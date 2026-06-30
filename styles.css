@@ -337,3 +337,265 @@ a {
   transition: opacity var(--transition-smooth), transform var(--transition-smooth);
 }
 
+/* Editorial Sheet Header */
+.sheet-meta-sec {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-accent-sage);
+  margin-bottom: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.sheet-meta-sec span:not(:last-child)::after {
+  content: "•";
+  margin-left: var(--spacing-xs);
+  color: var(--color-text-disabled);
+}
+
+.sheet-title {
+  font-family: var(--font-serif);
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+.sheet-description-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--spacing-lg);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border-hairline);
+  margin-bottom: var(--spacing-xl);
+}
+
+.sheet-summary {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.sheet-meta-block {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-sm);
+  font-size: 11px;
+  border-left: 1px solid var(--color-border-hairline);
+  padding-left: var(--spacing-md);
+}
+
+.meta-label {
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.meta-val {
+  font-weight: 500;
+  color: var(--color-text-primary);
+  text-align: right;
+}
+
+/* Document Content Typography */
+.paragraph-block {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-md);
+  position: relative;
+  cursor: pointer;
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition-fast);
+  border-left: 2px solid transparent;
+}
+
+.paragraph-block:hover {
+  background-color: rgba(91, 110, 91, 0.02); /* Sage faint tint */
+}
+
+.paragraph-block.has-annotation {
+  border-left-color: var(--color-accent-sage);
+}
+
+.paragraph-block.has-annotation-terracotta {
+  border-left-color: var(--color-accent-terracotta);
+}
+
+.paragraph-block.active-focus {
+  background-color: rgba(91, 110, 91, 0.04);
+  border-left-color: var(--color-accent-sage);
+}
+
+/* Editorial Elements */
+.drop-cap {
+  font-family: var(--font-serif);
+  font-size: 48px;
+  float: left;
+  line-height: 0.8;
+  margin-right: 8px;
+  margin-top: 4px;
+  color: var(--color-accent-terracotta);
+}
+
+/* Subheadings */
+.section-subtitle {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 500;
+  margin-top: var(--spacing-lg);
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-text-primary);
+}
+
+/* Margin Rail (Annotations Column) */
+.margin-rail {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 320px;
+  height: 100vh;
+  background-color: var(--color-bg-base);
+  border-left: 1px solid var(--color-border-hairline);
+  padding: var(--spacing-lg) var(--spacing-md);
+  overflow-y: auto;
+  z-index: 5;
+}
+
+.rail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--color-border-hairline);
+  margin-bottom: var(--spacing-md);
+}
+
+.rail-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+}
+
+.rail-status {
+  font-size: 10px;
+  color: var(--color-accent-sage);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--color-accent-sage);
+  border-radius: 50%;
+  display: inline-block;
+  animation: pulse-kf 2s infinite ease-in-out;
+}
+
+@keyframes pulse-kf {
+  0% { transform: scale(0.9); opacity: 0.5; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.5; }
+}
+
+.rail-content {
+  position: relative;
+  min-height: calc(100vh - 100px);
+}
+
+/* Annotation Cards */
+.annotation-card {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border-hairline);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-sm);
+  box-shadow: 0px 1px 3px rgba(31, 31, 30, 0.02);
+  transition: opacity var(--transition-smooth), transform var(--transition-smooth), border-color var(--transition-fast);
+  opacity: 0.4;
+  transform: scale(0.98);
+}
+
+.annotation-card:hover,
+.annotation-card.focused {
+  opacity: 1;
+  transform: scale(1);
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-sheet);
+  z-index: 12;
+}
+
+.annotation-card.type-sage {
+  border-top: 2px solid var(--color-accent-sage);
+}
+
+.annotation-card.type-terracotta {
+  border-top: 2px solid var(--color-accent-terracotta);
+}
+
+.card-tag {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.annotation-card.type-sage .card-tag {
+  color: var(--color-accent-sage);
+}
+
+.annotation-card.type-terracotta .card-tag {
+  color: var(--color-accent-terracotta);
+}
+
+.card-summary {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--color-text-muted);
+  border-top: 1px solid var(--color-border-hairline);
+  padding-top: var(--spacing-xs);
+}
+
+.confidence-score {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+/* 4. Component Styles (Screens & States) */
+
+/* Loading State */
+.sheet-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-family: var(--font-serif);
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* Screen 1: Intel Synthesis (The Desk Overview) */
