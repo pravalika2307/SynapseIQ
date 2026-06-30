@@ -1284,6 +1284,142 @@ function renderExecutiveBrief() {
 }
 
 // 5.5. Render: Intel Synthesis (The Executive Inbox)
+// Business Signals SVG Chart Generators
+function generateLineChartSVG(data, isNegative = false) {
+  const w = 400;
+  const h = 100;
+  const max = Math.max(...data);
+  const min = Math.min(...data);
+  const r = max - min || 1;
+  const step = w / (data.length - 1);
+  
+  let path = "";
+  data.forEach((val, i) => {
+    const x = i * step;
+    const y = h - 10 - ((val - min) / r) * (h - 20);
+    path += `${i === 0 ? 'M' : 'L'} ${x} ${y} `;
+  });
+  
+  const strokeColor = isNegative ? 'var(--color-accent-terracotta)' : 'var(--color-accent-sage)';
+  
+  return `
+    <svg viewBox="0 0 ${w} ${h}" class="signal-svg-chart">
+      <!-- Gridlines -->
+      <line x1="0" y1="${h * 0.25}" x2="${w}" y2="${h * 0.25}" stroke="var(--color-border-hairline)" stroke-width="0.75" stroke-dasharray="3 3" />
+      <line x1="0" y1="${h * 0.5}" x2="${w}" y2="${h * 0.5}" stroke="var(--color-border-hairline)" stroke-width="0.75" stroke-dasharray="3 3" />
+      <line x1="0" y1="${h * 0.75}" x2="${w}" y2="${h * 0.75}" stroke="var(--color-border-hairline)" stroke-width="0.75" stroke-dasharray="3 3" />
+      
+      <!-- Chart Line -->
+      <path d="${path}" fill="none" stroke="${strokeColor}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+      
+      <!-- Nodes -->
+      ${data.map((val, i) => {
+        const x = i * step;
+        const y = h - 10 - ((val - min) / r) * (h - 20);
+        return `<circle cx="${x}" cy="${y}" r="3" fill="var(--color-bg-surface)" stroke="${strokeColor}" stroke-width="1.5" />`;
+      }).join("")}
+    </svg>
+  `;
+}
+
+function generateBarChartSVG(data, isNegative = false) {
+  const w = 400;
+  const h = 100;
+  const max = Math.max(...data) || 1;
+  const barW = (w / data.length) * 0.5;
+  const gap = (w / data.length) * 0.5;
+  
+  const strokeColor = isNegative ? 'var(--color-accent-terracotta)' : 'var(--color-accent-sage)';
+  
+  let barsHTML = "";
+  data.forEach((val, i) => {
+    const x = i * (barW + gap) + gap / 2;
+    const barH = (val / max) * (h - 15);
+    const y = h - barH;
+    barsHTML += `<rect x="${x}" y="${y}" width="${barW}" height="${barH}" fill="${strokeColor}" rx="1.5" />`;
+  });
+  
+  return `
+    <svg viewBox="0 0 ${w} ${h}" class="signal-svg-chart">
+      <!-- Gridlines -->
+      <line x1="0" y1="${h * 0.25}" x2="${w}" y2="${h * 0.25}" stroke="var(--color-border-hairline)" stroke-width="0.75" stroke-dasharray="3 3" />
+      <line x1="0" y1="${h * 0.5}" x2="${w}" y2="${h * 0.5}" stroke="var(--color-border-hairline)" stroke-width="0.75" stroke-dasharray="3 3" />
+      <line x1="0" y1="${h * 0.75}" x2="${w}" y2="${h * 0.75}" stroke="var(--color-border-hairline)" stroke-width="0.75" stroke-dasharray="3 3" />
+      ${barsHTML}
+    </svg>
+  `;
+}
+
+function generateAreaChartSVG(data, isNegative = false) {
+  const w = 400;
+  const h = 100;
+  const max = Math.max(...data);
+  const min = Math.min(...data);
+  const r = max - min || 1;
+  const step = w / (data.length - 1);
+  
+  let path = "";
+  data.forEach((val, i) => {
+    const x = i * step;
+    const y = h - 10 - ((val - min) / r) * (h - 20);
+    path += `${i === 0 ? 'M' : 'L'} ${x} ${y} `;
+  });
+  
+  const strokeColor = isNegative ? 'var(--color-accent-terracotta)' : 'var(--color-accent-sage)';
+  const fillColor = isNegative ? 'var(--color-accent-terracotta)' : 'var(--color-accent-sage)';
+  
+  return `
+    <svg viewBox="0 0 ${w} ${h}" class="signal-svg-chart">
+      <!-- Gridlines -->
+      <line x1="0" y1="${h * 0.25}" x2="${w}" y2="${h * 0.25}" stroke="var(--color-border-hairline)" stroke-width="0.75" stroke-dasharray="3 3" />
+      <line x1="0" y1="${h * 0.5}" x2="${w}" y2="${h * 0.5}" stroke="var(--color-border-hairline)" stroke-width="0.75" stroke-dasharray="3 3" />
+      <line x1="0" y1="${h * 0.75}" x2="${w}" y2="${h * 0.75}" stroke="var(--color-border-hairline)" stroke-width="0.75" stroke-dasharray="3 3" />
+      
+      <!-- Area path -->
+      <path d="${path} L ${w} ${h} L 0 ${h} Z" fill="${fillColor}" opacity="0.06" />
+      
+      <!-- Line path -->
+      <path d="${path}" fill="none" stroke="${strokeColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      
+      <!-- Endpoint marker -->
+      <circle cx="${w}" cy="${h - 10 - ((data[data.length-1] - min) / r) * (h - 20)}" r="4" fill="${strokeColor}" />
+    </svg>
+  `;
+}
+
+function generateSegmentChartSVG(segments) {
+  const w = 400;
+  const h = 14;
+  
+  let rectsHTML = "";
+  let currentX = 0;
+  
+  segments.forEach(seg => {
+    const barW = (seg.percent / 100) * w;
+    rectsHTML += `<rect x="${currentX}" y="1" width="${barW}" height="${h-2}" fill="${seg.color}" rx="1.5" />`;
+    currentX += barW;
+  });
+  
+  const legendHTML = segments.map(seg => `
+    <div style="display: flex; align-items: center; gap: 4px; font-size: 9px; font-weight: 700; text-transform: uppercase; color: var(--color-text-secondary);">
+      <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background-color: ${seg.color};"></span>
+      <span>${seg.label} (${seg.percent}%)</span>
+    </div>
+  `).join("");
+  
+  return `
+    <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+      <svg viewBox="0 0 ${w} ${h}" style="width: 100%; height: ${h}px; overflow: visible;">
+        ${rectsHTML}
+      </svg>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 2px;">
+        ${legendHTML}
+      </div>
+    </div>
+  `;
+}
+
+// 5.5. Render: Intel Synthesis (The Executive Inbox)
 function renderIntelSynthesis() {
   let listHTML = "";
   Object.values(briefingsData).forEach(brief => {
@@ -1311,6 +1447,268 @@ function renderIntelSynthesis() {
     `;
   });
 
+  // 1. Fetch Active Dataset or fallback
+  const defaultDataset = {
+    name: "global_procurement_Q2.csv",
+    rows: 18240,
+    columns: 14,
+    domain: "Logistics & Supply Chain",
+    quality: "99.8%",
+    metrics: ["Revenue", "Transit Latency", "Supplier Credit Ratio", "Capital Allocation"],
+    missingValues: 14,
+    confidence: "93%"
+  };
+
+  const d = appState.activeDataset || defaultDataset;
+
+  // 2. Calibrate Dynamic Charts depending on domain
+  let chartSpecs = [];
+  if (d.domain === "Logistics & Supply Chain") {
+    chartSpecs = [
+      {
+        title: "Sourcing Transit Latency",
+        trend: "↑ 22%",
+        impact: "High",
+        note: "Vietnam and Singapore port backlogs escalate ocean turnaround latency times to 32 days.",
+        type: "line",
+        data: [12, 14, 15, 18, 22, 28, 32],
+        negative: true
+      },
+      {
+        title: "Warehouse Safety Buffer Allocation",
+        trend: "→ Stable",
+        impact: "Medium",
+        note: "Stuttgart central logistics node safety buffer expanded to house 45% of component capacities.",
+        type: "segment",
+        segments: [
+          { label: 'Stuttgart Hub', percent: 45, color: 'var(--color-accent-sage)' },
+          { label: 'Laredo Node', percent: 35, color: 'var(--color-accent-olive)' },
+          { label: 'Hanoi Hub', percent: 20, color: 'var(--color-text-muted)' }
+        ]
+      },
+      {
+        title: "Asia-Pacific Sourcing Spend",
+        trend: "↓ 8%",
+        impact: "High",
+        note: "Domestic nearshore component pivots contract Asian supplier spend marks by 8% over standard lines.",
+        type: "bar",
+        data: [80, 75, 68, 62, 55, 48]
+      },
+      {
+        title: "Supplier Credit Risk Index",
+        trend: "↑ 18%",
+        impact: "High",
+        note: "Solvency strain and cash depletion at tier-2 component fabricators elevate parts default ratios.",
+        type: "line",
+        data: [1.1, 1.3, 1.4, 1.8, 2.2, 2.6],
+        negative: true
+      },
+      {
+        title: "Warehouse Inventory Utilization",
+        trend: "↑ 14%",
+        impact: "Low",
+        note: "Stuttgart safety margins expanded to 72% capacity levels to cushion Hanoi transit backlogs.",
+        type: "area",
+        data: [45, 50, 52, 58, 65, 72]
+      },
+      {
+        title: "Laredo Rail Corridor Throughput",
+        trend: "↑ 35%",
+        impact: "High",
+        note: "Guadalajara re-routing rail corridor capacity expanded by 35%, ensuring nearshore throughput.",
+        type: "bar",
+        data: [120, 135, 145, 150, 162]
+      }
+    ];
+  } else if (d.domain === "Financial Operations") {
+    chartSpecs = [
+      {
+        title: "Annualized Recurring Revenue (ARR)",
+        trend: "↑ 18%",
+        impact: "High",
+        note: "Q2 revenue run rate expansions driven by 93% renewal contracts across enterprise hubs.",
+        type: "line",
+        data: [1.2, 1.4, 1.7, 1.9, 2.1, 2.4]
+      },
+      {
+        title: "Spot Freight Cost Volatility",
+        trend: "↑ 24%",
+        impact: "High",
+        note: "Expedited container spot-rate inflation spikes drive transport overhead budgets up by 24%.",
+        type: "bar",
+        data: [12, 15, 22, 34, 45, 52],
+        negative: true
+      },
+      {
+        title: "Procurement CapEx Breakdown",
+        trend: "↑ 12%",
+        impact: "Medium",
+        note: "Ocean freight surcharges dominate Q2 procurement budgets, accounting for 55% of CapEx allocations.",
+        type: "segment",
+        segments: [
+          { label: 'Ocean Freight', percent: 55, color: 'var(--color-accent-terracotta)' },
+          { label: 'Nearshore Rail', percent: 30, color: 'var(--color-accent-sage)' },
+          { label: 'Air Logistics', percent: 15, color: 'var(--color-accent-olive)' }
+        ]
+      },
+      {
+        title: "Operating Liquid Cash Reserves",
+        trend: "↑ 9%",
+        impact: "Medium",
+        note: "Strong ARR cash inflows expand corporate liquid positions, cushioning freight premium shocks.",
+        type: "area",
+        data: [10, 12, 14, 15, 18, 22]
+      },
+      {
+        title: "Spot Market Rate Risk Hedge",
+        trend: "↓ 15%",
+        impact: "High",
+        note: "Fixed-contract container quotas successfully reduce spot freight market pricing exposure by 15%.",
+        type: "line",
+        data: [52, 48, 42, 38, 32, 28]
+      },
+      {
+        title: "European Market Expansion Growth",
+        trend: "↑ 28%",
+        impact: "High",
+        note: "Renewals at EU enterprise nodes lead territorial revenue growth rate models, pacing at 28%.",
+        type: "bar",
+        data: [60, 68, 72, 85, 96, 112]
+      }
+    ];
+  } else if (d.domain === "Trade & Compliance") {
+    chartSpecs = [
+      {
+        title: "Belgian Port Custom Latency",
+        trend: "↑ 32%",
+        impact: "High",
+        note: "Revised customs mandate codes at Antwerp hubs extend average port check delays to 3.2 days.",
+        type: "line",
+        data: [1.2, 1.5, 2.1, 2.4, 2.8, 3.2],
+        negative: true
+      },
+      {
+        title: "Stuttgart Safety Buffer Capacity",
+        trend: "↑ 15%",
+        impact: "Medium",
+        note: "Stuttgart inventory safety stocks scaled by 15% to absorb Belgian customs delays.",
+        type: "bar",
+        data: [8, 10, 11, 12, 14, 15]
+      },
+      {
+        title: "Antwerp Surcharge Duties Allocation",
+        trend: "↑ 40%",
+        impact: "High",
+        note: "CBAM carbon tax penalties dominate port surcharge duty profiles, accounting for 40% of fees.",
+        type: "segment",
+        segments: [
+          { label: 'CBAM Tariffs', percent: 40, color: 'var(--color-accent-terracotta)' },
+          { label: 'Base Duties', percent: 45, color: 'var(--color-accent-sage)' },
+          { label: 'Clearance Fees', percent: 15, color: 'var(--color-accent-olive)' }
+        ]
+      },
+      {
+        title: "Carbon-Neutral Compliance Audits",
+        trend: "↑ 78%",
+        impact: "Medium",
+        note: "Supplier carbon compliance check rates reached 78%, resolving potential CBAM fee exposures.",
+        type: "area",
+        data: [30, 42, 55, 62, 70, 78]
+      },
+      {
+        title: "Customs duty Fee Reductions",
+        trend: "↓ 12%",
+        impact: "Medium",
+        note: "Authorized Economic Operator certifications successfully reduce average port customs clearance fees by 12%.",
+        type: "line",
+        data: [45, 42, 38, 35, 30, 28]
+      },
+      {
+        title: "Mexican Sourcing Hub Compliance",
+        trend: "↑ 45%",
+        impact: "High",
+        note: "Mexican components fabricators align to 100% compliance checklists, boosting nearshore stability.",
+        type: "bar",
+        data: [45, 52, 68, 75, 88, 100]
+      }
+    ];
+  } else {
+    // General Sourcing / Enterprise Operations
+    chartSpecs = [
+      {
+        title: "Asset Production Throughput",
+        trend: "↑ 8%",
+        impact: "Medium",
+        note: "Core equipment output rates expand, driving a 3-month productivity yield gain of 8%.",
+        type: "line",
+        data: [100, 102, 103, 105, 108]
+      },
+      {
+        title: "Logistics Surcharge Squeezes",
+        trend: "↑ 12%",
+        impact: "Medium",
+        note: "Freight spot pricing volatility spikes overall logistics operational expenditures by 12%.",
+        type: "bar",
+        data: [10, 11, 12, 12, 12, 12],
+        negative: true
+      },
+      {
+        title: "Container Space Pre-allocation",
+        trend: "↓ 15%",
+        impact: "High",
+        note: "Pre-arranged shipping container commitments decrease overall logistics spot fee exposures by 15%.",
+        type: "line",
+        data: [40, 38, 35, 30, 28]
+      },
+      {
+        title: "Safety Buffer Quota calibration",
+        trend: "↑ 10%",
+        impact: "Low",
+        note: "Warehouse safety stocks scaled up by 10% to insulate regional corridors from delay spikes.",
+        type: "area",
+        data: [80, 82, 85, 88, 90]
+      }
+    ];
+  }
+
+  // Compile Dynamic Signals Grid HTML
+  let signalsHTML = "";
+  chartSpecs.forEach(c => {
+    let chartSVG = "";
+    if (c.type === "line") {
+      chartSVG = generateLineChartSVG(c.data, c.negative);
+    } else if (c.type === "bar") {
+      chartSVG = generateBarChartSVG(c.data, c.negative);
+    } else if (c.type === "area") {
+      chartSVG = generateAreaChartSVG(c.data, c.negative);
+    } else if (c.type === "segment") {
+      chartSVG = generateSegmentChartSVG(c.segments);
+    }
+
+    signalsHTML += `
+      <div class="signal-chart-card ${c.negative ? 'negative-trend' : ''}">
+        <div class="signal-card-header">
+          <div class="signal-card-title-group">
+            <span class="signal-card-meta">Business Signal</span>
+            <h3 class="signal-card-title">${c.title}</h3>
+          </div>
+          <div class="signal-card-badges">
+            <span class="trend-badge ${c.negative ? 'trend-negative' : 'trend-positive'}">${c.trend}</span>
+            <span class="impact-badge ${c.impact === 'High' ? 'impact-high' : ''}">Impact: ${c.impact}</span>
+          </div>
+        </div>
+        
+        <div class="signal-chart-wrapper">
+          ${chartSVG}
+        </div>
+        
+        <div class="signal-card-footer">
+          <p class="signal-ai-note"><strong>AI Note:</strong> ${c.note}</p>
+        </div>
+      </div>
+    `;
+  });
+
   activeSheetEl.innerHTML = `
     <div class="workspace-dashboard">
       
@@ -1328,57 +1726,8 @@ function renderIntelSynthesis() {
         <span class="section-question-label">Business Signals</span>
         <h2 class="section-headline">What trends require immediate leadership focus?</h2>
         
-        <div class="signals-grid">
-          <!-- Card 1: Revenue -->
-          <div class="insight-card">
-            <div class="insight-header">
-              <span class="insight-title">Revenue (Q2 Run Rate)</span>
-              <span class="insight-trend up-sage">↑ 18%</span>
-            </div>
-            <div class="insight-value-block">
-              <span class="insight-value">₹2.4 Cr</span>
-            </div>
-            <div class="insight-note-block">
-              <p class="insight-note-text">
-                Growth driven by high-node enterprise renewals and expanded logistics client operations.
-              </p>
-            </div>
-            <span class="insight-confidence">94% AI Confidence • Verified by Stripe Ledger</span>
-          </div>
-
-          <!-- Card 2: Logistics Latency -->
-          <div class="insight-card type-terracotta">
-            <div class="insight-header">
-              <span class="insight-title">Logistics Transit Latency</span>
-              <span class="insight-trend up-terracotta">↑ 22%</span>
-            </div>
-            <div class="insight-value-block">
-              <span class="insight-value">4.8 Days</span>
-            </div>
-            <div class="insight-note-block">
-              <p class="insight-note-text">
-                Congestion peaks at Singapore and Hanoi ports, causing upstream component release bottlenecks.
-              </p>
-            </div>
-            <span class="insight-confidence">87% AI Confidence • Verified by MarineTraffic API</span>
-          </div>
-
-          <!-- Card 3: Supplier Solvency -->
-          <div class="insight-card type-terracotta">
-            <div class="insight-header">
-              <span class="insight-title">Supplier Debt-Equity Ratio</span>
-              <span class="insight-trend up-terracotta">↑ 14%</span>
-            </div>
-            <div class="insight-value-block">
-              <span class="insight-value">2.6x Limit</span>
-            </div>
-            <div class="insight-note-block">
-              <p class="insight-note-text">
-                Hanoi tier-2 fabricators face critical cash depletion, risking material delivery breaks.
-              </p>
-            </div>
-            <span class="insight-confidence">81% AI Confidence • Verified by Refinitiv Ratings</span>
-          </div>
+        <div class="signals-grid-redesign">
+          ${signalsHTML}
         </div>
       </section>
 

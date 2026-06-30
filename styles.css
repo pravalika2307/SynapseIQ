@@ -2284,3 +2284,132 @@ input[type=range].desk-slider::-webkit-slider-thumb:hover {
     grid-template-columns: 1fr;
   }
 }
+
+/* ==========================================================================
+   Business Signals Redesign & Chart Styling
+   ========================================================================== */
+
+.signals-grid-redesign {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-xl);
+  border-top: 1px solid var(--color-border-hairline);
+  padding-top: var(--spacing-md);
+}
+
+.signal-chart-card {
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border-hairline);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  transition: all var(--transition-smooth);
+}
+
+.signal-chart-card:hover {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-sheet);
+  transform: translateY(-2.0px);
+}
+
+.signal-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  border-bottom: 0.75px solid var(--color-border-hairline);
+  padding-bottom: var(--spacing-xs);
+}
+
+.signal-card-meta {
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.signal-card-title {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  line-height: 1.3;
+}
+
+.signal-card-badges {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.trend-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.trend-badge.trend-positive {
+  background-color: var(--color-accent-sage-light);
+  color: var(--color-accent-sage);
+}
+
+.trend-badge.trend-negative {
+  background-color: var(--color-accent-terracotta-light);
+  color: var(--color-accent-terracotta);
+}
+
+.impact-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background-color: var(--color-bg-muted);
+  color: var(--color-text-secondary);
+}
+
+.impact-badge.impact-high {
+  border: 0.75px solid var(--color-border-strong);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-surface);
+}
+
+.signal-chart-wrapper {
+  margin: var(--spacing-xs) 0;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.signal-svg-chart {
+  width: 100%;
+  height: 100px;
+  overflow: visible;
+}
+
+.signal-ai-note {
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg-muted);
+  padding: 8px 12px;
+  border-left: 2px solid var(--color-accent-sage);
+  border-radius: var(--radius-sm);
+}
+
+.signal-chart-card.negative-trend .signal-ai-note {
+  border-left-color: var(--color-accent-terracotta);
+}
+
+@media (max-width: 1024px) {
+  .signals-grid-redesign {
+    grid-template-columns: 1fr;
+  }
+}
