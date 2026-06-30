@@ -1,0 +1,28 @@
+# System Files
+.DS_Store
+Thumbs.db
+*.log
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Build & Dependency Outputs
+node_modules/
+dist/
+build/
+out/
+.env
+.env.*
+!.env.example
+
+# Temporary files
+tmp/
+temp/
+.sass-cache/
+.eslintcache
