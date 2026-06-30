@@ -1997,3 +1997,121 @@ input[type=range].desk-slider::-webkit-slider-thumb:hover {
     grid-template-columns: 1fr;
   }
 }
+
+/* ==========================================================================
+   Dataset Upload Experience & Dynamic Summary Card
+   ========================================================================== */
+
+/* Transition states for Single-Page App */
+.landing-container {
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 1;
+  transform: scale(1);
+}
+
+.landing-container.fade-out {
+  opacity: 0;
+  transform: scale(0.96);
+  pointer-events: none;
+}
+
+.app-container {
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: scale(0.98);
+}
+
+.app-container.fade-in {
+  display: flex !important;
+  opacity: 1 !important;
+  transform: scale(1) !important;
+}
+
+/* Premium Dataset Summary Card */
+.dataset-summary-card {
+  background-color: var(--color-bg-muted);
+  border: 1px solid var(--color-border-hairline);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.summary-card-header {
+  border-bottom: 0.75px solid var(--color-border-strong);
+  padding-bottom: var(--spacing-xs);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.summary-card-meta {
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+}
+
+.summary-card-title {
+  font-family: var(--font-serif);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.summary-card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-md);
+}
+
+.summary-grid-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.summary-item-label {
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}
+
+.summary-item-value {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.summary-metrics-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.summary-metric-pill {
+  font-size: 9px;
+  font-weight: 600;
+  background-color: var(--color-accent-sage-light);
+  color: var(--color-accent-sage);
+  padding: 1px 6px;
+  border-radius: 10px;
+}
+
+.summary-metric-empty {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .summary-card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

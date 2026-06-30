@@ -836,6 +836,58 @@ function setupChartTooltipListeners() {
 
 // 5. Render: Executive Morning Brief (CEO's Morning Desk Sheet)
 function renderExecutiveBrief() {
+  let summaryCardHTML = "";
+  if (appState.activeDataset) {
+    const d = appState.activeDataset;
+    let metricsHTML = "";
+    if (d.metrics && d.metrics.length > 0) {
+      d.metrics.forEach(m => {
+        metricsHTML += `<span class="summary-metric-pill">${m}</span>`;
+      });
+    } else {
+      metricsHTML = `<span class="summary-metric-empty">None identified</span>`;
+    }
+
+    summaryCardHTML = `
+      <div class="dataset-summary-card">
+        <div class="summary-card-header">
+          <span class="summary-card-title">${d.name}</span>
+          <span class="summary-card-meta">ACTIVE DATASET INTAKE AUDIT</span>
+        </div>
+        <div class="summary-card-grid">
+          <div class="summary-grid-item">
+            <span class="summary-item-label">Rows</span>
+            <span class="summary-item-value">${d.rows.toLocaleString()}</span>
+          </div>
+          <div class="summary-grid-item">
+            <span class="summary-item-label">Columns</span>
+            <span class="summary-item-value">${d.columns}</span>
+          </div>
+          <div class="summary-grid-item">
+            <span class="summary-item-label">Detected Domain</span>
+            <span class="summary-item-value" style="color: var(--color-accent-sage);">${d.domain}</span>
+          </div>
+          <div class="summary-grid-item">
+            <span class="summary-item-label">Data Quality</span>
+            <span class="summary-item-value" style="color: var(--color-accent-sage);">${d.quality}</span>
+          </div>
+          <div class="summary-grid-item" style="grid-column: span 2;">
+            <span class="summary-item-label">Metrics Identified</span>
+            <div class="summary-metrics-list">${metricsHTML}</div>
+          </div>
+          <div class="summary-grid-item">
+            <span class="summary-item-label">Missing Values</span>
+            <span class="summary-item-value" style="${d.missingValues > 0 ? 'color: var(--color-accent-terracotta);' : ''}">${d.missingValues}</span>
+          </div>
+          <div class="summary-grid-item">
+            <span class="summary-item-label">Confidence Index</span>
+            <span class="summary-item-value" style="color: var(--color-accent-olive);">${d.confidence}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   activeSheetEl.innerHTML = `
     <div class="brief-layout">
       <header class="brief-header">
@@ -845,6 +897,8 @@ function renderExecutiveBrief() {
           A synthesized morning briefing prepared for the Executive Desk. AI analysis maps strategic operational opportunities and vulnerabilities from raw enterprise indicators.
         </p>
       </header>
+
+      ${summaryCardHTML}
 
       <!-- Typographic metric highlights, avoiding neon widgets -->
       <section class="brief-grid">
@@ -1642,26 +1696,31 @@ function runBriefingLoader() {
   const overlay = document.getElementById("briefing-overlay");
   const msgEl = document.getElementById("overlay-status-msg");
   const barEl = document.getElementById("overlay-progress-bar");
-  const container = document.getElementById("app-container");
   
-  if (!overlay || !msgEl || !barEl || !container) {
-    // Fallback if elements not found
+  if (!overlay || !msgEl || !barEl) {
     navigateTo("executive-brief");
     return;
   }
 
+  // Display overlay with flex
+  overlay.style.display = "flex";
+  
+  // Force reflow and animate opacity
+  overlay.offsetHeight;
+  overlay.style.opacity = "1";
+
   const stages = [
-    "Reading uploaded dataset...",
-    "Analyzing 18,000+ records...",
-    "Finding anomalies...",
-    "Identifying opportunities...",
-    "Forecasting business trends...",
-    "Generating strategic recommendations...",
-    "Preparing boardroom briefing..."
+    "Reading Dataset",
+    "Validating Structure",
+    "Cleaning Missing Values",
+    "Detecting Business Metrics",
+    "Finding Anomalies",
+    "Building Executive Brief",
+    "Preparing Decision Workspace"
   ];
 
   let currentStageIdx = 0;
-  const stageDuration = 400; // 400ms per stage
+  const stageDuration = 450; // 450ms * 7 stages = ~3.2 seconds total processing time
 
   // Progress starts at 0
   barEl.style.width = "0%";
@@ -1679,18 +1738,33 @@ function runBriefingLoader() {
         
         currentStageIdx++;
         setTimeout(updateStage, stageDuration);
-      }, 100);
+      }, 50);
     } else {
-      // Transition out
-      overlay.classList.add("fade-out");
+      // Complete! Trigger Elegant transitions
+      overlay.style.opacity = "0";
+      
+      // Scale down and fade out landing container
+      const landingContainer = document.getElementById("landing-container");
+      if (landingContainer) {
+        landingContainer.classList.add("fade-out");
+      }
       
       setTimeout(() => {
         overlay.style.display = "none";
+        if (landingContainer) {
+          landingContainer.style.display = "none";
+        }
         
-        // Elegant fade reveal of main app
-        container.style.transition = "opacity 1.2s ease-in-out";
-        container.style.opacity = "1";
+        // Scale up and fade in workspace container
+        const appContainer = document.getElementById("app-container");
+        if (appContainer) {
+          appContainer.style.display = "flex";
+          // force reflow
+          appContainer.offsetHeight;
+          appContainer.classList.add("fade-in");
+        }
         
+        // Render brief view with dynamic summary card
         navigateTo("executive-brief");
       }, 800);
     }
@@ -1700,8 +1774,269 @@ function runBriefingLoader() {
   updateStage();
 }
 
+// 9. Client-side File Upload & Parser
+function setupLandingGreeting() {
+  const greetingTitle = document.getElementById("greeting-title");
+  if (greetingTitle) {
+    const hour = new Date().getHours();
+    let greetingText = "Good Evening."; 
+    
+    if (hour < 12) {
+      greetingText = "Good Morning.";
+    } else if (hour < 17) {
+      greetingText = "Good Afternoon.";
+    } else {
+      greetingText = "Good Evening.";
+    }
+    
+    greetingTitle.textContent = greetingText;
+  }
+}
+
+function setupDragAndDrop() {
+  const dropZone = document.getElementById("drop-zone");
+  const fileSelector = document.getElementById("file-selector");
+  
+  if (!dropZone || !fileSelector) return;
+
+  dropZone.addEventListener("click", (e) => {
+    if (e.target !== fileSelector) {
+      fileSelector.click();
+    }
+  });
+
+  fileSelector.addEventListener("change", (e) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      processFile(files[0]);
+    }
+  });
+
+  ["dragenter", "dragover"].forEach(eventName => {
+    dropZone.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropZone.classList.add("drag-active");
+    }, false);
+  });
+
+  ["dragleave", "drop"].forEach(eventName => {
+    dropZone.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropZone.classList.remove("drag-active");
+    }, false);
+  });
+
+  dropZone.addEventListener("drop", (e) => {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    if (files && files.length > 0) {
+      processFile(files[0]);
+    }
+  }, false);
+}
+
+function processFile(file) {
+  const fileName = file.name;
+  const extension = fileName.split(".").pop().toLowerCase();
+  const statusLabel = document.getElementById("upload-status-lbl");
+  const titleEl = document.querySelector(".upload-title");
+  const subtitleEl = document.querySelector(".upload-subtitle");
+  
+  if (extension !== "csv" && extension !== "xlsx" && extension !== "xls") {
+    if (statusLabel) {
+      statusLabel.textContent = "Invalid Format";
+      statusLabel.style.color = "var(--color-accent-terracotta)";
+    }
+    if (titleEl) titleEl.textContent = "Supported Formats Only";
+    if (subtitleEl) {
+      subtitleEl.textContent = "Please select a valid CSV or Excel file.";
+      subtitleEl.style.color = "var(--color-accent-terracotta)";
+    }
+    
+    setTimeout(() => {
+      if (statusLabel) {
+        statusLabel.textContent = "Ready for Synthesis";
+        statusLabel.style.color = "";
+      }
+      if (titleEl) titleEl.textContent = "Upload your business dataset.";
+      if (subtitleEl) {
+        subtitleEl.textContent = "Drag and drop file here, or click to browse";
+        subtitleEl.style.color = "";
+      }
+    }, 3000);
+    return;
+  }
+
+  // Show upload progress UI
+  const uploadMainView = document.getElementById("upload-main-view");
+  const uploadProgressView = document.getElementById("upload-progress-view");
+  const progressFileName = document.getElementById("progress-file-name");
+  const progressPercentage = document.getElementById("progress-percentage");
+  const progressBarFill = document.getElementById("progress-bar-fill");
+  const progressStatusText = document.getElementById("progress-status-text");
+
+  if (uploadMainView && uploadProgressView) {
+    uploadMainView.classList.add("hidden");
+    uploadProgressView.classList.remove("hidden");
+  }
+  
+  if (progressFileName) progressFileName.textContent = fileName;
+  if (statusLabel) {
+    statusLabel.textContent = "Synthesis In Progress";
+    statusLabel.style.color = "var(--color-accent-sage)";
+  }
+
+  // Read file data
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const text = e.target.result;
+    parseCSV(text, fileName);
+  };
+  
+  setTimeout(() => {
+    reader.readAsText(file);
+  }, 600);
+}
+
+function parseCSV(text, fileName) {
+  const lines = text.split(/\r?\n/).filter(line => line.trim() !== "");
+  const rows = Math.max(0, lines.length - 1);
+  let columns = 0;
+  let headers = [];
+  
+  if (lines.length > 0) {
+    headers = lines[0].split(",").map(h => h.replace(/['"]+/g, '').trim());
+    columns = headers.length;
+  }
+
+  let missingCount = 0;
+  const metricsSet = new Set();
+  const metricKeywords = ["revenue", "latency", "cost", "price", "margin", "transactions", "spend", "sales", "rating", "ratio", "credit", "delay", "buffer", "capex"];
+
+  headers.forEach(h => {
+    const lowerHeader = h.toLowerCase();
+    metricKeywords.forEach(k => {
+      if (lowerHeader.includes(k)) {
+        metricsSet.add(h);
+      }
+    });
+  });
+
+  for (let i = 1; i < lines.length; i++) {
+    const cells = lines[i].split(",");
+    cells.forEach(c => {
+      if (c.trim() === "") {
+        missingCount++;
+      }
+    });
+  }
+
+  let domain = "Enterprise Operations";
+  const headerString = headers.join(" ").toLowerCase();
+  if (headerString.includes("latency") || headerString.includes("port") || headerString.includes("vessel") || headerString.includes("shipping") || headerString.includes("transit") || headerString.includes("delay")) {
+    domain = "Logistics & Supply Chain";
+  } else if (headerString.includes("revenue") || headerString.includes("spend") || headerString.includes("price") || headerString.includes("margin") || headerString.includes("sourcing") || headerString.includes("cost")) {
+    domain = "Financial Operations";
+  } else if (headerString.includes("compliance") || headerString.includes("carbon") || headerString.includes("tariff") || headerString.includes("regulatory")) {
+    domain = "Trade & Compliance";
+  }
+
+  const totalCells = Math.max(1, (rows * columns));
+  const qualityPercent = Math.max(50, Math.min(100, Math.round((1 - (missingCount / totalCells)) * 1000) / 10));
+  const confidencePercent = Math.max(50, Math.min(99, Math.round(qualityPercent * 0.94)));
+
+  appState.activeDataset = {
+    name: fileName,
+    rows: rows,
+    columns: columns,
+    domain: domain,
+    quality: `${qualityPercent}%`,
+    metrics: Array.from(metricsSet).slice(0, 4),
+    missingValues: missingCount,
+    confidence: `${confidencePercent}%`
+  };
+
+  // Animate the upload progress bar
+  const progressBarFill = document.getElementById("progress-bar-fill");
+  const progressPercentage = document.getElementById("progress-percentage");
+  const progressStatusText = document.getElementById("progress-status-text");
+
+  let uploadPercentage = 0;
+  const timer = setInterval(() => {
+    uploadPercentage += 5;
+    if (progressPercentage) progressPercentage.textContent = `${uploadPercentage}%`;
+    if (progressBarFill) progressBarFill.style.width = `${uploadPercentage}%`;
+    if (progressStatusText) {
+      if (uploadPercentage < 50) progressStatusText.textContent = "Ingesting file streams...";
+      else if (uploadPercentage < 90) progressStatusText.textContent = "Resolving column schemas...";
+      else progressStatusText.textContent = "Intake complete.";
+    }
+
+    if (uploadPercentage >= 100) {
+      clearInterval(timer);
+      setTimeout(() => {
+        runBriefingLoader();
+      }, 400);
+    }
+  }, 50);
+}
+
+function loadDefaultDataset() {
+  appState.activeDataset = {
+    name: "global_procurement_Q2.csv",
+    rows: 18240,
+    columns: 14,
+    domain: "Logistics & Supply Chain",
+    quality: "99.8%",
+    metrics: ["Revenue", "Transit Latency", "Supplier Credit Ratio", "Capital Allocation"],
+    missingValues: 14,
+    confidence: "93%"
+  };
+
+  const uploadMainView = document.getElementById("upload-main-view");
+  const uploadProgressView = document.getElementById("upload-progress-view");
+  const progressFileName = document.getElementById("progress-file-name");
+  const progressPercentage = document.getElementById("progress-percentage");
+  const progressBarFill = document.getElementById("progress-bar-fill");
+  const progressStatusText = document.getElementById("progress-status-text");
+  const statusLabel = document.getElementById("upload-status-lbl");
+
+  if (uploadMainView && uploadProgressView) {
+    uploadMainView.classList.add("hidden");
+    uploadProgressView.classList.remove("hidden");
+  }
+  
+  if (progressFileName) progressFileName.textContent = "global_procurement_Q2.csv";
+  if (statusLabel) {
+    statusLabel.textContent = "Synthesis In Progress";
+    statusLabel.style.color = "var(--color-accent-sage)";
+  }
+
+  let uploadPercentage = 0;
+  const timer = setInterval(() => {
+    uploadPercentage += 10;
+    if (progressPercentage) progressPercentage.textContent = `${uploadPercentage}%`;
+    if (progressBarFill) progressBarFill.style.width = `${uploadPercentage}%`;
+    if (progressStatusText) {
+      progressStatusText.textContent = "Loading default briefing metrics...";
+    }
+
+    if (uploadPercentage >= 100) {
+      clearInterval(timer);
+      setTimeout(() => {
+        runBriefingLoader();
+      }, 300);
+    }
+  }, 40);
+}
+
 // 10. Initialization
 document.addEventListener("DOMContentLoaded", () => {
+  setupLandingGreeting();
+  setupDragAndDrop();
+
   // Attach Sidebar click listeners
   document.querySelectorAll(".nav-item").forEach(item => {
     item.addEventListener("click", (e) => {
@@ -1719,6 +2054,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
   
-  // Start the daily briefing loading sequence
-  runBriefingLoader();
+  const navStartBtn = document.getElementById("btn-nav-start");
+  if (navStartBtn) {
+    navStartBtn.addEventListener("click", () => {
+      loadDefaultDataset();
+    });
+  }
 });
