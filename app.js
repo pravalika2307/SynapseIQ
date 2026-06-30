@@ -232,6 +232,403 @@ function updateNavSelection(view, dataId) {
   });
 }
 
+// 4.3. Decision Copilot - Consulting Memo Database & Render
+const copilotBriefs = {
+  "revenue": {
+    meta: "MEMORANDUM • CONFIDENTIAL • SOURCING EXPENSES",
+    title: "Revenue Contraction Analysis — Q2 2026",
+    content: `
+      <p>Sourcing and operational telemetry reveals that Q2 revenue contraction of 3.8% ($12.4M variance vs budget) is primarily driven by shipping latency backlogs and upstream cost escalations, rather than market demand failure.</p>
+      
+      <div class="matrix-card-title" style="margin-top: 16px; margin-bottom: 8px;">Core Drivers of Unit Margin Erosion:</div>
+      <ul class="readout-bullet-list">
+        <li class="readout-bullet-item">
+          <strong>Strait of Malacca Congestion:</strong> Average transit duration rose from 14 to 32 days, resulting in late-delivery penalty clauses from high-tier electronics accounts.
+        </li>
+        <li class="readout-bullet-item">
+          <strong>Spot Shipping Premium:</strong> Expedited container charges to clear the Shanghai corridor created a 2.4x logistics spend multiplier.
+        </li>
+        <li class="readout-bullet-item">
+          <strong>Vietnamese Subcontractor Constraints:</strong> Solvency constraints at Hanoi fabs forced secondary vendor reliance at 18% higher tooling premiums.
+        </li>
+      </ul>
+      
+      <div class="readout-table-wrapper" style="margin-top: 16px;">
+        <table class="readout-table">
+          <thead>
+            <tr>
+              <th>Impact Channel</th>
+              <th>Variance vs Baseline</th>
+              <th>Primary Action Path</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Strait Delay Penalties</td>
+              <td style="color: var(--color-accent-terracotta); font-weight: 600;">+$4.8M</td>
+              <td>Enforce force majeure clause / Pre-clear logistics channels</td>
+            </tr>
+            <tr>
+              <td>Spot Freight Premiums</td>
+              <td style="color: var(--color-accent-terracotta); font-weight: 600;">+$3.2M</td>
+              <td>Transition 30% supply capacity to Mexican rail lines</td>
+            </tr>
+            <tr>
+              <td>Vendor tooling markups</td>
+              <td style="color: var(--color-accent-terracotta); font-weight: 600;">+$1.4M</td>
+              <td>Provide short-term supplier working-capital injection</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `
+  },
+  "regions": {
+    meta: "ASSESSMENT BRIEFING • SUPPLY PATH RISKS",
+    title: "Geographical Transit Exposure Audit",
+    content: `
+      <p>Multi-node parsing identifies <strong>Southeast Asia (Vietnam and Singapore hubs)</strong> as the critical vulnerability vector, accounting for 74% of active operational exposure.</p>
+      
+      <div class="readout-matrix" style="margin-top: 16px;">
+        <div class="matrix-card">
+          <div class="matrix-card-title" style="color: var(--color-accent-terracotta);">Singapore Port</div>
+          <p class="matrix-card-text">Transit queue backlogs are at peak historical density (30-day delays). Risk level is critical. Recommended action is immediate implementation of local customs pre-clearance and container tracking buffers.</p>
+        </div>
+        <div class="matrix-card">
+          <div class="matrix-card-title" style="color: var(--color-accent-terracotta);">Vietnam Assembly</div>
+          <p class="matrix-card-text">High debt leverage and credit rating drops in the Hanoi precision tooling tier present immediate liquidity risks. Secondary sourcing buffers must be activated.</p>
+        </div>
+      </div>
+
+      <div class="matrix-card" style="margin-top: 0;">
+        <div class="matrix-card-title" style="color: var(--color-accent-sage);">Mexico Corridor (Laredo/Guadalajara)</div>
+        <p class="matrix-card-text">Guadalajara and Laredo transit times are holding at 6 days with unit pricing variations of +8%. Excellent buffer candidate to absorb Southeast Asian delay profiles.</p>
+      </div>
+    `
+  },
+  "predict": {
+    meta: "PREDICTIVE MODEL • BOARD COMPILATION",
+    title: "Q3 2026 Procurement Projections & Margin Trends",
+    content: `
+      <p>Predictive analytics project a baseline unit cost surge of +23% ($192/unit avg) if current supply chain routing is maintained. Transitioning to a hybrid nearshoring model shifts the expected cost trajectory downwards.</p>
+      
+      <div class="readout-table-wrapper" style="margin-top: 16px;">
+        <table class="readout-table">
+          <thead>
+            <tr>
+              <th>Routing Scenario</th>
+              <th>Avg Lead Time</th>
+              <th>Projected Unit Cost</th>
+              <th>Risk Coefficient</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Scenario A (Baseline - Global First)</td>
+              <td>13 Days</td>
+              <td>$192.14</td>
+              <td style="color: var(--color-accent-terracotta); font-weight: 600;">68%</td>
+            </tr>
+            <tr>
+              <td><strong>Scenario B (Optimized - Hybrid Regional)</strong></td>
+              <td><strong>11 Days</strong></td>
+              <td><strong>$147.14</strong></td>
+              <td style="color: var(--color-accent-sage); font-weight: 600;"><strong>25%</strong></td>
+            </tr>
+            <tr>
+              <td>Scenario C (Local Sourcing - Domestic Focus)</td>
+              <td>4 Days</td>
+              <td>$165.40</td>
+              <td style="color: var(--color-accent-sage); font-weight: 600;">12%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <p style="font-size: 11px; color: var(--color-text-muted); margin-top: 8px;"><em>*Projections based on Monte Carlo simulations parsing 18,240 records across Q3 trade policy vectors. Confidence interval: 93%.</em></p>
+    `
+  },
+  "action": {
+    meta: "TACTICAL DISPOSITION SHEET • ACTIONS REQUIRED",
+    title: "Vietnamese Transit Mitigation Action Plan",
+    content: `
+      <p>This action plan details tactical steps required to insulate critical assemblies from Southeast Asian shipping congestion and supply-side liquidity failures.</p>
+      
+      <div class="matrix-card-title" style="margin-top: 16px; margin-bottom: 8px;">Phased Strategic Sequence:</div>
+      <ul class="readout-bullet-list">
+        <li class="readout-bullet-item">
+          <strong>Phase 1 (Immediate - 15 Days):</strong> Re-route 35% of Hanoi production buffers to Guadalajara. Authorize air freight premiums ($1.2M CapEx) to bypass maritime delays on high-priority orders.
+        </li>
+        <li class="readout-bullet-item">
+          <strong>Phase 2 (Mid-term - 15-60 Days):</strong> Inject short-term liquidity/pre-payments into Tier-2 Vietnamese suppliers to secure production queues and forestall vendor insolvencies.
+        </li>
+        <li class="readout-bullet-item">
+          <strong>Phase 3 (Long-term - 60-90 Days):</strong> Transition to nearshoring networks. Establish secondary manufacturing routes using Guadalajara and Laredo customs corridors to permanently lower systemic dependency.
+        </li>
+      </ul>
+    `
+  },
+  "summary": {
+    meta: "DATASET SUMMARY • EXECUTIVE SYNOPSIS",
+    title: "Database Telemetry Synthesis Report",
+    content: `
+      <p>Synthesis of the active procurement database consisting of 18,240 records across 14 transaction variables. Overall quality is robust, exposing targeted operational risks.</p>
+      
+      <div class="readout-matrix" style="margin-top: 16px;">
+        <div class="matrix-card">
+          <div class="matrix-card-title">Data Integrity</div>
+          <p class="matrix-card-text">99.8% successfully parsed. Clean fields with zero null vectors or missing date records. High statistical confidence.</p>
+        </div>
+        <div class="matrix-card">
+          <div class="matrix-card-title">Anomalies Isolated</div>
+          <p class="matrix-card-text">14 high-severity anomalies isolated (primarily supply-side pricing spikes and shipping container delays).</p>
+        </div>
+      </div>
+      
+      <div class="matrix-card" style="margin-top: 0;">
+        <div class="matrix-card-title">Primary Objective</div>
+        <p class="matrix-card-text">Optimize global transit paths, protect core margin thresholds, and resolve supplier capital exposure vulnerabilities.</p>
+      </div>
+    `
+  }
+};
+
+function renderDecisionCopilot() {
+  activeSheetEl.innerHTML = `
+    <div class="copilot-layout">
+      <!-- Left Control Panel (Mission Control Diagnostics & Prompts) -->
+      <div class="copilot-control-panel">
+        
+        <!-- Dataset Telemetry Widget -->
+        <div class="copilot-telemetry">
+          <div class="telemetry-item" style="grid-column: span 2; border-bottom: 0.75px solid var(--color-border-hairline); padding-bottom: 6px; margin-bottom: 4px;">
+            <span class="telemetry-label">Active Sourcing Dataset</span>
+            <span class="telemetry-val" style="font-family: var(--font-serif); font-size: 13px;">global_procurement_Q2.csv</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="telemetry-label">Record Count</span>
+            <span class="telemetry-val">18,240 Rows</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="telemetry-label">Data Integrity</span>
+            <span class="telemetry-val" style="color: var(--color-accent-sage);">99.8% Optimal</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="telemetry-label">Anomalies</span>
+            <span class="telemetry-val" style="color: var(--color-accent-terracotta);">14 isolated</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="telemetry-label">Copilot Mode</span>
+            <span class="telemetry-val">Consultant</span>
+          </div>
+        </div>
+
+        <!-- Strategy Prompts Deck -->
+        <div class="nav-section-title" style="padding-left: 0; margin-bottom: 4px; margin-top: 8px;">Consultant Inquiry Deck</div>
+        <div class="copilot-prompt-deck">
+          <button class="prompt-card active" data-brief="revenue">
+            <span class="prompt-card-category">Financial Impact</span>
+            <span class="prompt-card-text">Why did revenue decline?</span>
+          </button>
+          
+          <button class="prompt-card" data-brief="regions">
+            <span class="prompt-card-category">Risk Exposure</span>
+            <span class="prompt-card-text">Which region needs attention?</span>
+          </button>
+          
+          <button class="prompt-card" data-brief="predict">
+            <span class="prompt-card-category">Projections</span>
+            <span class="prompt-card-text">Predict next quarter.</span>
+          </button>
+          
+          <button class="prompt-card" data-brief="action">
+            <span class="prompt-card-category">Action Plan</span>
+            <span class="prompt-card-text">Generate an action plan.</span>
+          </button>
+          
+          <button class="prompt-card" data-brief="summary">
+            <span class="prompt-card-category">Data Synthesis</span>
+            <span class="prompt-card-text">Summarize this dataset.</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Right Readout Panel (Consultant Memorandums) -->
+      <div class="copilot-readout-panel">
+        <header class="readout-header">
+          <span class="readout-meta" id="readout-meta">MEMORANDUM • CONFIDENTIAL • SOURCING EXPENSES</span>
+          <h2 class="readout-title" id="readout-title">Revenue Contraction Analysis — Q2 2026</h2>
+        </header>
+        
+        <div class="readout-body" id="readout-body">
+          <!-- Inserted Dynamically -->
+        </div>
+      </div>
+
+      <!-- Custom Query Bar (Bottom Span) -->
+      <div class="copilot-input-container">
+        <div class="copilot-input-wrapper">
+          <input type="text" class="copilot-input" id="copilot-query-input" placeholder="Formulate custom strategic query (e.g. 'How does Shanghai container pricing affect Mexico tooling margins?')...">
+        </div>
+        <button class="btn-editorial btn-primary" id="copilot-query-btn" style="padding: 12px 24px; font-size: 11px;">
+          Execute Query
+        </button>
+      </div>
+
+    </div>
+  `;
+
+  // Render initial active card (revenue)
+  const defaultBrief = copilotBriefs["revenue"];
+  document.getElementById("readout-body").innerHTML = defaultBrief.content;
+
+  // Bind Copilot event listeners
+  setupCopilotListeners();
+}
+
+function setupCopilotListeners() {
+  const cards = document.querySelectorAll(".prompt-card");
+  const metaEl = document.getElementById("readout-meta");
+  const titleEl = document.getElementById("readout-title");
+  const bodyEl = document.getElementById("readout-body");
+  const inputEl = document.getElementById("copilot-query-input");
+  const buttonEl = document.getElementById("copilot-query-btn");
+
+  if (!cards || !bodyEl || !metaEl || !titleEl) return;
+
+  // Click card handlers
+  cards.forEach(card => {
+    card.addEventListener("click", () => {
+      // Clear active classes
+      cards.forEach(c => c.classList.remove("active"));
+      card.classList.add("active");
+
+      const briefId = card.getAttribute("data-brief");
+      const brief = copilotBriefs[briefId];
+      if (!brief) return;
+
+      // Smooth fade transition
+      bodyEl.style.opacity = "0";
+      setTimeout(() => {
+        metaEl.textContent = brief.meta;
+        titleEl.textContent = brief.title;
+        bodyEl.innerHTML = brief.content;
+        bodyEl.style.opacity = "1";
+      }, 150);
+    });
+  });
+
+  // Custom strategic query submission handler
+  const handleQuery = () => {
+    const queryText = inputEl.value.trim();
+    if (!queryText) return;
+
+    // Deselect other prompt cards
+    cards.forEach(c => c.classList.remove("active"));
+
+    // Render loading steps inside the memo area
+    bodyEl.style.opacity = "0";
+    setTimeout(() => {
+      metaEl.textContent = "AI SEARCH & REASONING MODEL";
+      titleEl.textContent = "Processing Strategic Inquiry...";
+      bodyEl.innerHTML = `
+        <div class="copilot-loader">
+          <span id="loader-step">Querying procurement databases...</span>
+          <div class="loader-track">
+            <div class="loader-bar"></div>
+          </div>
+        </div>
+      `;
+      bodyEl.style.opacity = "1";
+      
+      const stepEl = document.getElementById("loader-step");
+      
+      // Animate loading stages
+      setTimeout(() => {
+        if (stepEl) stepEl.textContent = "Assessing supply path node models...";
+      }, 700);
+
+      setTimeout(() => {
+        if (stepEl) stepEl.textContent = "Generating strategic action briefs...";
+      }, 1400);
+
+      // Render custom generated consulting brief response
+      setTimeout(() => {
+        bodyEl.style.opacity = "0";
+        setTimeout(() => {
+          metaEl.textContent = "BOARDROOM SYNTHESIS REPORT • CONSULTANT RESPONSE";
+          titleEl.textContent = `Consultation Brief: "${queryText.length > 40 ? queryText.slice(0, 40) + '...' : queryText}"`;
+          
+          // Tailor response slightly if keywords are present
+          let resultText = "";
+          let lowerText = queryText.toLowerCase();
+
+          if (lowerText.includes("mexico") || lowerText.includes("guadalajara")) {
+            resultText = `
+              <p>Operational logic parses Guadalajara as highly viable for nearshoring buffer routing, showing resilient 6-day lead times. However, custom tariffs introduce a localized unit premium of 8.2% ($12.50 per tool assembly SKU).</p>
+              <div class="matrix-card" style="margin-top: 16px;">
+                <div class="matrix-card-title" style="color: var(--color-accent-sage);">Guadalajara / Laredo Corridor Outlook</div>
+                <p class="matrix-card-text">Infrastructure capacities are strong, but long-term exposure mitigation requires establishing localized supply channels rather than purely re-routing global raw inputs.</p>
+              </div>
+            `;
+          } else if (lowerText.includes("cost") || lowerText.includes("pricing") || lowerText.includes("margin")) {
+            resultText = `
+              <p>Cost variance analysis projects procurement spot freight rate premiums to persist throughout Q3. Establishing container pre-allocations and transition strategies lowers projected Unit Sourcing Cost by 24% ($147.14 vs. $192.14 baseline).</p>
+              <div class="readout-table-wrapper" style="margin-top: 16px;">
+                <table class="readout-table">
+                  <thead>
+                    <tr>
+                      <th>Sourcing Strategy</th>
+                      <th>Expected Q3 Margin</th>
+                      <th>Logistics CapEx Required</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Global-First (Base)</td>
+                      <td style="color: var(--color-accent-terracotta);">32% Gross</td>
+                      <td>$0.0M</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Hybrid-Regional</strong></td>
+                      <td style="color: var(--color-accent-sage);"><strong>44% Gross</strong></td>
+                      <td><strong>$40.0M</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            `;
+          } else {
+            resultText = `
+              <p>Sourcing analysis evaluated trade lane vectors, supplier indices, and maritime congestion signals. We isolate 14 critical pricing/shipping anomalies across 18,240 records.</p>
+              <div class="matrix-card" style="margin-top: 16px;">
+                <div class="matrix-card-title" style="color: var(--color-accent-olive);">Primary Consulting Verdict</div>
+                <p class="matrix-card-text">To defend margins from Southeast Asian port backlogs, near-term capital reallocation to secondary assembly hubs (e.g. Mexico) is highly recommended.</p>
+              </div>
+            `;
+          }
+
+          bodyEl.innerHTML = resultText;
+          bodyEl.style.opacity = "1";
+          inputEl.value = ""; // clear field
+        }, 150);
+      }, 2100);
+
+    }, 150);
+  };
+
+  // Click query button
+  buttonEl.addEventListener("click", handleQuery);
+
+  // Press Enter key on input field
+  inputEl.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      handleQuery();
+    }
+  });
+}
+
 // 4.5. Render: Visual Projections (Bloomberg meets Apple Editorial Charts)
 function renderVisualProjections() {
   activeSheetEl.innerHTML = `
