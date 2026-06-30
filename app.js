@@ -834,7 +834,6 @@ function setupChartTooltipListeners() {
   });
 }
 
-// 5. Render: Executive Morning Brief (CEO's Morning Desk Sheet)
 function renderExecutiveBrief() {
   // 1. Dynamic Greeting based on Local Time
   const hour = new Date().getHours();
@@ -926,7 +925,7 @@ function renderExecutiveBrief() {
     confidenceExplanation = "Telemetry verified by Port Authority logs and MarineTraffic indices.";
     readinessValue = "Optimal";
     readinessExplanation = "Clean coordinates and time matrices support high-node corridor simulations.";
-    summaryText = "Sourcing metrics reveal that overall supply throughput is stable. However, average delays in Hanoi assemblies create inventory backlogs that threaten Q3 schedules. Diversifying transit paths (Mexico/Guadalajara re-routing) offers immediately actionable margin protection pathways.";
+    summaryText = "Sourcing metrics reveal stable supply throughput. Hanoi assembly line delays create minor inventory backlogs. Re-routing component assemblies to Guadalajara rail lines offers immediate protection against pending tariff revisions.";
     
     cards.findings = [
       {
@@ -988,7 +987,7 @@ function renderExecutiveBrief() {
     confidenceExplanation = "Financial ledger transactions reconciled directly against Stripe data.";
     readinessValue = "Optimal";
     readinessExplanation = "Reconciled ledger history allows highly calibrated budget models.";
-    summaryText = "Ledger audits reveal solid Q2 performance driven by high-tier software renewals. Margin compression remains isolated within global spot freight logistics surcharges. Consolidating sourcing operations lowers supplier overhead and stabilizes bottom-line cash vectors.";
+    summaryText = "Ledger audits reveal robust Q2 ARR renewals. Sourcing price variance remains isolated within global container spot rates. Consolidating assembly suppliers minimizes overhead margins.";
     
     cards.findings = [
       {
@@ -1050,7 +1049,7 @@ function renderExecutiveBrief() {
     confidenceExplanation = "Compliance statuses cross-referenced with European Customs Bulletin updates.";
     readinessValue = "Sufficient";
     readinessExplanation = "Minor null regulatory codes present, but compliance pathways remain clear.";
-    summaryText = "Custom regulatory changes at Antwerp ports introduce near-term unit cost friction. Localized inventory buffers at Stuttgart protect German distribution pathways from immediate impact. Sourcing components from carbon-neutral suppliers mitigates CBAM customs penalty zones.";
+    summaryText = "Revised compliance codes at Antwerp extend average customs clearance times. Stuttgart safety buffer blocks insulate German assembly pathways. Transitioning components to carbon-neutral sites mitigates pending carbon tax surcharges.";
     
     cards.findings = [
       {
@@ -1170,16 +1169,36 @@ function renderExecutiveBrief() {
     ];
   }
 
-  // Helper to compile card list HTML
-  const compileCardsHTML = (cardList, isRisk = false) => {
+  // Helper to compile card list HTML with AI Identity Badges
+  const compileCardsHTML = (cardList, sectionType) => {
     let html = "";
     cardList.forEach(c => {
+      let badgeLabel = "• AI Insight";
+      let badgeClass = "olive-badge";
+      let isRisk = false;
+      
+      if (sectionType === "findings") {
+        badgeLabel = "• AI Insight";
+        badgeClass = "olive-badge";
+      } else if (sectionType === "opportunities") {
+        badgeLabel = "• AI Generated";
+        badgeClass = "";
+      } else if (sectionType === "risks") {
+        badgeLabel = "• AI Insight";
+        badgeClass = "terracotta-badge";
+        isRisk = true;
+      } else if (sectionType === "recommendations") {
+        badgeLabel = "• AI Recommendation";
+        badgeClass = "";
+      }
+
       html += `
         <div class="section-card ${isRisk ? 'risk-border' : ''}">
           <div class="card-header">
-            <span class="card-title">${c.title}</span>
+            <span class="ai-indicator-badge ${badgeClass}">${badgeLabel}</span>
             <span class="card-confidence">${c.conf} Conf</span>
           </div>
+          <span class="card-title" style="margin-top: 4px; display: block;">${c.title}</span>
           <p class="card-desc">${c.desc}</p>
           <div class="card-impact ${isRisk ? 'risk-accent' : ''}">${c.impact}</div>
         </div>
@@ -1188,10 +1207,10 @@ function renderExecutiveBrief() {
     return html;
   };
 
-  const findingsHTML = compileCardsHTML(cards.findings);
-  const opportunitiesHTML = compileCardsHTML(cards.opportunities);
-  const risksHTML = compileCardsHTML(cards.risks, true);
-  const recommendationsHTML = compileCardsHTML(cards.recommendations);
+  const findingsHTML = compileCardsHTML(cards.findings, "findings");
+  const opportunitiesHTML = compileCardsHTML(cards.opportunities, "opportunities");
+  const risksHTML = compileCardsHTML(cards.risks, "risks");
+  const recommendationsHTML = compileCardsHTML(cards.recommendations, "recommendations");
 
   // 4. Render Layout
   activeSheetEl.innerHTML = `
@@ -1205,31 +1224,43 @@ function renderExecutiveBrief() {
       <!-- 2. Parsed Dataset Metadata Summary -->
       ${summaryCardHTML}
 
-      <!-- 3. AI Executive Summary (3-5 Lines narrative) -->
+      <!-- 3. AI Executive Summary (Scannable Narrative) -->
       <section class="brief-summary-section">
-        <h3>AI Executive Summary</h3>
-        <p class="brief-summary-text">${summaryText}</p>
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+          <h3 style="margin-bottom: 0;">AI Executive Summary</h3>
+          <span class="ai-indicator-badge">• AI Generated</span>
+        </div>
+        <p class="brief-summary-text"><strong>Strategic Synthesis:</strong> ${summaryText}</p>
       </section>
 
       <!-- 4. Dynamic KPI Score Card Row -->
       <section class="brief-meta-row">
         <!-- Business Health Score -->
         <div class="meta-card">
-          <span class="meta-card-label">Business Health Score</span>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+            <span class="meta-card-label">Business Health Score</span>
+            <span class="ai-indicator-badge olive-badge" style="font-size: 7px; padding: 1px 4px;">• AI Insight</span>
+          </div>
           <span class="meta-card-value" style="color: var(--color-accent-sage);">${healthScore} <span style="font-size: 11px; font-weight: normal; color: var(--color-text-muted);">/ 100</span></span>
           <span class="meta-card-explanation">${healthExplanation}</span>
         </div>
         
         <!-- AI Confidence Index -->
         <div class="meta-card">
-          <span class="meta-card-label">AI Confidence Index</span>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+            <span class="meta-card-label">AI Confidence Index</span>
+            <span class="ai-indicator-badge olive-badge" style="font-size: 7px; padding: 1px 4px;">• AI Insight</span>
+          </div>
           <span class="meta-card-value" style="color: var(--color-accent-olive);">${d.confidence}</span>
           <span class="meta-card-explanation">${confidenceExplanation}</span>
         </div>
 
         <!-- Decision Readiness -->
         <div class="meta-card">
-          <span class="meta-card-label">Decision Readiness</span>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+            <span class="meta-card-label">Decision Readiness</span>
+            <span class="ai-indicator-badge olive-badge" style="font-size: 7px; padding: 1px 4px;">• AI Insight</span>
+          </div>
           <span class="meta-card-value">${readinessValue}</span>
           <span class="meta-card-explanation">${readinessExplanation}</span>
         </div>
@@ -2374,64 +2405,93 @@ function runBriefingLoader() {
   overlay.offsetHeight;
   overlay.style.opacity = "1";
 
-  const stages = [
-    "Reading Dataset",
-    "Validating Structure",
-    "Cleaning Missing Values",
-    "Detecting Business Metrics",
-    "Finding Anomalies",
-    "Building Executive Brief",
-    "Preparing Decision Workspace"
-  ];
+  // Build the cinematic checklist structure dynamically
+  const statusContainer = document.querySelector(".overlay-status-container");
+  if (statusContainer) {
+    statusContainer.innerHTML = `
+      <div class="overlay-checklist" id="overlay-checklist">
+        <div class="checklist-item" id="item-0"><span>Reading Dataset...</span><span class="checklist-status" id="status-0">Pending</span></div>
+        <div class="checklist-item" id="item-1"><span>Understanding Business Context...</span><span class="checklist-status" id="status-1">Pending</span></div>
+        <div class="checklist-item" id="item-2"><span>Detecting Trends...</span><span class="checklist-status" id="status-2">Pending</span></div>
+        <div class="checklist-item" id="item-3"><span>Finding Opportunities...</span><span class="checklist-status" id="status-3">Pending</span></div>
+        <div class="checklist-item" id="item-4"><span>Building Executive Brief...</span><span class="checklist-status" id="status-4">Pending</span></div>
+        <div class="checklist-item" id="item-5"><span>Preparing Decision Workspace...</span><span class="checklist-status" id="status-5">Pending</span></div>
+      </div>
+      <div class="overlay-ready-msg" id="overlay-ready-msg">Your Executive Brief is Ready.</div>
+    `;
+  }
 
+  const totalStages = 6;
   let currentStageIdx = 0;
-  const stageDuration = 450; // 450ms * 7 stages = ~3.2 seconds total processing time
+  const stageDuration = 600; // 600ms per stage
 
   // Progress starts at 0
   barEl.style.width = "0%";
 
   function updateStage() {
-    if (currentStageIdx < stages.length) {
-      msgEl.style.opacity = "0.3";
+    if (currentStageIdx < totalStages) {
+      const itemEl = document.getElementById(`item-${currentStageIdx}`);
+      const statusEl = document.getElementById(`status-${currentStageIdx}`);
       
+      if (itemEl && statusEl) {
+        itemEl.classList.add("active");
+        statusEl.textContent = "In Progress";
+      }
+
       setTimeout(() => {
-        msgEl.textContent = stages[currentStageIdx];
-        msgEl.style.opacity = "1";
+        if (itemEl && statusEl) {
+          itemEl.classList.remove("active");
+          itemEl.classList.add("completed");
+          statusEl.textContent = "✓ Complete";
+        }
         
-        const percent = Math.round(((currentStageIdx + 1) / stages.length) * 100);
+        const percent = Math.round(((currentStageIdx + 1) / totalStages) * 100);
         barEl.style.width = `${percent}%`;
         
         currentStageIdx++;
-        setTimeout(updateStage, stageDuration);
-      }, 50);
+        setTimeout(updateStage, 150); // slight pause between items
+      }, stageDuration);
     } else {
-      // Complete! Trigger Elegant transitions
-      overlay.style.opacity = "0";
+      // Completed all steps! Trigger cinematic confirmation transition
+      const checklist = document.getElementById("overlay-checklist");
+      const readyMsg = document.getElementById("overlay-ready-msg");
       
-      // Scale down and fade out landing container
-      const landingContainer = document.getElementById("landing-container");
-      if (landingContainer) {
-        landingContainer.classList.add("fade-out");
+      if (checklist) {
+        checklist.style.opacity = "0";
       }
       
       setTimeout(() => {
-        overlay.style.display = "none";
-        if (landingContainer) {
-          landingContainer.style.display = "none";
+        if (checklist) checklist.style.display = "none";
+        if (readyMsg) {
+          readyMsg.classList.add("visible");
         }
         
-        // Scale up and fade in workspace container
-        const appContainer = document.getElementById("app-container");
-        if (appContainer) {
-          appContainer.style.display = "flex";
-          // force reflow
-          appContainer.offsetHeight;
-          appContainer.classList.add("fade-in");
-        }
-        
-        // Render brief view with dynamic summary card
-        navigateTo("executive-brief");
-      }, 800);
+        // Final transition out after showing "Your Executive Brief is Ready."
+        setTimeout(() => {
+          overlay.style.opacity = "0";
+          
+          const landingContainer = document.getElementById("landing-container");
+          if (landingContainer) {
+            landingContainer.classList.add("fade-out");
+          }
+          
+          setTimeout(() => {
+            overlay.style.display = "none";
+            if (landingContainer) {
+              landingContainer.style.display = "none";
+            }
+            
+            const appContainer = document.getElementById("app-container");
+            if (appContainer) {
+              appContainer.style.display = "flex";
+              appContainer.offsetHeight;
+              appContainer.classList.add("fade-in");
+            }
+            
+            navigateTo("executive-brief");
+          }, 800);
+        }, 1600);
+      }, 400);
     }
   }
 
