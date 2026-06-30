@@ -836,129 +836,445 @@ function setupChartTooltipListeners() {
 
 // 5. Render: Executive Morning Brief (CEO's Morning Desk Sheet)
 function renderExecutiveBrief() {
-  let summaryCardHTML = "";
-  if (appState.activeDataset) {
-    const d = appState.activeDataset;
-    let metricsHTML = "";
-    if (d.metrics && d.metrics.length > 0) {
-      d.metrics.forEach(m => {
-        metricsHTML += `<span class="summary-metric-pill">${m}</span>`;
-      });
-    } else {
-      metricsHTML = `<span class="summary-metric-empty">None identified</span>`;
-    }
+  // 1. Dynamic Greeting based on Local Time
+  const hour = new Date().getHours();
+  let greetingText = "Good Evening"; 
+  if (hour < 12) greetingText = "Good Morning";
+  else if (hour < 17) greetingText = "Good Afternoon";
 
-    summaryCardHTML = `
-      <div class="dataset-summary-card">
-        <div class="summary-card-header">
-          <span class="summary-card-title">${d.name}</span>
-          <span class="summary-card-meta">ACTIVE DATASET INTAKE AUDIT</span>
-        </div>
-        <div class="summary-card-grid">
-          <div class="summary-grid-item">
-            <span class="summary-item-label">Rows</span>
-            <span class="summary-item-value">${d.rows.toLocaleString()}</span>
-          </div>
-          <div class="summary-grid-item">
-            <span class="summary-item-label">Columns</span>
-            <span class="summary-item-value">${d.columns}</span>
-          </div>
-          <div class="summary-grid-item">
-            <span class="summary-item-label">Detected Domain</span>
-            <span class="summary-item-value" style="color: var(--color-accent-sage);">${d.domain}</span>
-          </div>
-          <div class="summary-grid-item">
-            <span class="summary-item-label">Data Quality</span>
-            <span class="summary-item-value" style="color: var(--color-accent-sage);">${d.quality}</span>
-          </div>
-          <div class="summary-grid-item" style="grid-column: span 2;">
-            <span class="summary-item-label">Metrics Identified</span>
-            <div class="summary-metrics-list">${metricsHTML}</div>
-          </div>
-          <div class="summary-grid-item">
-            <span class="summary-item-label">Missing Values</span>
-            <span class="summary-item-value" style="${d.missingValues > 0 ? 'color: var(--color-accent-terracotta);' : ''}">${d.missingValues}</span>
-          </div>
-          <div class="summary-grid-item">
-            <span class="summary-item-label">Confidence Index</span>
-            <span class="summary-item-value" style="color: var(--color-accent-olive);">${d.confidence}</span>
-          </div>
-        </div>
-      </div>
-    `;
+  // 2. Fetch Active Dataset Metadata or fallback to default
+  const defaultDataset = {
+    name: "global_procurement_Q2.csv",
+    rows: 18240,
+    columns: 14,
+    domain: "Logistics & Supply Chain",
+    quality: "99.8%",
+    metrics: ["Revenue", "Transit Latency", "Supplier Credit Ratio", "Capital Allocation"],
+    missingValues: 14,
+    confidence: "93%"
+  };
+
+  const d = appState.activeDataset || defaultDataset;
+
+  // Build Dynamic Summary Card HTML
+  let metricsHTML = "";
+  if (d.metrics && d.metrics.length > 0) {
+    d.metrics.forEach(m => {
+      metricsHTML += `<span class="summary-metric-pill">${m}</span>`;
+    });
+  } else {
+    metricsHTML = `<span class="summary-metric-empty">None identified</span>`;
   }
 
-  activeSheetEl.innerHTML = `
-    <div class="brief-layout">
-      <header class="brief-header">
-        <span class="brief-tag">DAILY REPORT — BOARD CONFIDENTIAL</span>
-        <h1 class="sheet-title">Today's Executive Brief</h1>
-        <p class="sheet-summary" style="font-style: normal; font-size: 15px; color: var(--color-text-secondary);">
-          A synthesized morning briefing prepared for the Executive Desk. AI analysis maps strategic operational opportunities and vulnerabilities from raw enterprise indicators.
-        </p>
-      </header>
-
-      ${summaryCardHTML}
-
-      <!-- Typographic metric highlights, avoiding neon widgets -->
-      <section class="brief-grid">
-        <div class="brief-stat">
-          <span class="brief-number accent-sage">3</span>
-          <span class="brief-label">Opportunities Found</span>
-        </div>
-        <div class="brief-stat">
-          <span class="brief-number accent-terracotta">1</span>
-          <span class="brief-label">Critical Risk</span>
-        </div>
-        <div class="brief-stat">
-          <span class="brief-number">+12%</span>
-          <span class="brief-label">Projected Growth</span>
-        </div>
-        <div class="brief-stat">
-          <span class="brief-number">93%</span>
-          <span class="brief-label">AI Confidence</span>
-        </div>
-      </section>
-
-      <!-- Business Editorial Text -->
-      <section class="brief-narratives">
-        <h2 class="brief-section-title">Strategic Outlook</h2>
-        <p class="paragraph-block" style="font-size: 15px; line-height: 1.7; margin-bottom: 24px;">
-          Overall operational stability is cataloged as highly resilient. Active supply lines show strong productivity metrics, with localized logistics backlogs in Hanoi representing our primary operational threat vector. Expanding local corridors while optimizing capital reserves will yield a projected 12% Q3 growth coefficient.
-        </p>
-
-        <h2 class="brief-section-title">Active Opportunities</h2>
-        <ul class="brief-bullet-list">
-          <li class="brief-bullet-item">
-            <strong>Geographic Sourcing Shift:</strong> Shifting component fabrication allocations to domestic Mexican suppliers offsets container transit queues and shields primary supply lines from pending import tariff revisions.
-          </li>
-          <li class="brief-bullet-item">
-            <strong>Transit Corridor Arbitration:</strong> Re-routing sea-air forwarding operations via Bangkok reduces average port turnaround queues from 30 days to 6 days.
-          </li>
-          <li class="brief-bullet-item">
-            <strong>Capital Efficiency Optimization:</strong> Activating the $40M Capex corridors reduces carrying asset drag and accelerates shipping throughput ratios.
-          </li>
-        </ul>
-
-        <h2 class="brief-section-title">Critical Risk Focus</h2>
-        <ul class="brief-bullet-list">
-          <li class="brief-bullet-item">
-            <strong>Supplier Liquidity Strain:</strong> Hanoi shipping backlogs have reached a 4.8-day queue backlog, which directly exposes three core tier-2 parts suppliers to operational solvency constraints.
-          </li>
-        </ul>
-      </section>
-
-      <div class="brief-signoff">
-        Approved for circulation. SynapseIQ Synthesis engine.
+  const summaryCardHTML = `
+    <div class="dataset-summary-card">
+      <div class="summary-card-header">
+        <span class="summary-card-title">${d.name}</span>
+        <span class="summary-card-meta">ACTIVE DATASET INTAKE AUDIT</span>
       </div>
-
-      <div class="sheet-actions-footer">
-        <button class="btn-editorial btn-primary" id="action-brief-enter">Acknowledge & Open Synthesis Desk →</button>
+      <div class="summary-card-grid">
+        <div class="summary-grid-item">
+          <span class="summary-item-label">Rows</span>
+          <span class="summary-item-value">${d.rows.toLocaleString()}</span>
+        </div>
+        <div class="summary-grid-item">
+          <span class="summary-item-label">Columns</span>
+          <span class="summary-item-value">${d.columns}</span>
+        </div>
+        <div class="summary-grid-item">
+          <span class="summary-item-label">Detected Domain</span>
+          <span class="summary-item-value" style="color: var(--color-accent-sage);">${d.domain}</span>
+        </div>
+        <div class="summary-grid-item">
+          <span class="summary-item-label">Data Quality</span>
+          <span class="summary-item-value" style="color: var(--color-accent-sage);">${d.quality}</span>
+        </div>
+        <div class="summary-grid-item" style="grid-column: span 2;">
+          <span class="summary-item-label">Metrics Identified</span>
+          <div class="summary-metrics-list">${metricsHTML}</div>
+        </div>
+        <div class="summary-grid-item">
+          <span class="summary-item-label">Missing Values</span>
+          <span class="summary-item-value" style="${d.missingValues > 0 ? 'color: var(--color-accent-terracotta);' : ''}">${d.missingValues}</span>
+        </div>
+        <div class="summary-grid-item">
+          <span class="summary-item-label">Confidence Index</span>
+          <span class="summary-item-value" style="color: var(--color-accent-olive);">${d.confidence}</span>
+        </div>
       </div>
     </div>
   `;
 
-  // Attach button click event
+  // 3. Define Strategic Brief Templates for each Domain
+  let healthScore = 84;
+  let healthExplanation = "Data streams indicate stable parameters across core transaction models.";
+  let confidenceExplanation = "Strong data volume and minor missing values yield high modeling certainty.";
+  let readinessValue = "Optimal";
+  let readinessExplanation = "Clean schema records support predictive forecasting models.";
+  let summaryText = "";
+  
+  let cards = {
+    findings: [],
+    opportunities: [],
+    risks: [],
+    recommendations: []
+  };
+
+  if (d.domain === "Logistics & Supply Chain") {
+    healthScore = 82;
+    healthExplanation = "Vietnam transit exposures slightly depress overall operational resilience.";
+    confidenceExplanation = "Telemetry verified by Port Authority logs and MarineTraffic indices.";
+    readinessValue = "Optimal";
+    readinessExplanation = "Clean coordinates and time matrices support high-node corridor simulations.";
+    summaryText = "Sourcing metrics reveal that overall supply throughput is stable. However, average delays in Hanoi assemblies create inventory backlogs that threaten Q3 schedules. Diversifying transit paths (Mexico/Guadalajara re-routing) offers immediately actionable margin protection pathways.";
+    
+    cards.findings = [
+      {
+        title: "Transit Queue Density Surge",
+        desc: "Singapore and Hanoi port queue backlogs have escalated turnaround timelines to 32 days.",
+        impact: "COMPRESSED DELIVERY BUFFER LIMITS",
+        conf: "94%"
+      },
+      {
+        title: "Supplier Credit Constraints",
+        desc: "Precision tooling suppliers in Hanoi show solvency dips, risking raw material lockouts.",
+        impact: "UPSTREAM TIMELINE COMPROMISE",
+        conf: "87%"
+      }
+    ];
+
+    cards.opportunities = [
+      {
+        title: "Guadalajara Nearshore Re-routing",
+        desc: "Transition 35% of components assemblies to Mexican rail lines, reducing ocean delay risks.",
+        impact: "-8% LOGISTICS DURATION IMPROVEMENT",
+        conf: "93%"
+      },
+      {
+        title: "Transit Arbitration via Bangkok",
+        desc: "Bypass maritime bottleneck corridors by forwarding air cargo through Bangkok hubs.",
+        impact: "-24 DAYS TOTAL TRANSIT TIME",
+        conf: "89%"
+      }
+    ];
+
+    cards.risks = [
+      {
+        title: "Vietnamese Sourcing Bottleneck",
+        desc: "Singapore port queues and high Hanoi debt leverage create critical supply disruptions.",
+        impact: "POTENTIAL ASSEMBLY DELIVERY BREAK",
+        conf: "81%"
+      }
+    ];
+
+    cards.recommendations = [
+      {
+        title: "Supplier Working-Capital Cushion",
+        desc: "Approve short-term liquidity pre-payments to Hanoi component fabricators to preserve queues.",
+        impact: "QUEUE PRIORITY SECURITY",
+        conf: "91%"
+      },
+      {
+        title: "Establish Laredo Port Pathways",
+        desc: "Secure customs clearance certificates at Laredo hubs to support nearshoring buffers.",
+        impact: "CORRIDOR EXPOSURE HEDGE",
+        conf: "95%"
+      }
+    ];
+
+  } else if (d.domain === "Financial Operations") {
+    healthScore = 88;
+    healthExplanation = "Strong enterprise ARR renewal margins balance logistics inflation costs.";
+    confidenceExplanation = "Financial ledger transactions reconciled directly against Stripe data.";
+    readinessValue = "Optimal";
+    readinessExplanation = "Reconciled ledger history allows highly calibrated budget models.";
+    summaryText = "Ledger audits reveal solid Q2 performance driven by high-tier software renewals. Margin compression remains isolated within global spot freight logistics surcharges. Consolidating sourcing operations lowers supplier overhead and stabilizes bottom-line cash vectors.";
+    
+    cards.findings = [
+      {
+        title: "Enterprise SaaS Revenue Growth",
+        desc: "High-node corporate renew rates surged by 18% during Q2.",
+        impact: "+$12.4M CORE RECURRING CASH RESERVES",
+        conf: "96%"
+      },
+      {
+        title: "Logistics Surcharge Squeeze",
+        desc: "Expedited container spot rates surged by 2.4x along global shipping routes.",
+        impact: "+$3.2M LOGISTICS OPEX VARIANCE",
+        conf: "90%"
+      }
+    ];
+
+    cards.opportunities = [
+      {
+        title: "Supplier Sourcing Consolidation",
+        desc: "Consolidate assembly orders under a single vendor to reduce secondary markups.",
+        impact: "-12% TOOLING PREMIUM OVERHEAD",
+        conf: "88%"
+      },
+      {
+        title: "Container Quota Pre-allocations",
+        desc: "Contract fixed cargo space quotas in Q3 to avoid spot market pricing exposure.",
+        impact: "-24% SPOT FREIGHT VOLATILITY",
+        conf: "92%"
+      }
+    ];
+
+    cards.risks = [
+      {
+        title: "Secondary Vendor Markup Friction",
+        desc: "Solvency strains at Hanoi precision tool hubs drive tooling overhead costs up by 18%.",
+        impact: "UNIT COST MARGIN EROSION",
+        conf: "85%"
+      }
+    ];
+
+    cards.recommendations = [
+      {
+        title: "Freight Contract Ceiling Cap",
+        desc: "Negotiate fixed freight cost ceilings with main carriers to prevent spot surcharge exposure.",
+        impact: "COST VARIANCE LIMIT RESOLUTION",
+        conf: "93%"
+      },
+      {
+        title: "Procurement Capital Reallocation",
+        desc: "Reallocate $40M Capex reserves from ocean freight budgets to nearshore corridor supply hubs.",
+        impact: "CAPEX CARRYING COST OPTIMIZATION",
+        conf: "94%"
+      }
+    ];
+
+  } else if (d.domain === "Trade & Compliance") {
+    healthScore = 79;
+    healthExplanation = "New European custom compliance mandates create near-term transaction friction.";
+    confidenceExplanation = "Compliance statuses cross-referenced with European Customs Bulletin updates.";
+    readinessValue = "Sufficient";
+    readinessExplanation = "Minor null regulatory codes present, but compliance pathways remain clear.";
+    summaryText = "Custom regulatory changes at Antwerp ports introduce near-term unit cost friction. Localized inventory buffers at Stuttgart protect German distribution pathways from immediate impact. Sourcing components from carbon-neutral suppliers mitigates CBAM customs penalty zones.";
+    
+    cards.findings = [
+      {
+        title: "Antwerp Custom Latency",
+        desc: "Revised compliance code declarations extended port clearance times by 3.2 days.",
+        impact: "DOWNSTREAM PRODUCTION INVENTORY STRAIN",
+        conf: "92%"
+      },
+      {
+        title: "Stuttgart Safety Buffer Integrity",
+        desc: "Stuttgart central logistics hub holds a robust 12-day inventory buffer.",
+        impact: "LOCAL DELAY INSULATION",
+        conf: "95%"
+      }
+    ];
+
+    cards.opportunities = [
+      {
+        title: "Carbon-Neutral CBAM Sourcing",
+        desc: "Transition hardware units to audited carbon-neutral assembly sites to bypass CBAM tariffs.",
+        impact: "ZERO CARBON TARIFF PENALTY",
+        conf: "90%"
+      },
+      {
+        title: "EU Customs Pre-clearance Audit",
+        desc: "Establish pre-compliance registry statuses at major EU entry ports.",
+        impact: "-3.2 DAYS CUSTOMS LATENCY",
+        conf: "87%"
+      }
+    ];
+
+    cards.risks = [
+      {
+        title: "Carbon Tariff Surcharge Penalties",
+        desc: "Non-compliant raw material imports face +15% customs fee markups at Antwerp.",
+        impact: "MARGIN EROSION RISK",
+        conf: "88%"
+      }
+    ];
+
+    cards.recommendations = [
+      {
+        title: "CBAM Compliance Registry Audit",
+        desc: "Mandate carbon-neutral audits for all tier-1 parts suppliers to eliminate customs friction.",
+        impact: "REGULATORY COMPLIANCE EXPOSURE CLEARANCE",
+        conf: "91%"
+      },
+      {
+        title: "Stuttgart Buffer Quota Scale-Up",
+        desc: "Increase Stuttgart safety buffers by +15% to absorb ongoing Antwerp declaration latency.",
+        impact: "SOURCING TIMELINE STABILIZATION",
+        conf: "93%"
+      }
+    ];
+
+  } else {
+    // General Enterprise Operations Sourcing Data
+    healthScore = 84;
+    healthExplanation = "General operational parameters show robust performance markers.";
+    confidenceExplanation = "Statistical checks reveal clean field patterns and standard deviations.";
+    readinessValue = "Optimal";
+    readinessExplanation = "Sufficient row volumes support key forecasting assumptions.";
+    summaryText = "Enterprise operations show robust performance indicators. Sourcing timelines are stable, and minor cost anomalies remain localized in secondary vendor transactions. Immediate optimization focuses on container pre-allocation and safety buffer scales.";
+
+    cards.findings = [
+      {
+        title: "Asset Capacity Performance",
+        desc: "Overall equipment output metrics rose by 8% over the past quarter.",
+        impact: "+$1.8M REVENUE VALUE GENERATION",
+        conf: "93%"
+      },
+      {
+        title: "Freight Surcharge Overhead",
+        desc: "Logistics shipping fees reflect a 12% rise due to spot market capacity limits.",
+        impact: "OPEX EXPENDITURE COMPRESSION",
+        conf: "89%"
+      }
+    ];
+
+    cards.opportunities = [
+      {
+        title: "Container Space Pre-allocation",
+        desc: "Secure shipping vessel volumes at baseline rates to reduce spot surcharge volatility.",
+        impact: "LOGISTICS COST VOLATILITY HEDGE",
+        conf: "91%"
+      },
+      {
+        title: "Safety Buffer Quota Calibration",
+        desc: "Recalibrate safety stocks at regional hubs to match local throughput variations.",
+        impact: "-6 DAYS TRANSIT TIME EXPOSURE",
+        conf: "88%"
+      }
+    ];
+
+    cards.risks = [
+      {
+        title: "Vendor Transaction Anomalies",
+        desc: "Minor pricing anomalies isolated in secondary procurement transaction lists.",
+        impact: "UNIT COST COMPLIANCE FRICTION",
+        conf: "84%"
+      }
+    ];
+
+    cards.recommendations = [
+      {
+        title: "Freight Contract Ceiling Negotiations",
+        desc: "Lock cargo prices with shipping lines to insulate operations from spot rate hikes.",
+        impact: "OPEX VARIANCE ELIMINATION",
+        conf: "92%"
+      },
+      {
+        title: "Local Safety Buffer Reallocation",
+        desc: "Reallocate $10M buffer capital to high-throughput regional distribution nodes.",
+        impact: "INVENTORY CARRYING COST OPTIMIZATION",
+        conf: "90%"
+      }
+    ];
+  }
+
+  // Helper to compile card list HTML
+  const compileCardsHTML = (cardList, isRisk = false) => {
+    let html = "";
+    cardList.forEach(c => {
+      html += `
+        <div class="section-card ${isRisk ? 'risk-border' : ''}">
+          <div class="card-header">
+            <span class="card-title">${c.title}</span>
+            <span class="card-confidence">${c.conf} Conf</span>
+          </div>
+          <p class="card-desc">${c.desc}</p>
+          <div class="card-impact ${isRisk ? 'risk-accent' : ''}">${c.impact}</div>
+        </div>
+      `;
+    });
+    return html;
+  };
+
+  const findingsHTML = compileCardsHTML(cards.findings);
+  const opportunitiesHTML = compileCardsHTML(cards.opportunities);
+  const risksHTML = compileCardsHTML(cards.risks, true);
+  const recommendationsHTML = compileCardsHTML(cards.recommendations);
+
+  // 4. Render Layout
+  activeSheetEl.innerHTML = `
+    <div class="brief-layout">
+      <!-- 1. Header Greeting -->
+      <header class="brief-header">
+        <span class="brief-tag">BOARDROOM INTELLIGENCE SYSTEM</span>
+        <h1 class="brief-welcome-msg">${greetingText}. Your business analysis is ready.</h1>
+      </header>
+
+      <!-- 2. Parsed Dataset Metadata Summary -->
+      ${summaryCardHTML}
+
+      <!-- 3. AI Executive Summary (3-5 Lines narrative) -->
+      <section class="brief-summary-section">
+        <h3>AI Executive Summary</h3>
+        <p class="brief-summary-text">${summaryText}</p>
+      </section>
+
+      <!-- 4. Dynamic KPI Score Card Row -->
+      <section class="brief-meta-row">
+        <!-- Business Health Score -->
+        <div class="meta-card">
+          <span class="meta-card-label">Business Health Score</span>
+          <span class="meta-card-value" style="color: var(--color-accent-sage);">${healthScore} <span style="font-size: 11px; font-weight: normal; color: var(--color-text-muted);">/ 100</span></span>
+          <span class="meta-card-explanation">${healthExplanation}</span>
+        </div>
+        
+        <!-- AI Confidence Index -->
+        <div class="meta-card">
+          <span class="meta-card-label">AI Confidence Index</span>
+          <span class="meta-card-value" style="color: var(--color-accent-olive);">${d.confidence}</span>
+          <span class="meta-card-explanation">${confidenceExplanation}</span>
+        </div>
+
+        <!-- Decision Readiness -->
+        <div class="meta-card">
+          <span class="meta-card-label">Decision Readiness</span>
+          <span class="meta-card-value">${readinessValue}</span>
+          <span class="meta-card-explanation">${readinessExplanation}</span>
+        </div>
+      </section>
+
+      <!-- 5. Four Clean Section Grid -->
+      <section class="brief-four-sections">
+        <!-- Section 1: Key Findings -->
+        <div class="brief-card-stack">
+          <div class="nav-section-title" style="padding-left: 0; margin-bottom: 8px;">1. Key Findings</div>
+          ${findingsHTML}
+        </div>
+
+        <!-- Section 2: Top Opportunities -->
+        <div class="brief-card-stack">
+          <div class="nav-section-title" style="padding-left: 0; margin-bottom: 8px;">2. Top Opportunities</div>
+          ${opportunitiesHTML}
+        </div>
+
+        <!-- Section 3: Critical Risks -->
+        <div class="brief-card-stack">
+          <div class="nav-section-title" style="padding-left: 0; margin-bottom: 8px; color: var(--color-accent-terracotta);">3. Critical Risks</div>
+          ${risksHTML}
+        </div>
+
+        <!-- Section 4: Executive Recommendations -->
+        <div class="brief-card-stack">
+          <div class="nav-section-title" style="padding-left: 0; margin-bottom: 8px;">4. Executive Recommendations</div>
+          ${recommendationsHTML}
+        </div>
+      </section>
+
+      <!-- Action Signoff footer -->
+      <footer class="sheet-actions-footer" style="border-top: 1px solid var(--color-border-hairline); padding-top: var(--spacing-md); margin-top: var(--spacing-lg);">
+        <div class="brief-signoff" style="margin-top: 0; padding-top: 0; border: none; margin-bottom: var(--spacing-sm);">
+          Approved for circulation. SynapseIQ Strategic Engine.
+        </div>
+        <button class="btn-editorial btn-primary" id="action-brief-enter" style="padding: 12px 24px; font-size: 11px;">
+          Acknowledge & Open Synthesis Desk →
+        </button>
+      </footer>
+    </div>
+  `;
+
+  // Bind Enter Workspace Button
   const enterBtn = document.getElementById("action-brief-enter");
   if (enterBtn) {
     enterBtn.addEventListener("click", () => {

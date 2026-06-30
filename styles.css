@@ -2115,3 +2115,172 @@ input[type=range].desk-slider::-webkit-slider-thumb:hover {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* ==========================================================================
+   Executive Brief Redesign & Styling
+   ========================================================================== */
+
+.brief-welcome-msg {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-top: 6px;
+  line-height: 1.35;
+}
+
+.brief-summary-section {
+  border-top: 1px solid var(--color-border-hairline);
+  border-bottom: 1px solid var(--color-border-hairline);
+  padding: var(--spacing-md) 0;
+  margin: var(--spacing-md) 0;
+}
+
+.brief-summary-section h3 {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-accent-sage);
+  margin-bottom: 8px;
+}
+
+.brief-summary-text {
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+}
+
+.brief-meta-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.meta-card {
+  background-color: var(--color-bg-muted);
+  border: 1px solid var(--color-border-hairline);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: var(--transition-fast);
+}
+
+.meta-card:hover {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-sheet);
+}
+
+.meta-card-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.meta-card-label {
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+.meta-card-explanation {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+}
+
+.brief-four-sections {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.brief-card-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.section-card {
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border-hairline);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  transition: all var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.section-card:hover {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-sheet);
+  transform: translateY(-1px);
+}
+
+.section-card.risk-border {
+  border-left: 2px solid var(--color-accent-terracotta);
+}
+
+.section-card.risk-border:hover {
+  border-left-color: var(--color-accent-terracotta);
+  border-color: var(--color-border-strong);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 2px;
+}
+
+.card-title {
+  font-family: var(--font-serif);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.card-confidence {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--color-accent-sage);
+}
+
+.section-card.risk-border .card-confidence {
+  color: var(--color-accent-terracotta);
+}
+
+.card-desc {
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+.card-impact {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-accent-sage);
+  margin-top: 2px;
+}
+
+.card-impact.risk-accent {
+  color: var(--color-accent-terracotta);
+}
+
+@media (max-width: 768px) {
+  .brief-meta-row {
+    grid-template-columns: 1fr;
+  }
+  .brief-four-sections {
+    grid-template-columns: 1fr;
+  }
+}
