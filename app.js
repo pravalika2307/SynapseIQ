@@ -1139,6 +1139,468 @@ function renderDecisionBriefing() {
       paragraphsHTML += `
         <div class="editorial-image-container">
           <img src="assets/shipping_logistics.png" alt="Southeast Asia Shipping Bottleneck" class="editorial-image">
+          <div class="image-caption">Figure 1.1: Visualizing maritime transit queues outside South China Sea ports.</div>
+        </div>
+      `;
+    }
+
+    if (p.annotation) {
+      const annotColorClass = p.annotation.type === "terracotta" ? "has-annotation-terracotta" : "has-annotation";
+      classList += ` ${annotColorClass}`;
+      
+      paragraphsHTML += `
+        <div class="${classList}" id="p-block-${idx}" data-annotation-id="card-${idx}">
+          ${textContent}
+        </div>
+      `;
+      
+      cardsHTML += `
+        <div class="annotation-card type-${p.annotation.type}" id="card-${idx}" data-p-id="p-block-${idx}">
+          <span class="card-tag">${p.annotation.tag}</span>
+          <p class="card-summary">${p.annotation.summary}</p>
+          <div class="card-footer">
+            <span class="confidence-score">${p.annotation.confidence}</span>
+            <span>Source: ${p.annotation.source}</span>
+          </div>
+        </div>
+      `;
+    } else {
+      paragraphsHTML += `
+        <div class="${classList}" id="p-block-${idx}">
+          ${textContent}
+        </div>
+      `;
+    }
+  });
+
+  // Supply-chain specific Scenario Modeler promo link
+  let bottomActionHTML = "";
+  if (brief.id === "supply-chain") {
+    bottomActionHTML = `
+      <div class="sheet-actions-footer">
+        <button class="btn-editorial btn-secondary" id="action-archive">Acknowledge Receipt</button>
+        <button class="btn-editorial btn-primary" id="action-modeler">Open Scenario Modeler →</button>
+      </div>
+    `;
+  } else {
+    bottomActionHTML = `
+      <div class="sheet-actions-footer">
+        <button class="btn-editorial btn-secondary" id="action-archive">Acknowledge Receipt</button>
+        <button class="btn-editorial btn-primary" id="action-close">Return to Briefings</button>
+      </div>
+    `;
+  }
+
+  activeSheetEl.innerHTML = `
+    <div class="briefing-layout">
+      <header>
+        <div class="sheet-meta-sec">
+          <span>${brief.category}</span>
+          <span>${brief.date}</span>
+          <span>${brief.readTime}</span>
+        </div>
+        <h1 class="sheet-title">${brief.title}</h1>
+        
+        <div class="sheet-description-grid">
+          <div class="sheet-summary">${brief.summary}</div>
+          <div class="sheet-meta-block">
+            <div>
+              <span class="meta-label">Author</span>
+              <div class="meta-val">${brief.author}</div>
+            </div>
+            <div>
+              <span class="meta-label">Security</span>
+              <div class="meta-val">Board Confidential</div>
+            </div>
+          </div>
+        </div>
+      </header>
+      
+      <section class="briefing-body">
+        ${paragraphsHTML}
+      </section>
+
+      ${bottomActionHTML}
+    </div>
+  `;
+  
+  // Inject cards into rail
+  railCardsContainerEl.innerHTML = cardsHTML;
+  
+  // Attach listeners for interactive paragraph alignments & highlights
+  setupAnnotationInteractionListeners();
+  
+  // Footers buttons
+  const modelerBtn = document.getElementById("action-modeler");
+  if (modelerBtn) {
+    modelerBtn.addEventListener("click", () => navigateTo("modeler"));
+  }
+  const closeBtn = document.getElementById("action-close");
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => navigateTo("synthesis"));
+  }
+  const ackBtn = document.getElementById("action-archive");
+  if (ackBtn) {
+    ackBtn.addEventListener("click", () => {
+      alert("Briefing receipt logged. Synthetic intelligence database updated.");
+      navigateTo("synthesis");
+    });
+  }
+}
+
+// 7. Render: Scenario Modeler View
+function renderScenarioModeler() {
+  activeSheetEl.innerHTML = `
+    <div class="modeler-layout">
+      <header class="synthesis-header">
+        <div class="editorial-date">Simulation Matrix</div>
+        <h1 class="sheet-title">Supply Chain Modeler</h1>
+        <p class="sheet-summary" style="font-style: normal; font-size: 15px; color: var(--color-text-secondary);">
+          Toggle geographic procurement sourcing structures and adjust capital scales to project lead-time mitigation ratios and unit cost variances.
+        </p>
+      </header>
+
+      <div class="modeler-grid">
+        <!-- Controls Column -->
+        <div class="modeler-controls">
+          <div class="control-group">
+            <div class="control-header">
+              <span class="control-label">Sourcing Strategy</span>
+            </div>
+            <div class="toggle-group" id="sourcing-toggles">
+              <button class="toggle-btn" data-value="global">Global-First</button>
+              <button class="toggle-btn" data-value="hybrid">Hybrid-Regional</button>
+              <button class="toggle-btn" data-value="domestic">Domestic-Focus</button>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <div class="control-header">
+              <span class="control-label">Capital Allocation</span>
+              <span class="control-value" id="capex-val">$40M</span>
+            </div>
+            <input type="range" min="10" max="100" step="5" value="40" class="desk-slider" id="capex-slider">
+            <span class="meta-label" style="font-size:9px;">Allocated to tooling, custom logistics corridors, and customs pre-clearance.</span>
+          </div>
+
+          <div class="control-group">
+            <div class="control-header">
+              <span class="control-label">Inventory Buffer</span>
+              <span class="control-value" id="buffer-val">30 Days</span>
+            </div>
+            <input type="range" min="0" max="90" step="5" value="30" class="desk-slider" id="buffer-slider">
+            <span class="meta-label" style="font-size:9px;">Dedicated warehouse storage limits representing security stock coefficients.</span>
+          </div>
+        </div>
+
+        <!-- Outputs Column -->
+        <div class="modeler-outputs">
+          <div class="output-metrics">
+            <div class="metric-card">
+              <div class="metric-card-label">Logistics Lead Time</div>
+              <div class="metric-card-value" id="out-lead-time">14 Days</div>
+              <div class="metric-card-delta positive" id="out-lead-delta">-12 Days</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-card-label">Unit Sourcing Cost</div>
+              <div class="metric-card-value" id="out-unit-cost">$155.00</div>
+              <div class="metric-card-delta negative" id="out-cost-delta">+29% over baseline</div>
+            </div>
+          </div>
+
+          <div class="output-metrics" style="grid-template-columns: 1fr; margin-bottom: 0;">
+            <div class="metric-card" style="padding: 12px 16px;">
+              <div class="metric-card-label">Supply Chain Risk Coefficient</div>
+              <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-top: 4px;">
+                <div class="metric-card-value" id="out-risk-val" style="font-size: 20px;">42%</div>
+                <div style="flex-grow: 1; height: 4px; background-color: var(--color-border-strong); border-radius: var(--radius-sm); position: relative; overflow: hidden;">
+                  <div id="risk-bar" style="position: absolute; left: 0; top: 0; bottom: 0; width: 42%; background-color: var(--color-accent-sage); transition: width var(--transition-smooth);"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="output-narrative-container">
+            <div class="narrative-title">Synthesis Forecast</div>
+            <p class="narrative-text" id="out-narrative">Loading forecast projection...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Forecast SVG Trend Graph -->
+      <div class="chart-container">
+        <div class="chart-header">
+          <span class="chart-title">4-Quarter Supply Chain Spend Trend ($M)</span>
+          <div class="chart-legend">
+            <div class="legend-item"><span class="legend-color sage"></span> Projected Scenario</div>
+            <div class="legend-item"><span class="legend-color terracotta"></span> Baseline Risk Margin</div>
+          </div>
+        </div>
+        <!-- Premium SVG Graph -->
+        <svg class="svg-chart" id="svg-chart-element">
+          <!-- Graph Gridlines -->
+          <line x1="0" y1="20" x2="100%" y2="20" stroke="var(--color-border-hairline)" stroke-width="1"></line>
+          <line x1="0" y1="70" x2="100%" y2="70" stroke="var(--color-border-hairline)" stroke-width="1"></line>
+          <line x1="0" y1="120" x2="100%" y2="120" stroke="var(--color-border-hairline)" stroke-width="1"></line>
+          <line x1="0" y1="160" x2="100%" y2="160" stroke="var(--color-border-strong)" stroke-width="1.5"></line>
+
+          <!-- Label markers -->
+          <text x="0" y="15" fill="var(--color-text-muted)" font-size="8">MAX</text>
+          <text x="0" y="155" fill="var(--color-text-muted)" font-size="8">BASE</text>
+          
+          <text x="10%" y="175" fill="var(--color-text-secondary)" font-size="9" text-anchor="middle">Q3 '26</text>
+          <text x="36%" y="175" fill="var(--color-text-secondary)" font-size="9" text-anchor="middle">Q4 '26</text>
+          <text x="63%" y="175" fill="var(--color-text-secondary)" font-size="9" text-anchor="middle">Q1 '27</text>
+          <text x="90%" y="175" fill="var(--color-text-secondary)" font-size="9" text-anchor="middle">Q2 '27</text>
+
+          <!-- Paths: updated in javascript -->
+          <path id="path-baseline" fill="none" stroke="var(--color-accent-terracotta)" stroke-width="1.5" stroke-dasharray="3 3"></path>
+          <path id="path-projected" fill="none" stroke="var(--color-accent-sage)" stroke-width="2.5" stroke-linecap="round"></path>
+          
+          <!-- Interactive Nodes -->
+          <circle id="node-end" r="4" fill="var(--color-accent-sage)"></circle>
+        </svg>
+      </div>
+
+      <div class="sheet-actions-footer">
+        <button class="btn-editorial btn-secondary" id="action-modeler-cancel">Return to Briefings</button>
+        <button class="btn-editorial btn-primary" id="action-modeler-save">Approve Sourcing Strategy Direction</button>
+      </div>
+    </div>
+  `;
+
+  // Attach controls listeners
+  setupModelerControlsListeners();
+  
+  // Run initial calculator update
+  updateModelerCalculations();
+}
+
+// 8. Annotation Margins Alignment Engine
+function alignAnnotationCards() {
+  if (appState.currentView !== "briefing") return;
+  
+  const cards = document.querySelectorAll(".annotation-card");
+  const sheet = document.getElementById("active-sheet");
+  if (!sheet) return;
+
+  cards.forEach(card => {
+    const pId = card.getAttribute("data-p-id");
+    const pEl = document.getElementById(pId);
+    
+    if (pEl) {
+      // Calculate vertical offset of paragraph relative to the desk sheet
+      const pRect = pEl.getBoundingClientRect();
+      const sheetRect = sheet.getBoundingClientRect();
+      const offsetTop = pRect.top - sheetRect.top;
+      
+      // Position card in the rail
+      card.style.top = `${offsetTop}px`;
+    }
+  });
+}
+
+function setupAnnotationInteractionListeners() {
+  const pBlocks = document.querySelectorAll(".paragraph-block");
+  const cards = document.querySelectorAll(".annotation-card");
+
+  pBlocks.forEach(p => {
+    if (p.getAttribute("data-annotation-id")) {
+      p.addEventListener("mouseenter", () => {
+        // Focus this paragraph & corresponding card
+        focusAnnotation(p.id, p.getAttribute("data-annotation-id"));
+      });
+      p.addEventListener("mouseleave", () => {
+        unfocusAll();
+      });
+    }
+  });
+
+  cards.forEach(card => {
+    card.addEventListener("mouseenter", () => {
+      focusAnnotation(card.getAttribute("data-p-id"), card.id);
+    });
+    card.addEventListener("mouseleave", () => {
+      unfocusAll();
+    });
+  });
+  
+  // Re-align on window resize
+  window.addEventListener("resize", alignAnnotationCards);
+}
+
+function focusAnnotation(pId, cardId) {
+  unfocusAll();
+  
+  const pEl = document.getElementById(pId);
+  const cardEl = document.getElementById(cardId);
+  
+  if (pEl) pEl.classList.add("active-focus");
+  if (cardEl) {
+    cardEl.classList.add("focused");
+    // Ensure card has high z-index and perfect visibility
+    cardEl.style.opacity = "1";
+    cardEl.style.transform = "scale(1.02)";
+  }
+}
+
+function unfocusAll() {
+  document.querySelectorAll(".paragraph-block").forEach(p => {
+    p.classList.remove("active-focus");
+  });
+  document.querySelectorAll(".annotation-card").forEach(card => {
+    card.classList.remove("focused");
+    card.style.opacity = "";
+    card.style.transform = "";
+  });
+}
+
+// 9. Modeler Simulation Calculations & SVGs
+function setupModelerControlsListeners() {
+  // Sourcing Focus Toggles
+  const toggles = document.querySelectorAll("#sourcing-toggles .toggle-btn");
+  toggles.forEach(btn => {
+    // Set active class based on state
+    if (btn.getAttribute("data-value") === appState.modeler.sourcingFocus) {
+      btn.classList.add("active");
+    }
+    
+    btn.addEventListener("click", () => {
+      toggles.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      appState.modeler.sourcingFocus = btn.getAttribute("data-value");
+      updateModelerCalculations();
+    });
+  });
+
+  // Sliders
+  const capexSlider = document.getElementById("capex-slider");
+  const capexVal = document.getElementById("capex-val");
+  capexSlider.value = appState.modeler.capexScale;
+  capexVal.textContent = `$${appState.modeler.capexScale}M`;
+  capexSlider.addEventListener("input", (e) => {
+    appState.modeler.capexScale = parseInt(e.target.value);
+    capexVal.textContent = `$${appState.modeler.capexScale}M`;
+    updateModelerCalculations();
+  });
+
+  const bufferSlider = document.getElementById("buffer-slider");
+  const bufferVal = document.getElementById("buffer-val");
+  bufferSlider.value = appState.modeler.bufferDays;
+  bufferVal.textContent = `${appState.modeler.bufferDays} Days`;
+  bufferSlider.addEventListener("input", (e) => {
+    appState.modeler.bufferDays = parseInt(e.target.value);
+    bufferVal.textContent = `${appState.modeler.bufferDays} Days`;
+    updateModelerCalculations();
+  });
+
+  // Save/Cancel buttons
+  document.getElementById("action-modeler-cancel").addEventListener("click", () => {
+    navigateTo("briefing", "supply-chain");
+  });
+  document.getElementById("action-modeler-save").addEventListener("click", () => {
+    alert(`Procurement strategy approved: ${appState.modeler.sourcingFocus.toUpperCase()} sourcing focus with $${appState.modeler.capexScale}M Capex budget expansion.`);
+    navigateTo("synthesis");
+  });
+}
+
+function updateModelerCalculations() {
+  const sf = appState.modeler.sourcingFocus;
+  const capex = appState.modeler.capexScale;
+  const buffer = appState.modeler.bufferDays;
+  
+  // Calculate Lead Time (Days)
+  // Baseline: Global = 30, Hybrid = 16, Domestic = 6
+  let baseLead = 30;
+  if (sf === "hybrid") baseLead = 16;
+  if (sf === "domestic") baseLead = 6;
+  
+  // Capex reduction (up to 40% reduction based on spend scale)
+  const capexReductionCoeff = 1 - (capex / 100) * 0.4; 
+  let finalLeadTime = Math.max(2, Math.round(baseLead * capexReductionCoeff));
+  
+  // Adjust output elements
+  const leadValEl = document.getElementById("out-lead-time");
+  leadValEl.textContent = `${finalLeadTime} Days`;
+  
+  const leadDeltaEl = document.getElementById("out-lead-delta");
+  const baselineDiff = finalLeadTime - 30;
+  if (baselineDiff < 0) {
+    leadDeltaEl.textContent = `${baselineDiff} Days vs. baseline`;
+    leadDeltaEl.className = "metric-card-delta positive";
+  } else {
+    leadDeltaEl.textContent = `Baseline latency`;
+    leadDeltaEl.className = "metric-card-delta";
+  }
+
+  // Calculate Unit Sourcing Cost ($)
+  // Baseline: Global = 120, Hybrid = 152, Domestic = 194
+  let baseCost = 120;
+  if (sf === "hybrid") baseCost = 152;
+  if (sf === "domestic") baseCost = 194;
+  
+  // Capex offset (Capex investment efficiency slightly lowers unit costs over time: up to 8%)
+  const capexCostDiscount = 1 - (capex / 100) * 0.08;
+  const finalUnitCost = (baseCost * capexCostDiscount).toFixed(2);
+  
+  const costValEl = document.getElementById("out-unit-cost");
+  costValEl.textContent = `$${finalUnitCost}`;
+  
+  const costDeltaEl = document.getElementById("out-cost-delta");
+  const costRatio = Math.round(((finalUnitCost - 120) / 120) * 100);
+  if (costRatio > 0) {
+    costDeltaEl.textContent = `+${costRatio}% cost premium`;
+    costDeltaEl.className = "metric-card-delta negative";
+  } else if (costRatio < 0) {
+    costDeltaEl.textContent = `${costRatio}% cost optimization`;
+    costDeltaEl.className = "metric-card-delta positive";
+  } else {
+    costDeltaEl.textContent = `Baseline sourcing cost`;
+    costDeltaEl.className = "metric-card-delta";
+  }
+
+  // Calculate Risk Index
+  // Buffer days reduce risk (each day of buffer offsets risk by 0.5%)
+  // Sourcing focus risk base: Global = 85%, Hybrid = 45%, Domestic = 12%
+  let baseRisk = 85;
+  if (sf === "hybrid") baseRisk = 45;
+  if (sf === "domestic") baseRisk = 12;
+  
+  // Capex also reduces operational risk by building corridors (up to 20% risk offset)
+  const capexRiskDiscount = (capex / 100) * 20;
+  const bufferRiskDiscount = (buffer / 90) * 35;
+  
+  let finalRisk = Math.max(5, Math.round(baseRisk - capexRiskDiscount - bufferRiskDiscount));
+  
+  const riskValEl = document.getElementById("out-risk-val");
+  riskValEl.textContent = `${finalRisk}%`;
+  
+  const riskBar = document.getElementById("risk-bar");
+  riskBar.style.width = `${finalRisk}%`;
+  if (finalRisk < 30) {
+    riskBar.style.backgroundColor = "var(--color-accent-sage)";
+  } else if (finalRisk < 60) {
+    riskBar.style.backgroundColor = "var(--color-accent-olive)";
+  } else {
+    riskBar.style.backgroundColor = "var(--color-accent-terracotta)";
+  }
+
+  // Narrative Text Compiler
+  const narrativeEl = document.getElementById("out-narrative");
+  let narrativeText = "";
+  if (sf === "global") {
+    narrativeText = `Maintaining our primary node focus in Singapore/Hanoi yields a highly optimal unit cost baseline ($${finalUnitCost}). However, it forces executive leadership to accept high exposure grids. Low capex corridors result in shipping backlogs, leaving a Risk Coefficient of ${finalRisk}%. Upstream supply disruptions remain likely.`;
+  } else if (sf === "hybrid") {
+    narrativeText = `Establishing secondary channels in Mexico and regional buffer centers provides structural flexibility. The unit cost premium of $${finalUnitCost} remains moderate. High capex allocation ($${capex}M) mitigates transit times, keeping lead latency at a low ${finalLeadTime} days and risk moderate at ${finalRisk}%.`;
+  } else {
+    narrativeText = `A Domestic-First sourcing alignment entirely insulates production loops from international maritime passage risks, dropping risk coefficients to a minimal ${finalRisk}%. However, structural localization constraints push unit procurement costs to a peak of $${finalUnitCost}. Highly recommended for tariff protection.`;
+  }
+  narrativeEl.textContent = narrativeText;
+
+  // Render SVG charts
+  drawSvgChart(finalUnitCost, finalRisk);
+}
+
 function drawSvgChart(unitCost, riskScore) {
   const chart = document.getElementById("svg-chart-element");
   if (!chart) return;
