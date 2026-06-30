@@ -1,0 +1,101 @@
+/* ==========================================================================
+   SynapseIQ Core Design System & Stylesheet
+   ========================================================================== */
+
+/* 1. Design System Tokens */
+:root {
+  /* Colors - Base Backgrounds */
+  --color-bg-base: #F8F7F2;      /* Warm Ivory */
+  --color-bg-surface: #FFFFFF;   /* Pure Alabaster (Paper) */
+  --color-bg-muted: #F2F0E8;     /* Soft Sand (Sidebar/Panels) */
+  
+  /* Colors - Typography (Warm Charcoal / Ink) */
+  --color-text-primary: #1F1F1E;   /* Warm Charcoal */
+  --color-text-secondary: #5C5A55; /* Soft Charcoal */
+  --color-text-muted: #8C8A82;     /* Dried Moss */
+  --color-text-disabled: #BFBDB6;  /* Muted Clay */
+  
+  /* Colors - Organic Accents */
+  --color-accent-sage: #5B6E5B;        /* Sage Green (Primary signifier) */
+  --color-accent-sage-light: #EBF0EB;  /* Light Sage Tint */
+  --color-accent-olive: #707558;       /* Olive Drab (Special insights) */
+  --color-accent-terracotta: #C87A53;  /* Terracotta (Critical notes) */
+  --color-accent-terracotta-light: #FDF4EF; /* Light Terracotta Tint */
+  
+  /* Colors - Hairlines & Borders */
+  --color-border-hairline: #E5E2D8; /* Pale Sand */
+  --color-border-strong: #D1CFC6;   /* Warm Gray */
+
+  /* Typography Stacks */
+  --font-serif: "Lora", Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* Border Radii (Subtle/Crisp) */
+  --radius-none: 0px;
+  --radius-sm: 3px;
+  --radius-md: 6px;
+
+  /* Elevation (Desk Metaphor) */
+  --shadow-sheet: 0px 4px 20px rgba(31, 31, 30, 0.02), 0px 1px 2px rgba(31, 31, 30, 0.02);
+  --shadow-popover: 0px 8px 32px rgba(31, 31, 30, 0.04), 0px 2px 8px rgba(31, 31, 30, 0.02);
+  --shadow-focus: 0 0 0 2px var(--color-bg-base), 0 0 0 4px var(--color-accent-sage);
+
+  /* Spacing Scale */
+  --spacing-xxs: 4px;
+  --spacing-xs: 8px;
+  --spacing-sm: 16px;
+  --spacing-md: 24px;
+  --spacing-lg: 32px;
+  --spacing-xl: 48px;
+  --spacing-xxl: 64px;
+
+  /* Motion Curves */
+  --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 2. Global Reset & Base Elements */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg-base);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  overflow: hidden;
+  height: 100vh;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+  color: inherit;
+  font-size: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: var(--radius-sm);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
