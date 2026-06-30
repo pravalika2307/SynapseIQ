@@ -5,26 +5,26 @@
 /* 1. Design System Tokens */
 :root {
   /* Colors - Base Backgrounds */
-  --color-bg-base: #F8F7F2;      /* Warm Ivory */
-  --color-bg-surface: #FFFFFF;   /* Pure Alabaster (Paper) */
-  --color-bg-muted: #F2F0E8;     /* Soft Sand (Sidebar/Panels) */
+  --color-bg-base: #0D1117;      /* Deep Charcoal background */
+  --color-bg-surface: #151B23;   /* Slate Charcoal card surface */
+  --color-bg-muted: #0D1117;     /* Matching dark sidebar panel */
   
-  /* Colors - Typography (Warm Charcoal / Ink) */
-  --color-text-primary: #1F1F1E;   /* Warm Charcoal */
-  --color-text-secondary: #5C5A55; /* Soft Charcoal */
-  --color-text-muted: #8C8A82;     /* Dried Moss */
-  --color-text-disabled: #BFBDB6;  /* Muted Clay */
+  /* Colors - Typography (Silver / Light Ash) */
+  --color-text-primary: #F0F6FC;   /* Premium Silver primary text */
+  --color-text-secondary: #C9D1D9; /* Soft Ash secondary text */
+  --color-text-muted: #8B949E;     /* Muted Steel label text */
+  --color-text-disabled: #21262D;  /* Dark Slate disabled states */
   
   /* Colors - Organic Accents */
-  --color-accent-sage: #5B6E5B;        /* Sage Green (Primary signifier) */
-  --color-accent-sage-light: #EBF0EB;  /* Light Sage Tint */
-  --color-accent-olive: #707558;       /* Olive Drab (Special insights) */
-  --color-accent-terracotta: #C87A53;  /* Terracotta (Critical notes) */
-  --color-accent-terracotta-light: #FDF4EF; /* Light Terracotta Tint */
+  --color-accent-sage: #84A98C;        /* Soft Sage Green */
+  --color-accent-sage-light: rgba(132, 169, 140, 0.12); /* Subtle Sage glow highlight */
+  --color-accent-olive: #A3B18A;       /* Muted Olive */
+  --color-accent-terracotta: #E07A5F;  /* Softer Terracotta for warning status labels */
+  --color-accent-terracotta-light: rgba(224, 122, 95, 0.12);
   
   /* Colors - Hairlines & Borders */
-  --color-border-hairline: #E5E2D8; /* Pale Sand */
-  --color-border-strong: #D1CFC6;   /* Warm Gray */
+  --color-border-hairline: rgba(255, 255, 255, 0.08); /* Minimalist borders */
+  --color-border-strong: rgba(255, 255, 255, 0.15);
 
   /* Typography Stacks */
   --font-serif: "Lora", Georgia, Cambria, "Times New Roman", Times, serif;
@@ -32,12 +32,12 @@
 
   /* Border Radii (Subtle/Crisp) */
   --radius-none: 0px;
-  --radius-sm: 3px;
-  --radius-md: 6px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
 
   /* Elevation (Desk Metaphor) */
-  --shadow-sheet: 0px 4px 20px rgba(31, 31, 30, 0.02), 0px 1px 2px rgba(31, 31, 30, 0.02);
-  --shadow-popover: 0px 8px 32px rgba(31, 31, 30, 0.04), 0px 2px 8px rgba(31, 31, 30, 0.02);
+  --shadow-sheet: 0px 4px 20px rgba(0, 0, 0, 0.2), 0px 1px 2px rgba(0, 0, 0, 0.15);
+  --shadow-popover: 0px 8px 32px rgba(0, 0, 0, 0.25), 0px 2px 8px rgba(0, 0, 0, 0.15);
   --shadow-focus: 0 0 0 2px var(--color-bg-base), 0 0 0 4px var(--color-accent-sage);
 
   /* Spacing Scale */
@@ -196,14 +196,14 @@ a {
 
 .nav-item:hover {
   color: var(--color-text-primary);
-  background-color: rgba(31, 31, 30, 0.03);
+  background-color: rgba(255, 255, 255, 0.04);
 }
 
 .nav-item.active {
   color: var(--color-text-primary);
   font-weight: 600;
   background-color: var(--color-bg-surface);
-  box-shadow: 0px 1px 3px rgba(31, 31, 30, 0.02);
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .nav-item.active::before {
@@ -419,7 +419,7 @@ a {
 }
 
 .paragraph-block:hover {
-  background-color: rgba(91, 110, 91, 0.02); /* Sage faint tint */
+  background-color: rgba(132, 169, 140, 0.06); /* Sage faint tint - dark mode */
 }
 
 .paragraph-block.has-annotation {
@@ -431,7 +431,7 @@ a {
 }
 
 .paragraph-block.active-focus {
-  background-color: rgba(91, 110, 91, 0.04);
+  background-color: rgba(132, 169, 140, 0.08);
   border-left-color: var(--color-accent-sage);
 }
 
@@ -524,7 +524,7 @@ a {
   border: 1px solid var(--color-border-hairline);
   border-radius: var(--radius-sm);
   padding: var(--spacing-sm);
-  box-shadow: 0px 1px 3px rgba(31, 31, 30, 0.02);
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
   transition: opacity var(--transition-smooth), transform var(--transition-smooth), border-color var(--transition-fast);
   opacity: 0.4;
   transform: scale(0.98);
@@ -2542,7 +2542,228 @@ input[type=range].desk-slider::-webkit-slider-thumb:hover {
   border-radius: 4px !important;
   border-color: var(--color-border-hairline) !important;
   font-size: 10px !important;
-  background-color: rgba(255, 255, 255, 0.96) !important;
+  background-color: rgba(21, 27, 35, 0.96) !important;
   backdrop-filter: blur(8px);
   padding: 6px 10px !important;
+  color: var(--color-text-primary) !important;
+}
+
+/* ==========================================================================
+   Premium Dark Mode Overrides & Component Enhancements
+   ========================================================================== */
+
+/* Overwrite Light Theme Colors for Sidebar, Sheet, and Elements */
+body, .landing-container, .app-container {
+  background-color: var(--color-bg-base) !important;
+  color: var(--color-text-primary) !important;
+}
+
+.sidebar {
+  background-color: var(--color-bg-base) !important;
+}
+
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+.nav-item.active {
+  background-color: var(--color-bg-surface) !important;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2) !important;
+}
+
+.nav-badge {
+  background-color: rgba(132, 169, 140, 0.15) !important;
+  color: var(--color-accent-sage) !important;
+}
+
+.desk-sheet {
+  background-color: var(--color-bg-base) !important;
+  border-left: 1px solid var(--color-border-hairline) !important;
+  border-right: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: var(--spacing-xl) !important;
+  min-height: 100vh !important;
+}
+
+.margin-rail {
+  background-color: var(--color-bg-base) !important;
+}
+
+.meta-card, .section-card, .signal-chart-card, .action-dossier-card, .chart-container, .outlook-modeler-promo, .boardroom-report-panel {
+  background-color: var(--color-bg-surface) !important;
+  border-color: var(--color-border-hairline) !important;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.action-dossier-card:hover, .meta-card:hover, .section-card:hover, .signal-chart-card:hover {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0px 6px 24px rgba(0, 0, 0, 0.25) !important;
+}
+
+.insight-note-block, .signal-ai-note {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  border-color: var(--color-accent-sage) !important;
+}
+
+.trend-badge.trend-positive {
+  background-color: rgba(132, 169, 140, 0.15) !important;
+  color: var(--color-accent-sage) !important;
+}
+
+.trend-badge.trend-negative {
+  background-color: rgba(224, 122, 95, 0.15) !important;
+  color: var(--color-accent-terracotta) !important;
+}
+
+/* Modal and progress overlay overrides */
+.briefing-overlay {
+  background-color: rgba(13, 17, 23, 0.98) !important;
+}
+
+.overlay-checklist {
+  background-color: #151B23 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Interactive Decision Graph styles */
+.decision-graph-container {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr;
+  gap: var(--spacing-lg);
+  border: 1px solid var(--color-border-hairline);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-surface);
+  padding: var(--spacing-md);
+  align-items: center;
+  margin-top: var(--spacing-sm);
+}
+
+.decision-graph-visualization {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-right: 1px solid var(--color-border-hairline);
+  padding-right: var(--spacing-md);
+  position: relative;
+}
+
+.decision-graph-context {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  padding-left: var(--spacing-xs);
+}
+
+.graph-context-title {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.graph-context-desc {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+.graph-node {
+  cursor: pointer;
+}
+
+.graph-node circle {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.graph-node:hover circle {
+  fill: rgba(255, 255, 255, 0.04);
+}
+
+path[id^="edge-"] {
+  transition: stroke 0.35s cubic-bezier(0.16, 1, 0.3, 1), stroke-width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Business Timeline Layout styles */
+.business-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  position: relative;
+  padding-left: 24px;
+  border-left: 1px dashed var(--color-border-hairline);
+  margin-top: var(--spacing-md);
+  margin-left: 10px;
+}
+
+.timeline-milestone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: var(--spacing-sm);
+}
+
+.timeline-milestone::before {
+  content: "";
+  position: absolute;
+  left: -29px;
+  top: 5px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background-color: var(--color-bg-base);
+  border: 2px solid var(--color-accent-sage);
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.timeline-milestone:hover::before {
+  background-color: var(--color-accent-sage);
+  box-shadow: 0 0 8px var(--color-accent-sage);
+}
+
+.timeline-milestone.milestone-alert::before {
+  border-color: var(--color-accent-terracotta);
+}
+
+.timeline-milestone.milestone-alert:hover::before {
+  background-color: var(--color-accent-terracotta);
+  box-shadow: 0 0 8px var(--color-accent-terracotta);
+}
+
+.timeline-time {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+.timeline-title {
+  font-family: var(--font-serif);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.timeline-desc {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 900px) {
+  .decision-graph-container {
+    grid-template-columns: 1fr;
+  }
+  .decision-graph-visualization {
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 1px solid var(--color-border-hairline);
+    padding-bottom: var(--spacing-md);
+  }
 }

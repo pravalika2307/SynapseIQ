@@ -1752,6 +1752,78 @@ function renderIntelSynthesis() {
         </p>
       </header>
 
+      <!-- Signature Interactive Decision Graph Hero -->
+      <section class="dashboard-section" style="margin-bottom: var(--spacing-lg);">
+        <span class="section-question-label">System Architecture</span>
+        <h2 class="section-headline">Interactive Decision Matrix</h2>
+        
+        <div class="decision-graph-container">
+          <div class="decision-graph-visualization">
+            <svg id="decision-graph-svg" viewBox="0 0 600 300" style="width: 100%; height: 300px; overflow: visible;">
+              <!-- Connection Lines -->
+              <path id="edge-customers-marketing" d="M 90 190 Q 150 110, 210 110" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" fill="none" />
+              <path id="edge-marketing-revenue" d="M 210 110 Q 260 160, 320 210" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" fill="none" />
+              <path id="edge-revenue-profit" d="M 320 210 Q 410 180, 510 150" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" fill="none" />
+              <path id="edge-inventory-operations" d="M 210 250 Q 300 170, 390 100" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" fill="none" />
+              <path id="edge-operations-profit" d="M 390 100 Q 450 120, 510 150" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" fill="none" />
+              <path id="edge-revenue-operations" d="M 320 210 Q 350 150, 390 100" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" fill="none" />
+              <path id="edge-customers-revenue" d="M 90 190 L 320 210" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" fill="none" />
+              
+              <!-- Nodes -->
+              <g class="graph-node" id="node-customers" data-entity="Customers" transform="translate(90, 190)">
+                <circle r="34" fill="#151B23" stroke="var(--color-border-strong)" stroke-width="1.5" />
+                <circle class="hover-glow" r="34" fill="none" stroke="var(--color-accent-sage)" stroke-width="0" opacity="0.4" />
+                <text text-anchor="middle" y="4" font-size="9" font-weight="700" fill="var(--color-text-primary)">CUSTOMERS</text>
+              </g>
+              
+              <g class="graph-node" id="node-marketing" data-entity="Marketing" transform="translate(210, 110)">
+                <circle r="34" fill="#151B23" stroke="var(--color-border-strong)" stroke-width="1.5" />
+                <circle class="hover-glow" r="34" fill="none" stroke="var(--color-accent-sage)" stroke-width="0" opacity="0.4" />
+                <text text-anchor="middle" y="4" font-size="9" font-weight="700" fill="var(--color-text-primary)">MARKETING</text>
+              </g>
+              
+              <g class="graph-node" id="node-revenue" data-entity="Revenue" transform="translate(320, 210)">
+                <circle r="34" fill="#151B23" stroke="var(--color-border-strong)" stroke-width="1.5" />
+                <circle class="hover-glow" r="34" fill="none" stroke="var(--color-accent-sage)" stroke-width="0" opacity="0.4" />
+                <text text-anchor="middle" y="4" font-size="9" font-weight="700" fill="var(--color-text-primary)">REVENUE</text>
+              </g>
+              
+              <g class="graph-node" id="node-inventory" data-entity="Inventory" transform="translate(210, 250)">
+                <circle r="34" fill="#151B23" stroke="var(--color-border-strong)" stroke-width="1.5" />
+                <circle class="hover-glow" r="34" fill="none" stroke="var(--color-accent-sage)" stroke-width="0" opacity="0.4" />
+                <text text-anchor="middle" y="4" font-size="9" font-weight="700" fill="var(--color-text-primary)">INVENTORY</text>
+              </g>
+              
+              <g class="graph-node" id="node-operations" data-entity="Operations" transform="translate(390, 100)">
+                <circle r="34" fill="#151B23" stroke="var(--color-border-strong)" stroke-width="1.5" />
+                <circle class="hover-glow" r="34" fill="none" stroke="var(--color-accent-sage)" stroke-width="0" opacity="0.4" />
+                <text text-anchor="middle" y="4" font-size="9" font-weight="700" fill="var(--color-text-primary)">OPERATIONS</text>
+              </g>
+              
+              <g class="graph-node" id="node-profit" data-entity="Profit" transform="translate(510, 150)">
+                <circle r="34" fill="#151B23" stroke="var(--color-border-strong)" stroke-width="1.5" />
+                <circle class="hover-glow" r="34" fill="none" stroke="var(--color-accent-sage)" stroke-width="0" opacity="0.4" />
+                <text text-anchor="middle" y="4" font-size="9" font-weight="700" fill="var(--color-text-primary)">PROFIT</text>
+              </g>
+            </svg>
+          </div>
+          
+          <div class="decision-graph-context" id="graph-context-card">
+            <div style="display: flex; align-items: center; gap: var(--spacing-xs); margin-bottom: var(--spacing-xs);">
+              <span class="ai-indicator-badge olive-badge">• Decision Engine Graph</span>
+              <span class="ai-indicator-badge" id="graph-node-status">Connected</span>
+            </div>
+            <h3 class="graph-context-title" id="graph-context-title">Strategic Matrix</h3>
+            <p class="graph-context-desc" id="graph-context-desc">Hover over any node in the system graph to inspect downstream decision pathways and dynamic metric associations mapped by the SynapseIQ compiler.</p>
+            
+            <div class="graph-associated-metrics" id="graph-associated-metrics" style="display: none; margin-top: 12px; border-top: 0.75px dashed var(--color-border-hairline); padding-top: 10px;">
+              <span class="meta-label" style="font-size: 8px;">CONNECTED NODES</span>
+              <div id="graph-metrics-pills" style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Section 1: Business Signals -->
       <section class="dashboard-section">
         <span class="section-question-label">Business Signals</span>
@@ -1762,7 +1834,45 @@ function renderIntelSynthesis() {
         </div>
       </section>
 
-      <!-- Section 2: Strategic Actions -->
+      <!-- Section 2: Business Timeline (Fulfilling Business Story Unfolding) -->
+      <section class="dashboard-section">
+        <span class="section-question-label">Business Timeline</span>
+        <h2 class="section-headline">Strategic Progression Pathway</h2>
+        
+        <div class="business-timeline">
+          <div class="timeline-milestone">
+            <span class="timeline-time">Day 1 — Current State</span>
+            <h3 class="timeline-title">Diagnostic Intake Complete</h3>
+            <p class="timeline-desc">Intake Well completes processing 18,240 records. 14 critical anomalies isolated. Upstream transit latencies flag Vietnam shipping ports at 32 days maximum queue latency.</p>
+          </div>
+          
+          <div class="timeline-milestone milestone-alert">
+            <span class="timeline-time" style="color: var(--color-accent-terracotta);">Day 15 — Projected Stress Point</span>
+            <h3 class="timeline-title">Hanoi Supplier Tooling Solvency Warning</h3>
+            <p class="timeline-desc">Predictive modeling highlights insolvency constraints at Tier-2 precision assembly houses. Capital buffer or Mexican routing overrides recommended.</p>
+          </div>
+          
+          <div class="timeline-milestone">
+            <span class="timeline-time">Day 30 — Target Pivot Point</span>
+            <h3 class="timeline-title">Tactical Redirection Corridor Activation</h3>
+            <p class="timeline-desc">Guadalajara safety margin scaled up to 72% storage capacity. Re-allocation of Laredo rail logistics corridors replaces maritime queue lanes.</p>
+          </div>
+          
+          <div class="timeline-milestone">
+            <span class="timeline-time">Day 60 — Auditing Target</span>
+            <h3 class="timeline-title">Customs Regulatory Clearance Peak</h3>
+            <p class="timeline-desc">Customs delay overhead clearances reach optimal 100% completion margins, stabilizing regional logistics channels.</p>
+          </div>
+          
+          <div class="timeline-milestone">
+            <span class="timeline-time">Day 90 — Baseline Target</span>
+            <h3 class="timeline-title">Margin Volatility Stabilization</h3>
+            <p class="timeline-desc">Fixed-capacity pricing limits and nearshore supply channels contract ocean spot rate freight overhead variations by 15%, defending baseline profit markers.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Strategic Actions -->
       <section class="dashboard-section">
         <span class="section-question-label">Strategic Actions</span>
         <h2 class="section-headline">What decisions are pending executive resolution?</h2>
@@ -1772,7 +1882,7 @@ function renderIntelSynthesis() {
         </div>
       </section>
 
-      <!-- Section 3: Future Outlook & Copilot -->
+      <!-- Section 4: Future Outlook & Copilot -->
       <section class="dashboard-section">
         <span class="section-question-label">Future Outlook</span>
         <h2 class="section-headline">What projections shape our upcoming quarters?</h2>
@@ -1813,7 +1923,7 @@ function renderIntelSynthesis() {
         </div>
       </section>
 
-      <!-- Section 4: Boardroom Report -->
+      <!-- Section 5: Boardroom Report -->
       <section class="dashboard-section" style="margin-bottom: 0;">
         <span class="section-question-label">Boardroom Report</span>
         <h2 class="section-headline">What is ready for investor circulation?</h2>
@@ -1838,6 +1948,104 @@ function renderIntelSynthesis() {
 
     </div>
   `;
+
+  // Dynamic Graph Nodes Interactive Event Binding
+  const nodes = document.querySelectorAll(".graph-node");
+  const graphContextTitle = document.getElementById("graph-context-title");
+  const graphContextDesc = document.getElementById("graph-context-desc");
+  const graphNodeStatus = document.getElementById("graph-node-status");
+  const associatedMetrics = document.getElementById("graph-associated-metrics");
+  const metricsPills = document.getElementById("graph-metrics-pills");
+  
+  const entityData = {
+    Customers: {
+      desc: "Sourcing accounts show 93% Q2 renewals. Acquisition volume maps directly to ARR pipelines.",
+      status: "+18% Renewals",
+      connections: ["Marketing", "Revenue"],
+      color: "var(--color-accent-sage)"
+    },
+    Marketing: {
+      desc: "Marketing allocation drives high-value customer acquisitions. Accounts acquisition cost down 8%.",
+      status: "-8% Acquisition",
+      connections: ["Customers", "Revenue"],
+      color: "var(--color-accent-sage)"
+    },
+    Revenue: {
+      desc: "ARR models stable. High renewal rates balance premium cargo surcharges.",
+      status: "Stable Run-Rate",
+      connections: ["Customers", "Marketing", "Profit", "Operations"],
+      color: "var(--color-accent-sage)"
+    },
+    Inventory: {
+      desc: "Stuttgart safety stock is at 72% utilization to cushion Antwerp custom check latency.",
+      status: "72% Capacity",
+      connections: ["Operations"],
+      color: "var(--color-accent-olive)"
+    },
+    Operations: {
+      desc: "Sourcing transit latencies peak at 32 days due to Singapore/Hanoi port queues.",
+      status: "32 Days Latency",
+      connections: ["Inventory", "Revenue", "Profit"],
+      color: "var(--color-accent-terracotta)"
+    },
+    Profit: {
+      desc: "Net yield is protected by fixed-price ocean freight caps and Guadalajara nearshore re-routing.",
+      status: "Optimized Yield",
+      connections: ["Revenue", "Operations"],
+      color: "var(--color-accent-sage)"
+    }
+  };
+
+  nodes.forEach(node => {
+    node.addEventListener("mouseenter", () => {
+      const entity = node.getAttribute("data-entity");
+      const info = entityData[entity];
+      if (info) {
+        // Highlight active nodes using inline styles
+        node.querySelector("circle").style.stroke = "var(--color-accent-sage)";
+        node.querySelector(".hover-glow").style.strokeWidth = "8px";
+        
+        // Update context card details
+        graphContextTitle.textContent = entity;
+        graphContextDesc.textContent = info.desc;
+        graphNodeStatus.textContent = info.status;
+        graphNodeStatus.className = `ai-indicator-badge ${entity === 'Operations' ? 'terracotta-badge' : 'olive-badge'}`;
+        
+        // Render associated nodes tags
+        associatedMetrics.style.display = "block";
+        metricsPills.innerHTML = info.connections.map(c => `
+          <span class="summary-metric-pill" style="font-size: 8px; font-weight:700;">${c}</span>
+        `).join("");
+        
+        // Dim all background paths, highlight matching pathways
+        document.querySelectorAll("path[id^='edge-']").forEach(p => {
+          p.style.stroke = "rgba(255,255,255,0.05)";
+          p.style.strokeWidth = "1";
+        });
+        
+        info.connections.forEach(conn => {
+          const id1 = `edge-${entity.toLowerCase()}-${conn.toLowerCase()}`;
+          const id2 = `edge-${conn.toLowerCase()}-${entity.toLowerCase()}`;
+          const pEl = document.getElementById(id1) || document.getElementById(id2);
+          if (pEl) {
+            pEl.style.stroke = entity === 'Operations' ? 'var(--color-accent-terracotta)' : 'var(--color-accent-sage)';
+            pEl.style.strokeWidth = "2.5";
+          }
+        });
+      }
+    });
+
+    node.addEventListener("mouseleave", () => {
+      node.querySelector("circle").style.stroke = "var(--color-border-strong)";
+      node.querySelector(".hover-glow").style.strokeWidth = "0";
+      
+      // Reset edge styles
+      document.querySelectorAll("path[id^='edge-']").forEach(p => {
+        p.style.stroke = "rgba(255,255,255,0.15)";
+        p.style.strokeWidth = "1.5";
+      });
+    });
+  });
 
   // Attach dossier card click event listeners
   document.querySelectorAll(".action-dossier-card").forEach(card => {

@@ -3,31 +3,8 @@
    ========================================================================== */
 
 /* 1. Core Visual Tokens */
-:root {
-  /* Colors */
-  --color-bg-base: #F8F7F2;      /* Warm Ivory */
-  --color-bg-surface: #FFFFFF;   /* Pure Alabaster */
-  --color-bg-muted: #F2F0E8;     /* Soft Sand */
-  
-  --color-text-primary: #1F1F1E;   /* Warm Charcoal */
-  --color-text-secondary: #5C5A55; /* Soft Charcoal */
-  --color-text-muted: #8C8A82;     /* Dried Moss */
-  
-  --color-accent-sage: #5B6E5B;        /* Sage Green */
-  --color-accent-sage-light: #EBF0EB;  /* Light Sage Tint */
-  --color-accent-terracotta: #C87A53;  /* Terracotta */
-  
-  --color-border-hairline: #E5E2D8; /* Pale Sand */
-  --color-border-strong: #D1CFC6;   /* Warm Gray */
-
-  /* Fonts */
-  --font-serif: "Lora", Georgia, Cambria, serif;
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-
-  /* Animation Curves */
-  --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-fast: 0.15s cubic-bezier(0.16, 1, 0.3, 1);
-}
+/* Note: Design tokens are defined in styles.css which loads after this file.
+   Do not redefine :root variables here to avoid overriding the dark theme. */
 
 /* 2. Global Resets & Base Elements */
 * {
@@ -108,7 +85,7 @@ body {
   align-items: center;
   padding: 0 8%;
   border-bottom: 0.75px solid var(--color-border-hairline);
-  background-color: rgba(248, 247, 242, 0.85); /* Faint blur support */
+  background-color: rgba(13, 17, 23, 0.92); /* Dark charcoal blur support */
   backdrop-filter: blur(10px);
 }
 
@@ -219,7 +196,7 @@ body {
 .upload-container {
   background-color: var(--color-bg-surface);
   border: 1px solid var(--color-border-hairline);
-  box-shadow: 0px 4px 24px rgba(31, 31, 30, 0.015);
+  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.2);
   border-radius: 4px;
   padding: var(--color-bg-surface);
   cursor: pointer;
@@ -244,7 +221,7 @@ body {
 
 .upload-container:hover {
   border-color: var(--color-border-strong);
-  box-shadow: 0px 8px 32px rgba(31, 31, 30, 0.025);
+  box-shadow: 0px 8px 32px rgba(0, 0, 0, 0.25);
   transform: translateY(-2px);
 }
 
@@ -421,7 +398,7 @@ body {
   font-size: 10px;
   color: var(--color-text-muted);
   letter-spacing: 0.05em;
-  background-color: rgba(248, 247, 242, 0.85);
+  background-color: rgba(13, 17, 23, 0.92);
 }
 
 /* 10. Responsive Design Rules */
