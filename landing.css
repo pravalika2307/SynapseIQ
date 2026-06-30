@@ -1,0 +1,459 @@
+/* ==========================================================================
+   SynapseIQ Landing Page CSS (WWDC / Apple Editorial Style)
+   ========================================================================== */
+
+/* 1. Core Visual Tokens */
+:root {
+  /* Colors */
+  --color-bg-base: #F8F7F2;      /* Warm Ivory */
+  --color-bg-surface: #FFFFFF;   /* Pure Alabaster */
+  --color-bg-muted: #F2F0E8;     /* Soft Sand */
+  
+  --color-text-primary: #1F1F1E;   /* Warm Charcoal */
+  --color-text-secondary: #5C5A55; /* Soft Charcoal */
+  --color-text-muted: #8C8A82;     /* Dried Moss */
+  
+  --color-accent-sage: #5B6E5B;        /* Sage Green */
+  --color-accent-sage-light: #EBF0EB;  /* Light Sage Tint */
+  --color-accent-terracotta: #C87A53;  /* Terracotta */
+  
+  --color-border-hairline: #E5E2D8; /* Pale Sand */
+  --color-border-strong: #D1CFC6;   /* Warm Gray */
+
+  /* Fonts */
+  --font-serif: "Lora", Georgia, Cambria, serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* Animation Curves */
+  --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 2. Global Resets & Base Elements */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg-base);
+  color: var(--color-text-primary);
+  overflow-x: hidden;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+}
+
+/* 3. Architectural Blueprint Background Gridlines */
+.blueprint-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.blueprint-bg .line {
+  position: absolute;
+  background-color: var(--color-border-hairline);
+}
+
+.blueprint-bg .line.vertical {
+  width: 0.75px;
+  height: 100%;
+}
+
+.blueprint-bg .line.horizontal {
+  height: 0.75px;
+  width: 100%;
+}
+
+/* Vertical grid boundaries (aligned with navigation logo and action button limits) */
+.left-grid {
+  left: 8%;
+}
+
+.right-grid {
+  right: 8%;
+}
+
+/* Horizontal boundaries defining header and footer segments */
+.top-grid {
+  top: 80px;
+}
+
+.bottom-grid {
+  bottom: 80px;
+}
+
+/* 4. Core Layout Container */
+.landing-container {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* 5. Navigation Desk */
+.top-nav {
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8%;
+  border-bottom: 0.75px solid var(--color-border-hairline);
+  background-color: rgba(248, 247, 242, 0.85); /* Faint blur support */
+  backdrop-filter: blur(10px);
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo {
+  width: 24px;
+  height: 24px;
+}
+
+.brand-title {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+
+.nav-link-item {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  transition: var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-link-item:hover {
+  color: var(--color-text-primary);
+}
+
+.external-icon {
+  width: 10px;
+  height: 10px;
+  opacity: 0.6;
+}
+
+.btn-get-started {
+  background-color: var(--color-text-primary);
+  color: var(--color-bg-base);
+  border: 1px solid var(--color-text-primary);
+  border-radius: 3px;
+  padding: 8px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.btn-get-started:hover {
+  background-color: var(--color-accent-sage);
+  border-color: var(--color-accent-sage);
+}
+
+/* 6. Main Presentation Area */
+.landing-main {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 8%;
+}
+
+.intro-block {
+  width: 100%;
+  max-width: 580px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.greeting-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.greeting-text {
+  font-family: var(--font-serif);
+  font-size: 54px;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  color: var(--color-text-primary);
+  line-height: 1.1;
+}
+
+.sub-greeting {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  font-style: italic;
+  letter-spacing: -0.01em;
+}
+
+/* 7. File Upload Portfolio Card */
+.upload-container {
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border-hairline);
+  box-shadow: 0px 4px 24px rgba(31, 31, 30, 0.015);
+  border-radius: 4px;
+  padding: var(--color-bg-surface);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Faint overlay grid details inside the card to look professional and calibrated */
+.upload-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  pointer-events: none;
+  border: 0.5px solid transparent;
+  transition: var(--transition-smooth);
+}
+
+.upload-container:hover {
+  border-color: var(--color-border-strong);
+  box-shadow: 0px 8px 32px rgba(31, 31, 30, 0.025);
+  transform: translateY(-2px);
+}
+
+.upload-container.drag-active {
+  background-color: var(--color-accent-sage-light);
+  border-color: var(--color-accent-sage);
+}
+
+.upload-container.drag-active::before {
+  border-color: var(--color-accent-sage);
+}
+
+.hidden-input {
+  display: none;
+}
+
+.upload-inner {
+  padding: 48px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.upload-header {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 0.75px solid var(--color-border-hairline);
+  padding-bottom: 12px;
+}
+
+.upload-tag {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+}
+
+.upload-status {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-accent-sage);
+}
+
+.upload-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  transition: opacity var(--transition-fast);
+}
+
+.intake-target {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.intake-icon {
+  width: 100%;
+  height: 100%;
+}
+
+.upload-title {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.upload-subtitle {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-top: -6px;
+}
+
+.format-badges {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.format-badge {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  background-color: var(--color-bg-base);
+  border: 1px solid var(--color-border-hairline);
+  color: var(--color-text-secondary);
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+/* 8. Interactive Upload Progress Overlay */
+.upload-progress-view {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  animation: fade-in-kf 0.3s ease-out;
+}
+
+@keyframes fade-in-kf {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.progress-details {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.progress-filename {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.progress-percent {
+  font-family: monospace;
+  font-weight: 600;
+  color: var(--color-accent-sage);
+}
+
+.progress-bar-track {
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-border-hairline);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  width: 0%;
+  background-color: var(--color-accent-sage);
+  transition: width 0.15s linear;
+}
+
+.progress-status {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  font-style: italic;
+  text-align: center;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.upload-footnote {
+  margin-top: -12px;
+}
+
+.footnote-text {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+}
+
+/* 9. Landing Footer Specs */
+.landing-footer {
+  height: 80px;
+  border-top: 0.75px solid var(--color-border-hairline);
+  padding: 0 8%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  color: var(--color-text-muted);
+  letter-spacing: 0.05em;
+  background-color: rgba(248, 247, 242, 0.85);
+}
+
+/* 10. Responsive Design Rules */
+@media (max-width: 768px) {
+  .left-grid, .right-grid {
+    display: none;
+  }
+  .top-nav {
+    padding: 0 24px;
+  }
+  .nav-links {
+    display: none; /* Collapses text links on mobile, leaving brand and CTA */
+  }
+  .landing-main {
+    padding: 48px 24px;
+  }
+  .greeting-text {
+    font-size: 40px;
+  }
+  .sub-greeting {
+    font-size: 16px;
+  }
+  .upload-inner {
+    padding: 32px 16px;
+  }
+  .landing-footer {
+    padding: 0 24px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    height: auto;
+    padding-top: var(--spacing-sm);
+    padding-bottom: var(--spacing-sm);
+  }
+}
