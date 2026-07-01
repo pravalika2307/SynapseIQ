@@ -1,436 +1,325 @@
 /* ==========================================================================
-   SynapseIQ Landing Page CSS (WWDC / Apple Editorial Style)
+   SynapseIQ — Landing Page Styles v2.0
    ========================================================================== */
 
-/* 1. Core Visual Tokens */
-/* Note: Design tokens are defined in styles.css which loads after this file.
-   Do not redefine :root variables here to avoid overriding the dark theme. */
-
-/* 2. Global Resets & Base Elements */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: var(--font-sans);
-  background-color: var(--color-bg-base);
-  color: var(--color-text-primary);
-  overflow-x: hidden;
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-  position: relative;
-}
-
-/* 3. Architectural Blueprint Background Gridlines */
-.blueprint-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.blueprint-bg .line {
-  position: absolute;
-  background-color: var(--color-border-hairline);
-}
-
-.blueprint-bg .line.vertical {
-  width: 0.75px;
-  height: 100%;
-}
-
-.blueprint-bg .line.horizontal {
-  height: 0.75px;
-  width: 100%;
-}
-
-/* Vertical grid boundaries (aligned with navigation logo and action button limits) */
-.left-grid {
-  left: 8%;
-}
-
-.right-grid {
-  right: 8%;
-}
-
-/* Horizontal boundaries defining header and footer segments */
-.top-grid {
-  top: 80px;
-}
-
-.bottom-grid {
-  bottom: 80px;
-}
-
-/* 4. Core Layout Container */
+/* ── LANDING CONTAINER ──────────────────────────────────────────────── */
 .landing-container {
-  position: relative;
-  z-index: 2;
+  position: fixed;
+  inset: 0;
+  background: #0D1117;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  width: 100%;
+  z-index: 200;
+  overflow: hidden;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* 5. Navigation Desk */
+.landing-container.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ── TOP NAV ────────────────────────────────────────────────────────── */
 .top-nav {
-  height: 80px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0 8%;
-  border-bottom: 0.75px solid var(--color-border-hairline);
-  background-color: rgba(13, 17, 23, 0.92); /* Dark charcoal blur support */
-  backdrop-filter: blur(10px);
+  justify-content: space-between;
+  padding: 0 48px;
+  height: 56px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  flex-shrink: 0;
 }
 
 .nav-brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
-.brand-logo {
-  width: 24px;
-  height: 24px;
-}
+.brand-logo { width: 22px; height: 22px; opacity: 0.85; }
 
 .brand-title {
-  font-family: var(--font-serif);
-  font-size: 16px;
-  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #F5F7FA;
   letter-spacing: -0.01em;
 }
 
 .nav-links {
   display: flex;
-  gap: 32px;
   align-items: center;
+  gap: 32px;
 }
 
 .nav-link-item {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--color-text-secondary);
-  transition: var(--transition-fast);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: #5A6478;
+  text-decoration: none;
+  transition: color 0.2s ease;
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.nav-link-item:hover {
-  color: var(--color-text-primary);
-}
+.nav-link-item:hover { color: #A8B3C2; }
 
-.external-icon {
-  width: 10px;
-  height: 10px;
-  opacity: 0.6;
-}
+.external-icon { width: 11px; height: 11px; }
+
+.github-link { gap: 5px; }
+
+.nav-action {}
 
 .btn-get-started {
-  background-color: var(--color-text-primary);
-  color: var(--color-bg-base);
-  border: 1px solid var(--color-text-primary);
-  border-radius: 3px;
-  padding: 8px 16px;
-  font-size: 11px;
+  padding: 7px 18px;
+  background: rgba(121,211,138,0.12);
+  border: 1px solid rgba(121,211,138,0.25);
+  border-radius: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
   font-weight: 600;
+  color: #79D38A;
   cursor: pointer;
-  transition: var(--transition-smooth);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  letter-spacing: 0.01em;
 }
 
 .btn-get-started:hover {
-  background-color: var(--color-accent-sage);
-  border-color: var(--color-accent-sage);
+  background: rgba(121,211,138,0.20);
+  border-color: rgba(121,211,138,0.45);
 }
 
-/* 6. Main Presentation Area */
+/* ── MAIN CONTENT ───────────────────────────────────────────────────── */
 .landing-main {
-  flex-grow: 1;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 64px 8%;
+  padding: 48px;
 }
 
 .intro-block {
-  width: 100%;
-  max-width: 580px;
-  text-align: center;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 640px;
   gap: 40px;
 }
 
+/* ── GREETING ───────────────────────────────────────────────────────── */
 .greeting-block {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  text-align: center;
 }
 
 .greeting-text {
-  font-family: var(--font-serif);
-  font-size: 54px;
+  font-family: 'Lora', Georgia, serif;
+  font-size: 52px;
   font-weight: 400;
-  letter-spacing: -0.03em;
-  color: var(--color-text-primary);
+  color: #F5F7FA;
+  letter-spacing: -0.02em;
   line-height: 1.1;
+  margin-bottom: 12px;
 }
 
 .sub-greeting {
-  font-family: var(--font-serif);
-  font-size: 20px;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
   font-weight: 400;
-  color: var(--color-text-secondary);
-  font-style: italic;
+  color: #5A6478;
   letter-spacing: -0.01em;
 }
 
-/* 7. File Upload Portfolio Card */
+/* ── UPLOAD CARD ────────────────────────────────────────────────────── */
 .upload-container {
-  background-color: var(--color-bg-surface);
-  border: 1px solid var(--color-border-hairline);
-  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
-  padding: var(--color-bg-surface);
-  cursor: pointer;
-  transition: var(--transition-smooth);
-  position: relative;
-  overflow: hidden;
-}
-
-/* Faint overlay grid details inside the card to look professional and calibrated */
-.upload-container::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
-  border-radius: 4px;
-  pointer-events: none;
-  border: 0.5px solid transparent;
-  transition: var(--transition-smooth);
+  background: #151B23;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
 }
 
-.upload-container:hover {
-  border-color: var(--color-border-strong);
-  box-shadow: 0px 8px 32px rgba(0, 0, 0, 0.25);
-  transform: translateY(-2px);
-}
+.upload-container:hover { border-color: rgba(255,255,255,0.14); }
+.upload-container.drag-active { border-color: rgba(121,211,138,0.4); }
 
-.upload-container.drag-active {
-  background-color: var(--color-accent-sage-light);
-  border-color: var(--color-accent-sage);
-}
+.hidden-input { display: none; }
 
-.upload-container.drag-active::before {
-  border-color: var(--color-accent-sage);
-}
-
-.hidden-input {
-  display: none;
-}
-
-.upload-inner {
-  padding: 48px 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
+.upload-inner { padding: 0; }
 
 .upload-header {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  border-bottom: 0.75px solid var(--color-border-hairline);
-  padding-bottom: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
 }
 
 .upload-tag {
+  font-family: 'Inter', sans-serif;
   font-size: 9px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--color-text-muted);
+  letter-spacing: 0.12em;
+  color: #3A4155;
 }
 
 .upload-status {
-  font-size: 9px;
-  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: #5A6478;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-accent-sage);
 }
 
 .upload-main {
+  padding: 40px 32px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
-  transition: opacity var(--transition-fast);
 }
 
-.intake-target {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 8px;
-}
+.intake-target { margin-bottom: 4px; }
 
-.intake-icon {
-  width: 100%;
-  height: 100%;
-}
+.intake-icon { width: 44px; height: 44px; }
 
 .upload-title {
-  font-family: var(--font-serif);
-  font-size: 18px;
-  font-weight: 500;
-  color: var(--color-text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #A8B3C2;
+  text-align: center;
 }
 
 .upload-subtitle {
-  font-size: 12px;
-  color: var(--color-text-secondary);
-  margin-top: -6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px;
+  color: #5A6478;
+  text-align: center;
 }
 
 .format-badges {
   display: flex;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .format-badge {
-  font-size: 9px;
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.05em;
-  background-color: var(--color-bg-base);
-  border: 1px solid var(--color-border-hairline);
-  color: var(--color-text-secondary);
-  padding: 2px 8px;
-  border-radius: 20px;
+  color: #5A6478;
+  background: #1B222C;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 4px;
+  padding: 3px 8px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
-/* 8. Interactive Upload Progress Overlay */
+/* ── UPLOAD PROGRESS ────────────────────────────────────────────────── */
 .upload-progress-view {
+  padding: 32px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  width: 100%;
-  animation: fade-in-kf 0.3s ease-out;
+  gap: 14px;
 }
 
-@keyframes fade-in-kf {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+.upload-progress-view.hidden { display: none; }
+.upload-main.hidden { display: none; }
 
 .progress-details {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  font-size: 12px;
 }
 
 .progress-filename {
-  font-family: var(--font-serif);
+  font-family: monospace;
+  font-size: 11.5px;
+  color: #A8B3C2;
   font-weight: 500;
-  color: var(--color-text-primary);
 }
 
 .progress-percent {
   font-family: monospace;
-  font-weight: 600;
-  color: var(--color-accent-sage);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #79D38A;
 }
 
 .progress-bar-track {
   width: 100%;
   height: 2px;
-  background-color: var(--color-border-hairline);
+  background: rgba(255,255,255,0.07);
+  border-radius: 1px;
+  overflow: hidden;
 }
 
 .progress-bar-fill {
   height: 100%;
+  background: #79D38A;
+  border-radius: 1px;
   width: 0%;
-  background-color: var(--color-accent-sage);
-  transition: width 0.15s linear;
+  transition: width 0.3s ease;
 }
 
 .progress-status {
-  font-size: 11px;
-  color: var(--color-text-muted);
-  font-style: italic;
-  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 11.5px;
+  color: #5A6478;
 }
 
-.hidden {
-  display: none !important;
-}
-
-.upload-footnote {
-  margin-top: -12px;
-}
+/* ── FOOTNOTE ───────────────────────────────────────────────────────── */
+.upload-footnote { text-align: center; }
 
 .footnote-text {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--color-text-muted);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: #3A4155;
 }
 
-/* 9. Landing Footer Specs */
+/* ── BLUEPRINT BACKGROUND ───────────────────────────────────────────── */
+.blueprint-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.landing-container > * { position: relative; z-index: 1; }
+.landing-main, .top-nav, .landing-footer { position: relative; z-index: 1; }
+
+.line {
+  position: absolute;
+  background: rgba(255,255,255,0.025);
+}
+
+.line.vertical { width: 1px; top: 0; bottom: 0; }
+.line.horizontal { height: 1px; left: 0; right: 0; }
+.line.left-grid  { left: 15%; }
+.line.right-grid { right: 15%; }
+.line.top-grid   { top: 25%; }
+.line.bottom-grid { bottom: 25%; }
+
+/* ── FOOTER ─────────────────────────────────────────────────────────── */
 .landing-footer {
-  height: 80px;
-  border-top: 0.75px solid var(--color-border-hairline);
-  padding: 0 8%;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  font-size: 10px;
-  color: var(--color-text-muted);
-  letter-spacing: 0.05em;
-  background-color: rgba(13, 17, 23, 0.92);
+  justify-content: space-between;
+  padding: 0 48px;
+  height: 48px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  flex-shrink: 0;
 }
 
-/* 10. Responsive Design Rules */
-@media (max-width: 768px) {
-  .left-grid, .right-grid {
-    display: none;
-  }
-  .top-nav {
-    padding: 0 24px;
-  }
-  .nav-links {
-    display: none; /* Collapses text links on mobile, leaving brand and CTA */
-  }
-  .landing-main {
-    padding: 48px 24px;
-  }
-  .greeting-text {
-    font-size: 40px;
-  }
-  .sub-greeting {
-    font-size: 16px;
-  }
-  .upload-inner {
-    padding: 32px 16px;
-  }
-  .landing-footer {
-    padding: 0 24px;
-    flex-direction: column;
-    justify-content: center;
-    gap: 8px;
-    height: auto;
-    padding-top: var(--spacing-sm);
-    padding-bottom: var(--spacing-sm);
-  }
+.footer-left, .footer-right {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: #3A4155;
 }

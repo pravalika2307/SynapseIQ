@@ -157,6 +157,25 @@ const navItems = document.querySelectorAll(".nav-item, .nav-item-sub");
 
 // 4. View Router & Transitions
 function navigateTo(view, dataId = null) {
+  const isDashboardView = ["executive-brief", "synthesis", "projections", "copilot"].includes(view);
+  
+  if (isDashboardView) {
+    const onDashboard = ["executive-brief", "synthesis", "projections", "copilot"].includes(appState.currentView);
+    if (onDashboard && document.getElementById("executive-brief-section")) {
+      appState.currentView = view;
+      updateNavSelection(view, dataId);
+      
+      let sectionId = "signals-section";
+      if (view === "executive-brief") sectionId = "executive-brief-section";
+      else if (view === "synthesis") sectionId = "signals-section";
+      else if (view === "projections") sectionId = "projections-section";
+      else if (view === "copilot") sectionId = "copilot-section";
+      
+      scrollToSection(sectionId, true);
+      return;
+    }
+  }
+
   // Fade out sheet
   activeSheetEl.style.opacity = "0";
   activeSheetEl.style.transform = "translateY(8px)";
@@ -174,22 +193,20 @@ function navigateTo(view, dataId = null) {
     updateNavSelection(view, dataId);
     
     // Render content based on view
-    if (view === "projections") {
-      renderVisualProjections();
-      annotationRailEl.style.display = "none";
-      document.querySelector(".workspace-area").style.paddingRight = "0";
-    } else if (view === "copilot") {
-      renderDecisionCopilot();
-      annotationRailEl.style.display = "none";
-      document.querySelector(".workspace-area").style.paddingRight = "0";
-    } else if (view === "executive-brief") {
-      renderExecutiveBrief();
-      annotationRailEl.style.display = "none";
-      document.querySelector(".workspace-area").style.paddingRight = "0";
-    } else if (view === "synthesis") {
+    if (isDashboardView) {
       renderIntelSynthesis();
       annotationRailEl.style.display = "none";
       document.querySelector(".workspace-area").style.paddingRight = "0";
+      
+      let sectionId = "signals-section";
+      if (view === "executive-brief") sectionId = "executive-brief-section";
+      else if (view === "synthesis") sectionId = "signals-section";
+      else if (view === "projections") sectionId = "projections-section";
+      else if (view === "copilot") sectionId = "copilot-section";
+      
+      setTimeout(() => {
+        scrollToSection(sectionId, false);
+      }, 50);
     } else if (view === "briefing") {
       renderDecisionBriefing();
       annotationRailEl.style.display = "block";
@@ -542,17 +559,19 @@ const copilotResponses = {
 };
 
 function renderDecisionCopilot() {
+  const container = document.getElementById("copilot-workspace-container");
   const isExpanded = appState.copilotExpanded;
-  
-  // Render layout container
-  activeSheetEl.innerHTML = `
-    <div class="copilot-container ${isExpanded ? 'copilot-container--expanded' : 'copilot-container--compact'}">
-      ${isExpanded ? renderExpandedWorkspace() : renderCompactPanel()}
-    </div>
-  `;
-
-  // Bind Copilot event listeners
-  setupCopilotListeners();
+  if (container) {
+    container.innerHTML = `
+      <div class="copilot-container ${isExpanded ? 'copilot-container--expanded' : 'copilot-container--compact'}">
+        ${isExpanded ? renderExpandedWorkspace() : renderCompactPanel()}
+      </div>
+    `;
+    setupCopilotListeners();
+  } else {
+    renderIntelSynthesis();
+    scrollToSection("copilot-section", false);
+  }
 }
 
 function renderCompactPanel() {
@@ -894,180 +913,8 @@ function executeInquiry(question) {
 
 // 4.5. Render: Visual Projections (Bloomberg meets Apple Editorial Charts)
 function renderVisualProjections() {
-  activeSheetEl.innerHTML = `
-    <div class="projections-layout">
-      
-      <!-- Editorial Header -->
-      <header class="synthesis-header">
-        <div class="editorial-date">Visual Analytics — June 30, 2026</div>
-        <h1 class="sheet-title">Macro Projections Console</h1>
-        <p class="sheet-summary" style="font-style: normal; font-size: 15px; color: var(--color-text-secondary);">
-          Calibrated visual models pairing the density of a Bloomberg Terminal with the clarity of Apple Keynote. Every chart isolates a key boardroom business query.
-        </p>
-      </header>
-
-      <!-- Custom Tooltip Element -->
-      <div id="chart-tooltip" class="chart-tooltip-overlay"></div>
-
-      <!-- Magazine Grid (2 Columns) -->
-      <div class="magazine-grid">
-
-        <!-- Chart 1: Sourcing Asset Distribution (Dot Track Plot) -->
-        <div class="tech-chart-container magazine-span-full">
-          <header class="tech-chart-header">
-            <span class="tech-chart-title">Visual 1.1: Sourcing Asset Distribution & Transit Exposure</span>
-            <h2 class="tech-chart-q">How is our inventory capital distributed across global transit lanes?</h2>
-          </header>
-          
-          <svg class="svg-canvas" height="150" viewBox="0 0 700 150">
-            <!-- X Axis ticks & lines -->
-            <line x1="100" y1="120" x2="650" y2="120" class="axis-line"></line>
-            
-            <line x1="200" y1="10" x2="200" y2="120" class="grid-line" stroke-dasharray="2 1"></line>
-            <line x1="350" y1="10" x2="350" y2="120" class="grid-line" stroke-dasharray="2 1"></line>
-            <line x1="500" y1="10" x2="500" y2="120" class="grid-line" stroke-dasharray="2 1"></line>
-            <line x1="650" y1="10" x2="650" y2="120" class="grid-line" stroke-dasharray="2 1"></line>
-            
-            <text x="200" y="135" class="axis-label x-align">LOW ($10M / 5d)</text>
-            <text x="350" y="135" class="axis-label x-align">MODERATE ($25M / 15d)</text>
-            <text x="500" y="135" class="axis-label x-align">HIGH ($40M / 25d)</text>
-            <text x="650" y="135" class="axis-label x-align">PEAK ($55M / 35d)</text>
-
-            <!-- Row Tracks -->
-            <!-- Row 1: Singapore -->
-            <text x="80" y="28" class="node-group-label">Singapore</text>
-            <line x1="100" y1="25" x2="650" y2="25" class="target-track" stroke-dasharray="4 2"></line>
-            <circle cx="500" cy="25" r="4.5" fill="var(--color-accent-terracotta)" class="chart-node" data-info="Singapore Delay Node: 30-day queue backlog at strait congestion sectors. High exposure." stroke="#FFFFFF" stroke-width="1"></circle>
-            <circle cx="590" cy="25" r="4.5" fill="var(--color-accent-sage)" class="chart-node" data-info="Singapore Sourcing Asset: $48M capital active. Peak financial concentration." stroke="#FFFFFF" stroke-width="1"></circle>
-
-            <!-- Row 2: Hanoi -->
-            <text x="80" y="58" class="node-group-label">Hanoi Assembly</text>
-            <line x1="100" y1="55" x2="650" y2="55" class="target-track" stroke-dasharray="4 2"></line>
-            <circle cx="420" cy="55" r="4.5" fill="var(--color-accent-terracotta)" class="chart-node" data-info="Hanoi Delay Node: 22-day shipping backlog. Tier-2 liquidity strain is high." stroke="#FFFFFF" stroke-width="1"></circle>
-            <circle cx="280" cy="55" r="4.5" fill="var(--color-accent-sage)" class="chart-node" data-info="Hanoi Sourcing Asset: $18M parts inventory buffer." stroke="#FFFFFF" stroke-width="1"></circle>
-
-            <!-- Row 3: Guadalajara -->
-            <text x="80" y="88" class="node-group-label">Guadalajara</text>
-            <line x1="100" y1="85" x2="650" y2="85" class="target-track" stroke-dasharray="4 2"></line>
-            <circle cx="160" cy="85" r="4.5" fill="var(--color-accent-sage)" class="chart-node" data-info="Guadalajara Delay Node: 6-day transit corridor delay. Highly insulated." stroke="#FFFFFF" stroke-width="1"></circle>
-            <circle cx="480" cy="85" r="4.5" fill="var(--color-accent-sage)" class="chart-node" data-info="Guadalajara Sourcing Asset: $38M capital active. Regional expansion focus." stroke="#FFFFFF" stroke-width="1"></circle>
-
-            <!-- Row 4: Stuttgart -->
-            <text x="80" y="118" class="node-group-label">Stuttgart Hub</text>
-            <line x1="100" y1="115" x2="650" y2="115" class="target-track" stroke-dasharray="4 2"></line>
-            <circle cx="130" cy="115" r="4.5" fill="var(--color-accent-sage)" class="chart-node" data-info="Stuttgart Delay Node: 4-day transit latency. Fully optimized." stroke="#FFFFFF" stroke-width="1"></circle>
-            <circle cx="220" cy="115" r="4.5" fill="var(--color-accent-sage)" class="chart-node" data-info="Stuttgart Sourcing Asset: $12M capital active." stroke="#FFFFFF" stroke-width="1"></circle>
-          </svg>
-          <div class="chart-legend" style="justify-content: flex-end;">
-            <div class="legend-item"><span class="legend-color sage"></span> Capital Invested ($M)</div>
-            <div class="legend-item"><span class="legend-color terracotta"></span> Node Delay (Days)</div>
-          </div>
-        </div>
-
-        <!-- Chart 2: Tariff Cost Projections (Area Curves) -->
-        <div class="tech-chart-container">
-          <header class="tech-chart-header">
-            <span class="tech-chart-title">Visual 1.2: Tariff Sourcing Curve (Unit Cost Projections)</span>
-            <h2 class="tech-chart-q">What is the projected financial impact of tariff changes on unit cost?</h2>
-          </header>
-          
-          <svg class="svg-canvas" height="180" viewBox="0 0 350 180">
-            <!-- Gridlines -->
-            <line x1="40" y1="140" x2="330" y2="140" class="axis-line"></line>
-            <line x1="40" y1="20" x2="40" y2="140" class="axis-line"></line>
-            
-            <line x1="40" y1="100" x2="330" y2="100" class="grid-line"></line>
-            <line x1="40" y1="60" x2="330" y2="60" class="grid-line"></line>
-            <line x1="40" y1="20" x2="330" y2="20" class="grid-line"></line>
-            
-            <line x1="112.5" y1="20" x2="112.5" y2="140" class="grid-line" stroke-dasharray="2 2"></line>
-            <line x1="185" y1="20" x2="185" y2="140" class="grid-line" stroke-dasharray="2 2"></line>
-            <line x1="257.5" y1="20" x2="257.5" y2="140" class="grid-line" stroke-dasharray="2 2"></line>
-            <line x1="330" y1="20" x2="330" y2="140" class="grid-line" stroke-dasharray="2 2"></line>
-
-            <!-- Y Axis labels -->
-            <text x="32" y="23" class="axis-label y-align">$200</text>
-            <text x="32" y="63" class="axis-label y-align">$150</text>
-            <text x="32" y="103" class="axis-label y-align">$100</text>
-            <text x="32" y="143" class="axis-label y-align">BASE</text>
-
-            <!-- X Axis labels -->
-            <text x="40" y="155" class="axis-label x-align">Q2 '26</text>
-            <text x="112.5" y="155" class="axis-label x-align">Q3 '26</text>
-            <text x="185" y="155" class="axis-label x-align">Q4 '26</text>
-            <text x="257.5" y="155" class="axis-label x-align">Q1 '27</text>
-            <text x="330" y="155" class="axis-label x-align">Q2 '27</text>
-
-            <!-- Area Path 1: Baseline (Terracotta) -->
-            <path d="M 40 100 Q 112.5 80, 185 45 T 330 30 L 330 140 L 40 140 Z" class="curve-area series-terracotta"></path>
-            <path d="M 40 100 Q 112.5 80, 185 45 T 330 30" class="curve-line series-terracotta" stroke-dasharray="4 2"></path>
-
-            <!-- Area Path 2: Optimized (Sage) -->
-            <path d="M 40 100 Q 112.5 110, 185 95 T 330 85 L 330 140 L 40 140 Z" class="curve-area series-sage"></path>
-            <path d="M 40 100 Q 112.5 110, 185 95 T 330 85" class="curve-line series-sage"></path>
-
-            <!-- Intersecting Nodes -->
-            <circle cx="330" cy="30" r="4" fill="var(--color-accent-terracotta)" class="chart-node" data-info="Baseline Sourcing Projection: $192/unit if Singapore nodes maintain concentration." stroke="#FFFFFF" stroke-width="1"></circle>
-            <circle cx="330" cy="85" r="4" fill="var(--color-accent-sage)" class="chart-node" data-info="Optimized Sourcing Projection: $146/unit under Mexican re-routing corridor pivots." stroke="#FFFFFF" stroke-width="1"></circle>
-          </svg>
-          <div class="chart-legend" style="justify-content: flex-end;">
-            <div class="legend-item"><span class="legend-color sage"></span> Optimized Localized Path</div>
-            <div class="legend-item"><span class="legend-color terracotta"></span> Conservative Global Path</div>
-          </div>
-        </div>
-
-        <!-- Chart 3: Supplier Credit Resilience (Bloomberg scatter) -->
-        <div class="tech-chart-container">
-          <header class="tech-chart-header">
-            <span class="tech-chart-title">Visual 1.3: Supplier Resilience Index Matrix</span>
-            <h2 class="tech-chart-q">Which tier-1 and tier-2 suppliers face liquidity constraints?</h2>
-          </header>
-          
-          <svg class="svg-canvas" height="180" viewBox="0 0 350 180">
-            <!-- Axes -->
-            <line x1="40" y1="140" x2="330" y2="140" class="axis-line"></line>
-            <line x1="40" y1="20" x2="40" y2="140" class="axis-line"></line>
-            
-            <!-- Gridlines -->
-            <line x1="40" y1="80" x2="330" y2="80" class="grid-line" stroke-dasharray="2 1"></line>
-            <line x1="185" y1="20" x2="185" y2="140" class="grid-line" stroke-dasharray="2 1"></line>
-
-            <!-- Axis Labels -->
-            <!-- Y-Axis labels: Credit Rating Index -->
-            <text x="32" y="23" class="axis-label y-align">100 Rating</text>
-            <text x="32" y="83" class="axis-label y-align">50 Rating</text>
-            <text x="32" y="143" class="axis-label y-align">0 Rating</text>
-
-            <!-- X-Axis labels: Debt-Equity Ratio -->
-            <text x="40" y="155" class="axis-label x-align">0.0 (Clean)</text>
-            <text x="185" y="155" class="axis-label x-align">2.0 (Limit)</text>
-            <text x="330" y="155" class="axis-label x-align">4.0 (Overleveraged)</text>
-
-            <!-- Scatter Nodes (Bloomberg style scatter) -->
-            <!-- Hanoi Fab (Critical Anomaly) -->
-            <circle cx="280" cy="110" r="4.5" fill="var(--color-accent-terracotta)" class="chart-node" data-info="Hanoi Precision Parts (Vietnam) • Debt Ratio: 2.8x • Credit Rating: 32 • AI Verdict: Severe Liquidity Risk." stroke="#FFFFFF" stroke-width="1"></circle>
-            <!-- Hue Micro (Risk) -->
-            <circle cx="220" cy="90" r="4.5" fill="var(--color-accent-terracotta)" class="chart-node" data-info="Hue Semiconductors • Debt Ratio: 2.1x • Credit Rating: 48 • AI Verdict: Solvency Constraint Warning." stroke="#FFFFFF" stroke-width="1"></circle>
-            <!-- Mexico Allied (Stable) -->
-            <circle cx="120" cy="40" r="4" fill="var(--color-accent-sage)" class="chart-node" data-info="MexAllied Fabricators (MX) • Debt Ratio: 1.1x • Credit Rating: 88 • AI Verdict: Healthy." stroke="#FFFFFF" stroke-width="1"></circle>
-            <!-- Munich Board (Stable) -->
-            <circle cx="70" cy="30" r="4" fill="var(--color-accent-sage)" class="chart-node" data-info="Munich Circuitry (DE) • Debt Ratio: 0.4x • Credit Rating: 94 • AI Verdict: Clean." stroke="#FFFFFF" stroke-width="1"></circle>
-            <!-- AZ Foundry (Stable) -->
-            <circle cx="150" cy="50" r="4" fill="var(--color-accent-sage)" class="chart-node" data-info="Arizona Foundry SKU (US) • Debt Ratio: 1.4x • Credit Rating: 78 • AI Verdict: Optimal." stroke="#FFFFFF" stroke-width="1"></circle>
-          </svg>
-          <div class="chart-legend" style="justify-content: flex-end;">
-            <div class="legend-item"><span class="legend-color sage"></span> Stable Partner</div>
-            <div class="legend-item"><span class="legend-color terracotta"></span> Critical Risk Alert</div>
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-  `;
-
-  // Hook up hover tooltip overlays
-  setupChartTooltipListeners();
+  renderIntelSynthesis();
+  scrollToSection("projections-section", false);
 }
 
 function setupChartTooltipListeners() {
@@ -1098,483 +945,8 @@ function setupChartTooltipListeners() {
 }
 
 function renderExecutiveBrief() {
-  // 1. Dynamic Greeting based on Local Time
-  const hour = new Date().getHours();
-  let greetingText = "Good Evening"; 
-  if (hour < 12) greetingText = "Good Morning";
-  else if (hour < 17) greetingText = "Good Afternoon";
-
-  // 2. Fetch Active Dataset Metadata or fallback to default
-  const defaultDataset = {
-    name: "global_procurement_Q2.csv",
-    rows: 18240,
-    columns: 14,
-    domain: "Logistics & Supply Chain",
-    quality: "99.8%",
-    metrics: ["Revenue", "Transit Latency", "Supplier Credit Ratio", "Capital Allocation"],
-    missingValues: 14,
-    confidence: "93%"
-  };
-
-  const d = appState.activeDataset || defaultDataset;
-
-  // Build Dynamic Summary Card HTML
-  let metricsHTML = "";
-  if (d.metrics && d.metrics.length > 0) {
-    d.metrics.forEach(m => {
-      metricsHTML += `<span class="summary-metric-pill">${m}</span>`;
-    });
-  } else {
-    metricsHTML = `<span class="summary-metric-empty">None identified</span>`;
-  }
-
-  const summaryCardHTML = `
-    <div class="dataset-summary-card">
-      <div class="summary-card-header">
-        <span class="summary-card-title">${d.name}</span>
-        <span class="summary-card-meta">ACTIVE DATASET INTAKE AUDIT</span>
-      </div>
-      <div class="summary-card-grid">
-        <div class="summary-grid-item">
-          <span class="summary-item-label">Rows</span>
-          <span class="summary-item-value">${d.rows.toLocaleString()}</span>
-        </div>
-        <div class="summary-grid-item">
-          <span class="summary-item-label">Columns</span>
-          <span class="summary-item-value">${d.columns}</span>
-        </div>
-        <div class="summary-grid-item">
-          <span class="summary-item-label">Detected Domain</span>
-          <span class="summary-item-value" style="color: var(--color-accent-sage);">${d.domain}</span>
-        </div>
-        <div class="summary-grid-item">
-          <span class="summary-item-label">Data Quality</span>
-          <span class="summary-item-value" style="color: var(--color-accent-sage);">${d.quality}</span>
-        </div>
-        <div class="summary-grid-item" style="grid-column: span 2;">
-          <span class="summary-item-label">Metrics Identified</span>
-          <div class="summary-metrics-list">${metricsHTML}</div>
-        </div>
-        <div class="summary-grid-item">
-          <span class="summary-item-label">Missing Values</span>
-          <span class="summary-item-value" style="${d.missingValues > 0 ? 'color: var(--color-accent-terracotta);' : ''}">${d.missingValues}</span>
-        </div>
-        <div class="summary-grid-item">
-          <span class="summary-item-label">Confidence Index</span>
-          <span class="summary-item-value" style="color: var(--color-accent-olive);">${d.confidence}</span>
-        </div>
-      </div>
-    </div>
-  `;
-
-  // 3. Define Strategic Brief Templates for each Domain
-  let healthScore = 84;
-  let healthExplanation = "Data streams indicate stable parameters across core transaction models.";
-  let confidenceExplanation = "Strong data volume and minor missing values yield high modeling certainty.";
-  let readinessValue = "Optimal";
-  let readinessExplanation = "Clean schema records support predictive forecasting models.";
-  let summaryText = "";
-  
-  let cards = {
-    findings: [],
-    opportunities: [],
-    risks: [],
-    recommendations: []
-  };
-
-  if (d.domain === "Logistics & Supply Chain") {
-    healthScore = 82;
-    healthExplanation = "Vietnam transit exposures slightly depress overall operational resilience.";
-    confidenceExplanation = "Telemetry verified by Port Authority logs and MarineTraffic indices.";
-    readinessValue = "Optimal";
-    readinessExplanation = "Clean coordinates and time matrices support high-node corridor simulations.";
-    summaryText = "Sourcing metrics reveal stable supply throughput. Hanoi assembly line delays create minor inventory backlogs. Re-routing component assemblies to Guadalajara rail lines offers immediate protection against pending tariff revisions.";
-    
-    cards.findings = [
-      {
-        title: "Transit Queue Density Surge",
-        desc: "Singapore and Hanoi port queue backlogs have escalated turnaround timelines to 32 days.",
-        impact: "COMPRESSED DELIVERY BUFFER LIMITS",
-        conf: "94%"
-      },
-      {
-        title: "Supplier Credit Constraints",
-        desc: "Precision tooling suppliers in Hanoi show solvency dips, risking raw material lockouts.",
-        impact: "UPSTREAM TIMELINE COMPROMISE",
-        conf: "87%"
-      }
-    ];
-
-    cards.opportunities = [
-      {
-        title: "Guadalajara Nearshore Re-routing",
-        desc: "Transition 35% of components assemblies to Mexican rail lines, reducing ocean delay risks.",
-        impact: "-8% LOGISTICS DURATION IMPROVEMENT",
-        conf: "93%"
-      },
-      {
-        title: "Transit Arbitration via Bangkok",
-        desc: "Bypass maritime bottleneck corridors by forwarding air cargo through Bangkok hubs.",
-        impact: "-24 DAYS TOTAL TRANSIT TIME",
-        conf: "89%"
-      }
-    ];
-
-    cards.risks = [
-      {
-        title: "Vietnamese Sourcing Bottleneck",
-        desc: "Singapore port queues and high Hanoi debt leverage create critical supply disruptions.",
-        impact: "POTENTIAL ASSEMBLY DELIVERY BREAK",
-        conf: "81%"
-      }
-    ];
-
-    cards.recommendations = [
-      {
-        title: "Supplier Working-Capital Cushion",
-        desc: "Approve short-term liquidity pre-payments to Hanoi component fabricators to preserve queues.",
-        impact: "QUEUE PRIORITY SECURITY",
-        conf: "91%"
-      },
-      {
-        title: "Establish Laredo Port Pathways",
-        desc: "Secure customs clearance certificates at Laredo hubs to support nearshoring buffers.",
-        impact: "CORRIDOR EXPOSURE HEDGE",
-        conf: "95%"
-      }
-    ];
-
-  } else if (d.domain === "Financial Operations") {
-    healthScore = 88;
-    healthExplanation = "Strong enterprise ARR renewal margins balance logistics inflation costs.";
-    confidenceExplanation = "Financial ledger transactions reconciled directly against Stripe data.";
-    readinessValue = "Optimal";
-    readinessExplanation = "Reconciled ledger history allows highly calibrated budget models.";
-    summaryText = "Ledger audits reveal robust Q2 ARR renewals. Sourcing price variance remains isolated within global container spot rates. Consolidating assembly suppliers minimizes overhead margins.";
-    
-    cards.findings = [
-      {
-        title: "Enterprise SaaS Revenue Growth",
-        desc: "High-node corporate renew rates surged by 18% during Q2.",
-        impact: "+$12.4M CORE RECURRING CASH RESERVES",
-        conf: "96%"
-      },
-      {
-        title: "Logistics Surcharge Squeeze",
-        desc: "Expedited container spot rates surged by 2.4x along global shipping routes.",
-        impact: "+$3.2M LOGISTICS OPEX VARIANCE",
-        conf: "90%"
-      }
-    ];
-
-    cards.opportunities = [
-      {
-        title: "Supplier Sourcing Consolidation",
-        desc: "Consolidate assembly orders under a single vendor to reduce secondary markups.",
-        impact: "-12% TOOLING PREMIUM OVERHEAD",
-        conf: "88%"
-      },
-      {
-        title: "Container Quota Pre-allocations",
-        desc: "Contract fixed cargo space quotas in Q3 to avoid spot market pricing exposure.",
-        impact: "-24% SPOT FREIGHT VOLATILITY",
-        conf: "92%"
-      }
-    ];
-
-    cards.risks = [
-      {
-        title: "Secondary Vendor Markup Friction",
-        desc: "Solvency strains at Hanoi precision tool hubs drive tooling overhead costs up by 18%.",
-        impact: "UNIT COST MARGIN EROSION",
-        conf: "85%"
-      }
-    ];
-
-    cards.recommendations = [
-      {
-        title: "Freight Contract Ceiling Cap",
-        desc: "Negotiate fixed freight cost ceilings with main carriers to prevent spot surcharge exposure.",
-        impact: "COST VARIANCE LIMIT RESOLUTION",
-        conf: "93%"
-      },
-      {
-        title: "Procurement Capital Reallocation",
-        desc: "Reallocate $40M Capex reserves from ocean freight budgets to nearshore corridor supply hubs.",
-        impact: "CAPEX CARRYING COST OPTIMIZATION",
-        conf: "94%"
-      }
-    ];
-
-  } else if (d.domain === "Trade & Compliance") {
-    healthScore = 79;
-    healthExplanation = "New European custom compliance mandates create near-term transaction friction.";
-    confidenceExplanation = "Compliance statuses cross-referenced with European Customs Bulletin updates.";
-    readinessValue = "Sufficient";
-    readinessExplanation = "Minor null regulatory codes present, but compliance pathways remain clear.";
-    summaryText = "Revised compliance codes at Antwerp extend average customs clearance times. Stuttgart safety buffer blocks insulate German assembly pathways. Transitioning components to carbon-neutral sites mitigates pending carbon tax surcharges.";
-    
-    cards.findings = [
-      {
-        title: "Antwerp Custom Latency",
-        desc: "Revised compliance code declarations extended port clearance times by 3.2 days.",
-        impact: "DOWNSTREAM PRODUCTION INVENTORY STRAIN",
-        conf: "92%"
-      },
-      {
-        title: "Stuttgart Safety Buffer Integrity",
-        desc: "Stuttgart central logistics hub holds a robust 12-day inventory buffer.",
-        impact: "LOCAL DELAY INSULATION",
-        conf: "95%"
-      }
-    ];
-
-    cards.opportunities = [
-      {
-        title: "Carbon-Neutral CBAM Sourcing",
-        desc: "Transition hardware units to audited carbon-neutral assembly sites to bypass CBAM tariffs.",
-        impact: "ZERO CARBON TARIFF PENALTY",
-        conf: "90%"
-      },
-      {
-        title: "EU Customs Pre-clearance Audit",
-        desc: "Establish pre-compliance registry statuses at major EU entry ports.",
-        impact: "-3.2 DAYS CUSTOMS LATENCY",
-        conf: "87%"
-      }
-    ];
-
-    cards.risks = [
-      {
-        title: "Carbon Tariff Surcharge Penalties",
-        desc: "Non-compliant raw material imports face +15% customs fee markups at Antwerp.",
-        impact: "MARGIN EROSION RISK",
-        conf: "88%"
-      }
-    ];
-
-    cards.recommendations = [
-      {
-        title: "CBAM Compliance Registry Audit",
-        desc: "Mandate carbon-neutral audits for all tier-1 parts suppliers to eliminate customs friction.",
-        impact: "REGULATORY COMPLIANCE EXPOSURE CLEARANCE",
-        conf: "91%"
-      },
-      {
-        title: "Stuttgart Buffer Quota Scale-Up",
-        desc: "Increase Stuttgart safety buffers by +15% to absorb ongoing Antwerp declaration latency.",
-        impact: "SOURCING TIMELINE STABILIZATION",
-        conf: "93%"
-      }
-    ];
-
-  } else {
-    // General Enterprise Operations Sourcing Data
-    healthScore = 84;
-    healthExplanation = "General operational parameters show robust performance markers.";
-    confidenceExplanation = "Statistical checks reveal clean field patterns and standard deviations.";
-    readinessValue = "Optimal";
-    readinessExplanation = "Sufficient row volumes support key forecasting assumptions.";
-    summaryText = "Enterprise operations show robust performance indicators. Sourcing timelines are stable, and minor cost anomalies remain localized in secondary vendor transactions. Immediate optimization focuses on container pre-allocation and safety buffer scales.";
-
-    cards.findings = [
-      {
-        title: "Asset Capacity Performance",
-        desc: "Overall equipment output metrics rose by 8% over the past quarter.",
-        impact: "+$1.8M REVENUE VALUE GENERATION",
-        conf: "93%"
-      },
-      {
-        title: "Freight Surcharge Overhead",
-        desc: "Logistics shipping fees reflect a 12% rise due to spot market capacity limits.",
-        impact: "OPEX EXPENDITURE COMPRESSION",
-        conf: "89%"
-      }
-    ];
-
-    cards.opportunities = [
-      {
-        title: "Container Space Pre-allocation",
-        desc: "Secure shipping vessel volumes at baseline rates to reduce spot surcharge volatility.",
-        impact: "LOGISTICS COST VOLATILITY HEDGE",
-        conf: "91%"
-      },
-      {
-        title: "Safety Buffer Quota Calibration",
-        desc: "Recalibrate safety stocks at regional hubs to match local throughput variations.",
-        impact: "-6 DAYS TRANSIT TIME EXPOSURE",
-        conf: "88%"
-      }
-    ];
-
-    cards.risks = [
-      {
-        title: "Vendor Transaction Anomalies",
-        desc: "Minor pricing anomalies isolated in secondary procurement transaction lists.",
-        impact: "UNIT COST COMPLIANCE FRICTION",
-        conf: "84%"
-      }
-    ];
-
-    cards.recommendations = [
-      {
-        title: "Freight Contract Ceiling Negotiations",
-        desc: "Lock cargo prices with shipping lines to insulate operations from spot rate hikes.",
-        impact: "OPEX VARIANCE ELIMINATION",
-        conf: "92%"
-      },
-      {
-        title: "Local Safety Buffer Reallocation",
-        desc: "Reallocate $10M buffer capital to high-throughput regional distribution nodes.",
-        impact: "INVENTORY CARRYING COST OPTIMIZATION",
-        conf: "90%"
-      }
-    ];
-  }
-
-  // Helper to compile card list HTML with AI Identity Badges
-  const compileCardsHTML = (cardList, sectionType) => {
-    let html = "";
-    cardList.forEach(c => {
-      let badgeLabel = "• AI Insight";
-      let badgeClass = "olive-badge";
-      let isRisk = false;
-      
-      if (sectionType === "findings") {
-        badgeLabel = "• AI Insight";
-        badgeClass = "olive-badge";
-      } else if (sectionType === "opportunities") {
-        badgeLabel = "• AI Generated";
-        badgeClass = "";
-      } else if (sectionType === "risks") {
-        badgeLabel = "• AI Insight";
-        badgeClass = "terracotta-badge";
-        isRisk = true;
-      } else if (sectionType === "recommendations") {
-        badgeLabel = "• AI Recommendation";
-        badgeClass = "";
-      }
-
-      html += `
-        <div class="section-card ${isRisk ? 'risk-border' : ''}">
-          <div class="card-header">
-            <span class="ai-indicator-badge ${badgeClass}">${badgeLabel}</span>
-            <span class="card-confidence">${c.conf} Conf</span>
-          </div>
-          <span class="card-title" style="margin-top: 4px; display: block;">${c.title}</span>
-          <p class="card-desc">${c.desc}</p>
-          <div class="card-impact ${isRisk ? 'risk-accent' : ''}">${c.impact}</div>
-        </div>
-      `;
-    });
-    return html;
-  };
-
-  const findingsHTML = compileCardsHTML(cards.findings, "findings");
-  const opportunitiesHTML = compileCardsHTML(cards.opportunities, "opportunities");
-  const risksHTML = compileCardsHTML(cards.risks, "risks");
-  const recommendationsHTML = compileCardsHTML(cards.recommendations, "recommendations");
-
-  // 4. Render Layout
-  activeSheetEl.innerHTML = `
-    <div class="brief-layout">
-      <!-- 1. Header Greeting -->
-      <header class="brief-header">
-        <span class="brief-tag">BOARDROOM INTELLIGENCE SYSTEM</span>
-        <h1 class="brief-welcome-msg">${greetingText}. Your business analysis is ready.</h1>
-      </header>
-
-      <!-- 2. Parsed Dataset Metadata Summary -->
-      ${summaryCardHTML}
-
-      <!-- 3. AI Executive Summary (Scannable Narrative) -->
-      <section class="brief-summary-section">
-        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
-          <h3 style="margin-bottom: 0;">AI Executive Summary</h3>
-          <span class="ai-indicator-badge">• AI Generated</span>
-        </div>
-        <p class="brief-summary-text"><strong>Strategic Synthesis:</strong> ${summaryText}</p>
-      </section>
-
-      <!-- 4. Dynamic KPI Score Card Row -->
-      <section class="brief-meta-row">
-        <!-- Business Health Score -->
-        <div class="meta-card">
-          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
-            <span class="meta-card-label">Business Health Score</span>
-            <span class="ai-indicator-badge olive-badge" style="font-size: 7px; padding: 1px 4px;">• AI Insight</span>
-          </div>
-          <span class="meta-card-value" style="color: var(--color-accent-sage);">${healthScore} <span style="font-size: 11px; font-weight: normal; color: var(--color-text-muted);">/ 100</span></span>
-          <span class="meta-card-explanation">${healthExplanation}</span>
-        </div>
-        
-        <!-- AI Confidence Index -->
-        <div class="meta-card">
-          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
-            <span class="meta-card-label">AI Confidence Index</span>
-            <span class="ai-indicator-badge olive-badge" style="font-size: 7px; padding: 1px 4px;">• AI Insight</span>
-          </div>
-          <span class="meta-card-value" style="color: var(--color-accent-olive);">${d.confidence}</span>
-          <span class="meta-card-explanation">${confidenceExplanation}</span>
-        </div>
-
-        <!-- Decision Readiness -->
-        <div class="meta-card">
-          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
-            <span class="meta-card-label">Decision Readiness</span>
-            <span class="ai-indicator-badge olive-badge" style="font-size: 7px; padding: 1px 4px;">• AI Insight</span>
-          </div>
-          <span class="meta-card-value">${readinessValue}</span>
-          <span class="meta-card-explanation">${readinessExplanation}</span>
-        </div>
-      </section>
-
-      <!-- 5. Four Clean Section Grid -->
-      <section class="brief-four-sections">
-        <!-- Section 1: Key Findings -->
-        <div class="brief-card-stack">
-          <div class="nav-section-title" style="padding-left: 0; margin-bottom: 8px;">1. Key Findings</div>
-          ${findingsHTML}
-        </div>
-
-        <!-- Section 2: Top Opportunities -->
-        <div class="brief-card-stack">
-          <div class="nav-section-title" style="padding-left: 0; margin-bottom: 8px;">2. Top Opportunities</div>
-          ${opportunitiesHTML}
-        </div>
-
-        <!-- Section 3: Critical Risks -->
-        <div class="brief-card-stack">
-          <div class="nav-section-title" style="padding-left: 0; margin-bottom: 8px; color: var(--color-accent-terracotta);">3. Critical Risks</div>
-          ${risksHTML}
-        </div>
-
-        <!-- Section 4: Executive Recommendations -->
-        <div class="brief-card-stack">
-          <div class="nav-section-title" style="padding-left: 0; margin-bottom: 8px;">4. Executive Recommendations</div>
-          ${recommendationsHTML}
-        </div>
-      </section>
-
-      <!-- Action Signoff footer -->
-      <footer class="sheet-actions-footer" style="border-top: 1px solid var(--color-border-hairline); padding-top: var(--spacing-md); margin-top: var(--spacing-lg);">
-        <div class="brief-signoff" style="margin-top: 0; padding-top: 0; border: none; margin-bottom: var(--spacing-sm);">
-          Approved for circulation. SynapseIQ Strategic Engine.
-        </div>
-        <button class="btn-editorial btn-primary" id="action-brief-enter" style="padding: 12px 24px; font-size: 11px;">
-          Acknowledge & Open Synthesis Desk →
-        </button>
-      </footer>
-    </div>
-  `;
-
-  // Bind Enter Workspace Button
-  const enterBtn = document.getElementById("action-brief-enter");
-  if (enterBtn) {
-    enterBtn.addEventListener("click", () => {
-      navigateTo("synthesis");
-    });
-  }
+  renderIntelSynthesis();
+  scrollToSection("executive-brief-section", false);
 }
 
 // 5.5. Render: Intel Synthesis (The Executive Inbox)
@@ -1715,6 +1087,10 @@ function generateSegmentChartSVG(segments) {
 
 // 5.5. Render: Intel Synthesis (The Executive Inbox)
 function renderIntelSynthesis() {
+  if (document.getElementById("executive-brief-section")) {
+    return;
+  }
+
   let listHTML = "";
   Object.values(briefingsData).forEach(brief => {
     let badgeType = brief.id === "supply-chain" ? "type-terracotta" : "type-sage";
@@ -1741,7 +1117,6 @@ function renderIntelSynthesis() {
     `;
   });
 
-  // 1. Fetch Active Dataset or fallback
   const defaultDataset = {
     name: "global_procurement_Q2.csv",
     rows: 18240,
@@ -1755,7 +1130,6 @@ function renderIntelSynthesis() {
 
   const d = appState.activeDataset || defaultDataset;
 
-  // 2. Calibrate Dynamic Charts depending on domain
   let chartSpecs = [];
   if (d.domain === "Logistics & Supply Chain") {
     chartSpecs = [
@@ -1927,7 +1301,6 @@ function renderIntelSynthesis() {
       }
     ];
   } else {
-    // General Sourcing / Enterprise Operations
     chartSpecs = [
       {
         title: "Asset Production Throughput",
@@ -1965,7 +1338,6 @@ function renderIntelSynthesis() {
     ];
   }
 
-  // Compile Dynamic Signals Grid HTML
   let signalsHTML = "";
   chartSpecs.forEach(c => {
     let chartSVG = "";
@@ -1988,11 +1360,10 @@ function renderIntelSynthesis() {
           </div>
           <div class="signal-card-badges">
             <span class="trend-badge ${c.negative ? 'trend-negative' : 'trend-positive'}">${c.trend}</span>
-            <span class="impact-badge ${c.impact === 'High' ? 'impact-high' : ''}">Impact: ${c.impact}</span>
           </div>
         </div>
         
-        <div class="signal-chart-wrapper">
+        <div class="signal-card-body">
           ${chartSVG}
         </div>
         
@@ -2003,182 +1374,360 @@ function renderIntelSynthesis() {
     `;
   });
 
+  const projectionsHTML = `
+    <div id="chart-tooltip" class="chart-tooltip-overlay"></div>
+    <div class="magazine-grid">
+      <div class="tech-chart-container magazine-span-full">
+        <header class="tech-chart-header">
+          <span class="tech-chart-title">Visual 1.1: Sourcing Asset Distribution & Transit Exposure</span>
+          <h2 class="tech-chart-q">How is our inventory capital distributed across global transit lanes?</h2>
+        </header>
+        
+        <svg class="svg-canvas" height="150" viewBox="0 0 700 150">
+          <line x1="100" y1="120" x2="650" y2="120" class="axis-line"></line>
+          <line x1="200" y1="10" x2="200" y2="120" class="grid-line" stroke-dasharray="2 1"></line>
+          <line x1="350" y1="10" x2="350" y2="120" class="grid-line" stroke-dasharray="2 1"></line>
+          <line x1="500" y1="10" x2="500" y2="120" class="grid-line" stroke-dasharray="2 1"></line>
+          <line x1="650" y1="10" x2="650" y2="120" class="grid-line" stroke-dasharray="2 1"></line>
+          
+          <text x="200" y="135" class="axis-label x-align">LOW ($10M / 5d)</text>
+          <text x="350" y="135" class="axis-label x-align">MODERATE ($25M / 15d)</text>
+          <text x="500" y="135" class="axis-label x-align">HIGH ($40M / 25d)</text>
+          <text x="650" y="135" class="axis-label x-align">PEAK ($55M / 35d)</text>
+
+          <text x="80" y="28" class="node-group-label">Singapore</text>
+          <line x1="100" y1="25" x2="650" y2="25" class="target-track" stroke-dasharray="4 2"></line>
+          <circle cx="500" cy="25" r="4.5" fill="var(--color-accent-terracotta)" class="chart-node" data-info="Singapore Delay Node: 30-day queue backlog at strait congestion sectors. High exposure." stroke="#FFFFFF" stroke-width="1"></circle>
+          <circle cx="590" cy="25" r="4.5" fill="var(--color-accent-sage)" class="chart-node" data-info="Singapore Sourcing Asset: $48M capital active. Peak financial concentration." stroke="#FFFFFF" stroke-width="1"></circle>
+
+          <text x="80" y="58" class="node-group-label">Hanoi Assembly</text>
+          <line x1="100" y1="55" x2="650" y2="55" class="target-track" stroke-dasharray="4 2"></line>
+          <circle cx="420" cy="55" r="4.5" fill="var(--color-accent-terracotta)" class="chart-node" data-info="Hanoi Delay Node: 22-day shipping backlog. Tier-2 liquidity strain is high." stroke="#FFFFFF" stroke-width="1"></circle>
+          <circle cx="280" cy="55" r="4.5" fill="var(--color-accent-sage)" class="chart-node" data-info="Hanoi Sourcing Asset: $18M parts inventory buffer." stroke="#FFFFFF" stroke-width="1"></circle>
+
+          <text x="80" y="88" class="node-group-label">Guadalajara</text>
+          <line x1="100" y1="85" x2="650" y2="85" class="target-track" stroke-dasharray="4 2"></line>
+          <circle cx="160" cy="85" r="4.5" fill="var(--color-accent-sage)" class="chart-node" data-info="Guadalajara Delay Node: 6-day transit corridor delay. Highly insulated." stroke="#FFFFFF" stroke-width="1"></circle>
+          <circle cx="480" cy="85" r="4.5" fill="var(--color-accent-sage)" class="chart-node" data-info="Guadalajara Sourcing Asset: $38M capital active. Regional expansion focus." stroke="#FFFFFF" stroke-width="1"></circle>
+
+          <text x="80" y="118" class="node-group-label">Stuttgart Hub</text>
+          <line x1="100" y1="115" x2="650" y2="115" class="target-track" stroke-dasharray="4 2"></line>
+          <circle cx="130" cy="115" r="4.5" fill="var(--color-accent-sage)" class="chart-node" data-info="Stuttgart Delay Node: 4-day transit latency. Fully optimized." stroke="#FFFFFF" stroke-width="1"></circle>
+          <circle cx="220" cy="115" r="4.5" fill="var(--color-accent-sage)" class="chart-node" data-info="Stuttgart Sourcing Asset: $12M capital active." stroke="#FFFFFF" stroke-width="1"></circle>
+        </svg>
+        <div class="chart-legend" style="justify-content: flex-end;">
+          <div class="legend-item"><span class="legend-color sage"></span> Capital Invested ($M)</div>
+          <div class="legend-item"><span class="legend-color terracotta"></span> Node Delay (Days)</div>
+        </div>
+      </div>
+
+      <div class="tech-chart-container">
+        <header class="tech-chart-header">
+          <span class="tech-chart-title">Visual 1.2: Tariff Sourcing Curve (Unit Cost Projections)</span>
+          <h2 class="tech-chart-q">What is the projected financial impact of tariff changes on unit cost?</h2>
+        </header>
+        
+        <svg class="svg-canvas" height="180" viewBox="0 0 350 180">
+          <line x1="40" y1="140" x2="330" y2="140" class="axis-line"></line>
+          <line x1="40" y1="20" x2="40" y2="140" class="axis-line"></line>
+          <line x1="40" y1="100" x2="330" y2="100" class="grid-line"></line>
+          <line x1="40" y1="60" x2="330" y2="60" class="grid-line"></line>
+          <line x1="40" y1="20" x2="330" y2="20" class="grid-line"></line>
+          <line x1="112.5" y1="20" x2="112.5" y2="140" class="grid-line" stroke-dasharray="2 2"></line>
+          <line x1="185" y1="20" x2="185" y2="140" class="grid-line" stroke-dasharray="2 2"></line>
+          <line x1="257.5" y1="20" x2="257.5" y2="140" class="grid-line" stroke-dasharray="2 2"></line>
+          <line x1="330" y1="20" x2="330" y2="140" class="grid-line" stroke-dasharray="2 2"></line>
+
+          <text x="32" y="23" class="axis-label y-align">$200</text>
+          <text x="32" y="63" class="axis-label y-align">$150</text>
+          <text x="32" y="103" class="axis-label y-align">$100</text>
+          <text x="32" y="143" class="axis-label y-align">BASE</text>
+
+          <text x="40" y="155" class="axis-label x-align">Q2 '26</text>
+          <text x="112.5" y="155" class="axis-label x-align">Q3 '26</text>
+          <text x="185" y="155" class="axis-label x-align">Q4 '26</text>
+          <text x="257.5" y="155" class="axis-label x-align">Q1 '27</text>
+          <text x="330" y="155" class="axis-label x-align">Q2 '27</text>
+
+          <path d="M 40 100 Q 112.5 80, 185 45 T 330 30 L 330 140 L 40 140 Z" class="curve-area series-terracotta"></path>
+          <path d="M 40 100 Q 112.5 80, 185 45 T 330 30" class="curve-line series-terracotta" stroke-dasharray="4 2"></path>
+          <path d="M 40 100 Q 112.5 110, 185 95 T 330 85 L 330 140 L 40 140 Z" class="curve-area series-sage"></path>
+          <path d="M 40 100 Q 112.5 110, 185 95 T 330 85" class="curve-line series-sage"></path>
+
+          <circle cx="330" cy="30" r="4" fill="var(--color-accent-terracotta)" class="chart-node" data-info="Baseline Sourcing Projection: $192/unit if Singapore nodes maintain concentration." stroke="#FFFFFF" stroke-width="1"></circle>
+          <circle cx="330" cy="85" r="4" fill="var(--color-accent-sage)" class="chart-node" data-info="Optimized Sourcing Projection: $146/unit under Mexican re-routing corridor pivots." stroke="#FFFFFF" stroke-width="1"></circle>
+        </svg>
+        <div class="chart-legend" style="justify-content: flex-end;">
+          <div class="legend-item"><span class="legend-color sage"></span> Optimized Localized Path</div>
+          <div class="legend-item"><span class="legend-color terracotta"></span> Conservative Global Path</div>
+        </div>
+      </div>
+
+      <div class="tech-chart-container">
+        <header class="tech-chart-header">
+          <span class="tech-chart-title">Visual 1.3: Supplier Resilience Index Matrix</span>
+          <h2 class="tech-chart-q">Which tier-1 and tier-2 suppliers face liquidity constraints?</h2>
+        </header>
+        
+        <svg class="svg-canvas" height="180" viewBox="0 0 350 180">
+          <line x1="40" y1="140" x2="330" y2="140" class="axis-line"></line>
+          <line x1="40" y1="20" x2="40" y2="140" class="axis-line"></line>
+          <line x1="40" y1="80" x2="330" y2="80" class="grid-line" stroke-dasharray="2 1"></line>
+          <line x1="185" y1="20" x2="185" y2="140" class="grid-line" stroke-dasharray="2 1"></line>
+
+          <text x="32" y="23" class="axis-label y-align">100 Rating</text>
+          <text x="32" y="83" class="axis-label y-align">50 Rating</text>
+          <text x="32" y="143" class="axis-label y-align">0 Rating</text>
+
+          <text x="40" y="155" class="axis-label x-align">0.0 (Clean)</text>
+          <text x="185" y="155" class="axis-label x-align">2.0 (Limit)</text>
+          <text x="330" y="155" class="axis-label x-align">4.0 (Overleveraged)</text>
+
+          <circle cx="280" cy="110" r="4.5" fill="var(--color-accent-terracotta)" class="chart-node" data-info="Hanoi Precision Parts (Vietnam) • Debt Ratio: 2.8x • Credit Rating: 32 • AI Verdict: Severe Liquidity Risk." stroke="#FFFFFF" stroke-width="1"></circle>
+          <circle cx="220" cy="90" r="4.5" fill="var(--color-accent-terracotta)" class="chart-node" data-info="Hue Semiconductors • Debt Ratio: 2.1x • Credit Rating: 48 • AI Verdict: Solvency Constraint Warning." stroke="#FFFFFF" stroke-width="1"></circle>
+          <circle cx="120" cy="40" r="4" fill="var(--color-accent-sage)" class="chart-node" data-info="MexAllied Fabricators (MX) • Debt Ratio: 1.1x • Credit Rating: 88 • AI Verdict: Healthy." stroke="#FFFFFF" stroke-width="1"></circle>
+          <circle cx="70" cy="30" r="4" fill="var(--color-accent-sage)" class="chart-node" data-info="Munich Circuitry (DE) • Debt Ratio: 0.4x • Credit Rating: 94 • AI Verdict: Clean." stroke="#FFFFFF" stroke-width="1"></circle>
+          <circle cx="150" cy="50" r="4" fill="var(--color-accent-sage)" class="chart-node" data-info="Arizona Foundry SKU (US) • Debt Ratio: 1.4x • Credit Rating: 78 • AI Verdict: Optimal." stroke="#FFFFFF" stroke-width="1"></circle>
+        </svg>
+        <div class="chart-legend" style="justify-content: flex-end;">
+          <div class="legend-item"><span class="legend-color sage"></span> Stable Partner</div>
+          <div class="legend-item"><span class="legend-color terracotta"></span> Critical Risk Alert</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // ── KPI sparklines ──────────────────────────────────────────────────
+  const kpiSparkline = (data, color = 'var(--accent)') => {
+    const w = 100, h = 32;
+    const max = Math.max(...data), min = Math.min(...data), range = max - min || 1;
+    const pts = data.map((v, i) => `${(i / (data.length - 1)) * w},${h - ((v - min) / range) * h}`).join(' ');
+    return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  };
+
   activeSheetEl.innerHTML = `
     <div class="workspace-dashboard">
-      
-      <!-- Dashboard Editorial Header -->
-      <header class="synthesis-header">
-        <div class="editorial-date">Synthesis Matrix — June 30, 2026</div>
-        <h1 class="sheet-title">Executive Synthesis Console</h1>
-        <p class="sheet-summary" style="font-style: normal; font-size: 15px; color: var(--color-text-secondary);">
-          Real-time organizational synthesis. AI analysis maps operational anomalies against strategic objectives to guide high-stakes decision validation.
-        </p>
-      </header>
 
-      <!-- Signature Interactive Decision Graph -->
-      <section class="dashboard-section" style="margin-bottom: var(--spacing-lg);">
-        <span class="section-question-label">Decision Intelligence</span>
+      <!-- HERO SECTION -->
+      <section class="dashboard-section hero-section" id="executive-brief-section">
+        <div class="hero-eyebrow">
+          <span class="pulse-dot"></span>
+          AI Analysis Complete
+        </div>
+        <h1 class="hero-headline">Here's your business,<br><em>intelligently understood.</em></h1>
+        <p class="hero-sub">Real-time organizational synthesis. AI maps operational anomalies against strategic objectives — giving you clarity when it matters most.</p>
+        <div class="hero-meta-row">
+          <div class="hero-dataset-chip">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.5"><path d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" stroke-linecap="round"/></svg>
+            <div>
+              <span class="hero-dataset-label">Active Dataset</span>
+              <span class="hero-dataset-name">${d.name}</span>
+            </div>
+          </div>
+          <div class="hero-confidence">
+            <span class="hero-confidence-label">AI Confidence</span>
+            <div class="hero-confidence-bar">
+              <div class="hero-confidence-track"><div class="hero-confidence-fill" style="width:${d.confidence || '93%'}"></div></div>
+              <span class="hero-confidence-value">${d.confidence || '93%'}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Executive Brief Card -->
+        <div id="briefing-editorial-container" style="margin-top: 32px;">
+          ${buildExecutiveBriefingHTML(appState.copilotContextNodeId || 'health')}
+        </div>
+      </section>
+
+      <!-- KPI ROW -->
+      <section class="dashboard-section">
+        <div class="section-eyebrow"><span class="section-eyebrow-dot"></span><span class="section-label">Key Performance Indicators</span></div>
+        <div class="kpi-row">
+          <div class="kpi-card">
+            <span class="kpi-label">Revenue Growth</span>
+            <div class="kpi-value up">+18%</div>
+            <div class="kpi-trend up">↑ vs Q1 forecast</div>
+            <div class="kpi-sparkline">${kpiSparkline([8,10,11,14,15,16,18], 'var(--accent)')}</div>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">CAC Efficiency</span>
+            <div class="kpi-value up">↓ 8%</div>
+            <div class="kpi-trend up">Cost per acquisition</div>
+            <div class="kpi-sparkline">${kpiSparkline([18,16,15,13,11,10,8], 'var(--accent)')}</div>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Gross Margin</span>
+            <div class="kpi-value up">44.0%</div>
+            <div class="kpi-trend up">↑ 12% YoY</div>
+            <div class="kpi-sparkline">${kpiSparkline([32,35,36,38,40,42,44], 'var(--accent)')}</div>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Transit Latency</span>
+            <div class="kpi-value down">32d</div>
+            <div class="kpi-trend down">↑ Peak delay</div>
+            <div class="kpi-sparkline">${kpiSparkline([12,15,18,22,26,30,32], 'var(--critical)')}</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DECISION GRAPH -->
+      <section class="dashboard-section" id="decision-graph-section">
+        <div class="section-eyebrow"><span class="section-eyebrow-dot"></span><span class="section-label">Decision Intelligence</span></div>
         <h2 class="section-headline">Business Decision Graph</h2>
-        <p style="font-size:12px;color:var(--color-text-secondary);margin-bottom:var(--spacing-md);">Hover any entity to inspect relationships. Click to explore in Decision Copilot.</p>
-
+        <p class="section-sub">Click any node to update the executive brief, highlight related signals, and surface contextual strategy questions.</p>
         <div class="dg-wrapper">
           <div class="dg-header">
-            <span class="dg-header-title">Entity Relationship Graph &mdash; AI Synthesized</span>
-            <span class="dg-header-badge">Live Analysis</span>
+            <span class="dg-header-title">Entity Relationship Graph — AI Synthesized</span>
+            <span class="dg-header-badge"><span class="pulse-dot"></span>Live</span>
           </div>
-          <!-- DecisionGraph mounts here -->
           <div id="dg-canvas"></div>
-          <!-- Detail panel: revealed on node click -->
           <div id="dg-detail-panel"></div>
         </div>
       </section>
 
-
-      <!-- Section 1: Business Signals -->
-      <section class="dashboard-section">
-        <span class="section-question-label">Business Signals</span>
-        <h2 class="section-headline">What trends require immediate leadership focus?</h2>
-        
+      <!-- BUSINESS SIGNALS -->
+      <section class="dashboard-section" id="signals-section">
+        <div class="section-eyebrow"><span class="section-eyebrow-dot"></span><span class="section-label">Business Signals</span></div>
+        <h2 class="section-headline">Supporting Evidence Matrix</h2>
+        <p class="section-sub">Real-time telemetry. Click a Decision Graph node to filter these signals.</p>
         <div class="signals-grid-redesign">
           ${signalsHTML}
         </div>
       </section>
 
-      <!-- Section 2: Business Timeline (Fulfilling Business Story Unfolding) -->
-      <section class="dashboard-section">
-        <span class="section-question-label">Business Timeline</span>
+      <!-- STRATEGY CANVAS (Visual Projections) -->
+      <section class="dashboard-section" id="projections-section">
+        <div class="section-eyebrow"><span class="section-eyebrow-dot"></span><span class="section-label">Strategy Canvas</span></div>
+        <h2 class="section-headline">Macro Projections Matrix</h2>
+        ${projectionsHTML}
+      </section>
+
+      <!-- BUSINESS TIMELINE -->
+      <section class="dashboard-section" id="timeline-section">
+        <div class="section-eyebrow"><span class="section-eyebrow-dot"></span><span class="section-label">Business Timeline</span></div>
         <h2 class="section-headline">Strategic Progression Pathway</h2>
-        
         <div class="business-timeline">
           <div class="timeline-milestone">
             <span class="timeline-time">Day 1 — Current State</span>
             <h3 class="timeline-title">Diagnostic Intake Complete</h3>
-            <p class="timeline-desc">Intake Well completes processing 18,240 records. 14 critical anomalies isolated. Upstream transit latencies flag Vietnam shipping ports at 32 days maximum queue latency.</p>
+            <p class="timeline-desc">Intake Well processes 18,240 records. 14 critical anomalies isolated. Vietnam shipping ports flag at 32 days maximum queue latency.</p>
           </div>
-          
           <div class="timeline-milestone milestone-alert">
-            <span class="timeline-time" style="color: var(--color-accent-terracotta);">Day 15 — Projected Stress Point</span>
-            <h3 class="timeline-title">Hanoi Supplier Tooling Solvency Warning</h3>
-            <p class="timeline-desc">Predictive modeling highlights insolvency constraints at Tier-2 precision assembly houses. Capital buffer or Mexican routing overrides recommended.</p>
+            <span class="timeline-time">Day 15 — Projected Stress Point</span>
+            <h3 class="timeline-title">Hanoi Supplier Solvency Warning</h3>
+            <p class="timeline-desc">Predictive modeling highlights insolvency constraints at Tier-2 assembly houses. Capital buffer or Mexican routing overrides recommended.</p>
           </div>
-          
           <div class="timeline-milestone">
             <span class="timeline-time">Day 30 — Target Pivot Point</span>
             <h3 class="timeline-title">Tactical Redirection Corridor Activation</h3>
-            <p class="timeline-desc">Guadalajara safety margin scaled up to 72% storage capacity. Re-allocation of Laredo rail logistics corridors replaces maritime queue lanes.</p>
+            <p class="timeline-desc">Guadalajara safety margin scaled to 72% capacity. Re-allocation of Laredo rail corridors replaces maritime queue lanes.</p>
           </div>
-          
           <div class="timeline-milestone">
             <span class="timeline-time">Day 60 — Auditing Target</span>
             <h3 class="timeline-title">Customs Regulatory Clearance Peak</h3>
-            <p class="timeline-desc">Customs delay overhead clearances reach optimal 100% completion margins, stabilizing regional logistics channels.</p>
+            <p class="timeline-desc">Customs clearances reach optimal 100% completion margins, stabilizing regional logistics channels.</p>
           </div>
-          
           <div class="timeline-milestone">
             <span class="timeline-time">Day 90 — Baseline Target</span>
             <h3 class="timeline-title">Margin Volatility Stabilization</h3>
-            <p class="timeline-desc">Fixed-capacity pricing limits and nearshore supply channels contract ocean spot rate freight overhead variations by 15%, defending baseline profit markers.</p>
+            <p class="timeline-desc">Fixed-capacity pricing and nearshore channels contract freight overhead variations by 15%, defending baseline profit markers.</p>
           </div>
         </div>
       </section>
 
-      <!-- Section 3: Strategic Actions -->
-      <section class="dashboard-section">
-        <span class="section-question-label">Strategic Actions</span>
-        <h2 class="section-headline">What decisions are pending executive resolution?</h2>
-        
-        <div class="strategic-action-list">
-          ${listHTML}
-        </div>
+      <!-- STRATEGIC ACTIONS -->
+      <section class="dashboard-section" id="actions-section">
+        <div class="section-eyebrow"><span class="section-eyebrow-dot"></span><span class="section-label">Strategic Actions</span></div>
+        <h2 class="section-headline">Decisions pending executive resolution</h2>
+        <div class="strategic-action-list">${listHTML}</div>
       </section>
 
-      <!-- Section 4: Future Outlook & Copilot -->
-      <section class="dashboard-section">
-        <span class="section-question-label">Future Outlook</span>
-        <h2 class="section-headline">What projections shape our upcoming quarters?</h2>
-        
+      <!-- FORECAST / MODELER PROMO -->
+      <section class="dashboard-section" id="outlook-section">
+        <div class="section-eyebrow"><span class="section-eyebrow-dot"></span><span class="section-label">Forecast</span></div>
+        <h2 class="section-headline">Procurement Pivot Simulation</h2>
         <div class="future-outlook-split">
-          <!-- Mini SVG Chart -->
-          <div class="chart-container" style="margin-top: 0; background-color: var(--color-bg-base); border: 1px solid var(--color-border-hairline);">
-            <div class="chart-header">
-              <span class="chart-title" style="font-size: 9px;">Core Sourcing Spend Outlook ($M)</span>
-            </div>
-            <svg class="svg-chart" style="height: 120px; width: 100%;">
-              <line x1="0" y1="15" x2="100%" y2="15" stroke="var(--color-border-hairline)" stroke-width="0.75"></line>
-              <line x1="0" y1="60" x2="100%" y2="60" stroke="var(--color-border-hairline)" stroke-width="0.75"></line>
-              <line x1="0" y1="105" x2="100%" y2="105" stroke="var(--color-border-strong)" stroke-width="1.25"></line>
-              
-              <path d="M 0 100 C 80 80, 160 90, 240 40 S 320 20, 400 30" fill="none" stroke="var(--color-accent-sage)" stroke-width="2" stroke-linecap="round"></path>
-              <path d="M 0 100 C 80 90, 160 110, 240 70 S 320 85, 400 80" fill="none" stroke="var(--color-accent-terracotta)" stroke-width="1.25" stroke-dasharray="2 2"></path>
-              
-              <circle cx="400" cy="30" r="3.5" fill="var(--color-accent-sage)"></circle>
+          <div class="chart-container">
+            <div class="chart-header"><span class="chart-title">Core Sourcing Spend Outlook ($M)</span></div>
+            <svg class="svg-chart" style="height:120px;width:100%;">
+              <line x1="0" y1="15" x2="100%" y2="15" stroke="var(--border)" stroke-width="0.75"></line>
+              <line x1="0" y1="60" x2="100%" y2="60" stroke="var(--border)" stroke-width="0.75"></line>
+              <line x1="0" y1="105" x2="100%" y2="105" stroke="var(--border-strong)" stroke-width="1"></line>
+              <path d="M 0 100 C 80 80, 160 90, 240 40 S 320 20, 400 30" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round"></path>
+              <path d="M 0 100 C 80 90, 160 110, 240 70 S 320 85, 400 80" fill="none" stroke="var(--critical)" stroke-width="1.25" stroke-dasharray="3 2"></path>
+              <circle cx="400" cy="30" r="3" fill="var(--accent)"></circle>
             </svg>
-            <div class="chart-legend" style="margin-top: 8px; justify-content: flex-end;">
-              <div class="legend-item"><span class="legend-color sage"></span> Scenario</div>
+            <div class="chart-legend">
+              <div class="legend-item"><span class="legend-color sage"></span> Optimized</div>
               <div class="legend-item"><span class="legend-color terracotta"></span> Baseline</div>
             </div>
           </div>
-
-          <!-- Modeler Promo Card -->
           <div class="outlook-modeler-promo">
-            <span class="section-question-label" style="color: var(--color-accent-sage); margin-bottom: 0;">DECISION COPILOT</span>
+            <span class="section-label" style="margin-bottom:4px;">Decision Workspace</span>
             <h3 class="promo-title">Simulate Procurement Pivots</h3>
-            <p class="promo-text">
-              Adjust capital scaling ratios and geographic supply shifts to forecast mitigation lead-times and cost projections dynamically.
-            </p>
-            <button class="btn-editorial btn-primary" id="btn-dashboard-modeler" style="padding: 8px 16px; font-size: 11px;">
-              Launch Modeler Workspace
+            <p class="promo-text">Adjust capital ratios and geographic supply shifts to forecast mitigation lead-times and cost projections dynamically.</p>
+            <button class="btn-editorial btn-primary" id="btn-dashboard-modeler">Launch Modeler</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- REPORTS -->
+      <section class="dashboard-section" id="report-section">
+        <div class="section-eyebrow"><span class="section-eyebrow-dot"></span><span class="section-label">Reports</span></div>
+        <h2 class="section-headline">Ready for investor circulation</h2>
+        <div class="boardroom-report-panel">
+          <div class="report-actions-row">
+            <button class="report-action-btn" id="btn-export-pdf">
+              <svg class="report-btn-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Compile Board Briefing PDF
+            </button>
+            <button class="report-action-btn" id="btn-sync-keynote">
+              <svg class="report-btn-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M8.684 10.742l1.638 1.638L14.776 8M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Synchronize Keynote Deck
             </button>
           </div>
         </div>
       </section>
 
-      <!-- Section 5: Boardroom Report -->
-      <section class="dashboard-section" style="margin-bottom: 0;">
-        <span class="section-question-label">Boardroom Report</span>
-        <h2 class="section-headline">What is ready for investor circulation?</h2>
-        
-        <div class="boardroom-report-panel">
-          <div class="report-actions-row">
-            <button class="report-action-btn" id="btn-export-pdf">
-              <svg class="report-btn-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              Compile Board Briefing PDF
-            </button>
-            <button class="report-action-btn" id="btn-sync-keynote">
-              <svg class="report-btn-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              Synchronize to Notion & Keynote
-            </button>
-          </div>
-        </div>
+      <!-- DECISION COPILOT -->
+      <section class="dashboard-section" id="copilot-section">
+        <div class="section-eyebrow"><span class="section-eyebrow-dot"></span><span class="section-label">Decision Copilot</span></div>
+        <h2 class="section-headline">AI Strategy Consultant</h2>
+        <div id="copilot-workspace-container"></div>
       </section>
 
     </div>
   `;
 
-  // ── Decision Graph Initialization ────────────────────────────────
+  // ── Decision Graph Centerpiece Initialization ─────────────────────
   if (window.DecisionGraph && document.getElementById('dg-canvas')) {
-    // Destroy any existing graph instance
     if (window._synapseGraph) {
       try { window._synapseGraph.destroy(); } catch(e) {}
     }
     window._synapseGraph = new DecisionGraph('dg-canvas', {
       onNodeClick: function(nodeId, nodeData) {
         appState.copilotContextNodeId = nodeId;
+        updateExecutiveBriefingForNode(nodeId);
+        highlightSignalsForNode(nodeId);
+        renderDecisionCopilot(); // updates starters dynamically in copilot
       }
     });
-    // Animate in after a short delay so the sheet transition completes
     setTimeout(function() {
       window._synapseGraph.animateIn();
     }, 260);
   }
 
+  // Render the Copilot inside its dedicated placeholder
+  renderDecisionCopilot();
+
+  // Hook up hover tooltip overlays for projections
+  setupChartTooltipListeners();
+
   // ── Cross-view routing from graph question buttons ─────────────────
   window.synapseRouteToQuestion = function(question) {
-    navigateTo('copilot');
+    appState.copilotExpanded = true;
+    renderDecisionCopilot();
+    scrollToSection('copilot-section', true);
     setTimeout(function() {
       var input = document.getElementById('copilot-query-input');
       var btn   = document.getElementById('copilot-query-btn');
@@ -2217,9 +1766,7 @@ function renderIntelSynthesis() {
       alert("Sync request queued. Local databases synchronized to Notion Enterprise and Keynote Cloud templates.");
     });
   }
-}
-
-// 6. Render: Decision Briefing (Editorial View)
+}// 6. Render: Decision Briefing (Editorial View)
 function renderDecisionBriefing() {
   const brief = briefingsData[appState.activeBriefingId];
   let paragraphsHTML = "";
@@ -3109,6 +2656,7 @@ function loadDefaultDataset() {
 
 // 10. Initialization
 document.addEventListener("DOMContentLoaded", () => {
+  setupScrollSpy();
   setupLandingGreeting();
   setupDragAndDrop();
 
@@ -3136,3 +2684,251 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+
+// ── CUSTOM REDESIGN HELPERS ──────────────────────────────────────────
+function buildExecutiveBriefingHTML(nodeId = 'health') {
+  const d = appState.activeDataset || {
+    name: "global_procurement_Q2.csv",
+    rows: 18240,
+    columns: 14,
+    domain: "Logistics & Supply Chain",
+    quality: "99.8%",
+    confidence: "93%"
+  };
+
+  const hour = new Date().getHours();
+  let greetingText = "Good Evening"; 
+  if (hour < 12) greetingText = "Good Morning";
+  else if (hour < 17) greetingText = "Good Afternoon";
+
+  const briefs = {
+    "health": {
+      title: "Corporate Vitality & Baseline Health",
+      metric: "74 / 100",
+      metricLabel: "Vitality Index",
+      metricTrend: "stable",
+      summary: "Data streams indicate stable parameters across core transaction models. Strong ARR renewal paths (+18%) mitigate transit queue backlogs in primary logistics pipelines.",
+      opportunity: "Transition assembly lines to Laredo rail corridors to hedge maritime pass congestion.",
+      risk: "Southeast Asia port queue latencies cascading into Q3 inventory stock depletion.",
+      recommendation: "Activate Mexican re-routing rail corridor and leverage secondary air forwarding via Bangkok."
+    },
+    "revenue": {
+      title: "Revenue Generation & Sales Variance",
+      metric: "↑ 18%",
+      metricLabel: "Growth variance",
+      metricTrend: "up",
+      summary: "Annual recurring revenue exhibits strong growth, outpacing Q2 baseline forecasts by 18%. Growth is anchored by a 93% enterprise contract renewal rate in EU and US markets.",
+      opportunity: "Scale acquisition spend in Western European and LATAM enterprise pipelines.",
+      risk: "Contract SLA breaches and delay penalties from component shipment latencies.",
+      recommendation: "Lock in index-linked long-term freight shipping container caps ahead of Q3 peaks."
+    },
+    "marketing": {
+      title: "Marketing Acquisition & Pipeline ROI",
+      metric: "↓ 8% CAC",
+      metricLabel: "CAC efficiency",
+      metricTrend: "up",
+      summary: "Customer Acquisition Cost (CAC) has decreased by 8% due to high-performance enterprise lead campaigns, maximizing pipeline ROI and reducing spend overheads.",
+      opportunity: "Scale strategic marketing campaigns with tier-1 enterprise partners.",
+      risk: "Diminishing marginal returns on traditional digital search acquisition vectors.",
+      recommendation: "Re-allocate spend margins from search placements into dedicated executive forums."
+    },
+    "inventory": {
+      title: "Inventory Utilization & Safety Stocks",
+      metric: "72% Cap",
+      metricLabel: "Buffer capacity",
+      metricTrend: "stable",
+      summary: "Stuttgart central logistics buffers are utilized at 72% capacity, providing a critical supply cushion against ocean freight passage delays.",
+      opportunity: "Establish sub-assembly storage pools near Laredo rail terminals.",
+      risk: "Holding cost capital drag estimated at $4.2M over a 120-day horizon.",
+      recommendation: "Adjust safety buffers dynamically based on rolling 14-day port transit queues."
+    },
+    "profit": {
+      title: "Profit Margin Defense & Cost Contours",
+      metric: "↑ 12%",
+      metricLabel: "Margin change",
+      metricTrend: "up",
+      summary: "Gross profit margins remain stable at 44.0%. Systematic nearshoring and long-term contract carriage rates successfully offset ocean spot freight inflation.",
+      opportunity: "Consolidate supplier pricing models to unlock silicon volume discounts.",
+      risk: "Severe cash flow constraints and default risks at Tier-2 suppliers in Vietnam.",
+      recommendation: "Authorize capital credit advances to primary supplier groups to secure parts supply."
+    },
+    "customers": {
+      title: "Customer Expansion & Retention Dynamics",
+      metric: "↑ 8%",
+      metricLabel: "Cohort expansion",
+      metricTrend: "up",
+      summary: "Active customer cohorts scaled by 8% this quarter. High-value enterprise account expansion in North America provides stable cash flow margins.",
+      opportunity: "Upsell dedicated custom support service agreements to enterprise cohorts.",
+      risk: "EMEA customer onboarding friction raising churn risks on mid-tier accounts.",
+      recommendation: "Streamline platform integration toolkits and expand CSM allocations."
+    },
+    "operations": {
+      title: "Operations Throughput & Logistics Latency",
+      metric: "↓ 32d Lag",
+      metricLabel: "Max Transit delay",
+      metricTrend: "down",
+      summary: "Port backlogs at Vietnam and Singapore hubs have pushed ocean transit latencies to a peak of 32 days, creating critical upstream pressure.",
+      opportunity: "Redirect freight container volume directly to Guadalajara rail channels.",
+      risk: "Factory shutdowns if component delivery lags extend past the end of Q3.",
+      recommendation: "Activate nearshore rail transit corridors immediately and absorb short-term shipping premium costs."
+    }
+  };
+
+  const context = briefs[nodeId] || briefs["health"];
+  const trendClass = context.metricTrend === "down" ? "down" : context.metricTrend === "up" ? "up" : "stable";
+
+  return `
+    <div class="briefing-editorial">
+      <div class="brief-header">
+        <div>
+          <span class="editorial-section-title">Boardroom briefing &bull; ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</span>
+          <h2 class="brief-title serif-display">${greetingText}. Here is your executive brief.</h2>
+        </div>
+        <div style="text-align:right;">
+          <span class="editorial-section-title" style="display:block;margin-bottom:3px;">Context</span>
+          <span style="font-size:12px;font-weight:600;color:var(--accent);">${context.title}</span>
+        </div>
+      </div>
+
+      <div class="briefing-editorial-main">
+        <div class="brief-col-left">
+          <h3 class="brief-sub-title serif-display">${context.title} Analysis</h3>
+          <p class="editorial-p" id="brief-editorial-summary">${context.summary}</p>
+
+          <div style="margin-top:var(--sp-lg);padding:var(--sp-md);background:var(--elevated);border:1px solid var(--border);border-radius:var(--r-sm);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <span class="editorial-section-title">AI Synthesis Confidence</span>
+              <span style="font-size:12px;font-weight:700;color:var(--accent);font-family:monospace;">${d.confidence || '93%'}</span>
+            </div>
+            <div style="height:3px;background:var(--border);border-radius:2px;overflow:hidden;">
+              <div style="width:${d.confidence || '93%'};height:100%;background:var(--accent);border-radius:2px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="brief-col-right">
+          <div class="brief-stats-row">
+            <div class="brief-stat-card">
+              <span class="brief-stat-label">${context.metricLabel}</span>
+              <div class="brief-stat-num ${trendClass}">${context.metric}</div>
+              <p class="brief-stat-desc">Live telemetry snapshot</p>
+            </div>
+
+            <div class="brief-stat-card">
+              <span class="brief-stat-label" style="color:var(--accent);">Top Opportunity</span>
+              <div style="font-size:12.5px;font-weight:500;color:var(--text-1);margin-top:5px;line-height:1.5;">${context.opportunity}</div>
+            </div>
+
+            <div class="brief-stat-card">
+              <span class="brief-stat-label" style="color:var(--critical);">Risk Alert</span>
+              <div style="font-size:12.5px;font-weight:500;color:var(--text-1);margin-top:5px;line-height:1.5;">${context.risk}</div>
+            </div>
+
+            <div class="brief-stat-card" style="grid-column:span 2;">
+              <span class="brief-stat-label" style="color:var(--accent);">AI Recommendation</span>
+              <div style="font-size:13px;font-weight:400;color:var(--text-2);margin-top:6px;line-height:1.6;font-style:italic;">&ldquo;${context.recommendation}&rdquo;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function updateExecutiveBriefingForNode(nodeId) {
+  const container = document.getElementById("briefing-editorial-container");
+  if (!container) return;
+  
+  container.style.opacity = "0";
+  container.style.transform = "translateY(4px)";
+  container.style.transition = "opacity 0.25s ease, transform 0.25s ease";
+  
+  setTimeout(() => {
+    container.innerHTML = buildExecutiveBriefingHTML(nodeId);
+    container.style.opacity = "1";
+    container.style.transform = "translateY(0)";
+  }, 250);
+}
+
+function highlightSignalsForNode(nodeId) {
+  const cards = document.querySelectorAll(".signal-chart-card");
+  if (!cards.length) return;
+  
+  let relatedIndices = [];
+  if (nodeId === "health") relatedIndices = [0, 1, 2, 3, 4, 5];
+  else if (nodeId === "revenue") relatedIndices = [2, 5];
+  else if (nodeId === "profit") relatedIndices = [3, 2];
+  else if (nodeId === "customers") relatedIndices = [4];
+  else if (nodeId === "satisfaction") relatedIndices = [1, 4];
+  else if (nodeId === "operations") relatedIndices = [0, 3, 5];
+  else if (nodeId === "inventory") relatedIndices = [1, 4];
+  else if (nodeId === "marketing") relatedIndices = [2];
+
+  cards.forEach((card, idx) => {
+    if (relatedIndices.includes(idx)) {
+      card.classList.remove("signal-dimmed");
+      card.classList.add("signal-active");
+    } else {
+      card.classList.remove("signal-active");
+      card.classList.add("signal-dimmed");
+    }
+  });
+}
+
+let isScrollingToSection = false;
+function scrollToSection(sectionId, smooth = true) {
+  const container = document.querySelector(".workspace-area");
+  const target = document.getElementById(sectionId);
+  if (container && target) {
+    const topPos = target.getBoundingClientRect().top + container.scrollTop - container.getBoundingClientRect().top - 24;
+    if (smooth) {
+      isScrollingToSection = true;
+      container.scrollTo({ top: topPos, behavior: "smooth" });
+      setTimeout(() => {
+        isScrollingToSection = false;
+      }, 800);
+    } else {
+      container.scrollTo({ top: topPos, behavior: "auto" });
+    }
+  }
+}
+
+function setupScrollSpy() {
+  const container = document.querySelector(".workspace-area");
+  if (!container) return;
+  
+  container.addEventListener("scroll", () => {
+    if (isScrollingToSection) return;
+    
+    const onDashboard = ["executive-brief", "synthesis", "projections", "copilot"].includes(appState.currentView);
+    if (!onDashboard) return;
+    
+    const sections = [
+      { id: "executive-brief-section", view: "executive-brief" },
+      { id: "signals-section", view: "synthesis" },
+      { id: "projections-section", view: "projections" },
+      { id: "copilot-section", view: "copilot" }
+    ];
+    
+    let activeView = null;
+    const containerRect = container.getBoundingClientRect();
+    
+    for (const section of sections) {
+      const el = document.getElementById(section.id);
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const elementTopInContainer = rect.top - containerRect.top;
+        if (elementTopInContainer <= 120 && rect.bottom >= containerRect.top + 120) {
+          activeView = section.view;
+          break;
+        }
+      }
+    }
+    
+    if (activeView && appState.currentView !== activeView) {
+      appState.currentView = activeView;
+      updateNavSelection(activeView);
+    }
+  });
+}
