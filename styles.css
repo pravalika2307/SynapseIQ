@@ -2767,3 +2767,305 @@ path[id^="edge-"] {
     padding-bottom: var(--spacing-md);
   }
 }
+
+/* ========================================================================
+   Decision Graph Component — SynapseIQ
+   ======================================================================== */
+
+/* Graph wrapper */
+.dg-wrapper {
+  position: relative;
+  width: 100%;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-hairline);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.dg-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-bottom: 1px solid var(--color-border-hairline);
+}
+
+.dg-header-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.dg-header-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: var(--color-accent-sage);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.dg-header-badge::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent-sage);
+  box-shadow: 0 0 6px var(--color-accent-sage);
+  animation: dg-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes dg-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.85); }
+}
+
+/* SVG canvas */
+.dg-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 280px;
+}
+
+@media (max-width: 640px) {
+  .dg-svg { min-width: 420px; }
+  .dg-wrapper { overflow-x: auto; }
+}
+
+/* SVG node + edge transitions */
+.dg-node { will-change: opacity; }
+.dg-edge  { will-change: stroke-dashoffset, stroke, opacity; }
+
+/* ─── Tooltip ─────────────────────────────────────────────── */
+.dg-tooltip {
+  position: absolute;
+  pointer-events: none;
+  z-index: 200;
+  min-width: 210px;
+  max-width: 240px;
+  background: rgba(10, 15, 25, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 14px 16px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.dg-tooltip--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dg-tt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.dg-tt-name {
+  font-size: 11px;
+  font-weight: 700;
+  color: #F0F6FC;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+}
+
+.dg-tt-metric {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+  padding: 2px 7px;
+  border-radius: 20px;
+  font-family: 'Inter', monospace;
+}
+
+.dg-tt-metric--up     { color: #84A98C; background: rgba(132,169,140,0.12); }
+.dg-tt-metric--down   { color: #E07A5F; background: rgba(224,122,95,0.12); }
+.dg-tt-metric--stable { color: #8B949E; background: rgba(139,148,158,0.12); }
+
+.dg-tt-desc {
+  font-size: 10.5px;
+  color: #8B949E;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.dg-tt-driven {
+  margin-bottom: 8px;
+}
+
+.dg-tt-driven-label {
+  display: block;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8B949E;
+  margin-bottom: 4px;
+}
+
+.dg-tt-driven ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.dg-tt-driven li {
+  font-size: 9.5px;
+  color: #C9D1D9;
+  background: rgba(255,255,255,0.06);
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.dg-tt-hint {
+  display: block;
+  font-size: 9px;
+  color: var(--color-accent-sage);
+  letter-spacing: 0.04em;
+  margin-top: 6px;
+  opacity: 0.7;
+}
+
+/* ─── Detail Panel ─────────────────────────────────────────── */
+#dg-detail-panel {
+  border-top: 1px solid var(--color-border-hairline);
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.45s cubic-bezier(0.16,1,0.3,1), opacity 0.35s ease;
+}
+
+#dg-detail-panel.dg-detail-panel--visible {
+  max-height: 320px;
+  opacity: 1;
+}
+
+.dg-dp-inner {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dg-dp-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.dg-dp-eyebrow {
+  display: block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 4px;
+}
+
+.dg-dp-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+
+.dg-dp-desc {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+  max-width: 480px;
+}
+
+.dg-dp-badge {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.04em;
+}
+
+.dg-dp-metric--up     { color: #84A98C; background: rgba(132,169,140,0.12); border: 1px solid rgba(132,169,140,0.2); }
+.dg-dp-metric--down   { color: #E07A5F; background: rgba(224,122,95,0.12);  border: 1px solid rgba(224,122,95,0.2); }
+.dg-dp-metric--stable { color: #8B949E; background: rgba(139,148,158,0.10); border: 1px solid rgba(139,148,158,0.2); }
+
+.dg-dp-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 700px) {
+  .dg-dp-cols { grid-template-columns: 1fr; }
+}
+
+.dg-dp-col-label {
+  display: block;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  margin-bottom: 8px;
+}
+
+.dg-dp-signals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.dg-signal-chip {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-accent-sage);
+  background: rgba(132, 169, 140, 0.1);
+  border: 1px solid rgba(132, 169, 140, 0.2);
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.03em;
+}
+
+.dg-dp-questions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dg-question-btn {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  font-family: var(--font-sans);
+  line-height: 1.4;
+}
+
+.dg-question-btn:hover {
+  background: rgba(132,169,140,0.08);
+  color: var(--color-accent-sage);
+  border-color: rgba(132,169,140,0.25);
+}

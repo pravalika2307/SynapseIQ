@@ -1752,77 +1752,24 @@ function renderIntelSynthesis() {
         </p>
       </header>
 
-      <!-- Signature Interactive Decision Graph Hero -->
+      <!-- Signature Interactive Decision Graph -->
       <section class="dashboard-section" style="margin-bottom: var(--spacing-lg);">
-        <span class="section-question-label">System Architecture</span>
-        <h2 class="section-headline">Interactive Decision Matrix</h2>
-        
-        <div class="decision-graph-container">
-          <div class="decision-graph-visualization">
-            <svg id="decision-graph-svg" viewBox="0 0 600 300" style="width: 100%; height: 300px; overflow: visible;">
-              <!-- Connection Lines -->
-              <path id="edge-customers-marketing" d="M 90 190 Q 150 110, 210 110" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" fill="none" />
-              <path id="edge-marketing-revenue" d="M 210 110 Q 260 160, 320 210" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" fill="none" />
-              <path id="edge-revenue-profit" d="M 320 210 Q 410 180, 510 150" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" fill="none" />
-              <path id="edge-inventory-operations" d="M 210 250 Q 300 170, 390 100" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" fill="none" />
-              <path id="edge-operations-profit" d="M 390 100 Q 450 120, 510 150" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" fill="none" />
-              <path id="edge-revenue-operations" d="M 320 210 Q 350 150, 390 100" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" fill="none" />
-              <path id="edge-customers-revenue" d="M 90 190 L 320 210" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" fill="none" />
-              
-              <!-- Nodes -->
-              <g class="graph-node" id="node-customers" data-entity="Customers" transform="translate(90, 190)">
-                <circle r="34" fill="#151B23" stroke="var(--color-border-strong)" stroke-width="1.5" />
-                <circle class="hover-glow" r="34" fill="none" stroke="var(--color-accent-sage)" stroke-width="0" opacity="0.4" />
-                <text text-anchor="middle" y="4" font-size="9" font-weight="700" fill="var(--color-text-primary)">CUSTOMERS</text>
-              </g>
-              
-              <g class="graph-node" id="node-marketing" data-entity="Marketing" transform="translate(210, 110)">
-                <circle r="34" fill="#151B23" stroke="var(--color-border-strong)" stroke-width="1.5" />
-                <circle class="hover-glow" r="34" fill="none" stroke="var(--color-accent-sage)" stroke-width="0" opacity="0.4" />
-                <text text-anchor="middle" y="4" font-size="9" font-weight="700" fill="var(--color-text-primary)">MARKETING</text>
-              </g>
-              
-              <g class="graph-node" id="node-revenue" data-entity="Revenue" transform="translate(320, 210)">
-                <circle r="34" fill="#151B23" stroke="var(--color-border-strong)" stroke-width="1.5" />
-                <circle class="hover-glow" r="34" fill="none" stroke="var(--color-accent-sage)" stroke-width="0" opacity="0.4" />
-                <text text-anchor="middle" y="4" font-size="9" font-weight="700" fill="var(--color-text-primary)">REVENUE</text>
-              </g>
-              
-              <g class="graph-node" id="node-inventory" data-entity="Inventory" transform="translate(210, 250)">
-                <circle r="34" fill="#151B23" stroke="var(--color-border-strong)" stroke-width="1.5" />
-                <circle class="hover-glow" r="34" fill="none" stroke="var(--color-accent-sage)" stroke-width="0" opacity="0.4" />
-                <text text-anchor="middle" y="4" font-size="9" font-weight="700" fill="var(--color-text-primary)">INVENTORY</text>
-              </g>
-              
-              <g class="graph-node" id="node-operations" data-entity="Operations" transform="translate(390, 100)">
-                <circle r="34" fill="#151B23" stroke="var(--color-border-strong)" stroke-width="1.5" />
-                <circle class="hover-glow" r="34" fill="none" stroke="var(--color-accent-sage)" stroke-width="0" opacity="0.4" />
-                <text text-anchor="middle" y="4" font-size="9" font-weight="700" fill="var(--color-text-primary)">OPERATIONS</text>
-              </g>
-              
-              <g class="graph-node" id="node-profit" data-entity="Profit" transform="translate(510, 150)">
-                <circle r="34" fill="#151B23" stroke="var(--color-border-strong)" stroke-width="1.5" />
-                <circle class="hover-glow" r="34" fill="none" stroke="var(--color-accent-sage)" stroke-width="0" opacity="0.4" />
-                <text text-anchor="middle" y="4" font-size="9" font-weight="700" fill="var(--color-text-primary)">PROFIT</text>
-              </g>
-            </svg>
+        <span class="section-question-label">Decision Intelligence</span>
+        <h2 class="section-headline">Business Decision Graph</h2>
+        <p style="font-size:12px;color:var(--color-text-secondary);margin-bottom:var(--spacing-md);">Hover any entity to inspect relationships. Click to explore in Decision Copilot.</p>
+
+        <div class="dg-wrapper">
+          <div class="dg-header">
+            <span class="dg-header-title">Entity Relationship Graph &mdash; AI Synthesized</span>
+            <span class="dg-header-badge">Live Analysis</span>
           </div>
-          
-          <div class="decision-graph-context" id="graph-context-card">
-            <div style="display: flex; align-items: center; gap: var(--spacing-xs); margin-bottom: var(--spacing-xs);">
-              <span class="ai-indicator-badge olive-badge">• Decision Engine Graph</span>
-              <span class="ai-indicator-badge" id="graph-node-status">Connected</span>
-            </div>
-            <h3 class="graph-context-title" id="graph-context-title">Strategic Matrix</h3>
-            <p class="graph-context-desc" id="graph-context-desc">Hover over any node in the system graph to inspect downstream decision pathways and dynamic metric associations mapped by the SynapseIQ compiler.</p>
-            
-            <div class="graph-associated-metrics" id="graph-associated-metrics" style="display: none; margin-top: 12px; border-top: 0.75px dashed var(--color-border-hairline); padding-top: 10px;">
-              <span class="meta-label" style="font-size: 8px;">CONNECTED NODES</span>
-              <div id="graph-metrics-pills" style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;"></div>
-            </div>
-          </div>
+          <!-- DecisionGraph mounts here -->
+          <div id="dg-canvas"></div>
+          <!-- Detail panel: revealed on node click -->
+          <div id="dg-detail-panel"></div>
         </div>
       </section>
+
 
       <!-- Section 1: Business Signals -->
       <section class="dashboard-section">
@@ -1949,103 +1896,35 @@ function renderIntelSynthesis() {
     </div>
   `;
 
-  // Dynamic Graph Nodes Interactive Event Binding
-  const nodes = document.querySelectorAll(".graph-node");
-  const graphContextTitle = document.getElementById("graph-context-title");
-  const graphContextDesc = document.getElementById("graph-context-desc");
-  const graphNodeStatus = document.getElementById("graph-node-status");
-  const associatedMetrics = document.getElementById("graph-associated-metrics");
-  const metricsPills = document.getElementById("graph-metrics-pills");
-  
-  const entityData = {
-    Customers: {
-      desc: "Sourcing accounts show 93% Q2 renewals. Acquisition volume maps directly to ARR pipelines.",
-      status: "+18% Renewals",
-      connections: ["Marketing", "Revenue"],
-      color: "var(--color-accent-sage)"
-    },
-    Marketing: {
-      desc: "Marketing allocation drives high-value customer acquisitions. Accounts acquisition cost down 8%.",
-      status: "-8% Acquisition",
-      connections: ["Customers", "Revenue"],
-      color: "var(--color-accent-sage)"
-    },
-    Revenue: {
-      desc: "ARR models stable. High renewal rates balance premium cargo surcharges.",
-      status: "Stable Run-Rate",
-      connections: ["Customers", "Marketing", "Profit", "Operations"],
-      color: "var(--color-accent-sage)"
-    },
-    Inventory: {
-      desc: "Stuttgart safety stock is at 72% utilization to cushion Antwerp custom check latency.",
-      status: "72% Capacity",
-      connections: ["Operations"],
-      color: "var(--color-accent-olive)"
-    },
-    Operations: {
-      desc: "Sourcing transit latencies peak at 32 days due to Singapore/Hanoi port queues.",
-      status: "32 Days Latency",
-      connections: ["Inventory", "Revenue", "Profit"],
-      color: "var(--color-accent-terracotta)"
-    },
-    Profit: {
-      desc: "Net yield is protected by fixed-price ocean freight caps and Guadalajara nearshore re-routing.",
-      status: "Optimized Yield",
-      connections: ["Revenue", "Operations"],
-      color: "var(--color-accent-sage)"
+  // ── Decision Graph Initialization ────────────────────────────────
+  if (window.DecisionGraph && document.getElementById('dg-canvas')) {
+    // Destroy any existing graph instance
+    if (window._synapseGraph) {
+      try { window._synapseGraph.destroy(); } catch(e) {}
     }
-  };
-
-  nodes.forEach(node => {
-    node.addEventListener("mouseenter", () => {
-      const entity = node.getAttribute("data-entity");
-      const info = entityData[entity];
-      if (info) {
-        // Highlight active nodes using inline styles
-        node.querySelector("circle").style.stroke = "var(--color-accent-sage)";
-        node.querySelector(".hover-glow").style.strokeWidth = "8px";
-        
-        // Update context card details
-        graphContextTitle.textContent = entity;
-        graphContextDesc.textContent = info.desc;
-        graphNodeStatus.textContent = info.status;
-        graphNodeStatus.className = `ai-indicator-badge ${entity === 'Operations' ? 'terracotta-badge' : 'olive-badge'}`;
-        
-        // Render associated nodes tags
-        associatedMetrics.style.display = "block";
-        metricsPills.innerHTML = info.connections.map(c => `
-          <span class="summary-metric-pill" style="font-size: 8px; font-weight:700;">${c}</span>
-        `).join("");
-        
-        // Dim all background paths, highlight matching pathways
-        document.querySelectorAll("path[id^='edge-']").forEach(p => {
-          p.style.stroke = "rgba(255,255,255,0.05)";
-          p.style.strokeWidth = "1";
-        });
-        
-        info.connections.forEach(conn => {
-          const id1 = `edge-${entity.toLowerCase()}-${conn.toLowerCase()}`;
-          const id2 = `edge-${conn.toLowerCase()}-${entity.toLowerCase()}`;
-          const pEl = document.getElementById(id1) || document.getElementById(id2);
-          if (pEl) {
-            pEl.style.stroke = entity === 'Operations' ? 'var(--color-accent-terracotta)' : 'var(--color-accent-sage)';
-            pEl.style.strokeWidth = "2.5";
-          }
-        });
+    window._synapseGraph = new DecisionGraph('dg-canvas', {
+      onNodeClick: function(nodeId, nodeData) {
+        // Node click cross-view callback handled in detail panel
       }
     });
+    // Animate in after a short delay so the sheet transition completes
+    setTimeout(function() {
+      window._synapseGraph.animateIn();
+    }, 260);
+  }
 
-    node.addEventListener("mouseleave", () => {
-      node.querySelector("circle").style.stroke = "var(--color-border-strong)";
-      node.querySelector(".hover-glow").style.strokeWidth = "0";
-      
-      // Reset edge styles
-      document.querySelectorAll("path[id^='edge-']").forEach(p => {
-        p.style.stroke = "rgba(255,255,255,0.15)";
-        p.style.strokeWidth = "1.5";
-      });
-    });
-  });
+  // ── Cross-view routing from graph question buttons ─────────────────
+  window.synapseRouteToQuestion = function(question) {
+    navigateTo('copilot');
+    setTimeout(function() {
+      var input = document.getElementById('copilot-query-input');
+      var btn   = document.getElementById('copilot-query-btn');
+      if (input && btn) {
+        input.value = question;
+        btn.click();
+      }
+    }, 350);
+  };
 
   // Attach dossier card click event listeners
   document.querySelectorAll(".action-dossier-card").forEach(card => {
