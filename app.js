@@ -143,7 +143,10 @@ const appState = {
     sourcingFocus: "hybrid", // "global", "hybrid", "domestic"
     capexScale: 40,          // in millions ($10M - $100M)
     bufferDays: 30           // 0 to 90 days
-  }
+  },
+  copilotContextNodeId: null,
+  copilotExpanded: false,
+  copilotHistory: []
 };
 
 // 3. Document Elements Cache
@@ -233,400 +236,660 @@ function updateNavSelection(view, dataId) {
 }
 
 // 4.3. Decision Copilot - Consulting Memo Database & Render
-const copilotBriefs = {
+const copilotResponses = {
   "revenue": {
-    meta: "MEMORANDUM • CONFIDENTIAL • SOURCING EXPENSES",
-    title: "Revenue Contraction Analysis — Q2 2026",
-    content: `
-      <p>Sourcing and operational telemetry reveals that Q2 revenue contraction of 3.8% ($12.4M variance vs budget) is primarily driven by shipping latency backlogs and upstream cost escalations, rather than market demand failure.</p>
-      
-      <div class="matrix-card-title" style="margin-top: 16px; margin-bottom: 8px;">Core Drivers of Unit Margin Erosion:</div>
-      <ul class="readout-bullet-list">
-        <li class="readout-bullet-item">
-          <strong>Strait of Malacca Congestion:</strong> Average transit duration rose from 14 to 32 days, resulting in late-delivery penalty clauses from high-tier electronics accounts.
-        </li>
-        <li class="readout-bullet-item">
-          <strong>Spot Shipping Premium:</strong> Expedited container charges to clear the Shanghai corridor created a 2.4x logistics spend multiplier.
-        </li>
-        <li class="readout-bullet-item">
-          <strong>Vietnamese Subcontractor Constraints:</strong> Solvency constraints at Hanoi fabs forced secondary vendor reliance at 18% higher tooling premiums.
-        </li>
-      </ul>
-      
-      <div class="readout-table-wrapper" style="margin-top: 16px;">
-        <table class="readout-table">
-          <thead>
-            <tr>
-              <th>Impact Channel</th>
-              <th>Variance vs Baseline</th>
-              <th>Primary Action Path</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Strait Delay Penalties</td>
-              <td style="color: var(--color-accent-terracotta); font-weight: 600;">+$4.8M</td>
-              <td>Enforce force majeure clause / Pre-clear logistics channels</td>
-            </tr>
-            <tr>
-              <td>Spot Freight Premiums</td>
-              <td style="color: var(--color-accent-terracotta); font-weight: 600;">+$3.2M</td>
-              <td>Transition 30% supply capacity to Mexican rail lines</td>
-            </tr>
-            <tr>
-              <td>Vendor tooling markups</td>
-              <td style="color: var(--color-accent-terracotta); font-weight: 600;">+$1.4M</td>
-              <td>Provide short-term supplier working-capital injection</td>
-            </tr>
-          </tbody>
-        </table>
+    meta: "BOARDROOM CONSULTATION BRIEF • REVENUE MATRIX",
+    title: "Revenue Expansion Strategy & Variance Analysis",
+    summary: "Q2 revenue run-rate shows an 18% expansion in enterprise accounts, primarily driven by long-term contract renewals in the North American and EU corridors. This robust performance offsets spot freight cargo premium variances.",
+    confidence: 94,
+    metrics: [
+      { name: "Enterprise Customer Growth", val: "↑ 18%", trend: "up" },
+      { name: "Sourcing Margin", val: "42.5%", trend: "stable" },
+      { name: "Contract Freight Volatility", val: "↓ 12%", trend: "down" }
+    ],
+    evidence: [
+      "Enterprise customer renewals increased by 18% over the past quarter, bringing in an additional $14.8M in ARR.",
+      "Contracted shipping lanes in North America insulated logistics budgets against the spot shipping spikes.",
+      "Guadalajara nearshoring transition stabilized component assembly lines, avoiding delayed shipping overhead penalty claims."
+    ],
+    actions: [
+      "Scale up regional assembly buffers in the Laredo Rail Corridor to absorb future shipping latency risks.",
+      "Re-allocate marketing expenditure to high-value enterprise accounts in North America and Western Europe.",
+      "Lock in fixed freight container allocations with carriers ahead of the Q3 peak shipping season."
+    ],
+    references: `
+      <div class="reference-card">
+        <div class="reference-card-header">
+          <span class="reference-tag">DATABASE EXTRACT</span>
+          <span class="reference-status text-sage">Verified</span>
+        </div>
+        <div class="reference-card-title">Q2 Revenue Sourcing Breakdown</div>
+        <div class="readout-table-wrapper">
+          <table class="readout-table">
+            <thead>
+              <tr><th>Sourcing Category</th><th>Q2 Variance</th><th>Contribution %</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Enterprise Renewals</td><td>+$14.8M</td><td>64%</td></tr>
+              <tr><td>Spot Freight Penalties</td><td>-$3.2M</td><td>18%</td></tr>
+              <tr><td>Operational Overheads</td><td>-$1.4M</td><td>8%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `
+  },
+  "profit": {
+    meta: "BOARDROOM CONSULTATION BRIEF • PROFIT STABILITY",
+    title: "Profit Margin Defense & Cost Optimization",
+    summary: "Profit margins remain stable at 44% gross. Systematic nearshore re-routing of raw parts through Guadalajara rail lines and long-term ocean charter contracts shielded bottom-line figures from shipping spikes.",
+    confidence: 92,
+    metrics: [
+      { name: "Gross Profit Margin", val: "44.0%", trend: "stable" },
+      { name: "Logistics Overhead Spend", val: "↓ 15%", trend: "down" },
+      { name: "Spot freight exposure", val: "8.2%", trend: "down" }
+    ],
+    evidence: [
+      "Fixed container allocations caps saved an estimated $3.2M in spots freight surcharges.",
+      "Guadalajara Nearshoring corridor lowered transit latency overhead by 70%, avoiding premium air freight costs.",
+      "Supplier credit consolidation saved 8% unit procurement premiums on core silicon assemblies."
+    ],
+    actions: [
+      "Re-allocate shipping container caps from spot markets to long-term index-linked contracts.",
+      "Expand Stuttgart safety stock reserves to maintain buffer supply and keep operations optimized.",
+      "Establish localized supply lines in Mexico to completely hedge against global freight volatility."
+    ],
+    references: `
+      <div class="reference-card">
+        <div class="reference-card-header">
+          <span class="reference-tag">PROFIT Telemetry</span>
+          <span class="reference-status text-sage">Calibrated</span>
+        </div>
+        <div class="reference-card-title">Logistics Spend Optimization</div>
+        <p class="reference-text">Gross margins defended by shifting assembly buffers away from high-tariff oceanic lanes to overland rail lines.</p>
+        <div class="readout-table-wrapper">
+          <table class="readout-table">
+            <thead>
+              <tr><th>Route Corridor</th><th>Transit Cost / Unit</th><th>Lead Time</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Shanghai-Singapore (Sea)</td><td>$192.14</td><td>32 Days</td></tr>
+              <tr><td>Guadalajara-Laredo (Rail)</td><td>$147.14</td><td>6 Days</td></tr>
+              <tr><td>Hanoi-Stuttgart (Air)</td><td>$405.00</td><td>3 Days</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     `
   },
   "regions": {
-    meta: "ASSESSMENT BRIEFING • SUPPLY PATH RISKS",
-    title: "Geographical Transit Exposure Audit",
-    content: `
-      <p>Multi-node parsing identifies <strong>Southeast Asia (Vietnam and Singapore hubs)</strong> as the critical vulnerability vector, accounting for 74% of active operational exposure.</p>
-      
-      <div class="readout-matrix" style="margin-top: 16px;">
-        <div class="matrix-card">
-          <div class="matrix-card-title" style="color: var(--color-accent-terracotta);">Singapore Port</div>
-          <p class="matrix-card-text">Transit queue backlogs are at peak historical density (30-day delays). Risk level is critical. Recommended action is immediate implementation of local customs pre-clearance and container tracking buffers.</p>
+    meta: "BOARDROOM ASSESSMENT • GEOGRAPHIC TRANSIT EXP",
+    title: "Supply Path Regional Exposure & Mitigations",
+    summary: "Sourcing telemetry highlights Southeast Asia (Singapore and Hanoi corridors) as the primary risk zone, accounting for 74% of delayed deliveries. Overland Mexican rail lines are identified as the optimal hedge.",
+    confidence: 91,
+    metrics: [
+      { name: "Singapore Port Delay", val: "32 Days", trend: "up" },
+      { name: "Hanoi Supplier Debt Ratio", val: "2.8x", trend: "up" },
+      { name: "Mexico Transit Latency", val: "6 Days", trend: "stable" }
+    ],
+    evidence: [
+      "Singapore maritime vessel congestion peaked at 32 days, causing contract breaches on electronics shipments.",
+      "Three Tier-2 precision tooling fabricators in Hanoi report severe working-capital depletion.",
+      "Overland Mexican corridors show stable 6-day lead times with only a minor +8% cost delta."
+    ],
+    actions: [
+      "Initiate a pre-paid working capital facility ($10M CapEx) for Hanoi suppliers to secure manufacturing lines.",
+      "Pivot 30% of global freight capacity from Singapore sea lanes to Guadalajara rail terminals.",
+      "Establish localized warehouses in Laredo to serve as buffers against oceanic transit shocks."
+    ],
+    references: `
+      <div class="reference-card">
+        <div class="reference-card-header">
+          <span class="reference-tag">REGIONAL DENSITY ASSESSMENT</span>
+          <span class="reference-status text-terra">Critical Risk</span>
         </div>
-        <div class="matrix-card">
-          <div class="matrix-card-title" style="color: var(--color-accent-terracotta);">Vietnam Assembly</div>
-          <p class="matrix-card-text">High debt leverage and credit rating drops in the Hanoi precision tooling tier present immediate liquidity risks. Secondary sourcing buffers must be activated.</p>
-        </div>
-      </div>
-
-      <div class="matrix-card" style="margin-top: 0;">
-        <div class="matrix-card-title" style="color: var(--color-accent-sage);">Mexico Corridor (Laredo/Guadalajara)</div>
-        <p class="matrix-card-text">Guadalajara and Laredo transit times are holding at 6 days with unit pricing variations of +8%. Excellent buffer candidate to absorb Southeast Asian delay profiles.</p>
+        <div class="reference-card-title">Southeast Asian Port Congestion Indicators</div>
+        <p class="reference-text">Vessel turnaround latency has risen to 32 days (2.2x of historical normal levels).</p>
       </div>
     `
   },
-  "predict": {
-    meta: "PREDICTIVE MODEL • BOARD COMPILATION",
-    title: "Q3 2026 Procurement Projections & Margin Trends",
-    content: `
-      <p>Predictive analytics project a baseline unit cost surge of +23% ($192/unit avg) if current supply chain routing is maintained. Transitioning to a hybrid nearshoring model shifts the expected cost trajectory downwards.</p>
-      
-      <div class="readout-table-wrapper" style="margin-top: 16px;">
-        <table class="readout-table">
-          <thead>
-            <tr>
-              <th>Routing Scenario</th>
-              <th>Avg Lead Time</th>
-              <th>Projected Unit Cost</th>
-              <th>Risk Coefficient</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Scenario A (Baseline - Global First)</td>
-              <td>13 Days</td>
-              <td>$192.14</td>
-              <td style="color: var(--color-accent-terracotta); font-weight: 600;">68%</td>
-            </tr>
-            <tr>
-              <td><strong>Scenario B (Optimized - Hybrid Regional)</strong></td>
-              <td><strong>11 Days</strong></td>
-              <td><strong>$147.14</strong></td>
-              <td style="color: var(--color-accent-sage); font-weight: 600;"><strong>25%</strong></td>
-            </tr>
-            <tr>
-              <td>Scenario C (Local Sourcing - Domestic Focus)</td>
-              <td>4 Days</td>
-              <td>$165.40</td>
-              <td style="color: var(--color-accent-sage); font-weight: 600;">12%</td>
-            </tr>
-          </tbody>
-        </table>
+  "operations": {
+    meta: "BOARDROOM CONSULTATION BRIEF • OPERATIONS TELEMETRY",
+    title: "Operations Optimization & Sourcing Latency Analysis",
+    summary: "Operations are severely constrained by a 22% spike in transit times. Stuttgart safety stock utilization was increased to 72% capacity to safeguard production from port delays.",
+    confidence: 89,
+    metrics: [
+      { name: "Transit Delay Duration", val: "+22% spike", trend: "up" },
+      { name: "Safety Buffer Level", val: "72% utilization", trend: "up" },
+      { name: "Supplier Credit Risk Index", val: "2.6 Rating", trend: "up" }
+    ],
+    evidence: [
+      "Singapore port backlogs increase average transit latencies to 32 days, putting manufacturing timelines at risk.",
+      "Hanoi supplier liquidity crisis threatens production capacity, escalating parts failure warnings.",
+      "Stuttgart safety margins expanded to cushion European logistics node lines."
+    ],
+    actions: [
+      "Inject short-term prepayments to secure fabrication queues in Vietnam.",
+      "Redirect 35% of Hanoi production lines to Mexican nearshoring corridor assemblies.",
+      "Scale up warehouse buffers at the Stuttgart logistics hub."
+    ],
+    references: `
+      <div class="reference-card">
+        <div class="reference-card-header">
+          <span class="reference-tag">OPERATIONAL INCIDENTS Log</span>
+          <span class="reference-status text-terra">Alert</span>
+        </div>
+        <div class="reference-card-title">Vessel Transit Anomalies</div>
+        <p class="reference-text">Anomalies indicate supply chain volatility is concentrated in secondary sub-assembly vendor lanes.</p>
       </div>
-      
-      <p style="font-size: 11px; color: var(--color-text-muted); margin-top: 8px;"><em>*Projections based on Monte Carlo simulations parsing 18,240 records across Q3 trade policy vectors. Confidence interval: 93%.</em></p>
     `
   },
-  "action": {
-    meta: "TACTICAL DISPOSITION SHEET • ACTIONS REQUIRED",
-    title: "Vietnamese Transit Mitigation Action Plan",
-    content: `
-      <p>This action plan details tactical steps required to insulate critical assemblies from Southeast Asian shipping congestion and supply-side liquidity failures.</p>
-      
-      <div class="matrix-card-title" style="margin-top: 16px; margin-bottom: 8px;">Phased Strategic Sequence:</div>
-      <ul class="readout-bullet-list">
-        <li class="readout-bullet-item">
-          <strong>Phase 1 (Immediate - 15 Days):</strong> Re-route 35% of Hanoi production buffers to Guadalajara. Authorize air freight premiums ($1.2M CapEx) to bypass maritime delays on high-priority orders.
-        </li>
-        <li class="readout-bullet-item">
-          <strong>Phase 2 (Mid-term - 15-60 Days):</strong> Inject short-term liquidity/pre-payments into Tier-2 Vietnamese suppliers to secure production queues and forestall vendor insolvencies.
-        </li>
-        <li class="readout-bullet-item">
-          <strong>Phase 3 (Long-term - 60-90 Days):</strong> Transition to nearshoring networks. Establish secondary manufacturing routes using Guadalajara and Laredo customs corridors to permanently lower systemic dependency.
-        </li>
-      </ul>
+  "inventory": {
+    meta: "BOARDROOM CONSULTATION BRIEF • INVENTORY RATINGS",
+    title: "Safety Buffer & Warehouse Capacity Strategy",
+    summary: "Inventory is stable at 72% safety utilization. This represents a robust buffer against Singapore port queues, but long-term exposure requires local supply path setups.",
+    confidence: 88,
+    metrics: [
+      { name: "Stuttgart Capacity", val: "72% utilized", trend: "stable" },
+      { name: "Safety Buffer Duration", val: "30 Days", trend: "stable" },
+      { name: "Inventory Carrying Cost", val: "+$1.2M variance", trend: "up" }
+    ],
+    evidence: [
+      "Stuttgart inventory holds 45% of total global component assemblies.",
+      "Laredo rail terminal nearshore buffer holds 35% of parts capacity.",
+      "Transit delays increased carrying costs by $1.2M due to safety buffer expansions."
+    ],
+    actions: [
+      "Maintain active Stuttgart safety stocks at 70%+ capacity until port queues ease.",
+      "Relocate surplus assemblies from sea lanes to regional land warehouses.",
+      "Optimize safety buffers using Monte Carlo demand forecasting tools."
+    ],
+    references: `
+      <div class="reference-card">
+        <div class="reference-card-header">
+          <span class="reference-tag">INVENTORY TELEMETRY</span>
+          <span class="reference-status text-sage">Optimal</span>
+        </div>
+        <div class="reference-card-title">Warehouse Allocation Levels</div>
+        <p class="reference-text">Current component stock levels provide 30 days of production runway in case of sudden port shutdown.</p>
+      </div>
     `
   },
-  "summary": {
-    meta: "DATASET SUMMARY • EXECUTIVE SYNOPSIS",
-    title: "Database Telemetry Synthesis Report",
-    content: `
-      <p>Synthesis of the active procurement database consisting of 18,240 records across 14 transaction variables. Overall quality is robust, exposing targeted operational risks.</p>
-      
-      <div class="readout-matrix" style="margin-top: 16px;">
-        <div class="matrix-card">
-          <div class="matrix-card-title">Data Integrity</div>
-          <p class="matrix-card-text">99.8% successfully parsed. Clean fields with zero null vectors or missing date records. High statistical confidence.</p>
+  "customers": {
+    meta: "BOARDROOM ASSESSMENT • CUSTOMER RETENTION",
+    title: "Customer Growth, Renewal, & Satisfaction Analysis",
+    summary: "Customer renewals hold at a premium 93% rate. Enterprise expansions in the EU and North American corridors drive positive customer metrics, offsetting delivery delays.",
+    confidence: 93,
+    metrics: [
+      { name: "Renewal Rate", val: "93.0% gross", trend: "up" },
+      { name: "Customer Growth Rate", val: "↑ 8%", trend: "up" },
+      { name: "NPS Index", val: "91 Rating", trend: "stable" }
+    ],
+    evidence: [
+      "Enterprise renewals generated $14.8M, representing the core growth channel.",
+      "Support response times maintained high ratings through dedicated enterprise reps.",
+      "Delivery delay penalty clauses were triggered on 4 orders, but relations remain strong."
+    ],
+    actions: [
+      "Establish container priority shipping status for top-tier customer orders.",
+      "Extend service level agreement (SLA) terms to offer flexibility in transit buffers.",
+      "Optimize customer success operations for the Western European markets."
+    ],
+    references: `
+      <div class="reference-card">
+        <div class="reference-card-header">
+          <span class="reference-tag">CLIENT RETENTION INDEX</span>
+          <span class="reference-status text-sage">Robust</span>
         </div>
-        <div class="matrix-card">
-          <div class="matrix-card-title">Anomalies Isolated</div>
-          <p class="matrix-card-text">14 high-severity anomalies isolated (primarily supply-side pricing spikes and shipping container delays).</p>
-        </div>
+        <div class="reference-card-title">Enterprise Renewal Trend</div>
+        <p class="reference-text">Renewal levels defended by premium support tier performance, mitigating customer friction from shipping delays.</p>
       </div>
-      
-      <div class="matrix-card" style="margin-top: 0;">
-        <div class="matrix-card-title">Primary Objective</div>
-        <p class="matrix-card-text">Optimize global transit paths, protect core margin thresholds, and resolve supplier capital exposure vulnerabilities.</p>
+    `
+  },
+  "marketing": {
+    meta: "BOARDROOM CONSULTATION BRIEF • MARKETING ROI",
+    title: "Marketing Spend & Customer Acquisition Strategy",
+    summary: "Marketing campaigns outperformed targets, lowering Customer Acquisition Cost (CAC) by 8%. Enterprise acquisition channels continue to drive strong margins.",
+    confidence: 90,
+    metrics: [
+      { name: "Customer Acquisition Cost", val: "↓ 8% CAC", trend: "down" },
+      { name: "Marketing Campaign ROI", val: "3.2x Return", trend: "up" },
+      { name: "Lead Pipeline Expansion", val: "↑ 14%", trend: "up" }
+    ],
+    evidence: [
+      "Digital campaign optimization lowered enterprise procurement lead costs.",
+      "Brand marketing strength supported 93% contract renewals.",
+      "High campaign performance in Western Europe accelerated nearshore sales pipelines."
+    ],
+    actions: [
+      "Increase marketing allocations to Guadalajara logistics corridors to promote nearshore facilities.",
+      "Implement predictive lead ranking models to further decrease acquisition spend.",
+      "Align marketing outreach campaigns with regional supply chain strengths."
+    ],
+    references: `
+      <div class="reference-card">
+        <div class="reference-card-header">
+          <span class="reference-tag">CAMPAIGN PERFORMANCE AUDIT</span>
+          <span class="reference-status text-sage">Optimal</span>
+        </div>
+        <div class="reference-card-title">CAC Efficiency Mapping</div>
+        <p class="reference-text">Enterprise marketing spend efficiency optimized by 8%, accelerating digital sourcing intake paths.</p>
+      </div>
+    `
+  },
+  "risk": {
+    meta: "BOARDROOM DIAGNOSTIC • RISK ASSESSMENT",
+    title: "Vulnerability Mapping & Mitigation Pathways",
+    summary: "Systemic supply-chain risks present a 78% exposure rating due to Southeast Asian harbor queues and supplier working-capital deficits. Immediate nearshore transitions are recommended.",
+    confidence: 87,
+    metrics: [
+      { name: "Overall Exposure Rating", val: "78% critical", trend: "up" },
+      { name: "Supplier Solvency Score", val: "2.8 Rating", trend: "up" },
+      { name: "Logistics Lead Time Volatility", val: "+22 Days", trend: "up" }
+    ],
+    evidence: [
+      "Southeast Asian sea lane delays continue to average 32 days, threatening assembly queues.",
+      "Hanoi fabs report severe liquidity deficits, which can result in vendor failure.",
+      "Tariffs and regulatory barriers on oceanic shipping lanes introduce price margins erosion."
+    ],
+    actions: [
+      "Deploy working-capital support buffers for critical component manufacturers.",
+      "Redirect raw parts shipping routes from Southeast Asian harbors to Mexican rail corridor corridors.",
+      "Establish redundancy guidelines across all high-value electronics assembly components."
+    ],
+    references: `
+      <div class="reference-card">
+        <div class="reference-card-header">
+          <span class="reference-tag">RISK COMPILATION AUDIT</span>
+          <span class="reference-status text-terra">Vulnerable</span>
+        </div>
+        <div class="reference-card-title">Critical Vendor Insolvency Alert</div>
+        <p class="reference-text">Monte Carlo models predict a 68% vendor default probability if container freight backlogs exceed 60 days.</p>
+      </div>
+    `
+  },
+  "cost": {
+    meta: "BOARDROOM CONSULTATION BRIEF • COST CONTAINMENT",
+    title: "Procurement Cost Containment & Margin Defense",
+    summary: "Spot container freight rate spikes created a $3.2M spend variance. Shifting to nearshore rail networks reduces unit cost from $192.14 baseline down to $147.14.",
+    confidence: 93,
+    metrics: [
+      { name: "Base Sourcing Cost", val: "$147.14 / unit", trend: "down" },
+      { name: "Spot Surcharge Variance", val: "-$3.2M savings", trend: "down" },
+      { name: "Supplier Price Premium", val: "8.2% delta", trend: "stable" }
+    ],
+    evidence: [
+      "Shanghai corridor shipping backlogs caused freight price premiums of 2.4x baseline levels.",
+      "Transitioning supply corridors to overland rail lines avoids spot oceanic shipping surcharges.",
+      "Consolidating component sourcing volumes lowers vendor pricing markups."
+    ],
+    actions: [
+      "Enforce fixed oceanic pricing agreements and divert remaining containers to rail terminals.",
+      "Establish localized nearshore suppliers in Laredo to completely bypass oceanic freight margins.",
+      "Pre-clear custom lanes with logistics providers to eliminate queue processing fees."
+    ],
+    references: `
+      <div class="reference-card">
+        <div class="reference-card-header">
+          <span class="reference-tag">COST VARIANCE DATABASE</span>
+          <span class="reference-status text-sage">Optimized</span>
+        </div>
+        <div class="reference-card-title">Procurement Corridor Price Comp</div>
+        <p class="reference-text">Nearshore transitions lower lead times and reduce logistics overhead risk vectors.</p>
       </div>
     `
   }
 };
 
 function renderDecisionCopilot() {
+  const isExpanded = appState.copilotExpanded;
+  
+  // Render layout container
   activeSheetEl.innerHTML = `
-    <div class="copilot-layout">
-      <!-- Left Control Panel (Mission Control Diagnostics & Prompts) -->
-      <div class="copilot-control-panel">
-        
-        <!-- Dataset Telemetry Widget -->
-        <div class="copilot-telemetry">
-          <div class="telemetry-item" style="grid-column: span 2; border-bottom: 0.75px solid var(--color-border-hairline); padding-bottom: 6px; margin-bottom: 4px;">
-            <span class="telemetry-label">Active Sourcing Dataset</span>
-            <span class="telemetry-val" style="font-family: var(--font-serif); font-size: 13px;">global_procurement_Q2.csv</span>
-          </div>
-          <div class="telemetry-item">
-            <span class="telemetry-label">Record Count</span>
-            <span class="telemetry-val">18,240 Rows</span>
-          </div>
-          <div class="telemetry-item">
-            <span class="telemetry-label">Data Integrity</span>
-            <span class="telemetry-val" style="color: var(--color-accent-sage);">99.8% Optimal</span>
-          </div>
-          <div class="telemetry-item">
-            <span class="telemetry-label">Anomalies</span>
-            <span class="telemetry-val" style="color: var(--color-accent-terracotta);">14 isolated</span>
-          </div>
-          <div class="telemetry-item">
-            <span class="telemetry-label">Copilot Mode</span>
-            <span class="telemetry-val">Consultant</span>
-          </div>
-        </div>
-
-        <!-- Strategy Prompts Deck -->
-        <div class="nav-section-title" style="padding-left: 0; margin-bottom: 4px; margin-top: 8px;">Consultant Inquiry Deck</div>
-        <div class="copilot-prompt-deck">
-          <button class="prompt-card active" data-brief="revenue">
-            <span class="prompt-card-category">Financial Impact</span>
-            <span class="prompt-card-text">Why did revenue decline?</span>
-          </button>
-          
-          <button class="prompt-card" data-brief="regions">
-            <span class="prompt-card-category">Risk Exposure</span>
-            <span class="prompt-card-text">Which region needs attention?</span>
-          </button>
-          
-          <button class="prompt-card" data-brief="predict">
-            <span class="prompt-card-category">Projections</span>
-            <span class="prompt-card-text">Predict next quarter.</span>
-          </button>
-          
-          <button class="prompt-card" data-brief="action">
-            <span class="prompt-card-category">Action Plan</span>
-            <span class="prompt-card-text">Generate an action plan.</span>
-          </button>
-          
-          <button class="prompt-card" data-brief="summary">
-            <span class="prompt-card-category">Data Synthesis</span>
-            <span class="prompt-card-text">Summarize this dataset.</span>
-          </button>
-        </div>
-
-      </div>
-
-      <!-- Right Readout Panel (Consultant Memorandums) -->
-      <div class="copilot-readout-panel">
-        <header class="readout-header">
-          <span class="readout-meta" id="readout-meta">MEMORANDUM • CONFIDENTIAL • SOURCING EXPENSES</span>
-          <h2 class="readout-title" id="readout-title">Revenue Contraction Analysis — Q2 2026</h2>
-        </header>
-        
-        <div class="readout-body" id="readout-body">
-          <!-- Inserted Dynamically -->
-        </div>
-      </div>
-
-      <!-- Custom Query Bar (Bottom Span) -->
-      <div class="copilot-input-container">
-        <div class="copilot-input-wrapper">
-          <input type="text" class="copilot-input" id="copilot-query-input" placeholder="Formulate custom strategic query (e.g. 'How does Shanghai container pricing affect Mexico tooling margins?')...">
-        </div>
-        <button class="btn-editorial btn-primary" id="copilot-query-btn" style="padding: 12px 24px; font-size: 11px;">
-          Execute Query
-        </button>
-      </div>
-
+    <div class="copilot-container ${isExpanded ? 'copilot-container--expanded' : 'copilot-container--compact'}">
+      ${isExpanded ? renderExpandedWorkspace() : renderCompactPanel()}
     </div>
   `;
-
-  // Render initial active card (revenue)
-  const defaultBrief = copilotBriefs["revenue"];
-  document.getElementById("readout-body").innerHTML = defaultBrief.content;
 
   // Bind Copilot event listeners
   setupCopilotListeners();
 }
 
+function renderCompactPanel() {
+  const contextNode = appState.copilotContextNodeId;
+  const contextLabel = contextNode 
+    ? `Target Node: ${contextNode.toUpperCase()} (Graph Selection)`
+    : "Target Database: global_procurement_Q2.csv";
+    
+  const starters = getCopilotStarters(contextNode);
+  const startersHTML = starters.map((s, idx) => `
+    <button class="copilot-starter-card" data-key="${s.key}" data-query="${s.text}">
+      <span class="copilot-starter-category">${s.category}</span>
+      <span class="copilot-starter-text">${s.text}</span>
+    </button>
+  `).join("");
+
+  return `
+    <div class="copilot-compact-card">
+      <div class="copilot-context-badge">
+        <span class="pulse-dot"></span>
+        <span>${contextLabel}</span>
+        ${contextNode ? '<button class="btn-clear-context" id="btn-clear-context">Clear Context</button>' : ''}
+      </div>
+      
+      <div class="copilot-input-row">
+        <div class="copilot-input-wrapper">
+          <input type="text" class="copilot-input" id="copilot-query-input" placeholder="Formulate custom strategic query (e.g. 'Predict Q3 nearshoring costs')...">
+        </div>
+        <button class="btn-editorial btn-primary" id="copilot-query-btn" style="padding: 14px 28px; font-size: 11px;">
+          Execute Query
+        </button>
+      </div>
+
+      <div class="copilot-starters-section">
+        <span class="copilot-starters-label">Suggested Consultative Inquiries</span>
+        <div class="copilot-starters-grid">
+          ${startersHTML}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderExpandedWorkspace() {
+  // Generate conversation history HTML
+  let messagesHTML = "";
+  if (appState.copilotHistory.length === 0) {
+    messagesHTML = `
+      <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--color-text-muted); font-size: 12px; font-style: italic;">
+        No inquiries recorded. Execute a query to begin.
+      </div>
+    `;
+  } else {
+    messagesHTML = appState.copilotHistory.map(h => `
+      <div class="copilot-memo-block">
+        <div class="copilot-memo-question">&ldquo;${h.question}&rdquo;</div>
+        <div class="copilot-memo-response">
+          <span class="copilot-memo-eyebrow">${h.response.meta}</span>
+          <h3 class="copilot-memo-title">${h.response.title}</h3>
+          
+          <div class="copilot-memo-section">
+            <span class="copilot-memo-section-label">Executive Summary</span>
+            <p class="copilot-memo-summary">${h.response.summary}</p>
+          </div>
+
+          <div class="copilot-memo-confidence-container">
+            <span class="copilot-memo-metric-label">AI Confidence</span>
+            <div class="copilot-confidence-bar">
+              <div class="copilot-confidence-fill" style="width: ${h.response.confidence}%"></div>
+            </div>
+            <span class="copilot-confidence-label">${h.response.confidence}%</span>
+          </div>
+
+          <div class="copilot-memo-metrics-row">
+            ${h.response.metrics.map(m => `
+              <div class="copilot-memo-metric-card">
+                <span class="copilot-memo-metric-label">${m.name}</span>
+                <span class="copilot-memo-metric-val ${m.trend}">${m.val}</span>
+              </div>
+            `).join("")}
+          </div>
+
+          <div class="copilot-memo-section">
+            <span class="copilot-memo-section-label">Supporting Evidence</span>
+            <ul class="copilot-memo-evidence-list">
+              ${h.response.evidence.map(e => `<li>${e}</li>`).join("")}
+            </ul>
+          </div>
+
+          <div class="copilot-memo-section">
+            <span class="copilot-memo-section-label">Recommended Actions</span>
+            <ol class="copilot-memo-actions-list">
+              ${h.response.actions.map(a => `<li>${a}</li>`).join("")}
+            </ol>
+          </div>
+        </div>
+      </div>
+    `).join("<hr style='border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 24px 0;'>");
+  }
+
+  // Get active references HTML (from last question)
+  let referencesHTML = `
+    <div class="copilot-ref-header">AI References & Business Context</div>
+    <div style="display: flex; align-items: center; justify-content: center; flex-grow: 1; color: var(--color-text-muted); font-size: 11px; font-style: italic; text-align: center; padding: var(--spacing-md);">
+      Active telemetry references will load here when a consultation is executed.
+    </div>
+  `;
+  if (appState.copilotHistory.length > 0) {
+    const lastHistory = appState.copilotHistory[appState.copilotHistory.length - 1];
+    referencesHTML = `
+      <div class="copilot-ref-header">AI References & Business Context</div>
+      ${lastHistory.response.references}
+    `;
+  }
+
+  return `
+    <div class="copilot-split-workspace">
+      <!-- Left Column: Dialog Thread -->
+      <div class="copilot-chat-thread">
+        <header class="copilot-thread-header">
+          <span class="copilot-thread-header-title">Consultation Ledger</span>
+          <button class="btn-copilot-reset" id="btn-copilot-reset">Reset Workspace</button>
+        </header>
+
+        <div class="copilot-messages-container" id="copilot-messages-container">
+          ${messagesHTML}
+        </div>
+
+        <div class="copilot-chat-input-row">
+          <div class="copilot-input-wrapper">
+            <input type="text" class="copilot-input" id="copilot-query-input" placeholder="Formulate follow-up consultative query...">
+          </div>
+          <button class="btn-editorial btn-primary" id="copilot-query-btn" style="padding: 14px 28px; font-size: 11px;">
+            Execute
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Column: Context/Charts References -->
+      <div class="copilot-reference-pane" id="copilot-reference-pane">
+        ${referencesHTML}
+      </div>
+    </div>
+  `;
+}
+
+function getCopilotStarters(nodeId) {
+  const starters = {
+    "revenue": [
+      { category: "Financial Projections", text: "Why did revenue increase this month?", key: "revenue" },
+      { category: "Forecast Models", text: "Predict next quarter's revenue.", key: "predict" },
+      { category: "Strategic Margin", text: "How does Singapore latency affect Q3 profit?", key: "profit" }
+    ],
+    "profit": [
+      { category: "Tactical Redirection", text: "How can I improve profit margins?", key: "profit" },
+      { category: "Cost Mitigation", text: "Where should I reduce costs?", key: "cost" },
+      { category: "Operational Risk", text: "What risks threaten Q3 margin target?", key: "risk" }
+    ],
+    "regions": [
+      { category: "Geographic Exposure", text: "Which region needs immediate attention?", key: "regions" },
+      { category: "Transit Corridors", text: "Explain Laredo rail throughput vs Singapore sea route.", key: "cost" }
+    ],
+    "operations": [
+      { category: "Operational Bottleneck", text: "Why is operations lagging?", key: "operations" },
+      { category: "Transit Latency", text: "Explain Singapore/Hanoi port queues.", key: "regions" },
+      { category: "Mitigation Strategy", text: "Generate an action plan to reduce operations latency.", key: "action" }
+    ],
+    "inventory": [
+      { category: "Warehouse Capacity", text: "Is inventory buffer sufficient?", key: "inventory" },
+      { category: "Projections", text: "Predict inventory needs next quarter.", key: "inventory" }
+    ],
+    "customers": [
+      { category: "Retention Analysis", text: "What is driving customer growth?", key: "customers" },
+      { category: "Satisfaction Assessment", text: "What affects customer satisfaction?", key: "customers" }
+    ],
+    "satisfaction": [
+      { category: "Satisfaction Assessment", text: "What affects customer satisfaction?", key: "satisfaction" },
+      { category: "Service Levels", text: "How do I improve support response time?", key: "satisfaction" }
+    ],
+    "marketing": [
+      { category: "Acquisition Efficiency", text: "Which marketing campaign performed best?", key: "marketing" },
+      { category: "Capital Optimization", text: "Optimize marketing spend allocation.", key: "marketing" }
+    ]
+  };
+
+  const defaults = [
+    { category: "Financial Projections", text: "Why did revenue increase this month?", key: "revenue" },
+    { category: "Geographic Exposure", text: "Which region needs immediate attention?", key: "regions" },
+    { category: "Tactical Redirection", text: "What is my biggest business risk?", key: "risk" },
+    { category: "Forecast Models", text: "Predict next quarter's revenue.", key: "predict" },
+    { category: "Cost Mitigation", text: "Where should I reduce costs?", key: "cost" },
+    { category: "Acquisition Efficiency", text: "Which marketing campaign performed best?", key: "marketing" }
+  ];
+
+  return starters[nodeId] || defaults;
+}
+
 function setupCopilotListeners() {
-  const cards = document.querySelectorAll(".prompt-card");
-  const metaEl = document.getElementById("readout-meta");
-  const titleEl = document.getElementById("readout-title");
-  const bodyEl = document.getElementById("readout-body");
   const inputEl = document.getElementById("copilot-query-input");
   const buttonEl = document.getElementById("copilot-query-btn");
+  const clearContextBtn = document.getElementById("btn-clear-context");
+  const resetBtn = document.getElementById("btn-copilot-reset");
+  const starterCards = document.querySelectorAll(".copilot-starter-card");
 
-  if (!cards || !bodyEl || !metaEl || !titleEl) return;
+  if (!inputEl || !buttonEl) return;
 
-  // Click card handlers
-  cards.forEach(card => {
+  // Clear Context
+  if (clearContextBtn) {
+    clearContextBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      appState.copilotContextNodeId = null;
+      renderDecisionCopilot();
+    });
+  }
+
+  // Reset/Collapse Workspace
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      appState.copilotExpanded = false;
+      appState.copilotHistory = [];
+      renderDecisionCopilot();
+    });
+  }
+
+  // Suggested starters click
+  starterCards.forEach(card => {
     card.addEventListener("click", () => {
-      // Clear active classes
-      cards.forEach(c => c.classList.remove("active"));
-      card.classList.add("active");
-
-      const briefId = card.getAttribute("data-brief");
-      const brief = copilotBriefs[briefId];
-      if (!brief) return;
-
-      // Smooth fade transition
-      bodyEl.style.opacity = "0";
-      setTimeout(() => {
-        metaEl.textContent = brief.meta;
-        titleEl.textContent = brief.title;
-        bodyEl.innerHTML = brief.content;
-        bodyEl.style.opacity = "1";
-      }, 150);
+      const queryText = card.getAttribute("data-query");
+      inputEl.value = queryText;
+      executeInquiry(queryText);
     });
   });
 
-  // Custom strategic query submission handler
-  const handleQuery = () => {
-    const queryText = inputEl.value.trim();
-    if (!queryText) return;
+  // Execute click
+  buttonEl.addEventListener("click", () => {
+    const val = inputEl.value.trim();
+    if (val) executeInquiry(val);
+  });
 
-    // Deselect other prompt cards
-    cards.forEach(c => c.classList.remove("active"));
-
-    // Render loading steps inside the memo area
-    bodyEl.style.opacity = "0";
-    setTimeout(() => {
-      metaEl.textContent = "AI SEARCH & REASONING MODEL";
-      titleEl.textContent = "Processing Strategic Inquiry...";
-      bodyEl.innerHTML = `
-        <div class="copilot-loader">
-          <span id="loader-step">Querying procurement databases...</span>
-          <div class="loader-track">
-            <div class="loader-bar"></div>
-          </div>
-        </div>
-      `;
-      bodyEl.style.opacity = "1";
-      
-      const stepEl = document.getElementById("loader-step");
-      
-      // Animate loading stages
-      setTimeout(() => {
-        if (stepEl) stepEl.textContent = "Assessing supply path node models...";
-      }, 700);
-
-      setTimeout(() => {
-        if (stepEl) stepEl.textContent = "Generating strategic action briefs...";
-      }, 1400);
-
-      // Render custom generated consulting brief response
-      setTimeout(() => {
-        bodyEl.style.opacity = "0";
-        setTimeout(() => {
-          metaEl.textContent = "BOARDROOM SYNTHESIS REPORT • CONSULTANT RESPONSE";
-          titleEl.textContent = `Consultation Brief: "${queryText.length > 40 ? queryText.slice(0, 40) + '...' : queryText}"`;
-          
-          // Tailor response slightly if keywords are present
-          let resultText = "";
-          let lowerText = queryText.toLowerCase();
-
-          if (lowerText.includes("mexico") || lowerText.includes("guadalajara")) {
-            resultText = `
-              <p>Operational logic parses Guadalajara as highly viable for nearshoring buffer routing, showing resilient 6-day lead times. However, custom tariffs introduce a localized unit premium of 8.2% ($12.50 per tool assembly SKU).</p>
-              <div class="matrix-card" style="margin-top: 16px;">
-                <div class="matrix-card-title" style="color: var(--color-accent-sage);">Guadalajara / Laredo Corridor Outlook</div>
-                <p class="matrix-card-text">Infrastructure capacities are strong, but long-term exposure mitigation requires establishing localized supply channels rather than purely re-routing global raw inputs.</p>
-              </div>
-            `;
-          } else if (lowerText.includes("cost") || lowerText.includes("pricing") || lowerText.includes("margin")) {
-            resultText = `
-              <p>Cost variance analysis projects procurement spot freight rate premiums to persist throughout Q3. Establishing container pre-allocations and transition strategies lowers projected Unit Sourcing Cost by 24% ($147.14 vs. $192.14 baseline).</p>
-              <div class="readout-table-wrapper" style="margin-top: 16px;">
-                <table class="readout-table">
-                  <thead>
-                    <tr>
-                      <th>Sourcing Strategy</th>
-                      <th>Expected Q3 Margin</th>
-                      <th>Logistics CapEx Required</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Global-First (Base)</td>
-                      <td style="color: var(--color-accent-terracotta);">32% Gross</td>
-                      <td>$0.0M</td>
-                    </tr>
-                    <tr>
-                      <td><strong>Hybrid-Regional</strong></td>
-                      <td style="color: var(--color-accent-sage);"><strong>44% Gross</strong></td>
-                      <td><strong>$40.0M</strong></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            `;
-          } else {
-            resultText = `
-              <p>Sourcing analysis evaluated trade lane vectors, supplier indices, and maritime congestion signals. We isolate 14 critical pricing/shipping anomalies across 18,240 records.</p>
-              <div class="matrix-card" style="margin-top: 16px;">
-                <div class="matrix-card-title" style="color: var(--color-accent-olive);">Primary Consulting Verdict</div>
-                <p class="matrix-card-text">To defend margins from Southeast Asian port backlogs, near-term capital reallocation to secondary assembly hubs (e.g. Mexico) is highly recommended.</p>
-              </div>
-            `;
-          }
-
-          bodyEl.innerHTML = resultText;
-          bodyEl.style.opacity = "1";
-          inputEl.value = ""; // clear field
-        }, 150);
-      }, 2100);
-
-    }, 150);
-  };
-
-  // Click query button
-  buttonEl.addEventListener("click", handleQuery);
-
-  // Press Enter key on input field
+  // Execute on Enter key
   inputEl.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
-      handleQuery();
+      const val = inputEl.value.trim();
+      if (val) executeInquiry(val);
     }
   });
+}
+
+function executeInquiry(question) {
+  // If compact, expand workspace first
+  if (!appState.copilotExpanded) {
+    appState.copilotExpanded = true;
+    renderDecisionCopilot();
+  }
+
+  const container = document.getElementById("copilot-messages-container");
+  if (!container) return;
+
+  // Clear "no inquiries" placeholder
+  if (appState.copilotHistory.length === 0) {
+    container.innerHTML = "";
+  }
+
+  // Create loading loader block inside container
+  const loaderEl = document.createElement("div");
+  loaderEl.className = "copilot-loader-block";
+  loaderEl.innerHTML = `
+    <div class="copilot-loader-step">
+      <span class="copilot-loader-spinner"></span>
+      <span class="step-text" id="loader-step-text">Parsing procurement transaction database...</span>
+    </div>
+    <div class="copilot-loader-bar-wrapper">
+      <div class="copilot-loader-bar-fill"></div>
+    </div>
+  `;
+  container.appendChild(loaderEl);
+  container.scrollTop = container.scrollHeight;
+
+  // Animate loading text phases
+  setTimeout(() => {
+    const txt = document.getElementById("loader-step-text");
+    if (txt) txt.textContent = "Correlating geographic delay vectors...";
+  }, 500);
+
+  setTimeout(() => {
+    const txt = document.getElementById("loader-step-text");
+    if (txt) txt.textContent = "Compiling Recommended Action Pathways...";
+  }, 1000);
+
+  // Load response
+  setTimeout(() => {
+    // Remove loader
+    if (loaderEl.parentNode) loaderEl.parentNode.removeChild(loaderEl);
+
+    // Formulate response matching keyword
+    const lowercaseQ = question.toLowerCase();
+    let responseKey = "revenue"; // Default fallback
+    if (lowercaseQ.includes("revenue") || lowercaseQ.includes("increase")) responseKey = "revenue";
+    else if (lowercaseQ.includes("profit") || lowercaseQ.includes("margin")) responseKey = "profit";
+    else if (lowercaseQ.includes("region") || lowercaseQ.includes("attention")) responseKey = "regions";
+    else if (lowercaseQ.includes("operation") || lowercaseQ.includes("lag")) responseKey = "operations";
+    else if (lowercaseQ.includes("inventory") || lowercaseQ.includes("buffer")) responseKey = "inventory";
+    else if (lowercaseQ.includes("customer") || lowercaseQ.includes("retention")) responseKey = "customers";
+    else if (lowercaseQ.includes("satisfaction") || lowercaseQ.includes("nps") || lowercaseQ.includes("support")) responseKey = "satisfaction";
+    else if (lowercaseQ.includes("marketing") || lowercaseQ.includes("campaign")) responseKey = "marketing";
+    else if (lowercaseQ.includes("risk") || lowercaseQ.includes("exposure")) responseKey = "risk";
+    else if (lowercaseQ.includes("cost") || lowercaseQ.includes("reduce")) responseKey = "cost";
+    else if (lowercaseQ.includes("predict")) responseKey = "predict";
+    else if (lowercaseQ.includes("action") || lowercaseQ.includes("mitigation")) responseKey = "action";
+
+    // Re-check predictive model key specifically
+    if (lowercaseQ.includes("predict") && lowercaseQ.includes("revenue")) responseKey = "revenue";
+
+    // Fetch response payload
+    const payload = copilotResponses[responseKey] || copilotResponses["revenue"];
+
+    // Push Q&A record to dialogue history
+    appState.copilotHistory.push({
+      question: question,
+      response: payload
+    });
+
+    // Re-render expanded workspace so full Q&A updates cleanly with streaming-like visual offsets
+    renderDecisionCopilot();
+
+    // Scroll chat thread to the top of the newly added response block
+    const messagesBox = document.getElementById("copilot-messages-container");
+    if (messagesBox) {
+      const blocks = messagesBox.querySelectorAll(".copilot-memo-block");
+      if (blocks.length > 0) {
+        const lastBlock = blocks[blocks.length - 1];
+        messagesBox.scrollTop = lastBlock.offsetTop;
+      } else {
+        messagesBox.scrollTop = 0;
+      }
+    }
+  }, 1600);
 }
 
 // 4.5. Render: Visual Projections (Bloomberg meets Apple Editorial Charts)
@@ -1904,7 +2167,7 @@ function renderIntelSynthesis() {
     }
     window._synapseGraph = new DecisionGraph('dg-canvas', {
       onNodeClick: function(nodeId, nodeData) {
-        // Node click cross-view callback handled in detail panel
+        appState.copilotContextNodeId = nodeId;
       }
     });
     // Animate in after a short delay so the sheet transition completes
