@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 /**
  * SynapseIQ — Decision Graph Engine
