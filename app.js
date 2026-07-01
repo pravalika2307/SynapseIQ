@@ -1497,19 +1497,29 @@ function renderIntelSynthesis() {
     </div>
   `;
 
-  // ── KPI sparklines ──────────────────────────────────────────────────
-  const kpiSparkline = (data, color = 'var(--accent)') => {
-    const w = 100, h = 32;
+  // ── KPI sparklines — area fill for premium look
+  const kpiSparkline = (data, color = 'var(--accent)', colorRaw = '#79D38A') => {
+    const w = 100, h = 36;
     const max = Math.max(...data), min = Math.min(...data), range = max - min || 1;
-    const pts = data.map((v, i) => `${(i / (data.length - 1)) * w},${h - ((v - min) / range) * h}`).join(' ');
-    return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    const pts = data.map((v, i) => `${(i / (data.length - 1)) * w},${h - ((v - min) / range) * (h - 4) - 2}`);
+    const ptsStr = pts.join(' ');
+    const areaPath = `M ${pts[0]} L ${pts.join(' L ')} L ${w},${h} L 0,${h} Z`;
+    const gradId = `sg${Math.random().toString(36).slice(2,7)}`;
+    return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" style="overflow:visible">
+      <defs><linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${colorRaw}" stop-opacity="0.25"/>
+        <stop offset="100%" stop-color="${colorRaw}" stop-opacity="0"/>
+      </linearGradient></defs>
+      <path d="${areaPath}" fill="url(#${gradId})" />
+      <polyline points="${ptsStr}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
   };
 
   activeSheetEl.innerHTML = `
     <div class="workspace-dashboard">
 
       <!-- HERO SECTION -->
-      <section class="dashboard-section hero-section" id="executive-brief-section">
+      <section class="dashboard-section hero-section section-primary anim-1" id="executive-brief-section">
         <div class="hero-eyebrow">
           <span class="pulse-dot"></span>
           AI Analysis Complete
@@ -1518,7 +1528,7 @@ function renderIntelSynthesis() {
         <p class="hero-sub">Real-time organizational synthesis. AI maps operational anomalies against strategic objectives — giving you clarity when it matters most.</p>
         <div class="hero-meta-row">
           <div class="hero-dataset-chip">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.5"><path d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" stroke-linecap="round"/></svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--text-3)"><path d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" stroke-linecap="round"/></svg>
             <div>
               <span class="hero-dataset-label">Active Dataset</span>
               <span class="hero-dataset-name">${d.name}</span>
@@ -1534,44 +1544,44 @@ function renderIntelSynthesis() {
         </div>
 
         <!-- Executive Brief Card -->
-        <div id="briefing-editorial-container" style="margin-top: 32px;">
+        <div id="briefing-editorial-container" style="margin-top:40px;">
           ${buildExecutiveBriefingHTML(appState.copilotContextNodeId || 'health')}
         </div>
       </section>
 
       <!-- KPI ROW -->
-      <section class="dashboard-section">
+      <section class="dashboard-section anim-2">
         <div class="section-eyebrow"><span class="section-eyebrow-dot"></span><span class="section-label">Key Performance Indicators</span></div>
         <div class="kpi-row">
           <div class="kpi-card">
             <span class="kpi-label">Revenue Growth</span>
             <div class="kpi-value up">+18%</div>
             <div class="kpi-trend up">↑ vs Q1 forecast</div>
-            <div class="kpi-sparkline">${kpiSparkline([8,10,11,14,15,16,18], 'var(--accent)')}</div>
+            <div class="kpi-sparkline">${kpiSparkline([8,10,11,14,15,16,18], 'var(--accent)', '#79D38A')}</div>
           </div>
           <div class="kpi-card">
             <span class="kpi-label">CAC Efficiency</span>
             <div class="kpi-value up">↓ 8%</div>
             <div class="kpi-trend up">Cost per acquisition</div>
-            <div class="kpi-sparkline">${kpiSparkline([18,16,15,13,11,10,8], 'var(--accent)')}</div>
+            <div class="kpi-sparkline">${kpiSparkline([18,16,15,13,11,10,8], 'var(--accent)', '#79D38A')}</div>
           </div>
           <div class="kpi-card">
             <span class="kpi-label">Gross Margin</span>
             <div class="kpi-value up">44.0%</div>
             <div class="kpi-trend up">↑ 12% YoY</div>
-            <div class="kpi-sparkline">${kpiSparkline([32,35,36,38,40,42,44], 'var(--accent)')}</div>
+            <div class="kpi-sparkline">${kpiSparkline([32,35,36,38,40,42,44], 'var(--accent)', '#79D38A')}</div>
           </div>
           <div class="kpi-card">
             <span class="kpi-label">Transit Latency</span>
             <div class="kpi-value down">32d</div>
             <div class="kpi-trend down">↑ Peak delay</div>
-            <div class="kpi-sparkline">${kpiSparkline([12,15,18,22,26,30,32], 'var(--critical)')}</div>
+            <div class="kpi-sparkline">${kpiSparkline([12,15,18,22,26,30,32], 'var(--critical)', '#E76F51')}</div>
           </div>
         </div>
       </section>
 
       <!-- DECISION GRAPH -->
-      <section class="dashboard-section" id="decision-graph-section">
+      <section class="dashboard-section section-primary anim-3" id="decision-graph-section">
         <div class="section-eyebrow"><span class="section-eyebrow-dot"></span><span class="section-label">Decision Intelligence</span></div>
         <h2 class="section-headline">Business Decision Graph</h2>
         <p class="section-sub">Click any node to update the executive brief, highlight related signals, and surface contextual strategy questions.</p>
@@ -1586,7 +1596,7 @@ function renderIntelSynthesis() {
       </section>
 
       <!-- BUSINESS SIGNALS -->
-      <section class="dashboard-section" id="signals-section">
+      <section class="dashboard-section anim-4" id="signals-section">
         <div class="section-eyebrow"><span class="section-eyebrow-dot"></span><span class="section-label">Business Signals</span></div>
         <h2 class="section-headline">Supporting Evidence Matrix</h2>
         <p class="section-sub">Real-time telemetry. Click a Decision Graph node to filter these signals.</p>
@@ -1596,14 +1606,14 @@ function renderIntelSynthesis() {
       </section>
 
       <!-- STRATEGY CANVAS (Visual Projections) -->
-      <section class="dashboard-section" id="projections-section">
+      <section class="dashboard-section anim-5" id="projections-section">
         <div class="section-eyebrow"><span class="section-eyebrow-dot"></span><span class="section-label">Strategy Canvas</span></div>
         <h2 class="section-headline">Macro Projections Matrix</h2>
         ${projectionsHTML}
       </section>
 
       <!-- BUSINESS TIMELINE -->
-      <section class="dashboard-section" id="timeline-section">
+      <section class="dashboard-section anim-6" id="timeline-section">
         <div class="section-eyebrow"><span class="section-eyebrow-dot"></span><span class="section-label">Business Timeline</span></div>
         <h2 class="section-headline">Strategic Progression Pathway</h2>
         <div class="business-timeline">
