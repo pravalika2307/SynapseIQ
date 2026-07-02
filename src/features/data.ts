@@ -234,24 +234,34 @@ export const briefingReports: BriefingReport[] = [
 
 export const copilotStarters = [
   {
-    category: 'Revenue & Growth',
-    text: 'Why did revenue increase this month?',
-    query: 'Provide a breakdown of the revenue growth. What factors contributed to the +18% increase this month?'
+    category: 'Revenue Performance',
+    text: 'Why did revenue increase?',
+    query: 'Why did revenue increase?'
   },
   {
-    category: 'Risk Assessment',
-    text: 'Which region needs immediate attention?',
-    query: 'Identify the region with the highest operational latency and financial risk. What are the key bottlenecks there?'
+    category: 'Risk Diagnostics',
+    text: 'Which region is underperforming?',
+    query: 'Which region is underperforming?'
   },
   {
-    category: 'Logistics Corridor',
-    text: 'Analyze transpacific shipping bottlenecks.',
-    query: 'Detail the current transit queue delays in Southeast Asia. How does it impact our safety stock metrics?'
+    category: 'Profit Projections',
+    text: "Predict next month's profit.",
+    query: "Predict next month's profit."
   },
   {
-    category: 'Nearshoring Modeler',
-    text: 'Simulate Mexican logistics pivot.',
-    query: 'How does nearshoring 25% of sub-assemblies to Mexico impact gross margin and shipping lead times?'
+    category: 'Risk Mitigation',
+    text: 'What is my biggest business risk?',
+    query: 'What is my biggest business risk?'
+  },
+  {
+    category: 'Marketing ROI',
+    text: 'Which marketing campaign had the best ROI?',
+    query: 'Which marketing campaign had the best ROI?'
+  },
+  {
+    category: 'Strategic Investment',
+    text: 'Where should I invest next?',
+    query: 'Where should I invest next?'
   }
 ];
 
@@ -264,46 +274,80 @@ export const copilotAIResponses: Record<string, any> = {
       'Enterprise bookings remain strong in the EU corridor.'
     ],
     confidence: 94,
-    recommendation: 'Initiate buffer stock scaling to 45 days in North American logistics centers.'
+    recommendation: 'Initiate buffer stock scaling to 45 days in North American logistics centers.',
+    relatedMetrics: ['Transit Latency (32d)', 'Gross Margin (44.0%)'],
+    nextQuestion: 'Simulate Mexican logistics pivot.'
   },
-  'Why did revenue increase this month?': {
-    summary: 'Q2 revenue run-rate expanded by 18% YoY ($42.8M total), primarily driven by enterprise renewals in North America and contract wins in the EU market compliance segment.',
+  'Why did revenue increase?': {
+    summary: 'Revenue expanded by 18% YoY ($42.8M run-rate), driven by strong Net Revenue Retention (NRR) and contract wins in the EU market compliance segment.',
     evidence: [
-      'Net Revenue Retention (NRR) rose to 118%.',
-      'EU digital compliance expansion added 12 new logo accounts.',
-      'Customer Acquisition Cost (CAC) decreased by 8% due to targeted campaign execution.'
+      'Net Revenue Retention (NRR) rose to 118% with near-zero Tier-1 churn.',
+      'Frankfurt cloud node launch converted 12 security-conscious enterprise accounts.',
+      'Customer Acquisition Cost (CAC) decreased by 8% due to high-intent ABM search campaigns.'
     ],
     confidence: 96,
-    recommendation: 'Reallocate surplus lead generation funds to high-intent account lists in France and Germany.'
+    recommendation: 'Reallocate surplus display ad budget to high-intent account lists in Germany and France.',
+    relatedMetrics: ['Revenue Growth (+18%)', 'CAC Efficiency (↓ 8%)', 'NRR (118%)'],
+    nextQuestion: 'Which marketing campaign had the best ROI?'
   },
-  'Which region needs immediate attention?': {
-    summary: 'The Asia-Pacific supply corridor requires immediate operational mitigation. Upstream logistics lags at ports are generating assembly gaps in final delivery pipelines.',
+  'Which region is underperforming?': {
+    summary: 'The Asia-Pacific supply corridor underperforms due to upstream logistics lags at ports, causing delivery assembly gaps in final delivery pipelines.',
     evidence: [
       'Vietnam assembly hubs report a 32-day shipment delay.',
       'Hanoi Precision Parts debt metrics warn of potential solvency constraint issues.',
       'Texas warehouse space utilization is currently at 88% capacity.'
     ],
     confidence: 92,
-    recommendation: 'Divert wafer sourcing flow to Arizona foundry lines and trigger the safety stock expansion.'
+    recommendation: 'Divert wafer sourcing flow to Arizona foundry lines and scale Mexican safety stock targets.',
+    relatedMetrics: ['Transit Latency (32d)', 'Inventory Turns (6.2x)'],
+    nextQuestion: 'What is my biggest business risk?'
   },
-  'Analyze transpacific shipping bottlenecks.': {
-    summary: 'Transpacific transit times are constrained by port processing backlogs in Southeast Asian shipping hubs, primarily impacting electronics component SKU categories.',
+  "Predict next month's profit.": {
+    summary: 'Gross profit margins are projected to stabilize at 44.0%, but operating margins face a 1.8% contraction risk if ocean freight spot rates remain volatile.',
     evidence: [
-      'Average vessel turnaround is 5.2 days longer than the historical baseline.',
-      'Ocean spot freight rates increased by $1,200 per container.',
-      'Laredo customs clearance holds stand at 1.8 days.'
+      'Ocean spot freight rates increased by $1,200 per container this month.',
+      'Guadalajara assembly capacity utilization is running at 92.4%.',
+      'Overland shipping from Laredo is scaling up by 15%.'
     ],
-    confidence: 89,
-    recommendation: 'Secure fixed contract rates for the remainder of the fiscal year to protect operating profit.'
+    confidence: 88,
+    recommendation: 'Lock in fixed ocean carrier rates on the Eastern Pacific corridor immediately.',
+    relatedMetrics: ['Gross Margin (44.0%)', 'Transit Latency (32d)'],
+    nextQuestion: 'Where should I invest next?'
   },
-  'Simulate Mexican logistics pivot.': {
-    summary: 'Rerouting 25% of wafer supply chains to the Guadalajara corridor decreases shipping latency from 32 to 14 days, protecting gross margins from cargo premium spikes.',
+  'What is my biggest business risk?': {
+    summary: 'Overconcentration of wafer sub-assemblies in Hanoi Precision Parts exposes the business to supplier credit default and final delivery shutdown hazards.',
     evidence: [
-      'Lead time drops by 18 days overall.',
-      'Tariff mitigation lowers compliance overhead by $420k.',
-      'Slight increase in overland transport costs is offset by maritime container cost reductions.'
+      'Vietnam supplier debt ratio escalated to 2.8x.',
+      'Vietnam terminal vessel turnaround is 5.2 days longer than the historical baseline.',
+      'Guadalajara inventory safety buffer holds less than 14 days of SKU-940 components.'
+    ],
+    confidence: 95,
+    recommendation: 'Transition wafer allocations to Arizona foundry lines within the next 60 days.',
+    relatedMetrics: ['Vietnam Solvency (32 pts)', 'Transit Latency (32d)', 'Capacity (92.4%)'],
+    nextQuestion: "Predict next month's profit."
+  },
+  'Which marketing campaign had the best ROI?': {
+    summary: 'Account-Based Marketing (ABM) targeting Fortune 500 manufacturing accounts yielded the highest returns, reducing overall CAC by 8%.',
+    evidence: [
+      'ABM program logged a 5.4x LTV:CAC efficiency ratio.',
+      'Paid search on high-volume developer keywords CPC increased by 22%.',
+      'EU compliance webinars converted 4 major logos.'
+    ],
+    confidence: 93,
+    recommendation: 'Shift 20% of paid display ad spend to targeted compliance webinars and account campaigns.',
+    relatedMetrics: ['CAC Efficiency (↓ 8%)', 'Revenue Run-rate ($42.8M)'],
+    nextQuestion: 'Why did revenue increase?'
+  },
+  'Where should I invest next?': {
+    summary: 'Capital allocation modeling favors scaling the Jalisco nearshoring corridor to eliminate transpacific logistics delays and minimize capital lockup.',
+    evidence: [
+      'Nearshoring near Guadalajara reduces transit times from 32 to 14 days.',
+      'Overland logistics reduces sea freight custom delays by 2.4 days.',
+      'Initial Jalisco plant capacity is running underutilized at 72%.'
     ],
     confidence: 91,
-    recommendation: 'Approve the Jalisco supply chain corridor nearshoring proposal.'
+    recommendation: 'Approve the Jalisco supply chain corridor nearshoring proposal.',
+    relatedMetrics: ['Gross Margin (44.0%)', 'Transit Latency (32d)', 'Capacity (92.4%)'],
+    nextQuestion: 'Why did revenue increase?'
   }
 };

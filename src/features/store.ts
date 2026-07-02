@@ -10,6 +10,8 @@ export interface CopilotMessage {
     evidence: string[];
     confidence: number;
     recommendation: string;
+    relatedMetrics?: string[];
+    nextQuestion?: string;
   };
 }
 
