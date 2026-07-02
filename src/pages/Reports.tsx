@@ -41,7 +41,7 @@ export const Reports: React.FC = () => {
           <div className="w-1.5 h-1.5 rounded-full bg-accent-sage opacity-75" />
           <span className="text-[10px] font-bold uppercase tracking-widest text-accent-sage">Circulation Desk</span>
         </div>
-        <h1 className="text-32 font-semibold tracking-tight text-white/95">Boardroom Briefings Dossier</h1>
+        <h1 className="text-32 font-semibold tracking-tight text-white/95">Boardroom Report</h1>
         <p className="text-14 text-white/50 -mt-2">
           Ready for investor and steering committee distribution. Compile executive-grade analysis summaries.
         </p>
