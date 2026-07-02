@@ -13,7 +13,8 @@ import {
   ChevronRight,
   Settings,
   HelpCircle,
-  User
+  User,
+  Clock
 } from 'lucide-react';
 import { useAppStore } from '../features/store';
 
@@ -27,6 +28,11 @@ export const Sidebar: React.FC = () => {
       to: '/dashboard/brief',
       icon: <FileText size={16} />,
       label: 'Executive Brief'
+    },
+    {
+      to: '/dashboard/timeline',
+      icon: <Clock size={16} />,
+      label: 'Business Timeline'
     },
     {
       to: '/dashboard/signals',

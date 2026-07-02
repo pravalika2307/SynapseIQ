@@ -9,6 +9,7 @@ import { DecisionCopilot } from './pages/DecisionCopilot';
 import { Forecast } from './pages/Forecast';
 import { Reports } from './pages/Reports';
 import { DataExplorer } from './pages/DataExplorer';
+import { BusinessTimeline } from './pages/BusinessTimeline';
 
 const App: React.FC = () => {
   return (
@@ -20,6 +21,7 @@ const App: React.FC = () => {
           <Route index element={<Navigate to="/dashboard/brief" replace />} />
           <Route path="brief" element={<ExecutiveBrief />} />
           <Route path="brief/:reportId" element={<Reports />} />
+          <Route path="timeline" element={<BusinessTimeline />} />
           <Route path="signals" element={<BusinessSignals />} />
           <Route path="projections" element={<StrategyCanvas />} />
           <Route path="copilot" element={<DecisionCopilot />} />
