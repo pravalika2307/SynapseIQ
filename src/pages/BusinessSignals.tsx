@@ -1,8 +1,10 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { useAppStore } from '../features/store';
+import { useDemoStore } from '../features/demoStore';
 import { businessSignals } from '../features/data';
+import { Card } from '../components/ui';
+import { Zap } from 'lucide-react';
 
 // Helper to check if a signal is related to the currently active graph node
 const isSignalRelatedToNode = (signalId: string, nodeId: string): boolean => {
@@ -19,6 +21,9 @@ const isSignalRelatedToNode = (signalId: string, nodeId: string): boolean => {
 
 export const BusinessSignals: React.FC = () => {
   const activeNodeId = useAppStore((state) => state.activeNodeId);
+  
+  const isDemoActive = useDemoStore((state) => state.isDemoActive);
+  const currentStep = useDemoStore((state) => state.currentStep);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -61,13 +66,16 @@ export const BusinessSignals: React.FC = () => {
           const strokeColor = signal.trend === 'positive' ? '#79D38A' : signal.trend === 'negative' ? '#E76F51' : '#F5B14C';
           const fillColor = signal.trend === 'positive' ? 'rgba(121, 211, 138, 0.08)' : signal.trend === 'negative' ? 'rgba(231, 111, 81, 0.08)' : 'rgba(245, 177, 76, 0.08)';
 
+          const isHighlightDemo = isDemoActive && currentStep === 5 && ['gross-margin', 'transit-latency', 'cac-efficiency'].includes(signal.id);
+
           return (
             <div
               key={signal.id}
               className={`
-                bg-card border rounded-2xl p-6 flex flex-col gap-5 transition-all duration-500 shadow-lg
-                ${isDimmed ? 'opacity-20 border-white/5 grayscale-[50%] pointer-events-none' : 'border-white/5 hover:border-white/10 hover:-translate-y-1 hover:shadow-xl'}
+                bg-[#151B23] border rounded-2xl p-6 flex flex-col gap-5 transition-all duration-500 shadow-lg
+                ${isDimmed && !isHighlightDemo ? 'opacity-20 border-white/5 grayscale-[50%] pointer-events-none' : 'border-white/5 hover:border-white/10 hover:-translate-y-1 hover:shadow-xl'}
                 ${isRelated && activeNodeId !== 'health' ? 'border-accent-sage/35 shadow-accent-sage/5 scale-[1.01]' : ''}
+                ${isHighlightDemo ? 'ring-2 ring-[#79D38A] scale-[1.01] shadow-[0_0_20px_rgba(121,211,138,0.15)] bg-[#79D38A]/5 border-transparent' : ''}
               `}
             >
               {/* Header */}
@@ -128,6 +136,31 @@ export const BusinessSignals: React.FC = () => {
           );
         })}
       </motion.div>
+
+      {/* AI Recommendations panel (Step 5 spotlight target) */}
+      <AnimatePresence>
+        {isDemoActive && currentStep === 5 && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="w-full mt-4"
+          >
+            <Card elevation="flat" className="p-6 border border-[#79D38A]/20 bg-[#79D38A]/5 shadow-xl flex flex-col gap-3">
+              <div className="flex items-center gap-1.5 text-[#79D38A]">
+                <Zap size={14} className="animate-pulse" />
+                <span className="text-[10px] font-bold uppercase tracking-wider font-sans">AI Sourcing Recommendations</span>
+              </div>
+              <h4 className="text-14.5 font-semibold text-white tracking-tight font-serif">
+                Divert wafer sourcing flow to Arizona foundry lines & scale Jalisco stock targets to 60 days
+              </h4>
+              <p className="text-13 text-white/50 leading-relaxed font-serif">
+                Analysis of Vietnamese dock backlogs flags peak queues at 32 days. Transitioning microcontroller SKU components overland protects overall gross profit margin targets.
+              </p>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };

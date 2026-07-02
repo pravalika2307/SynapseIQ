@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, ArrowRight, Play } from 'lucide-react';
 import { useAppStore } from '../features/store';
+import { useDemoStore } from '../features/demoStore';
 import { UploadZone } from '../components/UploadZone';
 import { AnalysisLoader } from '../components/AnalysisLoader';
 import { PageTransition } from '../components/PageTransition';
@@ -11,6 +12,10 @@ export const Landing: React.FC = () => {
   const navigate = useNavigate();
   const setDataset = useAppStore((state) => state.setDataset);
   const setIsDatasetLoaded = useAppStore((state) => state.setIsDatasetLoaded);
+  
+  const startDemo = useDemoStore((state) => state.startDemo);
+  const isDemoActive = useDemoStore((state) => state.isDemoActive);
+  const nextStep = useDemoStore((state) => state.nextStep);
 
   const [state, setState] = useState<'hero' | 'loading'>('hero');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -23,10 +28,20 @@ export const Landing: React.FC = () => {
   const handleAnalysisComplete = () => {
     setDataset(selectedFile ? selectedFile.name : 'synapse_intel_matrix_q2.csv');
     setIsDatasetLoaded(true);
-    navigate('/dashboard/brief');
+    if (isDemoActive) {
+      nextStep(); // Advance to Step 3 (Executive Brief)
+    } else {
+      navigate('/dashboard/brief');
+    }
   };
 
   const handleDemoClick = () => {
+    setState('loading');
+  };
+
+  const handleStartGuidedDemo = () => {
+    startDemo(); // sets isDemoActive to true, step to 1
+    nextStep(); // advances to step 2 (AI Ingestion layout)
     setState('loading');
   };
 
@@ -82,9 +97,16 @@ export const Landing: React.FC = () => {
                       const clickTarget = document.querySelector('input[type="file"]') as HTMLInputElement;
                       clickTarget?.click();
                     }}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#79D38A] text-[#0D1117] font-semibold text-13 hover:bg-[#79D38A]/90 active:scale-98 transition-all"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#79D38A] text-[#0D1117] font-semibold text-13 hover:bg-[#79D38A]/90 active:scale-98 transition-all animate-pulse-subtle"
                   >
                     Analyze My Data <ArrowRight size={14} />
+                  </button>
+
+                  <button 
+                    onClick={handleStartGuidedDemo}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#79D38A]/10 border border-[#79D38A]/30 text-[#79D38A] hover:bg-[#79D38A]/20 transition-all font-semibold text-13"
+                  >
+                    🎥 Start Guided Demo
                   </button>
 
                   <button 

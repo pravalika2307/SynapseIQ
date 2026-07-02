@@ -5,6 +5,8 @@ import { useAppStore } from '../features/store';
 import { copilotStarters, copilotAIResponses, nodeContexts } from '../features/data';
 import { Badge } from '../components/ui';
 
+import { useDemoStore } from '../features/demoStore';
+
 export const DecisionCopilot: React.FC = () => {
   const messages = useAppStore((state) => state.messages);
   const addMessage = useAppStore((state) => state.addMessage);
@@ -13,6 +15,10 @@ export const DecisionCopilot: React.FC = () => {
   // Workspace active/context node state
   const activeNodeId = useAppStore((state) => state.activeNodeId);
   const datasetName = useAppStore((state) => state.datasetName);
+
+  const isDemoActive = useDemoStore((state) => state.isDemoActive);
+  const currentStep = useDemoStore((state) => state.currentStep);
+  const [hasTriggeredDemo, setHasTriggeredDemo] = useState(false);
 
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -24,6 +30,16 @@ export const DecisionCopilot: React.FC = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
+
+  useEffect(() => {
+    if (isDemoActive && currentStep === 6 && !hasTriggeredDemo) {
+      setHasTriggeredDemo(true);
+      const timer = setTimeout(() => {
+        handleSend('What should the company prioritize next quarter?');
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [isDemoActive, currentStep, hasTriggeredDemo]);
 
   const handleSend = (text: string) => {
     if (!text.trim()) return;

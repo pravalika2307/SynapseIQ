@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sliders, Zap, CheckCircle } from 'lucide-react';
 import { SectionHeader, Card } from '../components/ui';
+import { useDemoStore } from '../features/demoStore';
 
 export const Forecast: React.FC = () => {
   // Simulation Controls Local State (with Current Strategy baselines)
@@ -10,6 +11,26 @@ export const Forecast: React.FC = () => {
   const [hiring, setHiring] = useState(15);
   const [retention, setRetention] = useState(88);
   const [costs, setCosts] = useState(5);
+
+  const isDemoActive = useDemoStore((state) => state.isDemoActive);
+  const currentStep = useDemoStore((state) => state.currentStep);
+
+  // Automatically simulate a 15% increase in marketing budget (from 45% baseline to 60%) in Step 7
+  useEffect(() => {
+    if (isDemoActive && currentStep === 7) {
+      setMarketing(45);
+      const timer = setInterval(() => {
+        setMarketing((prev) => {
+          if (prev >= 60) {
+            clearInterval(timer);
+            return 60;
+          }
+          return prev + 1;
+        });
+      }, 100);
+      return () => clearInterval(timer);
+    }
+  }, [isDemoActive, currentStep]);
 
   // Dynamic Math Equations for Real-Time Predictions
   const simulatedRevenue = 42.8 * (1 + price / 100) * (1 + (marketing - 45) * 0.0035) * (1 + (retention - 88) * 0.006);
@@ -70,7 +91,7 @@ export const Forecast: React.FC = () => {
           </div>
 
           {/* Marketing slider */}
-          <div className="space-y-2">
+          <div className={`space-y-2 p-3 rounded-xl transition-all duration-500 ${isDemoActive && currentStep === 7 ? 'ring-2 ring-[#79D38A] bg-[#79D38A]/5 shadow-[0_0_15px_rgba(121,211,138,0.15)]' : ''}`}>
             <div className="flex justify-between items-center text-12 font-medium">
               <span className="text-white/60">Marketing Budget Allocation</span>
               <span className="text-[#79D38A] font-mono font-bold">{marketing}%</span>
@@ -270,7 +291,7 @@ export const Forecast: React.FC = () => {
           </div>
 
           {/* Featured recommended card */}
-          <div className="bg-[#79D38A]/5 border border-[#79D38A]/20 rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-xl shadow-[#79D38A]/5 select-none">
+          <div className={`bg-[#79D38A]/5 border rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-xl select-none transition-all duration-500 ${isDemoActive && currentStep === 7 ? 'ring-2 ring-[#79D38A] shadow-[0_0_25px_rgba(121,211,138,0.18)] scale-[1.01] bg-[#79D38A]/10 border-transparent' : 'border-[#79D38A]/20 shadow-[#79D38A]/5'}`}>
             <div className="space-y-1 max-w-md">
               <div className="flex items-center gap-1 text-[#79D38A]">
                 <CheckCircle size={14} className="animate-pulse" />

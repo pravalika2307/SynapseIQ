@@ -266,6 +266,18 @@ export const copilotStarters = [
 ];
 
 export const copilotAIResponses: Record<string, any> = {
+  'What should the company prioritize next quarter?': {
+    summary: 'Priorities concentrate on two strategic pillars: nearshoring logistics nodes to the Guadalajara corridor to recoup transpacific latencies and scaling EU ARR expansion via digital compliance modules.',
+    evidence: [
+      'Jalisco nearshoring corridor lowers shipping queue time from 32 down to 14 days.',
+      'Sourcing 25% sub-assemblies domestically preserves gross profit margin targets at 44.0%.',
+      'Frankfurt compliance certifications unlock a $12M enterprise pipeline in Central Europe.'
+    ],
+    confidence: 96,
+    recommendation: 'Lock fixed ocean carrier contracts immediately and reallocate 20% of display ad spend to EU targeted webinars.',
+    relatedMetrics: ['Gross Margin (44.0%)', 'Transit Latency (32d)', 'NRR (118%)'],
+    nextQuestion: 'Predict next month\'s profit.'
+  },
   'default-query': {
     summary: 'A standard diagnostic assessment indicates that our logistics channels are running near capacity. Upstream supply chains are stable but vulnerable to maritime transit queues.',
     evidence: [

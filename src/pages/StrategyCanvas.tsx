@@ -10,9 +10,14 @@ import {
   ReferenceLine
 } from 'recharts';
 import { Compass, Info, TrendingUp } from 'lucide-react';
+import { DecisionGraph } from '../components/DecisionGraph';
+import { useDemoStore } from '../features/demoStore';
 
 export const StrategyCanvas: React.FC = () => {
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
+  
+  const isDemoActive = useDemoStore((state) => state.isDemoActive);
+  const currentStep = useDemoStore((state) => state.currentStep);
 
   // WAFER/Supplier Resilience Rating matrix
   const supplierData = [
@@ -31,15 +36,27 @@ export const StrategyCanvas: React.FC = () => {
           <Compass className="text-accent-sage animate-spin-slow" size={16} />
           <span className="text-[10px] font-bold uppercase tracking-widest text-accent-sage">Strategy Mapping</span>
         </div>
-        <h1 className="text-32 font-semibold tracking-tight text-white/95">Supplier Resilience Index Matrix</h1>
+        <h1 className="text-32 font-semibold tracking-tight text-white/95">Business Strategy Canvas</h1>
         <p className="text-14 text-white/50 -mt-2">
-          Multidimensional supplier credit profiling. Maps debt leverage ratios against organizational solvency scores to trace supply constraints.
+          Interactive business relationship network. Maps interdependencies between core organizational metrics.
+        </p>
+      </div>
+
+      {/* Decision Graph Centerpiece */}
+      <div className={`transition-all duration-500 rounded-2xl p-2 ${isDemoActive && currentStep === 4 ? 'ring-2 ring-[#79D38A] shadow-[0_0_25px_rgba(121,211,138,0.18)] bg-[#79D38A]/5' : ''}`}>
+        <DecisionGraph />
+      </div>
+
+      <div className="border-t border-white/5 pt-10 flex flex-col gap-3">
+        <h2 className="text-20 font-semibold tracking-tight text-white/90">Supplier Credit Resilience Profiling</h2>
+        <p className="text-13 text-white/40 -mt-1">
+          Maps supplier debt leverage levels against localized solvency indexes to isolate supply constraints.
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-8">
         {/* Scatter Chart Widget */}
-        <div className="bg-card border border-white/5 rounded-2xl p-6 shadow-xl">
+        <div className="bg-[#151B23] border border-white/5 rounded-2xl p-6 shadow-xl">
           <div className="flex items-center justify-between mb-6">
             <span className="text-[9.5px] font-bold text-white/30 uppercase tracking-wider">Leverage vs Solvency Rating</span>
             <span className="text-[10px] text-white/30 flex items-center gap-1 bg-white/[0.02] border border-white/5 rounded px-2 py-0.5 font-mono">

@@ -10,10 +10,12 @@ import { Forecast } from './pages/Forecast';
 import { Reports } from './pages/Reports';
 import { DataExplorer } from './pages/DataExplorer';
 import { BusinessTimeline } from './pages/BusinessTimeline';
+import { DemoController } from './components/DemoController';
 
 const App: React.FC = () => {
   return (
     <HashRouter>
+      <DemoController />
       <Routes>
         <Route path="/" element={<Landing />} />
         

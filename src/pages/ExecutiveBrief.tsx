@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion as dMotion } from 'framer-motion';
 import { useAppStore } from '../features/store';
+import { useDemoStore } from '../features/demoStore';
 import { Card, Badge, SectionHeader } from '../components/ui';
 import { 
   FileSpreadsheet, 
@@ -14,6 +15,9 @@ import {
 export const ExecutiveBrief: React.FC = () => {
   const datasetName = useAppStore((state) => state.datasetName);
   const [greeting, setGreeting] = useState('Good Evening');
+  
+  const isDemoActive = useDemoStore((state) => state.isDemoActive);
+  const currentStep = useDemoStore((state) => state.currentStep);
 
   useEffect(() => {
     const hrs = new Date().getHours();
@@ -152,7 +156,7 @@ export const ExecutiveBrief: React.FC = () => {
         
         {/* Executive Summary Card */}
         <dMotion.div variants={itemVariants}>
-          <Card elevation="flat" className="p-8 h-full flex flex-col gap-6">
+          <Card elevation="flat" className={`p-8 h-full flex flex-col gap-6 transition-all duration-500 ${isDemoActive && currentStep === 3 ? 'ring-2 ring-[#79D38A] scale-[1.01] shadow-[0_0_25px_rgba(121,211,138,0.18)] bg-[#79D38A]/5' : ''}`}>
             <div className="flex items-center gap-2 border-b border-white/5 pb-4">
               <Activity size={14} className="text-white/40" />
               <h2 className="text-13.5 font-bold uppercase tracking-wider text-white/60">Executive Synthesis</h2>
@@ -177,7 +181,7 @@ export const ExecutiveBrief: React.FC = () => {
 
         {/* Circular Business Health Widget */}
         <dMotion.div variants={itemVariants}>
-          <Card elevation="flat" className="p-8 flex flex-col items-center justify-center text-center gap-6 h-full">
+          <Card elevation="flat" className={`p-8 flex flex-col items-center justify-center text-center gap-6 h-full transition-all duration-500 ${isDemoActive && currentStep === 3 ? 'ring-2 ring-[#79D38A] scale-[1.01] shadow-[0_0_25px_rgba(121,211,138,0.18)] bg-[#79D38A]/5' : ''}`}>
             <span className="text-[10px] font-bold uppercase tracking-wider text-white/30">Business Health Index</span>
             
             {/* SVG Circular indicator */}
@@ -227,7 +231,7 @@ export const ExecutiveBrief: React.FC = () => {
       </dMotion.section>
 
       {/* Opportunities (1x3 Grid) */}
-      <dMotion.section variants={itemVariants} className="space-y-6">
+      <dMotion.section variants={itemVariants} className={`space-y-6 transition-all duration-500 rounded-2xl p-4 ${isDemoActive && currentStep === 3 ? 'ring-2 ring-[#79D38A] shadow-[0_0_25px_rgba(121,211,138,0.15)] bg-[#79D38A]/5' : ''}`}>
         <SectionHeader 
           label="Strategic Pipeline"
           title="Top 3 AI Opportunities"
@@ -254,7 +258,7 @@ export const ExecutiveBrief: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-8">
         
         {/* Critical Risks Column */}
-        <dMotion.div variants={itemVariants} className="space-y-6">
+        <dMotion.div variants={itemVariants} className={`space-y-6 transition-all duration-500 rounded-2xl p-4 ${isDemoActive && currentStep === 3 ? 'ring-2 ring-[#79D38A] shadow-[0_0_25px_rgba(121,211,138,0.15)] bg-[#79D38A]/5' : ''}`}>
           <SectionHeader 
             label="Anomalies Isolated"
             title="Critical Business Risks"

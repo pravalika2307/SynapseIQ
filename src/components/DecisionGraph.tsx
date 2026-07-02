@@ -86,12 +86,20 @@ const relationshipMap: Record<string, { metric: string; influence: string[] }> =
   growth: { metric: '↑ 14%', influence: ['Sales team focus', 'Frankfurt regulatory path', 'renewals scale'] }
 };
 
+import { useDemoStore } from '../features/demoStore';
+
 export const DecisionGraph: React.FC = () => {
   const activeNodeId = useAppStore((state) => state.activeNodeId);
   const setCopilotContextNodeId = useAppStore((state) => state.setCopilotContextNodeId);
+  
+  const isDemoActive = useDemoStore((state) => state.isDemoActive);
+  const currentStep = useDemoStore((state) => state.currentStep);
 
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [nodesAssembled, setNodesAssembled] = useState(0);
+
+  // Auto-hover revenue to display relationships in Step 4
+  const activeHoveredNodeId = (isDemoActive && currentStep === 4) ? 'revenue' : hoveredNodeId;
 
   // Assemble nodes sequentially over 1.6s
   useEffect(() => {
@@ -109,10 +117,10 @@ export const DecisionGraph: React.FC = () => {
 
   // Set of connections linked to any hovered node to dictate fading
   const connectedNodes = useMemo(() => {
-    if (!hoveredNodeId) return new Set<string>();
+    if (!activeHoveredNodeId) return new Set<string>();
     
     // Health is connected to all
-    if (hoveredNodeId === 'health') {
+    if (activeHoveredNodeId === 'health') {
       return new Set([
         'health', 'revenue', 'profit', 'marketing', 'customers', 
         'inventory', 'operations', 'customer-satisfaction', 'growth'
@@ -120,8 +128,8 @@ export const DecisionGraph: React.FC = () => {
     }
 
     // Direct neighborhood list
-    return new Set(['health', hoveredNodeId]);
-  }, [hoveredNodeId]);
+    return new Set(['health', activeHoveredNodeId]);
+  }, [activeHoveredNodeId]);
 
   // Layout node definitions
   const fullNodes = useMemo(() => [
@@ -134,8 +142,8 @@ export const DecisionGraph: React.FC = () => {
         metric: '84/100',
         icon: <Heart size={14} />,
         isActive: activeNodeId === 'health',
-        isHovered: hoveredNodeId === 'health',
-        isDimmed: hoveredNodeId !== null && !connectedNodes.has('health'),
+        isHovered: activeHoveredNodeId === 'health',
+        isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('health'),
         onMouseEnter: () => setHoveredNodeId('health'),
         onMouseLeave: () => setHoveredNodeId(null)
       }
@@ -149,8 +157,8 @@ export const DecisionGraph: React.FC = () => {
         metric: '$42.8M',
         icon: <DollarSign size={14} />,
         isActive: activeNodeId === 'revenue',
-        isHovered: hoveredNodeId === 'revenue',
-        isDimmed: hoveredNodeId !== null && !connectedNodes.has('revenue'),
+        isHovered: activeHoveredNodeId === 'revenue',
+        isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('revenue'),
         onMouseEnter: () => setHoveredNodeId('revenue'),
         onMouseLeave: () => setHoveredNodeId(null)
       }
@@ -164,8 +172,8 @@ export const DecisionGraph: React.FC = () => {
         metric: '44.0%',
         icon: <Percent size={14} />,
         isActive: activeNodeId === 'profit',
-        isHovered: hoveredNodeId === 'profit',
-        isDimmed: hoveredNodeId !== null && !connectedNodes.has('profit'),
+        isHovered: activeHoveredNodeId === 'profit',
+        isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('profit'),
         onMouseEnter: () => setHoveredNodeId('profit'),
         onMouseLeave: () => setHoveredNodeId(null)
       }
@@ -179,8 +187,8 @@ export const DecisionGraph: React.FC = () => {
         metric: '72 NPS',
         icon: <Smile size={14} />,
         isActive: activeNodeId === 'customer-satisfaction',
-        isHovered: hoveredNodeId === 'customer-satisfaction',
-        isDimmed: hoveredNodeId !== null && !connectedNodes.has('customer-satisfaction'),
+        isHovered: activeHoveredNodeId === 'customer-satisfaction',
+        isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('customer-satisfaction'),
         onMouseEnter: () => setHoveredNodeId('customer-satisfaction'),
         onMouseLeave: () => setHoveredNodeId(null)
       }
@@ -194,8 +202,8 @@ export const DecisionGraph: React.FC = () => {
         metric: '4.8x ROI',
         icon: <Megaphone size={14} />,
         isActive: activeNodeId === 'marketing',
-        isHovered: hoveredNodeId === 'marketing',
-        isDimmed: hoveredNodeId !== null && !connectedNodes.has('marketing'),
+        isHovered: activeHoveredNodeId === 'marketing',
+        isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('marketing'),
         onMouseEnter: () => setHoveredNodeId('marketing'),
         onMouseLeave: () => setHoveredNodeId(null)
       }
@@ -209,8 +217,8 @@ export const DecisionGraph: React.FC = () => {
         metric: '92.4%',
         icon: <Settings size={14} />,
         isActive: activeNodeId === 'operations',
-        isHovered: hoveredNodeId === 'operations',
-        isDimmed: hoveredNodeId !== null && !connectedNodes.has('operations'),
+        isHovered: activeHoveredNodeId === 'operations',
+        isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('operations'),
         onMouseEnter: () => setHoveredNodeId('operations'),
         onMouseLeave: () => setHoveredNodeId(null)
       }
@@ -224,8 +232,8 @@ export const DecisionGraph: React.FC = () => {
         metric: '6.2x Turns',
         icon: <Boxes size={14} />,
         isActive: activeNodeId === 'inventory',
-        isHovered: hoveredNodeId === 'inventory',
-        isDimmed: hoveredNodeId !== null && !connectedNodes.has('inventory'),
+        isHovered: activeHoveredNodeId === 'inventory',
+        isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('inventory'),
         onMouseEnter: () => setHoveredNodeId('inventory'),
         onMouseLeave: () => setHoveredNodeId(null)
       }
@@ -239,8 +247,8 @@ export const DecisionGraph: React.FC = () => {
         metric: '118% NRR',
         icon: <Users size={14} />,
         isActive: activeNodeId === 'customers',
-        isHovered: hoveredNodeId === 'customers',
-        isDimmed: hoveredNodeId !== null && !connectedNodes.has('customers'),
+        isHovered: activeHoveredNodeId === 'customers',
+        isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('customers'),
         onMouseEnter: () => setHoveredNodeId('customers'),
         onMouseLeave: () => setHoveredNodeId(null)
       }
@@ -254,13 +262,13 @@ export const DecisionGraph: React.FC = () => {
         metric: '+14% YoY',
         icon: <TrendingUp size={14} />,
         isActive: activeNodeId === 'growth',
-        isHovered: hoveredNodeId === 'growth',
-        isDimmed: hoveredNodeId !== null && !connectedNodes.has('growth'),
+        isHovered: activeHoveredNodeId === 'growth',
+        isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('growth'),
         onMouseEnter: () => setHoveredNodeId('growth'),
         onMouseLeave: () => setHoveredNodeId(null)
       }
     }
-  ], [activeNodeId, hoveredNodeId, connectedNodes]);
+  ], [activeNodeId, activeHoveredNodeId, connectedNodes]);
 
   // Display only assembled nodes
   const nodes = useMemo(() => {
@@ -284,12 +292,12 @@ export const DecisionGraph: React.FC = () => {
     return satellites
       .filter((_, idx) => idx + 1 < nodesAssembled)
       .map((satId) => {
-        const isCenterHovered = hoveredNodeId === 'health';
-        const isSatHovered = hoveredNodeId === satId;
+        const isCenterHovered = activeHoveredNodeId === 'health';
+        const isSatHovered = activeHoveredNodeId === satId;
         
         // Highlight logic
         const isHighlighted = isCenterHovered || isSatHovered || (activeNodeId === satId || activeNodeId === 'health');
-        const isDimmed = hoveredNodeId !== null && !isCenterHovered && !isSatHovered;
+        const isDimmed = activeHoveredNodeId !== null && !isCenterHovered && !isSatHovered;
 
         return {
           id: `edge-${satId}`,
@@ -303,10 +311,10 @@ export const DecisionGraph: React.FC = () => {
           }
         };
       });
-  }, [activeNodeId, hoveredNodeId, nodesAssembled]);
+  }, [activeNodeId, activeHoveredNodeId, nodesAssembled]);
 
-  const activeHoveredRel = hoveredNodeId ? relationshipMap[hoveredNodeId] : null;
-  const hoveredNode = hoveredNodeId ? fullNodes.find(n => n.id === hoveredNodeId) : null;
+  const activeHoveredRel = activeHoveredNodeId ? relationshipMap[activeHoveredNodeId] : null;
+  const hoveredNode = activeHoveredNodeId ? fullNodes.find(n => n.id === activeHoveredNodeId) : null;
 
   return (
     <div className="w-full h-[450px] relative bg-background border border-white/5 rounded-2xl overflow-hidden shadow-2xl">
