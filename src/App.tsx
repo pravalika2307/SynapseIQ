@@ -8,6 +8,7 @@ import { StrategyCanvas } from './pages/StrategyCanvas';
 import { DecisionCopilot } from './pages/DecisionCopilot';
 import { Forecast } from './pages/Forecast';
 import { Reports } from './pages/Reports';
+import { DataExplorer } from './pages/DataExplorer';
 
 const App: React.FC = () => {
   return (
@@ -24,6 +25,7 @@ const App: React.FC = () => {
           <Route path="copilot" element={<DecisionCopilot />} />
           <Route path="forecast" element={<Forecast />} />
           <Route path="reports" element={<Reports />} />
+          <Route path="explorer" element={<DataExplorer />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

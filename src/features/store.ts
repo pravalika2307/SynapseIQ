@@ -46,6 +46,8 @@ interface AppState {
   updateScenarioInputs: (inputs: Partial<{ capitalRatio: number; safetyStock: number; mexicanPivot: boolean }>) => void;
   addMessage: (text: string, sender: 'user' | 'assistant', references?: CopilotMessage['references']) => void;
   resetMessages: () => void;
+  isSidebarCollapsed: boolean;
+  setSidebarCollapsed: (collapsed: boolean) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -56,6 +58,7 @@ export const useAppStore = create<AppState>((set) => ({
   
   activeNodeId: 'health',
   copilotContextNodeId: 'health',
+  isSidebarCollapsed: false,
   
   selectedScenario: 'baseline',
   scenarioInputs: {
@@ -84,6 +87,7 @@ export const useAppStore = create<AppState>((set) => ({
   updateScenarioInputs: (inputs) => set((state) => ({
     scenarioInputs: { ...state.scenarioInputs, ...inputs }
   })),
+  setSidebarCollapsed: (collapsed) => set({ isSidebarCollapsed: collapsed }),
   
   addMessage: (text, sender, references) => set((state) => ({
     messages: [
