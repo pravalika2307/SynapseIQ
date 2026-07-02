@@ -58,7 +58,7 @@ export const Sidebar: React.FC = () => {
     {
       to: '/dashboard/reports',
       icon: <Layers size={16} />,
-      label: 'Board Reports'
+      label: 'Boardroom Report'
     },
     {
       to: '/dashboard/explorer',

@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Sliders, Zap, CheckCircle } from 'lucide-react';
 import { SectionHeader, Card } from '../components/ui';
 import { useDemoStore } from '../features/demoStore';
+import { useAppStore } from '../features/store';
 
 export const Forecast: React.FC = () => {
+  const activeNodeId = useAppStore((state) => state.activeNodeId);
+
   // Simulation Controls Local State (with Current Strategy baselines)
   const [marketing, setMarketing] = useState(45);
   const [price, setPrice] = useState(10);
@@ -91,7 +94,7 @@ export const Forecast: React.FC = () => {
           </div>
 
           {/* Marketing slider */}
-          <div className={`space-y-2 p-3 rounded-xl transition-all duration-500 ${isDemoActive && currentStep === 7 ? 'ring-2 ring-[#79D38A] bg-[#79D38A]/5 shadow-[0_0_15px_rgba(121,211,138,0.15)]' : ''}`}>
+          <div className={`space-y-2 p-3 rounded-xl transition-all duration-500 ${(isDemoActive && currentStep === 7) || activeNodeId === 'marketing' || activeNodeId === 'revenue' ? 'ring-2 ring-[#79D38A] bg-[#79D38A]/5 shadow-[0_0_15px_rgba(121,211,138,0.15)]' : ''}`}>
             <div className="flex justify-between items-center text-12 font-medium">
               <span className="text-white/60">Marketing Budget Allocation</span>
               <span className="text-[#79D38A] font-mono font-bold">{marketing}%</span>
@@ -107,7 +110,7 @@ export const Forecast: React.FC = () => {
           </div>
 
           {/* Price slider */}
-          <div className="space-y-2">
+          <div className="space-y-2 p-3 rounded-xl transition-all duration-500">
             <div className="flex justify-between items-center text-12 font-medium">
               <span className="text-white/60">Product Pricing Adjustment</span>
               <span className="text-[#79D38A] font-mono font-bold">{price > 0 ? `+${price}` : price}%</span>
@@ -123,7 +126,7 @@ export const Forecast: React.FC = () => {
           </div>
 
           {/* Inventory slider */}
-          <div className="space-y-2">
+          <div className={`space-y-2 p-3 rounded-xl transition-all duration-500 ${activeNodeId === 'inventory' ? 'ring-2 ring-[#79D38A] bg-[#79D38A]/5 shadow-[0_0_15px_rgba(121,211,138,0.15)]' : ''}`}>
             <div className="flex justify-between items-center text-12 font-medium">
               <span className="text-white/60">Inventory Safety stock Target</span>
               <span className="text-[#79D38A] font-mono font-bold">{inventory} days</span>
@@ -139,7 +142,7 @@ export const Forecast: React.FC = () => {
           </div>
 
           {/* Hiring slider */}
-          <div className="space-y-2">
+          <div className="space-y-2 p-3 rounded-xl transition-all duration-500">
             <div className="flex justify-between items-center text-12 font-medium">
               <span className="text-white/60">Headcount Hiring Growth</span>
               <span className="text-[#79D38A] font-mono font-bold">+{hiring}%</span>
@@ -155,7 +158,7 @@ export const Forecast: React.FC = () => {
           </div>
 
           {/* Retention slider */}
-          <div className="space-y-2">
+          <div className={`space-y-2 p-3 rounded-xl transition-all duration-500 ${activeNodeId === 'customers' || activeNodeId === 'customer-satisfaction' ? 'ring-2 ring-[#79D38A] bg-[#79D38A]/5 shadow-[0_0_15px_rgba(121,211,138,0.15)]' : ''}`}>
             <div className="flex justify-between items-center text-12 font-medium">
               <span className="text-white/60">Customer Retention Target</span>
               <span className="text-[#79D38A] font-mono font-bold">{retention}% NRR</span>
@@ -171,7 +174,7 @@ export const Forecast: React.FC = () => {
           </div>
 
           {/* Operating costs slider */}
-          <div className="space-y-2">
+          <div className={`space-y-2 p-3 rounded-xl transition-all duration-500 ${activeNodeId === 'operations' || activeNodeId === 'profit' ? 'ring-2 ring-[#79D38A] bg-[#79D38A]/5 shadow-[0_0_15px_rgba(121,211,138,0.15)]' : ''}`}>
             <div className="flex justify-between items-center text-12 font-medium">
               <span className="text-white/60">Operational Overhead Costs</span>
               <span className="text-[#79D38A] font-mono font-bold">{costs > 0 ? `+${costs}` : costs}%</span>

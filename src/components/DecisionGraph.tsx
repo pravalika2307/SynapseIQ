@@ -46,7 +46,7 @@ const CustomGraphNode: React.FC<NodeProps<Node<CustomNodeData>>> = ({ data }) =>
       className={`
         px-4 py-3 rounded-xl border bg-card transition-all duration-300 min-w-[150px] shadow-lg select-none cursor-pointer
         ${data.isActive 
-          ? 'border-accent-sage border-opacity-70 bg-accent-sage-dim shadow-accent-sage/5 scale-105' 
+          ? 'border-[#79D38A] bg-accent-sage-dim shadow-accent-sage/5 scale-105 ring-2 ring-[#79D38A]/25 animate-pulse' 
           : 'border-white/5 hover:border-white/15'
         }
         ${data.isDimmed ? 'opacity-25 scale-95' : 'opacity-100'}
@@ -317,7 +317,7 @@ export const DecisionGraph: React.FC = () => {
   const hoveredNode = activeHoveredNodeId ? fullNodes.find(n => n.id === activeHoveredNodeId) : null;
 
   return (
-    <div className="w-full h-[450px] relative bg-background border border-white/5 rounded-2xl overflow-hidden shadow-2xl">
+    <div className="w-full h-[580px] relative bg-background border border-white/5 rounded-2xl overflow-hidden shadow-2xl">
       <div className="absolute top-4 left-4 z-10 flex flex-col gap-0.5">
         <span className="text-[10px] font-bold uppercase tracking-wider text-white/30">System Blueprint</span>
         <span className="text-12 font-medium text-white/70">Interactive Relationship Graph</span>

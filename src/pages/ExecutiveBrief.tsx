@@ -7,8 +7,6 @@ import {
   FileSpreadsheet, 
   Calendar, 
   Activity, 
-  ShieldAlert, 
-  Zap, 
   Compass 
 } from 'lucide-react';
 
@@ -27,77 +25,6 @@ export const ExecutiveBrief: React.FC = () => {
   }, []);
 
   const analyzedTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-  // 4 Elegant Key Insights
-  const insights = [
-    {
-      title: 'Wafer Yield Optimization',
-      explanation: 'Slight calibration variations detected in Fab-14 sub-assembly machines.',
-      impact: 'Boosts final system validation pass rates from 98.6% to 99.4%.',
-      confidence: 94,
-      trend: 'Optimizing',
-    },
-    {
-      title: 'Transpacific Sourcing Corridor',
-      explanation: 'Vessel port queue latencies at Vietnam terminals remain bottlenecked.',
-      impact: 'Delays final product assembly targets in North America by 8 days.',
-      confidence: 89,
-      trend: 'Risk Warning',
-    },
-    {
-      title: 'Mid-Market Base Expansion',
-      explanation: 'High renewal rates log active telemetry spikes in compliance verticals.',
-      impact: 'Contributes an additional $3.2M ARR run-rate forecast next quarter.',
-      confidence: 96,
-      trend: 'Upsell Trigger',
-    },
-    {
-      title: 'Mexico Corridor Reroute',
-      explanation: 'Guadalajara production line scales up to accept excess wafer cargo.',
-      impact: 'Reduces transit times to North American fulfillment nodes by 18 days.',
-      confidence: 91,
-      trend: 'Strategic Shift',
-    }
-  ];
-
-  // Top 3 Opportunities
-  const opportunities = [
-    {
-      title: 'Jalisco logistics nearshoring corridor',
-      improvement: '+18 days lead time recovery',
-      impact: '$4.2M working capital unlocked',
-      priority: 'High Priority',
-      reasoning: 'Rerouting electronics sub-assemblies to Mexico bypasses transpacific harbor backlogs and tariff overhead.'
-    },
-    {
-      title: 'Frankfurt digital compliance upsell',
-      improvement: '+14% account expansion rate',
-      impact: '+$1.8M ARR expansion forecast',
-      priority: 'Medium Priority',
-      reasoning: 'Leverage our recently verified GDPR localization certification to cross-sell to security-conscious enterprise accounts.'
-    },
-    {
-      title: 'Abatement of spot-rate transport lanes',
-      improvement: '-12% cargo freight cost',
-      impact: '+$840k gross margin retention',
-      priority: 'Tactical Pivot',
-      reasoning: 'Transitioning shipping volumes to locked contract rates shields Q3 bottom line from ocean rate volatility spikes.'
-    }
-  ];
-
-  // Critical Risks
-  const risks = [
-    {
-      title: 'Vietnamese supplier solvency constraint',
-      cause: 'Severe debt-to-equity leverage warning at Hanoi Precision Parts.',
-      action: 'Distribute wafer supply sourcing targets to domestic Arizona foundries.'
-    },
-    {
-      title: 'Support CS backlog escalation',
-      cause: 'Rapid mid-market onboarding rates outpace CS engineer allocations.',
-      action: 'Deploy automated AI-assisted customer triage filters to lower response loops.'
-    }
-  ];
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -162,27 +89,20 @@ export const ExecutiveBrief: React.FC = () => {
               <h2 className="text-13.5 font-bold uppercase tracking-wider text-white/60">Executive Synthesis</h2>
             </div>
             
-            <p className="text-15.5 text-white/80 leading-relaxed font-serif">
+            <p className="text-17 text-white/90 leading-relaxed font-serif">
               Our Q2 synthesis indicates a robust operational baseline with **18% revenue run-rate expansion**, primarily supported by enterprise renewal loops. However, maritime lane congestion in Southeast Asia introduces shipping risks, locking up capital allocations. Rerouting assembly logistics to nearshore hubs is recommended.
             </p>
 
-            <div className="grid grid-cols-2 gap-4 mt-2">
-              <div className="p-4 bg-white/[0.01] border border-white/5 rounded-xl">
-                <span className="text-[9.5px] font-bold text-[#79D38A] uppercase tracking-wider block mb-1">Top Opportunity</span>
-                <span className="text-12.5 text-white/70 leading-normal font-serif">Jalisco shipping nearshore corridor recovery</span>
-              </div>
-              <div className="p-4 bg-white/[0.01] border border-white/5 rounded-xl">
-                <span className="text-[9.5px] font-bold text-critical uppercase tracking-wider block mb-1">Critical Risk Warning</span>
-                <span className="text-12.5 text-white/70 leading-normal font-serif">Vietnamese foundry solvency & shipping delay</span>
-              </div>
-            </div>
+            <p className="text-13.5 text-white/45 leading-relaxed font-serif -mt-2">
+              Introduction of Arizona wafer supply corridors acts as an active risk shield, stabilizing the composite solvency score.
+            </p>
           </Card>
         </dMotion.div>
 
         {/* Circular Business Health Widget */}
         <dMotion.div variants={itemVariants}>
           <Card elevation="flat" className={`p-8 flex flex-col items-center justify-center text-center gap-6 h-full transition-all duration-500 ${isDemoActive && currentStep === 3 ? 'ring-2 ring-[#79D38A] scale-[1.01] shadow-[0_0_25px_rgba(121,211,138,0.18)] bg-[#79D38A]/5' : ''}`}>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-white/30">Business Health Index</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-white/30 font-sans">Business Health Index</span>
             
             {/* SVG Circular indicator */}
             <div className="relative w-36 h-36 flex items-center justify-center">
@@ -204,111 +124,78 @@ export const ExecutiveBrief: React.FC = () => {
         </dMotion.div>
       </div>
 
-      {/* Key Insights (2x2 Grid) */}
-      <dMotion.section variants={itemVariants} className="space-y-6">
-        <SectionHeader 
-          label="Operational Telemetry"
-          title="Key Business Insights"
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {insights.map((ins, idx) => (
-            <Card key={idx} elevation="flat" className="p-6 flex flex-col gap-4">
-              <div className="flex justify-between items-start">
-                <h3 className="text-14.5 font-semibold text-white/90 tracking-tight">{ins.title}</h3>
-                <span className="text-[10.5px] font-bold font-mono text-[#79D38A] bg-[#79D38A]/5 border border-[#79D38A]/10 px-2 py-0.5 rounded">
-                  {ins.trend}
-                </span>
-              </div>
-              <p className="text-13.5 text-white/50 leading-relaxed font-serif">{ins.explanation}</p>
-              <div className="border-t border-white/5 pt-3 mt-auto flex justify-between items-center text-11.5">
-                <span className="text-white/30 font-serif">Impact: <strong className="text-white/60 font-sans">{ins.impact}</strong></span>
-                <span className="text-white/30 font-mono">Conf: <strong className="text-[#79D38A]">{ins.confidence}%</strong></span>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </dMotion.section>
-
-      {/* Opportunities (1x3 Grid) */}
-      <dMotion.section variants={itemVariants} className={`space-y-6 transition-all duration-500 rounded-2xl p-4 ${isDemoActive && currentStep === 3 ? 'ring-2 ring-[#79D38A] shadow-[0_0_25px_rgba(121,211,138,0.15)] bg-[#79D38A]/5' : ''}`}>
-        <SectionHeader 
-          label="Strategic Pipeline"
-          title="Top 3 AI Opportunities"
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {opportunities.map((opp, idx) => (
-            <Card key={idx} elevation="flat" className="p-6 flex flex-col gap-4">
-              <div className="flex justify-between items-start">
-                <Badge variant="sage">{opp.priority}</Badge>
-                <span className="text-11 font-mono text-[#79D38A] font-bold">{opp.improvement}</span>
-              </div>
-              <h3 className="text-14 font-semibold text-white/90 leading-tight tracking-tight">{opp.title}</h3>
-              <p className="text-12.5 text-white/45 leading-relaxed font-serif">{opp.reasoning}</p>
-              <div className="border-t border-white/5 pt-3.5 mt-auto text-12 font-medium text-white/70">
-                Expected: {opp.impact}
-              </div>
-            </Card>
-          ))}
-        </div>
-      </dMotion.section>
-
-      {/* Risks & Recommendation row */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-8">
+      {/* CEO Briefing Column: Opportunity, Risk, Recommendation */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        {/* Critical Risks Column */}
-        <dMotion.div variants={itemVariants} className={`space-y-6 transition-all duration-500 rounded-2xl p-4 ${isDemoActive && currentStep === 3 ? 'ring-2 ring-[#79D38A] shadow-[0_0_25px_rgba(121,211,138,0.15)] bg-[#79D38A]/5' : ''}`}>
+        {/* Biggest Opportunity */}
+        <dMotion.div variants={itemVariants} className={`space-y-4 transition-all duration-500 rounded-2xl p-2 ${isDemoActive && currentStep === 3 ? 'ring-2 ring-[#79D38A] shadow-[0_0_25px_rgba(121,211,138,0.15)] bg-[#79D38A]/5 border-transparent' : ''}`}>
           <SectionHeader 
-            label="Anomalies Isolated"
-            title="Critical Business Risks"
+            label="Strategic Pipeline"
+            title="Biggest Opportunity"
           />
-
-          <div className="space-y-3.5">
-            {risks.map((risk, idx) => (
-              <Card key={idx} elevation="flat" className="p-5 flex items-start gap-4 border-l-2 border-critical/40">
-                <div className="w-8 h-8 rounded-full bg-critical/10 flex items-center justify-center shrink-0">
-                  <ShieldAlert size={15} className="text-critical" />
-                </div>
-                <div className="space-y-1">
-                  <h4 className="text-13.5 font-semibold text-white/95">{risk.title}</h4>
-                  <p className="text-12 text-white/40 leading-relaxed font-serif"><strong className="text-white/60">Cause:</strong> {risk.cause}</p>
-                  <div className="flex items-center gap-1.5 text-[11px] text-accent-sage mt-1 font-serif">
-                    <Zap size={11} /> Suggested Action: {risk.action}
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
+          <Card elevation="flat" className="p-6 flex flex-col gap-4 min-h-[220px]">
+            <div className="flex justify-between items-start">
+              <Badge variant="sage">High Priority</Badge>
+              <span className="text-11 font-mono text-[#79D38A] font-bold">+18% Lead Time</span>
+            </div>
+            <h3 className="text-15 font-semibold text-white/90 leading-snug tracking-tight">Guadalajara Sourcing Pivot</h3>
+            <p className="text-13 text-white/45 leading-relaxed font-serif">
+              Transitioning 25% of microcontroller logistics volumes overland through nearshore corridors recovers lead times to 14 days.
+            </p>
+            <div className="border-t border-white/5 pt-3.5 mt-auto text-12 font-medium text-[#79D38A] font-sans">
+              Projected ROI: 18.2% expansion
+            </div>
+          </Card>
         </dMotion.div>
 
-        {/* Featured AI Recommendation Card */}
-        <dMotion.div variants={itemVariants} className="space-y-6">
+        {/* Biggest Risk */}
+        <dMotion.div variants={itemVariants} className={`space-y-4 transition-all duration-500 rounded-2xl p-2 ${isDemoActive && currentStep === 3 ? 'ring-2 ring-[#79D38A] shadow-[0_0_25px_rgba(121,211,138,0.15)] bg-[#79D38A]/5 border-transparent' : ''}`}>
+          <SectionHeader 
+            label="Anomalies Isolated"
+            title="Biggest Risk"
+          />
+          <Card elevation="flat" className="p-6 flex flex-col gap-4 border-l-2 border-critical/55 min-h-[220px]">
+            <div className="flex justify-between items-start">
+              <Badge variant="critical">Critical Risk</Badge>
+              <span className="text-11 font-mono text-critical font-bold">32d Latency</span>
+            </div>
+            <h3 className="text-15 font-semibold text-white/90 leading-snug tracking-tight">Vietnam Maritime Bottlenecks</h3>
+            <p className="text-13 text-white/45 leading-relaxed font-serif">
+              Peak port queue constraints delay microcontroller components from Taiwan, risking factory assembly shut downs within 14 days.
+            </p>
+            <div className="border-t border-white/5 pt-3.5 mt-auto text-12 font-medium text-critical/80 font-sans">
+              Exposure: $4.2M Capital Lock
+            </div>
+          </Card>
+        </dMotion.div>
+
+        {/* AI Recommendation */}
+        <dMotion.div variants={itemVariants} className={`space-y-4 transition-all duration-500 rounded-2xl p-2 ${isDemoActive && currentStep === 3 ? 'ring-2 ring-[#79D38A] shadow-[0_0_25px_rgba(121,211,138,0.15)] bg-[#79D38A]/5 border-transparent' : ''}`}>
           <SectionHeader 
             label="Steering Directive"
-            title="Featured Recommendation"
+            title="AI Recommendation"
           />
-
-          <Card elevation="flat" className="p-6 bg-accent-sage-dim border border-accent-sage-border/30 rounded-2xl flex flex-col gap-5 justify-between">
+          <Card elevation="flat" className="p-6 bg-accent-sage-dim border border-accent-sage-border/30 rounded-2xl flex flex-col gap-4 min-h-[220px] justify-between">
             <div className="space-y-2">
               <div className="flex items-center gap-1.5 text-[#79D38A]">
                 <Compass size={14} className="animate-pulse" />
                 <span className="text-[10px] font-bold uppercase tracking-wider">Strategic Directive</span>
               </div>
-              <h3 className="text-16 font-semibold text-white/95 leading-snug tracking-tight">
-                Migrate semiconductor assembly targets to American foundry lines
+              <h3 className="text-14.5 font-semibold text-white/95 leading-snug tracking-tight">
+                Establish Arizona wafer corridors
               </h3>
-              <p className="text-13 text-white/60 leading-relaxed font-serif">
-                Shifting raw foundry capacity allocations to domestic foundries shields operations from transpacific logistics halts and Hanoi credit warnings.
+              <p className="text-12.5 text-white/55 leading-relaxed font-serif">
+                Scaling buffer safety stocks to 60 days near domestic foundries insulates lines from transpacific logistics bottlenecks.
               </p>
             </div>
 
-            <div className="border-t border-accent-sage-border/20 pt-4 flex justify-between items-center text-11.5 font-mono">
-              <span className="text-white/40">Expected Outcome: <strong className="text-[#79D38A]">Lead recovery</strong></span>
-              <span className="text-white/40">Timeline: <strong className="text-white/70">60 days</strong></span>
+            <div className="border-t border-accent-sage-border/20 pt-3 flex justify-between items-center text-11.5 font-mono">
+              <span className="text-white/45">Outcome: <strong className="text-[#79D38A]">Lead recovery</strong></span>
+              <span className="text-white/45">Timeline: <strong className="text-white/70">60 days</strong></span>
             </div>
           </Card>
         </dMotion.div>
+
       </div>
     </dMotion.div>
   );

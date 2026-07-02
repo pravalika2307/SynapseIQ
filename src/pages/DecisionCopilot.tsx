@@ -240,7 +240,6 @@ export const DecisionCopilot: React.FC = () => {
           )}
           <div ref={messagesEndRef} />
         </div>
-
         {/* Input & Suggested Question Starters */}
         <div className="p-6 border-t border-white/5 bg-white/[0.01] space-y-4">
           
@@ -250,18 +249,58 @@ export const DecisionCopilot: React.FC = () => {
               <span className="text-[9.5px] font-bold text-white/20 uppercase tracking-widest block select-none">
                 Intelligent Consultation Starters
               </span>
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
-                {copilotStarters.map((starter, idx) => (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {(activeNodeId === 'revenue' ? [
+                  { category: 'Revenue Growth', text: 'Why did revenue increase?', query: 'Why did revenue increase?' },
+                  { category: 'Regional Split', text: 'Which region contributed most?', query: 'Which region is underperforming?' },
+                  { category: 'Forecasting', text: 'Predict next quarter.', query: 'Predict next month\'s profit.' }
+                ] : activeNodeId === 'profit' ? [
+                  { category: 'Margin Expansion', text: 'Why did gross margin stabilize?', query: 'Why did gross margin stabilize?' },
+                  { category: 'Freight Spot-rates', text: 'Audit maritime shipping costs.', query: 'What is the impact of ocean freight rates?' },
+                  { category: 'Nearshoring', text: 'Simulate Mexican wafer sourcing.', query: 'How does nearshoring stabilize operations?' }
+                ] : activeNodeId === 'customers' ? [
+                  { category: 'NRR Retentions', text: 'Why is mid-market churn near zero?', query: 'Explain NRR optimization.' },
+                  { category: 'Onboarding bottlenecks', text: 'Analyze support response latencies.', query: 'Why did customer satisfaction decline?' },
+                  { category: 'CS Ratios', text: 'How do customer CS ratios compare?', query: 'Explain customer success scaling recommendations.' }
+                ] : activeNodeId === 'operations' ? [
+                  { category: 'Facility Capacity', text: 'Audit Laredo customs delay decrease.', query: 'Explain Laredo customs latencies.' },
+                  { category: 'Supply Corridors', text: 'Analyze transpacific logistics halts.', query: 'What is our biggest business risk?' },
+                  { category: 'Buffer Stocks', text: 'Simulate safety stock allocations.', query: 'How do safety stock buffers prevent production delays?' }
+                ] : copilotStarters).map((starter, idx) => (
                   <button
                     key={idx}
+                    type="button"
                     onClick={() => handleSend(starter.query)}
-                    className="p-3 rounded-xl border border-white/5 bg-[#151B23] hover:border-[#79D38A]/30 hover:bg-[#79D38A]/5 transition-all text-left flex flex-col gap-0.5"
+                    className="p-3.5 rounded-xl border border-white/5 bg-[#151B23] hover:border-[#79D38A]/30 hover:bg-[#79D38A]/5 transition-all text-left flex flex-col gap-1 cursor-pointer"
                   >
                     <span className="text-[9px] font-bold text-[#79D38A] uppercase tracking-wider">{starter.category}</span>
-                    <span className="text-12 text-white/60 truncate w-full">{starter.text}</span>
+                    <span className="text-12 text-white/70 w-full line-clamp-2 leading-relaxed">{starter.text}</span>
                   </button>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* Follow-up Chips */}
+          {!isTyping && messages.length > 1 && (
+            <div className="flex flex-wrap gap-2">
+              {(activeNodeId === 'revenue' 
+                ? ['Simulate 60% Marketing Budget', 'Explain CAC efficiency increase', 'Audit EU compliance segments']
+                : activeNodeId === 'profit'
+                ? ['Audit nearshore wafer margins', 'Predict freight cost inflation impact']
+                : activeNodeId === 'inventory' || activeNodeId === 'operations'
+                ? ['Simulate Laredo shipping buffer', 'Check Hanoi solvency trends']
+                : ['What is my biggest business risk?', 'Predict next month\'s profit', 'Why did revenue increase?']
+              ).map((chip, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => handleSend(chip)}
+                  className="text-[11px] bg-[#151B23] border border-white/5 rounded-full px-3 py-1 text-white/55 hover:text-[#79D38A] hover:border-[#79D38A]/25 transition-all font-sans font-medium select-none cursor-pointer"
+                >
+                  {chip} &rarr;
+                </button>
+              ))}
             </div>
           )}
 

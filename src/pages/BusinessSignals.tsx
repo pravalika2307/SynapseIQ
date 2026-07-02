@@ -19,6 +19,39 @@ const isSignalRelatedToNode = (signalId: string, nodeId: string): boolean => {
   return false;
 };
 
+const signalAdvisories: Record<string, { insight: string; impact: string; action: string }> = {
+  'transit-latency': {
+    insight: 'Upstream ocean transport delays remain constrained near 32 days.',
+    impact: 'Increases local buffer strain, locking up $4.2M working capital.',
+    action: 'Divert 25% shipping volume to Guadalajara nearshore corridors.'
+  },
+  'solvency-constraints': {
+    insight: 'Predictive modeling flags Hanoi suppliers with warning debt-to-equity debt ratios.',
+    impact: 'Elevates run-out risks at factory assembly nodes within 14 days.',
+    action: 'Establish wafer validation trials near Arizona foundry lines.'
+  },
+  'cac-efficiency': {
+    insight: 'Net Revenue Retention targets expand to 118% via security enterprise packages.',
+    impact: 'Optimizes acquisition spend, lowering direct CAC margins by 8%.',
+    action: 'Reallocate 20% display marketing budget to EU regulatory webinars.'
+  },
+  'gross-margin': {
+    insight: 'Gross operating profit holds steady at 44.0%, protected by forward contracts.',
+    impact: 'Insulates local pricing models from maritime freight rate spikes.',
+    action: 'Lock locked ocean freight contract agreements immediately.'
+  },
+  'order-fill-rate': {
+    insight: 'Austin assembly center optimization yields 96.8% perfect deliveries.',
+    impact: 'Resolves down-channel SLA bottlenecks, lifting support loops by 12%.',
+    action: 'Replicate assembly floor configurations in Munich facilities.'
+  },
+  'customs-holdings': {
+    insight: 'Fast-tracked pre-clearances at Laredo portal reduce latency to 1.8 days.',
+    impact: 'Bypasses border processing holdups, securing delivery corridors.',
+    action: 'Deploy electronic border pre-clearance filings.'
+  }
+};
+
 export const BusinessSignals: React.FC = () => {
   const activeNodeId = useAppStore((state) => state.activeNodeId);
   
@@ -67,19 +100,20 @@ export const BusinessSignals: React.FC = () => {
           const fillColor = signal.trend === 'positive' ? 'rgba(121, 211, 138, 0.08)' : signal.trend === 'negative' ? 'rgba(231, 111, 81, 0.08)' : 'rgba(245, 177, 76, 0.08)';
 
           const isHighlightDemo = isDemoActive && currentStep === 5 && ['gross-margin', 'transit-latency', 'cac-efficiency'].includes(signal.id);
+          const advisory = signalAdvisories[signal.id] || { insight: 'No signal anomalies detected.', impact: 'Stable.', action: 'Continue tracking.' };
 
           return (
             <div
               key={signal.id}
               className={`
-                bg-[#151B23] border rounded-2xl p-6 flex flex-col gap-5 transition-all duration-500 shadow-lg
+                bg-[#151B23] border rounded-2xl p-6 flex flex-col gap-4.5 transition-all duration-500 shadow-lg
                 ${isDimmed && !isHighlightDemo ? 'opacity-20 border-white/5 grayscale-[50%] pointer-events-none' : 'border-white/5 hover:border-white/10 hover:-translate-y-1 hover:shadow-xl'}
                 ${isRelated && activeNodeId !== 'health' ? 'border-accent-sage/35 shadow-accent-sage/5 scale-[1.01]' : ''}
                 ${isHighlightDemo ? 'ring-2 ring-[#79D38A] scale-[1.01] shadow-[0_0_20px_rgba(121,211,138,0.15)] bg-[#79D38A]/5 border-transparent' : ''}
               `}
             >
               {/* Header */}
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start justify-between gap-3 select-none">
                 <div className="space-y-1">
                   <span className="text-[9px] font-bold text-white/20 uppercase tracking-wider">{signal.category}</span>
                   <h3 className="text-14 font-semibold text-white/90 leading-tight">{signal.title}</h3>
@@ -92,8 +126,8 @@ export const BusinessSignals: React.FC = () => {
                 </div>
               </div>
 
-              {/* Chart */}
-              <div className="h-20 w-full overflow-hidden">
+              {/* Sparkline (Supporting evidence) */}
+              <div className="h-14 w-full overflow-hidden opacity-75">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={signal.chartData} margin={{ top: 2, right: 2, left: 2, bottom: 2 }}>
                     <XAxis dataKey="time" hide />
@@ -106,31 +140,28 @@ export const BusinessSignals: React.FC = () => {
                       type="monotone" 
                       dataKey="value" 
                       stroke={strokeColor} 
-                      strokeWidth={1.5} 
+                      strokeWidth={1.2} 
                       fill={fillColor} 
-                      dot={{ r: 2, fill: strokeColor }} 
+                      dot={{ r: 1.5, fill: strokeColor }} 
                     />
-                    {signal.chartData[0].baseline !== undefined && (
-                      <Area 
-                        type="monotone" 
-                        dataKey="baseline" 
-                        stroke="rgba(255,255,255,0.15)" 
-                        strokeWidth={1} 
-                        strokeDasharray="3 3"
-                        fill="none" 
-                        dot={false}
-                      />
-                    )}
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
 
-              {/* Footer Note */}
-              <div className="border-t border-white/5 pt-3.5 mt-auto">
-                <p 
-                  className="text-11.5 text-white/40 leading-relaxed font-serif" 
-                  dangerouslySetInnerHTML={{ __html: signal.note }}
-                />
+              {/* CEO/Advisory Bulletins */}
+              <div className="border-t border-white/5 pt-4 flex flex-col gap-3 font-serif">
+                <div className="space-y-1">
+                  <span className="text-[8.5px] uppercase font-sans font-bold tracking-widest text-[#79D38A]/70">AI Insight</span>
+                  <p className="text-12 text-white/70 leading-normal">{advisory.insight}</p>
+                </div>
+                <div className="space-y-1">
+                  <span className="text-[8.5px] uppercase font-sans font-bold tracking-widest text-white/40">Business Impact</span>
+                  <p className="text-12 text-white/60 leading-normal">{advisory.impact}</p>
+                </div>
+                <div className="space-y-1">
+                  <span className="text-[8.5px] uppercase font-sans font-bold tracking-widest text-white/40">Suggested Action</span>
+                  <p className="text-12 text-white/65 leading-normal italic">{advisory.action}</p>
+                </div>
               </div>
             </div>
           );

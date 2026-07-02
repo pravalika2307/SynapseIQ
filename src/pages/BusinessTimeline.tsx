@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Calendar, 
@@ -118,6 +118,17 @@ export const BusinessTimeline: React.FC = () => {
   const [filter, setFilter] = useState<string>('All');
   const [hoveredEventId, setHoveredEventId] = useState<string | null>(null);
   const [expandedEventId, setExpandedEventId] = useState<string | null>(null);
+
+  // Sync timeline expansion with globally selected Strategy Canvas active node
+  useEffect(() => {
+    if (activeNodeId && activeNodeId !== 'health') {
+      const matchingEvent = timelineEvents.find((e) => e.targetNodeId === activeNodeId);
+      if (matchingEvent) {
+        setExpandedEventId(matchingEvent.id);
+        setFilter('All'); // Force reset filters so the highlighted card is visible
+      }
+    }
+  }, [activeNodeId]);
 
   const categories = ['All', 'Revenue', 'Marketing', 'Inventory', 'Customers', 'Operations', 'Risk', 'Growth'];
 
