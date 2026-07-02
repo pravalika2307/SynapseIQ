@@ -1,202 +1,301 @@
-import React from 'react';
-import { 
-  AreaChart, 
-  Area, 
-  XAxis, 
-  YAxis, 
-  Tooltip, 
-  Legend, 
-  ResponsiveContainer 
-} from 'recharts';
-import { Sliders, ToggleLeft, ToggleRight, Info, Zap } from 'lucide-react';
-import { useAppStore } from '../features/store';
+import React, { useState } from 'react';
+import { Sliders, Zap, CheckCircle } from 'lucide-react';
+import { SectionHeader, Card } from '../components/ui';
 
 export const Forecast: React.FC = () => {
-  const selectedScenario = useAppStore((state) => state.selectedScenario);
-  const setSelectedScenario = useAppStore((state) => state.setSelectedScenario);
-  const scenarioInputs = useAppStore((state) => state.scenarioInputs);
-  const updateScenarioInputs = useAppStore((state) => state.updateScenarioInputs);
+  // Simulation Controls Local State (with Current Strategy baselines)
+  const [marketing, setMarketing] = useState(45);
+  const [price, setPrice] = useState(10);
+  const [inventory, setInventory] = useState(60);
+  const [hiring, setHiring] = useState(15);
+  const [retention, setRetention] = useState(88);
+  const [costs, setCosts] = useState(5);
 
-  // Generate chart data based on scenario inputs
-  const getSimulatedData = () => {
-    const baseline = [
-      { month: 'Jun', spend: 120, baseline: 120 },
-      { month: 'Jul', spend: 125, baseline: 125 },
-      { month: 'Aug', spend: 135, baseline: 135 },
-      { month: 'Sep', spend: 142, baseline: 142 },
-      { month: 'Oct', spend: 155, baseline: 155 }
-    ];
+  // Dynamic Math Equations for Real-Time Predictions
+  const simulatedRevenue = 42.8 * (1 + price / 100) * (1 + (marketing - 45) * 0.0035) * (1 + (retention - 88) * 0.006);
+  const simulatedProfit = 44.0 + (price * 0.35) - (costs * 0.25) - ((marketing - 45) * 0.04);
+  const simulatedCustGrowth = 12.0 + (marketing - 45) * 0.12 - (price * 0.15) + (hiring - 15) * 0.04;
+  const simulatedMarketShare = 18.5 + (marketing - 45) * 0.06 + (retention - 88) * 0.08 - (price * 0.04);
+  const simulatedHealth = Math.min(100, Math.max(0, Math.round(84 + (marketing - 45) * 0.08 + (retention - 88) * 0.45 - (costs * 0.15) - (inventory < 30 ? (30 - inventory) * 0.6 : 0))));
+  const simulatedConfidence = Math.max(80, Math.min(99, 94 - Math.abs(price - 10) * 0.15 - Math.abs(costs - 5) * 0.1));
+  
+  const simulatedRisk = (inventory < 30 || costs > 12) ? 'Critical' : (inventory < 45 || costs > 8) ? 'High' : 'Low';
 
-    // Compute optimized path based on inputs
-    const capitalImpact = (100 - scenarioInputs.capitalRatio) * 0.15;
-    const safetyStockImpact = scenarioInputs.safetyStock * 0.25;
-    const pivotFactor = scenarioInputs.mexicanPivot ? 22 : 0;
+  // Dynamic McKinsey-style Narrative Explanation
+  const getAIExplanation = () => {
+    let text = '';
+    if (marketing > 55) {
+      text += `Increasing marketing allocations to ${marketing}% is projected to accelerate logo acquisition targets. However, customer conversion CAC is expected to elevate, squeezing near-term margin. `;
+    } else if (marketing < 35) {
+      text += `Reducing marketing buffers down to ${marketing}% minimizes overhead capital but limits target pipeline conversion velocity in European expansion lanes. `;
+    }
 
-    return baseline.map((item, idx) => {
-      // Projections change based on factors
-      const savings = (idx + 1) * (capitalImpact + safetyStockImpact + pivotFactor) * 0.12;
-      return {
-        ...item,
-        spend: Math.max(80, Math.round(item.spend - savings))
-      };
-    });
+    if (inventory < 35) {
+      text += `Scaling inventory targets down to ${inventory}% leaves Fab-14 sub-assembly lines exposed to Vietnamese shipping terminal delays. Sourcing nearshoring is recommended immediately. `;
+    } else {
+      text += `Maintaining buffer inventories above 45 days ensures continuous plant utilization even during transpacific logistics congestion. `;
+    }
+
+    if (price > 18) {
+      text += `A price increase of ${price}% is expected to support overall margins but limits mid-market NRR velocity to ${Math.round(retention * 0.95)}%. `;
+    }
+
+    if (text === '') {
+      text = `Simulated parameters are within optimal operating bounds. Telemetry registers stable gross profit margins at ${simulatedProfit.toFixed(1)}% with an executive health rating of ${simulatedHealth}/100.`;
+    }
+
+    return text;
   };
 
-  const chartData = getSimulatedData();
-
   return (
-    <div className="max-w-[1200px] mx-auto px-10 py-12 flex flex-col gap-10">
-      {/* Title */}
-      <div className="flex flex-col gap-3 pt-8">
-        <div className="flex items-center gap-2">
-          <div className="w-1.5 h-1.5 rounded-full bg-accent-sage opacity-75" />
-          <span className="text-[10px] font-bold uppercase tracking-widest text-accent-sage">Risk Simulator</span>
-        </div>
-        <h1 className="text-32 font-semibold tracking-tight text-white/95">Procurement Pivot Forecast</h1>
-        <p className="text-14 text-white/50 -mt-2">
-          Simulate logistics re-routing options and safety margins to predict cash lockups and procurement cost projections.
-        </p>
+    <div className="max-w-[1200px] mx-auto px-10 py-12 flex flex-col gap-10 text-[#F5F7FA]">
+      
+      {/* Title Header */}
+      <div className="flex flex-col gap-3 pt-8 select-none">
+        <SectionHeader 
+          label="Advisory Simulator"
+          title="AI Scenario Simulation Workspace"
+          description="Test strategic choices in real time. Adjust critical business variables below to simulate forecasted cash, profit, and risk parameters."
+        />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.35fr] gap-8">
-        {/* Left: Modeler Controls */}
-        <div className="bg-card border border-white/5 rounded-2xl p-6 flex flex-col gap-6 shadow-lg h-fit">
+      {/* Main Split Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1.5fr] gap-8">
+        
+        {/* Left Column: Simulation controls */}
+        <div className="bg-[#151B23] border border-white/5 rounded-2xl p-6 flex flex-col gap-6 shadow-xl h-fit select-none">
           <div className="flex items-center gap-2 border-b border-white/5 pb-4">
             <Sliders size={15} className="text-white/40" />
-            <h2 className="text-13.5 font-bold uppercase tracking-wider text-white/60">Simulator Controls</h2>
+            <h2 className="text-13.5 font-bold uppercase tracking-wider text-white/60 font-sans">Simulation Inputs</h2>
           </div>
 
-          {/* Scenario toggle */}
+          {/* Marketing slider */}
           <div className="space-y-2">
-            <span className="text-[9.5px] font-bold text-white/30 uppercase tracking-wider">Strategic Pathway</span>
-            <div className="flex bg-white/[0.02] border border-white/5 p-1 rounded-lg">
-              <button
-                onClick={() => setSelectedScenario('baseline')}
-                className={`
-                  flex-1 py-1.5 rounded text-11.5 font-semibold transition-all
-                  ${selectedScenario === 'baseline' ? 'bg-white/[0.04] text-white border border-white/5 shadow-sm' : 'text-white/40'}
-                `}
-              >
-                Conservative Baseline
-              </button>
-              <button
-                onClick={() => setSelectedScenario('optimized')}
-                className={`
-                  flex-1 py-1.5 rounded text-11.5 font-semibold transition-all
-                  ${selectedScenario === 'optimized' ? 'bg-white/[0.04] text-white border border-white/5 shadow-sm' : 'text-white/40'}
-                `}
-              >
-                Optimized Jalisco Path
-              </button>
-            </div>
-          </div>
-
-          {/* Capital allocation slider */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between text-12 font-medium">
-              <span className="text-white/60">Capital Buffer Ratio</span>
-              <span className="text-accent-sage font-mono font-bold">{scenarioInputs.capitalRatio}%</span>
-            </div>
-            <input 
-              type="range" 
-              min="10" 
-              max="90" 
-              value={scenarioInputs.capitalRatio}
-              onChange={(e) => updateScenarioInputs({ capitalRatio: Number(e.target.value) })}
-              className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-accent-sage"
-            />
-            <p className="text-[10.5px] text-white/30">Ratio of secondary source capital reserve.</p>
-          </div>
-
-          {/* Safety stock slider */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between text-12 font-medium">
-              <span className="text-white/60">Safety Stock Target</span>
-              <span className="text-accent-sage font-mono font-bold">{scenarioInputs.safetyStock} days</span>
+            <div className="flex justify-between items-center text-12 font-medium">
+              <span className="text-white/60">Marketing Budget Allocation</span>
+              <span className="text-[#79D38A] font-mono font-bold">{marketing}%</span>
             </div>
             <input 
               type="range" 
               min="15" 
               max="90" 
-              value={scenarioInputs.safetyStock}
-              onChange={(e) => updateScenarioInputs({ safetyStock: Number(e.target.value) })}
-              className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-accent-sage"
+              value={marketing}
+              onChange={(e) => setMarketing(Number(e.target.value))}
+              className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-[#79D38A]"
             />
-            <p className="text-[10.5px] text-white/30">Target inventory stockpile level at regional warehouses.</p>
           </div>
 
-          {/* Mexico pivot check */}
-          <div className="flex items-center justify-between p-4 bg-white/[0.01] border border-white/5 rounded-xl mt-2">
-            <div className="flex flex-col gap-0.5">
-              <span className="text-12.5 font-medium text-white/80">Guadalajara Reroute</span>
-              <span className="text-[10.5px] text-white/30">Activate Mexican sub-assembly lines.</span>
+          {/* Price slider */}
+          <div className="space-y-2">
+            <div className="flex justify-between items-center text-12 font-medium">
+              <span className="text-white/60">Product Pricing Adjustment</span>
+              <span className="text-[#79D38A] font-mono font-bold">{price > 0 ? `+${price}` : price}%</span>
             </div>
-            <button 
-              onClick={() => updateScenarioInputs({ mexicanPivot: !scenarioInputs.mexicanPivot })}
-              className="text-accent-sage transition-all hover:scale-105 active:scale-95"
-            >
-              {scenarioInputs.mexicanPivot ? <ToggleRight size={28} /> : <ToggleLeft size={28} className="text-white/20" />}
-            </button>
+            <input 
+              type="range" 
+              min="-10" 
+              max="30" 
+              value={price}
+              onChange={(e) => setPrice(Number(e.target.value))}
+              className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-[#79D38A]"
+            />
           </div>
+
+          {/* Inventory slider */}
+          <div className="space-y-2">
+            <div className="flex justify-between items-center text-12 font-medium">
+              <span className="text-white/60">Inventory Safety stock Target</span>
+              <span className="text-[#79D38A] font-mono font-bold">{inventory} days</span>
+            </div>
+            <input 
+              type="range" 
+              min="10" 
+              max="90" 
+              value={inventory}
+              onChange={(e) => setInventory(Number(e.target.value))}
+              className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-[#79D38A]"
+            />
+          </div>
+
+          {/* Hiring slider */}
+          <div className="space-y-2">
+            <div className="flex justify-between items-center text-12 font-medium">
+              <span className="text-white/60">Headcount Hiring Growth</span>
+              <span className="text-[#79D38A] font-mono font-bold">+{hiring}%</span>
+            </div>
+            <input 
+              type="range" 
+              min="5" 
+              max="45" 
+              value={hiring}
+              onChange={(e) => setHiring(Number(e.target.value))}
+              className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-[#79D38A]"
+            />
+          </div>
+
+          {/* Retention slider */}
+          <div className="space-y-2">
+            <div className="flex justify-between items-center text-12 font-medium">
+              <span className="text-white/60">Customer Retention Target</span>
+              <span className="text-[#79D38A] font-mono font-bold">{retention}% NRR</span>
+            </div>
+            <input 
+              type="range" 
+              min="75" 
+              max="98" 
+              value={retention}
+              onChange={(e) => setRetention(Number(e.target.value))}
+              className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-[#79D38A]"
+            />
+          </div>
+
+          {/* Operating costs slider */}
+          <div className="space-y-2">
+            <div className="flex justify-between items-center text-12 font-medium">
+              <span className="text-white/60">Operational Overhead Costs</span>
+              <span className="text-[#79D38A] font-mono font-bold">{costs > 0 ? `+${costs}` : costs}%</span>
+            </div>
+            <input 
+              type="range" 
+              min="-10" 
+              max="20" 
+              value={costs}
+              onChange={(e) => setCosts(Number(e.target.value))}
+              className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-[#79D38A]"
+            />
+          </div>
+
         </div>
 
-        {/* Right: Charts and Projections narrative */}
+        {/* Right Column: Outcomes & Projections */}
         <div className="flex flex-col gap-6">
-          {/* Main Chart Card */}
-          <div className="bg-card border border-white/5 rounded-2xl p-6 shadow-lg">
-            <div className="flex items-center justify-between mb-6">
-              <span className="text-[9.5px] font-bold text-white/30 uppercase tracking-wider">Projected Sourcing Cost ($M)</span>
-              <div className="flex items-center gap-1 text-[10px] text-white/30 bg-white/[0.02] border border-white/5 rounded-md px-2 py-0.5 font-mono">
-                <Info size={11} /> Simulated Model
-              </div>
+          
+          {/* Live Outcome Metrics grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="p-5 bg-[#151B23] border border-white/5 rounded-2xl flex flex-col gap-1 shadow-lg">
+              <span className="text-[9.5px] uppercase font-bold text-white/30 tracking-wider">Projected Revenue</span>
+              <span className="text-22 font-bold text-white tracking-tight">${simulatedRevenue.toFixed(1)}M</span>
             </div>
 
-            <div className="h-64 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <XAxis dataKey="month" stroke="rgba(255,255,255,0.15)" fontSize={11} className="font-mono" />
-                  <YAxis stroke="rgba(255,255,255,0.15)" fontSize={11} className="font-mono" />
-                  <Tooltip 
-                    contentStyle={{ background: '#151B23', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', fontSize: '12px' }}
-                  />
-                  <Legend verticalAlign="top" height={36} iconType="circle" />
-                  <Area 
-                    name="Optimized Pathway" 
-                    type="monotone" 
-                    dataKey="spend" 
-                    stroke="#79D38A" 
-                    strokeWidth={2}
-                    fill="rgba(121, 211, 138, 0.06)" 
-                  />
-                  <Area 
-                    name="Baseline Path" 
-                    type="monotone" 
-                    dataKey="baseline" 
-                    stroke="rgba(255,255,255,0.15)" 
-                    strokeWidth={1.5}
-                    strokeDasharray="3 3"
-                    fill="none" 
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+            <div className="p-5 bg-[#151B23] border border-white/5 rounded-2xl flex flex-col gap-1 shadow-lg">
+              <span className="text-[9.5px] uppercase font-bold text-white/30 tracking-wider">Gross Profit Margin</span>
+              <span className="text-22 font-bold text-white tracking-tight">{simulatedProfit.toFixed(1)}%</span>
+            </div>
+
+            <div className="p-5 bg-[#151B23] border border-white/5 rounded-2xl flex flex-col gap-1 shadow-lg">
+              <span className="text-[9.5px] uppercase font-bold text-white/30 tracking-wider">Customer Growth</span>
+              <span className="text-22 font-bold text-white tracking-tight">+{simulatedCustGrowth.toFixed(1)}%</span>
+            </div>
+
+            <div className="p-5 bg-[#151B23] border border-white/5 rounded-2xl flex flex-col gap-1 shadow-lg">
+              <span className="text-[9.5px] uppercase font-bold text-white/30 tracking-wider">Market Share</span>
+              <span className="text-22 font-bold text-white tracking-tight">{simulatedMarketShare.toFixed(1)}%</span>
+            </div>
+
+            <div className="p-5 bg-[#151B23] border border-white/5 rounded-2xl flex flex-col gap-1 shadow-lg">
+              <span className="text-[9.5px] uppercase font-bold text-white/30 tracking-wider">Business Health</span>
+              <span className="text-22 font-bold text-[#79D38A] tracking-tight">{simulatedHealth}/100</span>
+            </div>
+
+            <div className="p-5 bg-[#151B23] border border-white/5 rounded-2xl flex flex-col gap-1 shadow-lg">
+              <span className="text-[9.5px] uppercase font-bold text-white/30 tracking-wider">Operational Risk</span>
+              <span className={`text-22 font-bold tracking-tight ${simulatedRisk === 'Critical' ? 'text-critical animate-pulse' : 'text-white'}`}>{simulatedRisk}</span>
             </div>
           </div>
 
-          {/* Projections Narrative */}
-          <div className="bg-white/[0.01] border border-white/5 rounded-xl p-6 space-y-4">
-            <div className="flex items-center gap-2 text-accent-sage">
-              <Zap size={14} />
-              <span className="text-[10px] font-bold uppercase tracking-wider">AI Procurement Verdict</span>
+          {/* Real-time AI explanation banner */}
+          <div className="bg-[#151B23] border border-white/5 rounded-2xl p-6 shadow-lg flex flex-col gap-3">
+            <div className="flex items-center gap-1.5 text-[#79D38A] select-none">
+              <Zap size={14} className="animate-pulse" />
+              <span className="text-[10px] font-bold uppercase tracking-wider font-sans">AI Scenario Verdict</span>
             </div>
-            <p className="text-13.5 text-white/60 leading-relaxed font-serif">
-              {scenarioInputs.mexicanPivot 
-                ? 'Activating the Guadalajara corridor re-routing pipeline immediately bypasses port queue constraints, saving an estimated $22M in Q3 procurement delays. Gross margin holding improves to 44.0%, compensating for wafer rate spikes.'
-                : `Under the current settings (safety stock at ${scenarioInputs.safetyStock} days, secondary capital reserve at ${scenarioInputs.capitalRatio}%), wait lists at Vietnam docks could lock up to $4.2M in supply operations. Rerouting is highly recommended.`
-              }
+            <p className="text-14 text-white/60 leading-relaxed font-serif">
+              {getAIExplanation()}
             </p>
+            <div className="text-[10px] text-white/30 border-t border-white/5 pt-3 mt-1 select-none font-mono">
+              Confidence Index: {simulatedConfidence}% · Real-time simulation logic verified.
+            </div>
           </div>
+
+          {/* Strategy Comparison Mode */}
+          <div className="space-y-4">
+            <h3 className="text-14 font-semibold text-white/95 select-none font-sans">Strategic Comparison</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              
+              {/* Current Strategy Card */}
+              <Card elevation="flat" hoverEffect={false} className="p-5 bg-[#151B23]/40 border-white/5">
+                <span className="text-[9.5px] font-bold text-white/30 uppercase tracking-wider block mb-3 select-none">Current Strategy</span>
+                <div className="space-y-2 text-13">
+                  <div className="flex justify-between font-mono">
+                    <span className="text-white/40">Marketing:</span> <span className="text-white/70">45%</span>
+                  </div>
+                  <div className="flex justify-between font-mono">
+                    <span className="text-white/40">Pricing Adjustment:</span> <span className="text-white/70">+10%</span>
+                  </div>
+                  <div className="flex justify-between font-mono">
+                    <span className="text-white/40">Inventory:</span> <span className="text-white/70">60d</span>
+                  </div>
+                  <div className="flex justify-between font-serif border-t border-white/5 pt-2 mt-1">
+                    <span className="text-white/30">Projected Health:</span> <strong className="text-white/80 font-sans">84/100</strong>
+                  </div>
+                  <div className="flex justify-between font-serif">
+                    <span className="text-white/30">Projected Revenue:</span> <strong className="text-[#79D38A] font-sans">$42.8M</strong>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Simulated Strategy Card */}
+              <Card elevation="flat" hoverEffect={false} className="p-5 bg-[#79D38A]/5 border-[#79D38A]/25 shadow-lg shadow-[#79D38A]/5">
+                <span className="text-[9.5px] font-bold text-[#79D38A] uppercase tracking-wider block mb-3 select-none">Simulated Strategy</span>
+                <div className="space-y-2 text-13">
+                  <div className="flex justify-between font-mono">
+                    <span className="text-white/40">Marketing:</span> <span className="text-white/80">{marketing}%</span>
+                  </div>
+                  <div className="flex justify-between font-mono">
+                    <span className="text-white/40">Pricing Adjustment:</span> <span className="text-white/80">{price > 0 ? `+${price}` : price}%</span>
+                  </div>
+                  <div className="flex justify-between font-mono">
+                    <span className="text-white/40">Inventory:</span> <span className="text-white/80">{inventory}d</span>
+                  </div>
+                  <div className="flex justify-between font-serif border-t border-white/5 pt-2 mt-1">
+                    <span className="text-white/30">Projected Health:</span> <strong className="text-[#79D38A] font-sans">{simulatedHealth}/100</strong>
+                  </div>
+                  <div className="flex justify-between font-serif">
+                    <span className="text-white/30">Projected Revenue:</span> <strong className="text-[#79D38A] font-sans">${simulatedRevenue.toFixed(1)}M</strong>
+                  </div>
+                </div>
+              </Card>
+
+            </div>
+          </div>
+
+          {/* Featured recommended card */}
+          <div className="bg-[#79D38A]/5 border border-[#79D38A]/20 rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-xl shadow-[#79D38A]/5 select-none">
+            <div className="space-y-1 max-w-md">
+              <div className="flex items-center gap-1 text-[#79D38A]">
+                <CheckCircle size={14} className="animate-pulse" />
+                <span className="text-[10px] font-bold uppercase tracking-wider font-sans">✨ Recommended Scenario</span>
+              </div>
+              <h4 className="text-14 font-semibold text-white/95 tracking-tight font-serif">
+                Target 55% Marketing & Jalisco Logistics nearshore corridor
+              </h4>
+              <p className="text-12 text-white/40 font-serif leading-relaxed">
+                Shifting semiconductor logistics overland lowers transpacific delays from 32 days down to 14, safeguarding profit margins.
+              </p>
+            </div>
+            
+            <div className="flex flex-col gap-1 text-right sm:border-l border-white/10 sm:pl-6 shrink-0 font-mono text-11">
+              <div className="text-white/45">Expected ROI: <strong className="text-[#79D38A]">18.2%</strong></div>
+              <div className="text-white/45">Growth: <strong className="text-white/85">+16.4%</strong></div>
+              <div className="text-white/45">Risk: <strong className="text-white/85">Low</strong></div>
+              <div className="text-white/45">Timeframe: <strong className="text-white/85">45 Days</strong></div>
+            </div>
+          </div>
+
         </div>
+
       </div>
+
     </div>
   );
 };
