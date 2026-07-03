@@ -6,3 +6,4 @@ export * from './Dropdown';
 export * from './SectionHeader';
 export * from './MetricCard';
 export * from './ChartContainer';
+export * from './CountUp';

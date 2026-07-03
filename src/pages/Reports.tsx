@@ -23,7 +23,7 @@ export const Reports: React.FC = () => {
     riskLevel: 'Optimized',
     summary: 'Executive-grade circulation brief.',
     narrative: [
-      'No dataset uploaded. Please load telemetry data from the intake portal to compile dynamic boardroom dossiers.'
+      'Upload a dataset to begin discovering hidden business opportunities.'
     ]
   };
 

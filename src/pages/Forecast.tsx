@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Sliders, Zap, CheckCircle, RefreshCw } from 'lucide-react';
-import { SectionHeader, Card } from '../components/ui';
+import { SectionHeader, Card, CountUp } from '../components/ui';
 import { useDemoStore } from '../features/demoStore';
 import { useAppStore } from '../features/store';
 import { simulateGeminiScenario } from '../features/geminiService';
@@ -243,27 +243,38 @@ export const Forecast: React.FC = () => {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div className="p-5 bg-[#151B23] border border-white/5 rounded-2xl flex flex-col gap-1 shadow-lg">
               <span className="text-[9.5px] uppercase font-bold text-white/30 tracking-wider">Projected Revenue</span>
-              <span className="text-22 font-bold text-white tracking-tight">${simulatedRevenue.toFixed(1)}M</span>
+              <span className="text-22 font-bold text-white tracking-tight">
+                <CountUp value={simulatedRevenue} decimals={1} prefix="$" suffix="M" />
+              </span>
             </div>
 
             <div className="p-5 bg-[#151B23] border border-white/5 rounded-2xl flex flex-col gap-1 shadow-lg">
               <span className="text-[9.5px] uppercase font-bold text-white/30 tracking-wider">Gross Profit Margin</span>
-              <span className="text-22 font-bold text-white tracking-tight">{simulatedProfit.toFixed(1)}%</span>
+              <span className="text-22 font-bold text-white tracking-tight">
+                <CountUp value={simulatedProfit} decimals={1} suffix="%" />
+              </span>
             </div>
 
             <div className="p-5 bg-[#151B23] border border-white/5 rounded-2xl flex flex-col gap-1 shadow-lg">
               <span className="text-[9.5px] uppercase font-bold text-white/30 tracking-wider">Customer Growth</span>
-              <span className="text-22 font-bold text-white tracking-tight">+{simulatedCustGrowth.toFixed(1)}%</span>
+              <span className="text-22 font-bold text-white tracking-tight">
+                <CountUp value={simulatedCustGrowth} decimals={1} prefix="+" suffix="%" />
+              </span>
             </div>
 
             <div className="p-5 bg-[#151B23] border border-white/5 rounded-2xl flex flex-col gap-1 shadow-lg">
               <span className="text-[9.5px] uppercase font-bold text-white/30 tracking-wider">Market Share</span>
-              <span className="text-22 font-bold text-white tracking-tight">{simulatedMarketShare.toFixed(1)}%</span>
+              <span className="text-22 font-bold text-white tracking-tight">
+                <CountUp value={simulatedMarketShare} decimals={1} suffix="%" />
+              </span>
             </div>
 
             <div className="p-5 bg-[#151B23] border border-white/5 rounded-2xl flex flex-col gap-1 shadow-lg">
               <span className="text-[9.5px] uppercase font-bold text-white/30 tracking-wider">Business Health</span>
-              <span className="text-22 font-bold text-[#83D18B] tracking-tight">{simulatedHealth}/100</span>
+              <span className="text-22 font-bold text-[#83D18B] tracking-tight">
+                <CountUp value={simulatedHealth} />
+                <span className="text-12 text-white/30 uppercase tracking-widest font-mono font-normal">/100</span>
+              </span>
             </div>
 
             <div className="p-5 bg-[#151B23] border border-white/5 rounded-2xl flex flex-col gap-1 shadow-lg">

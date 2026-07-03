@@ -8,7 +8,9 @@ import {
   Megaphone, 
   Boxes, 
   Settings,
-  ArrowRight
+  ArrowRight,
+  Check,
+  Sparkles
 } from 'lucide-react';
 import { IntelligenceMesh } from './IntelligenceMesh';
 
@@ -30,24 +32,55 @@ export const AIMissionControl: React.FC<AIMissionControlProps> = ({ onComplete }
     'Analysis Complete.'
   ], []);
 
+  const checklist = useMemo(() => [
+    'Dataset Processed',
+    'Executive Brief Ready',
+    'Strategy Canvas Updated',
+    'AI Ready'
+  ], []);
+
   const [activeStep, setActiveStep] = useState(0);
   const [isExiting, setIsExiting] = useState(false);
+  const [checkIndex, setCheckIndex] = useState(-1);
 
+  // Core step-advancing ticker
   useEffect(() => {
-    if (activeStep >= steps.length) {
-      setIsExiting(true);
-      const timer = setTimeout(() => {
-        onComplete();
-      }, 800); // 800ms dissolve transition
-      return () => clearTimeout(timer);
+    if (activeStep >= steps.length - 1) {
+      // We are on "Analysis Complete". Stop auto-incrementing steps
+      // and start the checkmarks checkoff sequence!
+      setCheckIndex(0);
+      return;
     }
 
     const timer = setTimeout(() => {
       setActiveStep((prev) => prev + 1);
-    }, 700); // 700ms per step = 7.0 seconds total
+    }, 700); // 700ms per step = 6.3 seconds before final step
 
     return () => clearTimeout(timer);
-  }, [activeStep, steps.length, onComplete]);
+  }, [activeStep, steps.length]);
+
+  // Checklist sequential ticker
+  useEffect(() => {
+    if (checkIndex === -1) return;
+
+    if (checkIndex >= checklist.length) {
+      // Completed checking everything. Wait a bit, then exit
+      const timer = setTimeout(() => {
+        setIsExiting(true);
+        const exitTimer = setTimeout(() => {
+          onComplete();
+        }, 800); // 800ms dissolve transition
+        return () => clearTimeout(exitTimer);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+
+    const timer = setTimeout(() => {
+      setCheckIndex((prev) => prev + 1);
+    }, 350); // 350ms per checkmark checkoff
+
+    return () => clearTimeout(timer);
+  }, [checkIndex, checklist.length, onComplete]);
 
   const handleSkip = () => {
     setIsExiting(true);
@@ -89,7 +122,7 @@ export const AIMissionControl: React.FC<AIMissionControlProps> = ({ onComplete }
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, filter: 'blur(10px)' }}
           transition={{ duration: 0.8, ease: 'easeInOut' }}
-          className="fixed inset-0 z-50 bg-[#050608] flex flex-col justify-between p-10 select-none overflow-hidden"
+          className="fixed inset-0 z-50 bg-[#050608] flex flex-col justify-between p-10 select-none overflow-hidden font-sans"
         >
           <IntelligenceMesh />
 
@@ -100,8 +133,8 @@ export const AIMissionControl: React.FC<AIMissionControlProps> = ({ onComplete }
                 <span className="absolute w-2 h-2 bg-[#83D18B] rounded-full animate-ping" />
                 <span className="w-2.5 h-2.5 bg-[#83D18B] rounded-full" />
               </div>
-              <div className="flex flex-col">
-                <span className="text-[10px] font-bold text-accent-sage uppercase tracking-widest font-sans">
+              <div className="flex flex-col text-left">
+                <span className="text-[10px] font-bold text-accent-sage uppercase tracking-widest">
                   AI Mission Control Ingestion
                 </span>
                 <span className="text-11 text-white/30 font-mono">
@@ -112,7 +145,7 @@ export const AIMissionControl: React.FC<AIMissionControlProps> = ({ onComplete }
 
             <button
               onClick={handleSkip}
-              className="flex items-center gap-2 px-4 py-2 border border-white/5 hover:border-white/15 bg-white/[0.01] hover:bg-white/[0.03] rounded-xl text-12 font-medium text-white/50 hover:text-white/90 transition-all font-sans cursor-pointer active:scale-95"
+              className="flex items-center gap-2 px-4 py-2 border border-white/5 hover:border-white/15 bg-white/[0.01] hover:bg-white/[0.03] rounded-xl text-12 font-medium text-white/50 hover:text-white/90 transition-all cursor-pointer active:scale-95"
             >
               Skip Ingestion
               <ArrowRight size={13} />
@@ -195,6 +228,69 @@ export const AIMissionControl: React.FC<AIMissionControlProps> = ({ onComplete }
                 </motion.div>
               );
             })}
+
+            {/* Ingestion Sequential Checklist overlay on completion */}
+            <AnimatePresence>
+              {checkIndex !== -1 && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.96, backdropFilter: 'blur(0px)' }}
+                  animate={{ opacity: 1, scale: 1, backdropFilter: 'blur(4px)' }}
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  className="absolute inset-0 bg-[#050608]/75 z-20 flex flex-col items-center justify-center p-10 select-none"
+                >
+                  <motion.div 
+                    initial={{ y: 15 }}
+                    animate={{ y: 0 }}
+                    className="w-full max-w-sm bg-[#0D1117] border border-[#83D18B]/30 shadow-[0_12px_40px_rgba(131,209,139,0.08)] rounded-2xl p-7 flex flex-col gap-6"
+                  >
+                    <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+                      <Sparkles className="text-[#83D18B] animate-pulse" size={18} />
+                      <h3 className="text-14 font-bold text-white/90 uppercase tracking-wider">Strategic Synthesis Matrix</h3>
+                    </div>
+                    <div className="flex flex-col gap-4">
+                      {checklist.map((item, idx) => {
+                        const isChecked = checkIndex > idx;
+                        const isCurrent = checkIndex === idx;
+                        return (
+                          <motion.div 
+                            key={idx}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="flex items-center gap-3 text-13"
+                          >
+                            <div 
+                              className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-300
+                                ${isChecked 
+                                  ? 'bg-[#83D18B] border-[#83D18B] text-[#0D1117]' 
+                                  : isCurrent 
+                                    ? 'border-[#83D18B] text-[#83D18B] animate-pulse' 
+                                    : 'border-white/10 text-transparent'
+                                }
+                              `}
+                            >
+                              <Check size={11} strokeWidth={3} />
+                            </div>
+                            <span 
+                              className={`transition-all duration-300 font-mono text-11.5 uppercase tracking-wider
+                                ${isChecked 
+                                  ? 'text-white/90 font-semibold' 
+                                  : isCurrent 
+                                    ? 'text-[#83D18B]' 
+                                    : 'text-white/30'
+                                }
+                              `}
+                            >
+                              {item}
+                            </span>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Bottom Narrative strategic logging */}

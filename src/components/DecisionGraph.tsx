@@ -38,26 +38,52 @@ interface CustomNodeData extends Record<string, unknown> {
   onMouseLeave: () => void;
 }
 
-const CustomGraphNode: React.FC<NodeProps<Node<CustomNodeData>>> = ({ data }) => {
+const CustomGraphNode: React.FC<NodeProps<Node<CustomNodeData>>> = ({ id, data }) => {
+  const breatheNode = id === 'health' || data.label === 'Business Health' || data.label === 'Business Health Index';
+
   return (
-    <div 
+    <motion.div 
       onMouseEnter={data.onMouseEnter}
       onMouseLeave={data.onMouseLeave}
+      animate={{
+        scale: data.isActive 
+          ? [1.02, 1.05, 1.02] 
+          : breatheNode 
+            ? [0.99, 1.01, 0.99] 
+            : 1,
+        borderColor: data.isActive 
+          ? 'rgba(131, 209, 139, 0.8)' 
+          : data.isHovered 
+            ? 'rgba(131, 209, 139, 0.4)' 
+            : 'rgba(255, 255, 255, 0.05)',
+        boxShadow: data.isActive
+          ? ['0 0 10px rgba(131,209,139,0.1)', '0 0 25px rgba(131,209,139,0.25)', '0 0 10px rgba(131,209,139,0.1)']
+          : 'none'
+      }}
+      transition={{
+        scale: {
+          repeat: Infinity,
+          duration: breatheNode ? 3.0 : 2.0,
+          ease: 'easeInOut'
+        },
+        boxShadow: {
+          repeat: Infinity,
+          duration: 2.0,
+          ease: 'easeInOut'
+        },
+        borderColor: { duration: 0.25 }
+      }}
       className={`
         px-4 py-3 rounded-xl border bg-[#151B23] transition-all duration-300 min-w-[150px] shadow-lg select-none cursor-pointer
-        ${data.isActive 
-          ? 'border-[#83D18B] bg-accent-sage-dim shadow-accent-sage/5 scale-105 ring-2 ring-[#83D18B]/25' 
-          : 'border-white/5 hover:border-white/15'
-        }
-        ${data.isDimmed ? 'opacity-25 scale-95' : 'opacity-100'}
-        ${data.isHovered && !data.isActive ? 'border-[#83D18B]/50 bg-white/[0.01]' : ''}
+        ${data.isActive ? 'bg-accent-sage-dim' : ''}
+        ${data.isDimmed ? 'opacity-15 blur-[0.6px] grayscale scale-95' : 'opacity-100'}
       `}
     >
       <Handle type="target" position={Position.Top} className="opacity-0" />
       <Handle type="source" position={Position.Bottom} className="opacity-0" />
       
       <div className="flex items-center gap-2.5">
-        <div className={`p-1.5 rounded-lg ${data.isActive ? 'text-accent-sage' : 'text-white/40'}`}>
+        <div className={`p-1.5 rounded-lg ${data.isActive ? 'text-accent-sage animate-pulse' : 'text-white/40'}`}>
           {data.icon}
         </div>
         <div className="flex flex-col min-w-0">
@@ -65,7 +91,7 @@ const CustomGraphNode: React.FC<NodeProps<Node<CustomNodeData>>> = ({ data }) =>
           <span className="text-13 font-semibold text-white/90 truncate">{data.metric}</span>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -338,7 +364,7 @@ export const DecisionGraph: React.FC = () => {
         id: `edge-${e.source}-${e.target}-${idx}`,
         source: e.source,
         target: e.target,
-        animated: isHighlighted,
+        animated: !isDimmed,
         style: {
           stroke: isHighlighted ? '#83D18B' : isDimmed ? 'rgba(255,255,255,0.02)' : 'rgba(255, 255, 255, 0.08)',
           strokeWidth: isHighlighted ? 1.5 : 1,

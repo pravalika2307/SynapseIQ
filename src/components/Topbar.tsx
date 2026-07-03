@@ -5,6 +5,8 @@ import { Dropdown } from './ui/Dropdown';
 
 export const Topbar: React.FC = () => {
   const datasetName = useAppStore((state) => state.datasetName);
+  const isLoadingAnalysis = useAppStore((state) => state.isLoadingAnalysis);
+  const isDatasetLoaded = useAppStore((state) => state.isDatasetLoaded);
 
   const profileMenuItems = [
     {
@@ -64,9 +66,9 @@ export const Topbar: React.FC = () => {
           </div>
         )}
 
-        <div className="flex items-center gap-2 px-2.5 py-1 bg-accent-sage-dim border border-accent-sage-border rounded-full text-[10.5px] font-bold text-accent-sage tracking-wider uppercase">
-          <span className="w-1.5 h-1.5 rounded-full bg-accent-sage animate-pulse-ring" />
-          AI Active
+        <div className="flex items-center gap-2 px-2.5 py-1 bg-white/[0.02] border border-white/5 rounded-full text-[10px] font-bold text-white/55 tracking-wider uppercase font-mono select-none">
+          <span className={`w-1.5 h-1.5 rounded-full ${isLoadingAnalysis ? 'bg-critical' : 'bg-accent-sage'} animate-pulse`} />
+          {isLoadingAnalysis ? 'Strategic Analysis Active' : isDatasetLoaded ? 'Context Ingested' : 'AI Ready'}
         </div>
 
         <button className="w-8 h-8 rounded-lg flex items-center justify-center text-white/40 hover:text-white/80 hover:bg-white/[0.03] transition-all">

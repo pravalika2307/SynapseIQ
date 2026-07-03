@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, BookOpen, Zap, Compass } from 'lucide-react';
+import { Send, BookOpen, Zap, Compass, Sparkles } from 'lucide-react';
 import { useAppStore } from '../features/store';
 import { copilotStarters, copilotAIResponses } from '../features/data';
 import { askGeminiCopilot } from '../features/geminiService';
@@ -27,6 +27,8 @@ export const DecisionCopilot: React.FC = () => {
 
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [streamingMessage, setStreamingMessage] = useState<any | null>(null);
+  const [streamingText, setStreamingText] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const activeNodeContext = nodeContexts[activeNodeId] || nodeContexts.health;
@@ -34,7 +36,7 @@ export const DecisionCopilot: React.FC = () => {
   // Auto-scroll to bottom of conversation
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isTyping]);
+  }, [messages, isTyping, streamingText]);
 
   useEffect(() => {
     if (isDemoActive && currentStep === 6 && !hasTriggeredDemo) {
@@ -45,6 +47,40 @@ export const DecisionCopilot: React.FC = () => {
       return () => clearTimeout(timer);
     }
   }, [isDemoActive, currentStep, hasTriggeredDemo]);
+
+  const streamResponse = (responseData: any) => {
+    setIsTyping(false);
+    setStreamingMessage(responseData);
+    setStreamingText('');
+
+    const words = responseData.summary.split(' ');
+    let currentWordIdx = 0;
+    let currentText = '';
+
+    const interval = setInterval(() => {
+      if (currentWordIdx < words.length) {
+        currentText += (currentWordIdx === 0 ? '' : ' ') + words[currentWordIdx];
+        setStreamingText(currentText);
+        currentWordIdx++;
+      } else {
+        clearInterval(interval);
+        addMessage(
+          responseData.summary,
+          'assistant',
+          {
+            summary: responseData.summary,
+            evidence: responseData.evidence,
+            confidence: responseData.confidence,
+            recommendation: responseData.recommendation,
+            relatedMetrics: responseData.relatedMetrics || [],
+            nextQuestion: responseData.nextQuestion || ''
+          }
+        );
+        setStreamingMessage(null);
+        setStreamingText('');
+      }
+    }, 25);
+  };
 
   const handleSend = async (text: string) => {
     if (!text.trim()) return;
@@ -69,18 +105,7 @@ export const DecisionCopilot: React.FC = () => {
       try {
         const history = store.messages.map(m => ({ sender: m.sender, text: m.text }));
         const responseData = await askGeminiCopilot(apiKey, text, history, summary, activeNodeContext);
-        addMessage(
-          responseData.summary,
-          'assistant',
-          {
-            summary: responseData.summary,
-            evidence: responseData.evidence,
-            confidence: responseData.confidence,
-            recommendation: responseData.recommendation,
-            nextQuestion: responseData.nextQuestion
-          }
-        );
-        setIsTyping(false);
+        streamResponse(responseData);
         return;
       } catch (err) {
         console.warn('Gemini Copilot failed, falling back to local reasoning:', err);
@@ -143,19 +168,14 @@ export const DecisionCopilot: React.FC = () => {
         }
       }
 
-      addMessage(
-        customSummary,
-        'assistant',
-        {
-          summary: customSummary,
-          evidence: customEvidence,
-          confidence: responseData.confidence,
-          recommendation: customRec,
-          relatedMetrics: responseData.relatedMetrics || [],
-          nextQuestion: responseData.nextQuestion || ''
-        }
-      );
-      setIsTyping(false);
+      streamResponse({
+        summary: customSummary,
+        evidence: customEvidence,
+        confidence: responseData.confidence,
+        recommendation: customRec,
+        relatedMetrics: responseData.relatedMetrics || [],
+        nextQuestion: responseData.nextQuestion || ''
+      });
     }, 1200);
   };
 
@@ -313,6 +333,24 @@ export const DecisionCopilot: React.FC = () => {
               );
             })}
           </AnimatePresence>
+
+          {/* Typewriter Streaming Bubble */}
+          {streamingMessage && (
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col gap-3 max-w-[85%] bg-accent-sage-dim/40 border border-accent-sage-border/30 rounded-2xl p-5 select-none self-start"
+            >
+              <div className="flex items-center gap-2 border-b border-[#83D18B]/20 pb-2 text-[#83D18B]">
+                <Sparkles size={13} className="animate-pulse" />
+                <span className="text-[10px] font-bold uppercase tracking-wider font-sans">Streaming Strategic Insights...</span>
+              </div>
+              <p className="text-13 leading-relaxed font-serif text-white/90">
+                {streamingText}
+                <span className="inline-block w-1.5 h-3.5 bg-[#83D18B] ml-1 animate-pulse" />
+              </p>
+            </motion.div>
+          )}
 
           {isTyping && (
             <div className="flex items-center gap-2.5 text-white/30 text-12 italic font-serif select-none">

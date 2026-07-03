@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion as dMotion } from 'framer-motion';
 import { useAppStore } from '../features/store';
 import { useDemoStore } from '../features/demoStore';
-import { Card, Badge, SectionHeader } from '../components/ui';
+import { Card, Badge, SectionHeader, CountUp } from '../components/ui';
 import { 
   FileSpreadsheet, 
   Calendar, 
@@ -42,6 +42,11 @@ export const ExecutiveBrief: React.FC = () => {
   const itemVariants = {
     hidden: { opacity: 0, y: 15 },
     show: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 100, damping: 15 } }
+  };
+
+  const recommendationVariants = {
+    hidden: { opacity: 0, y: 15 },
+    show: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 100, damping: 15, delay: 0.6 } }
   };
 
   return (
@@ -117,11 +122,24 @@ export const ExecutiveBrief: React.FC = () => {
             <div className="relative w-36 h-36 flex items-center justify-center">
               <svg className="absolute transform -rotate-90 w-full h-full" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.03)" strokeWidth="8" fill="transparent" />
-                <circle cx="50" cy="50" r="40" stroke="#83D18B" strokeWidth="8" fill="transparent" 
-                        strokeDasharray="251.2" strokeDashoffset={strokeOffset} strokeLinecap="round" />
+                <dMotion.circle 
+                  cx="50" 
+                  cy="50" 
+                  r="40" 
+                  stroke="#83D18B" 
+                  strokeWidth="8" 
+                  fill="transparent" 
+                  strokeDasharray="251.2" 
+                  initial={{ strokeDashoffset: 251.2 }}
+                  animate={{ strokeDashoffset: strokeOffset }}
+                  transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                  strokeLinecap="round" 
+                />
               </svg>
               <div className="flex flex-col items-center select-none">
-                <span className="text-36 font-bold tracking-tight text-white">{healthScore}</span>
+                <span className="text-36 font-bold tracking-tight text-white">
+                  <CountUp value={healthScore} />
+                </span>
                 <span className="text-11 text-white/30 uppercase tracking-widest font-mono">/ 100</span>
               </div>
             </div>
@@ -173,7 +191,7 @@ export const ExecutiveBrief: React.FC = () => {
         </dMotion.div>
 
         {/* AI Recommendation */}
-        <dMotion.div variants={itemVariants} className={`space-y-4 transition-all duration-500 rounded-2xl p-2 ${isDemoActive && currentStep === 3 ? 'ring-2 ring-[#83D18B] shadow-[0_0_25px_rgba(131,209,139,0.15)] bg-[#83D18B]/5 border-transparent' : ''}`}>
+        <dMotion.div variants={recommendationVariants} className={`space-y-4 transition-all duration-500 rounded-2xl p-2 ${isDemoActive && currentStep === 3 ? 'ring-2 ring-[#83D18B] shadow-[0_0_25px_rgba(131,209,139,0.15)] bg-[#83D18B]/5 border-transparent' : ''}`}>
           <SectionHeader 
             label="Steering Directive"
             title="AI Recommendation"
