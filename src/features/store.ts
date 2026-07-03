@@ -83,6 +83,7 @@ interface AppState {
   setPresentationMode: (active: boolean) => void;
   setCopilotPreloadQuery: (query: string | null) => void;
   recordExploration: (topic: string) => void;
+  setAnalysisError: (error: string | null) => void;
   
   // Intelligence Actions
   setGeminiApiKey: (key: string | null) => void;
@@ -155,6 +156,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
   setCopilotPreloadQuery: (query) => set({ copilotPreloadQuery: query }),
   recordExploration: (topic) => set((state) => ({ explorationHistory: [...state.explorationHistory, topic] })),
+  setAnalysisError: (error) => set({ analysisError: error }),
   
   addMessage: (text, sender, references) => set((state) => ({
     messages: [

@@ -79,7 +79,7 @@ export const Topbar: React.FC = () => {
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.25, ease: 'easeOut' }}
             >
-              {isLoadingAnalysis ? 'Strategic Analysis Active' : isDatasetLoaded ? 'Context Updated' : 'Ready'}
+              {isLoadingAnalysis ? 'Building strategic understanding...' : isDatasetLoaded ? 'Business relationships refreshed.' : 'System Ready'}
             </motion.span>
           </AnimatePresence>
         </div>

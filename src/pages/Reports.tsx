@@ -23,7 +23,7 @@ export const Reports: React.FC = () => {
     riskLevel: 'Optimized',
     summary: 'Executive-grade circulation brief.',
     narrative: [
-      'Upload a dataset to begin discovering hidden business opportunities.'
+      'Upload a business dataset to begin generating executive insights.'
     ]
   };
 

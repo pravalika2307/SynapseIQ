@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { UploadCloud } from 'lucide-react';
+import { useAppStore } from '../features/store';
 
 interface UploadZoneProps {
   onFileSelected: (file: File) => void;
@@ -12,6 +13,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
   accept = '.csv,.xlsx',
   maxSizeMB = 10,
 }) => {
+  const setAnalysisError = useAppStore((state) => state.setAnalysisError);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -44,9 +46,11 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
   const validateAndProcessFile = (file: File) => {
     const fileSizeMB = file.size / (1024 * 1024);
     if (fileSizeMB > maxSizeMB) {
-      alert(`File size exceeds limit of ${maxSizeMB}MB.`);
+      setAnalysisError(`The selected file exceeds our size threshold constraint of ${maxSizeMB}MB.`);
       return;
     }
+    // Reset previous errors before uploading
+    setAnalysisError(null);
     onFileSelected(file);
   };
 

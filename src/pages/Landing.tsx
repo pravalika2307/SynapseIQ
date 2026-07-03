@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, ArrowRight, Play } from 'lucide-react';
+import { Sparkles, ArrowRight, Play, ShieldAlert } from 'lucide-react';
 import { useAppStore } from '../features/store';
 import { useDemoStore } from '../features/demoStore';
 import { UploadZone } from '../components/UploadZone';
@@ -20,6 +20,13 @@ export const Landing: React.FC = () => {
   const [state, setState] = useState<'hero' | 'loading'>('hero');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const triggerAnalysis = useAppStore((state) => state.triggerAnalysis);
+  const analysisError = useAppStore((state) => state.analysisError);
+
+  React.useEffect(() => {
+    if (analysisError) {
+      setState('hero');
+    }
+  }, [analysisError]);
 
   React.useEffect(() => {
     if (state === 'loading') {
@@ -152,7 +159,28 @@ export const Landing: React.FC = () => {
                     </span>
                   </div>
 
-                  <div className="p-8">
+                  <div className="p-8 space-y-4">
+                    {analysisError && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="p-4 bg-critical/10 border border-critical/20 rounded-xl text-left select-none"
+                      >
+                        <div className="flex items-center gap-2 text-critical mb-1 font-sans">
+                          <ShieldAlert size={14} className="shrink-0 animate-pulse" />
+                          <span className="text-[10px] font-bold uppercase tracking-wider">Intake Validation Constraint</span>
+                        </div>
+                        <p className="text-12.5 text-white/70 leading-relaxed font-serif">
+                          {analysisError.includes('at least a header')
+                            ? "The uploaded spreadsheet must contain a header row and at least one row of records. Please check file formatting."
+                            : analysisError.includes('API') || analysisError.includes('Gemini')
+                              ? "Secure cloud strategist failed to respond. Operational telemetry has been loaded in local analytical fallback mode."
+                              : `The dataset schema is missing critical indicators: ${analysisError}. Please check column headers.`
+                          }
+                        </p>
+                      </motion.div>
+                    )}
+
                     <UploadZone onFileSelected={handleFileSelect} />
                   </div>
                 </div>
