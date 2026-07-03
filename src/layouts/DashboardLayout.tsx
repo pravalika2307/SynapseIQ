@@ -155,7 +155,7 @@ export const DashboardLayout: React.FC = () => {
               initial={{ opacity: 0, y: 6, filter: 'blur(3px)' }}
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
               exit={{ opacity: 0, y: -6, filter: 'blur(3px)' }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }} // Soft Apple-like easing
+              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }} // Calmer Apple-like premium transition
               className="w-full h-full relative z-10"
             >
               <Outlet />

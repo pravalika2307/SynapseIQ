@@ -24,21 +24,21 @@ export const AIMissionControl: React.FC<AIMissionControlProps> = ({ onComplete }
   const steps = useMemo(() => [
     'Initializing Strategic Intelligence...',
     'Reading Business Data...',
-    'Understanding Company Structure...',
-    'Mapping Business Relationships...',
+    'Strategic understanding established.',
+    'Business relationships mapped.',
     'Finding Hidden Opportunities...',
     'Detecting Strategic Risks...',
-    'Generating Executive Brief...',
+    'Executive Brief prepared.',
     'Constructing Strategy Canvas...',
     'Preparing Decision Workspace...',
-    'Analysis Complete.'
+    'Future outlook recalculated.'
   ], []);
 
   const checklist = useMemo(() => [
     'Dataset Processed',
-    'Executive Brief Ready',
-    'Strategy Canvas Updated',
-    'AI Ready'
+    'Executive Brief prepared.',
+    'Business relationships mapped.',
+    'Strategic understanding established.'
   ], []);
 
   const [activeStep, setActiveStep] = useState(0);
@@ -363,6 +363,25 @@ export const AIMissionControl: React.FC<AIMissionControlProps> = ({ onComplete }
                       {narrativeSentences.slice(0, Math.max(1, narrativeIndex + 1)).map((sentence, sIdx) => {
                         const isOpportunity = sentence.startsWith('1.') || sentence.startsWith('2.') || sentence.startsWith('3.');
                         
+                        if (isOpportunity) {
+                          return (
+                            <motion.div
+                              key={sIdx}
+                              initial={{ opacity: 0, x: -15, scale: 0.98 }}
+                              animate={{ opacity: 1, x: 0, scale: 1 }}
+                              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                              className="flex items-start gap-4 p-4 bg-[#12161D]/60 border border-[#83D18B]/20 rounded-2xl shadow-xl text-13.5 text-white/85 font-serif leading-relaxed"
+                            >
+                              <div className="w-5.5 h-5.5 rounded-full bg-[#83D18B]/10 border border-[#83D18B]/30 flex items-center justify-center text-[#83D18B] font-mono text-10 font-bold shrink-0 mt-0.5">
+                                {sentence[0]}
+                              </div>
+                              <div className="flex-1">
+                                {sentence.substring(2)}
+                              </div>
+                            </motion.div>
+                          );
+                        }
+                        
                         return (
                           <motion.p
                             key={sIdx}
@@ -372,8 +391,7 @@ export const AIMissionControl: React.FC<AIMissionControlProps> = ({ onComplete }
                             className={`font-serif leading-relaxed text-white/90
                               ${sIdx === 0 ? 'text-24 md:text-30 font-bold mb-3' : ''}
                               ${sentence === 'However...' ? 'text-20 text-[#83D18B] font-bold italic py-1' : ''}
-                              ${isOpportunity ? 'pl-6 text-14 text-white/70 border-l border-[#83D18B]/30 py-1' : 'text-16'}
-                              ${sentence.includes('Welcome to') ? 'text-18 font-bold text-[#83D18B] mt-4' : ''}
+                              ${sentence.includes('Welcome to') ? 'text-18 font-bold text-[#83D18B] mt-4' : 'text-16'}
                             `}
                           >
                             {sentence}

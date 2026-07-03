@@ -44,12 +44,15 @@ const CustomGraphNode: React.FC<NodeProps<Node<CustomNodeData>>> = ({ id, data }
   return (
     <div className="relative">
       {/* Subtle radial glow backdrop */}
-      {data.isActive && (
+      {(data.isActive || breatheNode) && (
         <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: [0.2, 0.4, 0.2], scale: [1.15, 1.35, 1.15] }}
-          transition={{ repeat: Infinity, duration: 2.8, ease: 'easeInOut' }}
-          className="absolute -inset-4 bg-[#83D18B]/15 rounded-full blur-xl -z-10 pointer-events-none"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ 
+            opacity: breatheNode ? [0.12, 0.28, 0.12] : [0.2, 0.4, 0.2], 
+            scale: breatheNode ? [1.1, 1.25, 1.1] : [1.15, 1.35, 1.15] 
+          }}
+          transition={{ repeat: Infinity, duration: breatheNode ? 4.2 : 2.8, ease: 'easeInOut' }}
+          className={`absolute -inset-5 rounded-full blur-xl -z-10 pointer-events-none ${breatheNode ? 'bg-[#83D18B]/12' : 'bg-[#83D18B]/18'}`}
         />
       )}
 
