@@ -29,13 +29,13 @@ export const IntelligenceMesh: React.FC = () => {
     const particles: Particle[] = [];
 
     for (let i = 0; i < particlesCount; i++) {
-      const alpha = Math.random() * 0.15 + 0.05;
+      const alpha = Math.random() * 0.10 + 0.02; // Extra faint opacity
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.15, // Extremely slow drift
-        vy: (Math.random() - 0.5) * 0.15,
-        radius: Math.random() * 1.2 + 0.6,
+        vx: (Math.random() - 0.5) * 0.05, // Ambient, ultra-slow drift
+        vy: (Math.random() - 0.5) * 0.05,
+        radius: Math.random() * 1.0 + 0.5, // Tiny nodes
         alpha,
         targetAlpha: alpha,
       });

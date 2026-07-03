@@ -42,43 +42,54 @@ const CustomGraphNode: React.FC<NodeProps<Node<CustomNodeData>>> = ({ id, data }
   const breatheNode = id === 'health' || data.label === 'Business Health' || data.label === 'Business Health Index';
 
   return (
-    <motion.div 
-      onMouseEnter={data.onMouseEnter}
-      onMouseLeave={data.onMouseLeave}
-      animate={{
-        scale: data.isActive 
-          ? [1.02, 1.05, 1.02] 
-          : breatheNode 
-            ? [0.99, 1.01, 0.99] 
-            : 1,
-        borderColor: data.isActive 
-          ? 'rgba(131, 209, 139, 0.8)' 
-          : data.isHovered 
-            ? 'rgba(131, 209, 139, 0.4)' 
-            : 'rgba(255, 255, 255, 0.05)',
-        boxShadow: data.isActive
-          ? ['0 0 10px rgba(131,209,139,0.1)', '0 0 25px rgba(131,209,139,0.25)', '0 0 10px rgba(131,209,139,0.1)']
-          : 'none'
-      }}
-      transition={{
-        scale: {
-          repeat: Infinity,
-          duration: breatheNode ? 3.0 : 2.0,
-          ease: 'easeInOut'
-        },
-        boxShadow: {
-          repeat: Infinity,
-          duration: 2.0,
-          ease: 'easeInOut'
-        },
-        borderColor: { duration: 0.25 }
-      }}
-      className={`
-        px-4 py-3 rounded-xl border bg-[#151B23] transition-all duration-300 min-w-[150px] shadow-lg select-none cursor-pointer
-        ${data.isActive ? 'bg-accent-sage-dim' : ''}
-        ${data.isDimmed ? 'opacity-15 blur-[0.6px] grayscale scale-95' : 'opacity-100'}
-      `}
-    >
+    <div className="relative">
+      {/* Subtle radial glow backdrop */}
+      {data.isActive && (
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: [0.2, 0.4, 0.2], scale: [1.15, 1.35, 1.15] }}
+          transition={{ repeat: Infinity, duration: 2.8, ease: 'easeInOut' }}
+          className="absolute -inset-4 bg-[#83D18B]/15 rounded-full blur-xl -z-10 pointer-events-none"
+        />
+      )}
+
+      <motion.div 
+        onMouseEnter={data.onMouseEnter}
+        onMouseLeave={data.onMouseLeave}
+        animate={{
+          scale: data.isActive 
+            ? [1.02, 1.05, 1.02] 
+            : breatheNode 
+              ? [0.99, 1.01, 0.99] 
+              : 1,
+          borderColor: data.isActive 
+            ? 'rgba(131, 209, 139, 0.8)' 
+            : data.isHovered 
+              ? 'rgba(131, 209, 139, 0.4)' 
+              : 'rgba(255, 255, 255, 0.05)',
+          boxShadow: data.isActive
+            ? ['0 0 10px rgba(131,209,139,0.1)', '0 0 25px rgba(131,209,139,0.25)', '0 0 10px rgba(131,209,139,0.1)']
+            : 'none'
+        }}
+        transition={{
+          scale: {
+            repeat: Infinity,
+            duration: breatheNode ? 3.0 : 2.0,
+            ease: 'easeInOut'
+          },
+          boxShadow: {
+            repeat: Infinity,
+            duration: 2.0,
+            ease: 'easeInOut'
+          },
+          borderColor: { duration: 0.25 }
+        }}
+        className={`
+          px-4 py-3 rounded-xl border bg-[#151B23] transition-all duration-300 min-w-[150px] shadow-lg select-none cursor-pointer
+          ${data.isActive ? 'bg-accent-sage-dim' : ''}
+          ${data.isDimmed ? 'opacity-15 blur-[0.6px] grayscale scale-95' : 'opacity-100'}
+        `}
+      >
       <Handle type="target" position={Position.Top} className="opacity-0" />
       <Handle type="source" position={Position.Bottom} className="opacity-0" />
       
@@ -92,6 +103,7 @@ const CustomGraphNode: React.FC<NodeProps<Node<CustomNodeData>>> = ({ id, data }
         </div>
       </div>
     </motion.div>
+    </div>
   );
 };
 

@@ -118,36 +118,49 @@ export const Sidebar: React.FC = () => {
               key={item.to}
               to={item.to}
               className={({ isActive }) => `
-                flex items-center px-4 py-2.5 text-13 transition-all duration-200 border-l-2 relative group
-                ${isActive 
-                  ? 'text-white border-accent-sage bg-accent-sage/5 font-medium' 
-                  : 'text-white/50 border-transparent hover:text-white/80 hover:bg-white/[0.02]'
-                }
+                flex items-center px-4 py-2.5 text-13 transition-all duration-300 relative group
+                ${isActive ? 'text-white font-medium font-sans' : 'text-white/50 hover:text-white/85'}
               `}
             >
-              <span className="opacity-70 group-hover:opacity-100 min-w-[20px]">{item.icon}</span>
-              
-              {!isSidebarCollapsed && (
-                <motion.span 
-                  initial={{ opacity: 0, x: -5 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="ml-3 flex-1 truncate"
-                >
-                  {item.label}
-                </motion.span>
-              )}
+              {({ isActive }) => (
+                <>
+                  {isActive && (
+                    <motion.div 
+                      layoutId="activeNavBackground"
+                      className="absolute inset-0 bg-accent-sage/[0.04] border-l-2 border-accent-sage z-0"
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                  
+                  <motion.span 
+                    animate={isActive ? { scale: 1.05 } : { scale: 1 }}
+                    className="opacity-70 group-hover:opacity-100 min-w-[20px] z-10 flex items-center justify-center"
+                  >
+                    {item.icon}
+                  </motion.span>
+                  
+                  {!isSidebarCollapsed && (
+                    <motion.span 
+                      initial={{ opacity: 0, x: -5 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className="ml-3 flex-1 truncate z-10 text-left"
+                    >
+                      {item.label}
+                    </motion.span>
+                  )}
 
-              {!isSidebarCollapsed && item.badge && (
-                <span className="text-[10px] font-bold bg-accent-sage-dim text-accent-sage border border-accent-sage-border rounded-full px-2 py-0.5 ml-auto">
-                  {item.badge}
-                </span>
-              )}
+                  {!isSidebarCollapsed && item.badge && (
+                    <span className="text-[10px] font-bold bg-accent-sage-dim text-accent-sage border border-accent-sage-border rounded-full px-2 py-0.5 ml-auto z-10">
+                      {item.badge}
+                    </span>
+                  )}
 
-              {/* Tooltip for collapsed mode */}
-              {isSidebarCollapsed && (
-                <div className="absolute left-16 bg-[#18212C] border border-white/5 text-white/90 text-[11px] rounded px-2.5 py-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap shadow-xl">
-                  {item.label}
-                </div>
+                  {isSidebarCollapsed && (
+                    <div className="absolute left-16 bg-[#18212C] border border-white/5 text-white/90 text-[11px] rounded px-2.5 py-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap shadow-xl">
+                      {item.label}
+                    </div>
+                  )}
+                </>
               )}
             </NavLink>
           ))}

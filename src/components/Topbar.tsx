@@ -1,5 +1,6 @@
 import React from 'react';
 import { Search, Bell, Sparkles, User, Settings, LogOut, RefreshCw } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../features/store';
 import { Dropdown } from './ui/Dropdown';
 
@@ -66,9 +67,19 @@ export const Topbar: React.FC = () => {
           </div>
         )}
 
-        <div className="flex items-center gap-2 px-2.5 py-1 bg-white/[0.02] border border-white/5 rounded-full text-[10px] font-bold text-white/55 tracking-wider uppercase font-mono select-none">
+        <div className="flex items-center gap-2 px-2.5 py-1 bg-white/[0.02] border border-white/5 rounded-full text-[10px] font-bold text-white/55 tracking-wider uppercase font-mono select-none overflow-hidden">
           <span className={`w-1.5 h-1.5 rounded-full ${isLoadingAnalysis ? 'bg-critical' : 'bg-accent-sage'} animate-pulse`} />
-          {isLoadingAnalysis ? 'Strategic Analysis Active' : isDatasetLoaded ? 'Context Ingested' : 'AI Ready'}
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={isLoadingAnalysis ? 'analysing' : isDatasetLoaded ? 'loaded' : 'ready'}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+            >
+              {isLoadingAnalysis ? 'Strategic Analysis Active' : isDatasetLoaded ? 'Context Updated' : 'Ready'}
+            </motion.span>
+          </AnimatePresence>
         </div>
 
         <button className="w-8 h-8 rounded-lg flex items-center justify-center text-white/40 hover:text-white/80 hover:bg-white/[0.03] transition-all">
