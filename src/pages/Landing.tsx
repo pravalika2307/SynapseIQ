@@ -5,7 +5,7 @@ import { Sparkles, ArrowRight, Play } from 'lucide-react';
 import { useAppStore } from '../features/store';
 import { useDemoStore } from '../features/demoStore';
 import { UploadZone } from '../components/UploadZone';
-import { AnalysisLoader } from '../components/AnalysisLoader';
+import { AIMissionControl } from '../components/AIMissionControl';
 import { PageTransition } from '../components/PageTransition';
 
 import { IntelligenceMesh } from '../components/IntelligenceMesh';
@@ -159,28 +159,7 @@ export const Landing: React.FC = () => {
               </div>
             </motion.div>
           ) : (
-            <motion.div 
-              key="loading"
-              initial={{ opacity: 0, scale: 0.97 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.985 }}
-              transition={{ duration: 0.4, ease: 'easeOut' }}
-              className="w-full max-w-md bg-[#151B23] border border-white/5 rounded-2xl overflow-hidden shadow-2xl"
-            >
-              <div className="flex items-center justify-between px-5 py-3 border-b border-white/5 bg-white/[0.01] select-none">
-                <span className="text-[9px] font-bold text-[#83D18B] uppercase tracking-widest flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#83D18B] animate-pulse" />
-                  Synthesis Pipeline
-                </span>
-                <span className="text-[9px] font-bold text-white/30 uppercase tracking-wider font-mono">
-                  {selectedFile ? 'Custom Matrix' : 'Standard Demo'}
-                </span>
-              </div>
-              
-              <div className="p-8 py-10">
-                <AnalysisLoader onComplete={handleAnalysisComplete} />
-              </div>
-            </motion.div>
+            <AIMissionControl onComplete={handleAnalysisComplete} />
           )}
         </AnimatePresence>
       </main>
