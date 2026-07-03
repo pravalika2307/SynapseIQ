@@ -267,7 +267,7 @@ export const BusinessTimeline: React.FC = () => {
                       Business Impact: <strong className="text-white/60 font-sans">{ev.impact}</strong>
                     </span>
                     <span className="text-white/30 font-mono">
-                      Audit Conf: <strong className="text-[#79D38A]">{ev.confidence}%</strong>
+                      Audit Conf: <strong className="text-[#83D18B]">{ev.confidence}%</strong>
                     </span>
                   </div>
 
@@ -289,8 +289,8 @@ export const BusinessTimeline: React.FC = () => {
                             </p>
                           </div>
 
-                          <div className="p-4 bg-[#79D38A]/5 border border-[#79D38A]/10 rounded-xl space-y-1.5">
-                            <span className="text-[9px] uppercase font-bold text-[#79D38A] font-sans flex items-center gap-1">
+                          <div className="p-4 bg-[#83D18B]/5 border border-[#83D18B]/10 rounded-xl space-y-1.5">
+                            <span className="text-[9px] uppercase font-bold text-[#83D18B] font-sans flex items-center gap-1">
                               <Zap size={11} /> Recommended Strategic Action
                             </span>
                             <p className="text-12.5 text-white/70 font-serif leading-relaxed">

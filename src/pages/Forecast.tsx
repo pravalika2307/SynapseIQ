@@ -94,10 +94,10 @@ export const Forecast: React.FC = () => {
           </div>
 
           {/* Marketing slider */}
-          <div className={`space-y-2 p-3 rounded-xl transition-all duration-500 ${(isDemoActive && currentStep === 7) || activeNodeId === 'marketing' || activeNodeId === 'revenue' ? 'ring-2 ring-[#79D38A] bg-[#79D38A]/5 shadow-[0_0_15px_rgba(121,211,138,0.15)]' : ''}`}>
+          <div className={`space-y-2 p-3 rounded-xl transition-all duration-500 ${(isDemoActive && currentStep === 7) || activeNodeId === 'marketing' || activeNodeId === 'revenue' ? 'ring-2 ring-[#83D18B] bg-[#83D18B]/5 shadow-[0_0_15px_rgba(131,209,139,0.15)]' : ''}`}>
             <div className="flex justify-between items-center text-12 font-medium">
               <span className="text-white/60">Marketing Budget Allocation</span>
-              <span className="text-[#79D38A] font-mono font-bold">{marketing}%</span>
+              <span className="text-[#83D18B] font-mono font-bold">{marketing}%</span>
             </div>
             <input 
               type="range" 
@@ -105,7 +105,7 @@ export const Forecast: React.FC = () => {
               max="90" 
               value={marketing}
               onChange={(e) => setMarketing(Number(e.target.value))}
-              className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-[#79D38A]"
+              className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-[#83D18B]"
             />
           </div>
 
@@ -113,7 +113,7 @@ export const Forecast: React.FC = () => {
           <div className="space-y-2 p-3 rounded-xl transition-all duration-500">
             <div className="flex justify-between items-center text-12 font-medium">
               <span className="text-white/60">Product Pricing Adjustment</span>
-              <span className="text-[#79D38A] font-mono font-bold">{price > 0 ? `+${price}` : price}%</span>
+              <span className="text-[#83D18B] font-mono font-bold">{price > 0 ? `+${price}` : price}%</span>
             </div>
             <input 
               type="range" 
@@ -121,15 +121,15 @@ export const Forecast: React.FC = () => {
               max="30" 
               value={price}
               onChange={(e) => setPrice(Number(e.target.value))}
-              className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-[#79D38A]"
+              className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-[#83D18B]"
             />
           </div>
 
           {/* Inventory slider */}
-          <div className={`space-y-2 p-3 rounded-xl transition-all duration-500 ${activeNodeId === 'inventory' ? 'ring-2 ring-[#79D38A] bg-[#79D38A]/5 shadow-[0_0_15px_rgba(121,211,138,0.15)]' : ''}`}>
+          <div className={`space-y-2 p-3 rounded-xl transition-all duration-500 ${activeNodeId === 'inventory' ? 'ring-2 ring-[#83D18B] bg-[#83D18B]/5 shadow-[0_0_15px_rgba(131,209,139,0.15)]' : ''}`}>
             <div className="flex justify-between items-center text-12 font-medium">
               <span className="text-white/60">Inventory Safety stock Target</span>
-              <span className="text-[#79D38A] font-mono font-bold">{inventory} days</span>
+              <span className="text-[#83D18B] font-mono font-bold">{inventory} days</span>
             </div>
             <input 
               type="range" 
@@ -137,7 +137,7 @@ export const Forecast: React.FC = () => {
               max="90" 
               value={inventory}
               onChange={(e) => setInventory(Number(e.target.value))}
-              className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-[#79D38A]"
+              className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-[#83D18B]"
             />
           </div>
 
@@ -145,7 +145,7 @@ export const Forecast: React.FC = () => {
           <div className="space-y-2 p-3 rounded-xl transition-all duration-500">
             <div className="flex justify-between items-center text-12 font-medium">
               <span className="text-white/60">Headcount Hiring Growth</span>
-              <span className="text-[#79D38A] font-mono font-bold">+{hiring}%</span>
+              <span className="text-[#83D18B] font-mono font-bold">+{hiring}%</span>
             </div>
             <input 
               type="range" 
@@ -153,15 +153,15 @@ export const Forecast: React.FC = () => {
               max="45" 
               value={hiring}
               onChange={(e) => setHiring(Number(e.target.value))}
-              className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-[#79D38A]"
+              className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-[#83D18B]"
             />
           </div>
 
           {/* Retention slider */}
-          <div className={`space-y-2 p-3 rounded-xl transition-all duration-500 ${activeNodeId === 'customers' || activeNodeId === 'customer-satisfaction' ? 'ring-2 ring-[#79D38A] bg-[#79D38A]/5 shadow-[0_0_15px_rgba(121,211,138,0.15)]' : ''}`}>
+          <div className={`space-y-2 p-3 rounded-xl transition-all duration-500 ${activeNodeId === 'customers' || activeNodeId === 'customer-satisfaction' ? 'ring-2 ring-[#83D18B] bg-[#83D18B]/5 shadow-[0_0_15px_rgba(131,209,139,0.15)]' : ''}`}>
             <div className="flex justify-between items-center text-12 font-medium">
               <span className="text-white/60">Customer Retention Target</span>
-              <span className="text-[#79D38A] font-mono font-bold">{retention}% NRR</span>
+              <span className="text-[#83D18B] font-mono font-bold">{retention}% NRR</span>
             </div>
             <input 
               type="range" 
@@ -169,15 +169,15 @@ export const Forecast: React.FC = () => {
               max="98" 
               value={retention}
               onChange={(e) => setRetention(Number(e.target.value))}
-              className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-[#79D38A]"
+              className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-[#83D18B]"
             />
           </div>
 
           {/* Operating costs slider */}
-          <div className={`space-y-2 p-3 rounded-xl transition-all duration-500 ${activeNodeId === 'operations' || activeNodeId === 'profit' ? 'ring-2 ring-[#79D38A] bg-[#79D38A]/5 shadow-[0_0_15px_rgba(121,211,138,0.15)]' : ''}`}>
+          <div className={`space-y-2 p-3 rounded-xl transition-all duration-500 ${activeNodeId === 'operations' || activeNodeId === 'profit' ? 'ring-2 ring-[#83D18B] bg-[#83D18B]/5 shadow-[0_0_15px_rgba(131,209,139,0.15)]' : ''}`}>
             <div className="flex justify-between items-center text-12 font-medium">
               <span className="text-white/60">Operational Overhead Costs</span>
-              <span className="text-[#79D38A] font-mono font-bold">{costs > 0 ? `+${costs}` : costs}%</span>
+              <span className="text-[#83D18B] font-mono font-bold">{costs > 0 ? `+${costs}` : costs}%</span>
             </div>
             <input 
               type="range" 
@@ -185,7 +185,7 @@ export const Forecast: React.FC = () => {
               max="20" 
               value={costs}
               onChange={(e) => setCosts(Number(e.target.value))}
-              className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-[#79D38A]"
+              className="w-full h-1 bg-white/5 rounded-lg appearance-none cursor-pointer accent-[#83D18B]"
             />
           </div>
 
@@ -218,7 +218,7 @@ export const Forecast: React.FC = () => {
 
             <div className="p-5 bg-[#151B23] border border-white/5 rounded-2xl flex flex-col gap-1 shadow-lg">
               <span className="text-[9.5px] uppercase font-bold text-white/30 tracking-wider">Business Health</span>
-              <span className="text-22 font-bold text-[#79D38A] tracking-tight">{simulatedHealth}/100</span>
+              <span className="text-22 font-bold text-[#83D18B] tracking-tight">{simulatedHealth}/100</span>
             </div>
 
             <div className="p-5 bg-[#151B23] border border-white/5 rounded-2xl flex flex-col gap-1 shadow-lg">
@@ -229,7 +229,7 @@ export const Forecast: React.FC = () => {
 
           {/* Real-time AI explanation banner */}
           <div className="bg-[#151B23] border border-white/5 rounded-2xl p-6 shadow-lg flex flex-col gap-3">
-            <div className="flex items-center gap-1.5 text-[#79D38A] select-none">
+            <div className="flex items-center gap-1.5 text-[#83D18B] select-none">
               <Zap size={14} className="animate-pulse" />
               <span className="text-[10px] font-bold uppercase tracking-wider font-sans">AI Scenario Verdict</span>
             </div>
@@ -263,14 +263,14 @@ export const Forecast: React.FC = () => {
                     <span className="text-white/30">Projected Health:</span> <strong className="text-white/80 font-sans">84/100</strong>
                   </div>
                   <div className="flex justify-between font-serif">
-                    <span className="text-white/30">Projected Revenue:</span> <strong className="text-[#79D38A] font-sans">$42.8M</strong>
+                    <span className="text-white/30">Projected Revenue:</span> <strong className="text-[#83D18B] font-sans">$42.8M</strong>
                   </div>
                 </div>
               </Card>
 
               {/* Simulated Strategy Card */}
-              <Card elevation="flat" hoverEffect={false} className="p-5 bg-[#79D38A]/5 border-[#79D38A]/25 shadow-lg shadow-[#79D38A]/5">
-                <span className="text-[9.5px] font-bold text-[#79D38A] uppercase tracking-wider block mb-3 select-none">Simulated Strategy</span>
+              <Card elevation="flat" hoverEffect={false} className="p-5 bg-[#83D18B]/5 border-[#83D18B]/25 shadow-lg shadow-[#83D18B]/5">
+                <span className="text-[9.5px] font-bold text-[#83D18B] uppercase tracking-wider block mb-3 select-none">Simulated Strategy</span>
                 <div className="space-y-2 text-13">
                   <div className="flex justify-between font-mono">
                     <span className="text-white/40">Marketing:</span> <span className="text-white/80">{marketing}%</span>
@@ -282,10 +282,10 @@ export const Forecast: React.FC = () => {
                     <span className="text-white/40">Inventory:</span> <span className="text-white/80">{inventory}d</span>
                   </div>
                   <div className="flex justify-between font-serif border-t border-white/5 pt-2 mt-1">
-                    <span className="text-white/30">Projected Health:</span> <strong className="text-[#79D38A] font-sans">{simulatedHealth}/100</strong>
+                    <span className="text-white/30">Projected Health:</span> <strong className="text-[#83D18B] font-sans">{simulatedHealth}/100</strong>
                   </div>
                   <div className="flex justify-between font-serif">
-                    <span className="text-white/30">Projected Revenue:</span> <strong className="text-[#79D38A] font-sans">${simulatedRevenue.toFixed(1)}M</strong>
+                    <span className="text-white/30">Projected Revenue:</span> <strong className="text-[#83D18B] font-sans">${simulatedRevenue.toFixed(1)}M</strong>
                   </div>
                 </div>
               </Card>
@@ -294,9 +294,9 @@ export const Forecast: React.FC = () => {
           </div>
 
           {/* Featured recommended card */}
-          <div className={`bg-[#79D38A]/5 border rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-xl select-none transition-all duration-500 ${isDemoActive && currentStep === 7 ? 'ring-2 ring-[#79D38A] shadow-[0_0_25px_rgba(121,211,138,0.18)] scale-[1.01] bg-[#79D38A]/10 border-transparent' : 'border-[#79D38A]/20 shadow-[#79D38A]/5'}`}>
+          <div className={`bg-[#83D18B]/5 border rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-xl select-none transition-all duration-500 ${isDemoActive && currentStep === 7 ? 'ring-2 ring-[#83D18B] shadow-[0_0_25px_rgba(131,209,139,0.18)] scale-[1.01] bg-[#83D18B]/10 border-transparent' : 'border-[#83D18B]/20 shadow-[#83D18B]/5'}`}>
             <div className="space-y-1 max-w-md">
-              <div className="flex items-center gap-1 text-[#79D38A]">
+              <div className="flex items-center gap-1 text-[#83D18B]">
                 <CheckCircle size={14} className="animate-pulse" />
                 <span className="text-[10px] font-bold uppercase tracking-wider font-sans">✨ Recommended Scenario</span>
               </div>
@@ -309,7 +309,7 @@ export const Forecast: React.FC = () => {
             </div>
             
             <div className="flex flex-col gap-1 text-right sm:border-l border-white/10 sm:pl-6 shrink-0 font-mono text-11">
-              <div className="text-white/45">Expected ROI: <strong className="text-[#79D38A]">18.2%</strong></div>
+              <div className="text-white/45">Expected ROI: <strong className="text-[#83D18B]">18.2%</strong></div>
               <div className="text-white/45">Growth: <strong className="text-white/85">+16.4%</strong></div>
               <div className="text-white/45">Risk: <strong className="text-white/85">Low</strong></div>
               <div className="text-white/45">Timeframe: <strong className="text-white/85">45 Days</strong></div>

@@ -43,7 +43,7 @@ export const StrategyCanvas: React.FC = () => {
       </div>
 
       {/* Decision Graph Centerpiece */}
-      <div className={`transition-all duration-500 rounded-2xl p-2 ${isDemoActive && currentStep === 4 ? 'ring-2 ring-[#79D38A] shadow-[0_0_25px_rgba(121,211,138,0.18)] bg-[#79D38A]/5' : ''}`}>
+      <div className={`transition-all duration-500 rounded-2xl p-2 ${isDemoActive && currentStep === 4 ? 'ring-2 ring-[#83D18B] shadow-[0_0_25px_rgba(131,209,139,0.18)] bg-[#83D18B]/5' : ''}`}>
         <DecisionGraph />
       </div>
 
@@ -95,7 +95,7 @@ export const StrategyCanvas: React.FC = () => {
                 <Scatter 
                   name="Foundries" 
                   data={supplierData} 
-                  fill="#79D38A"
+                  fill="#83D18B"
                   onClick={(node: any) => setHoveredNode(node.name)}
                 />
               </ScatterChart>

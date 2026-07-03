@@ -159,9 +159,9 @@ export const DemoController: React.FC = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.3 }}
-            className="w-full max-w-md bg-[#151B23] border border-[#79D38A]/20 rounded-2xl p-8 shadow-2xl flex flex-col items-center text-center gap-6 select-none font-sans"
+            className="w-full max-w-md bg-[#151B23] border border-[#83D18B]/20 rounded-2xl p-8 shadow-2xl flex flex-col items-center text-center gap-6 select-none font-sans"
           >
-            <div className="w-12 h-12 rounded-full bg-[#79D38A]/10 border border-[#79D38A]/25 flex items-center justify-center text-[#79D38A]">
+            <div className="w-12 h-12 rounded-full bg-[#83D18B]/10 border border-[#83D18B]/25 flex items-center justify-center text-[#83D18B]">
               <Sparkles size={20} className="animate-pulse" />
             </div>
 
@@ -175,7 +175,7 @@ export const DemoController: React.FC = () => {
             <div className="flex flex-col gap-2.5 w-full pt-2">
               <button
                 onClick={exitDemo}
-                className="w-full py-2.5 rounded-xl bg-[#79D38A] text-[#0D1117] font-semibold text-13 hover:bg-[#79D38A]/90 transition-all"
+                className="w-full py-2.5 rounded-xl bg-[#83D18B] text-[#0D1117] font-semibold text-13 hover:bg-[#83D18B]/90 transition-all"
               >
                 Explore Freely
               </button>
@@ -200,15 +200,15 @@ export const DemoController: React.FC = () => {
         exit={{ opacity: 0, y: 50 }}
         className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-xl px-4"
       >
-        <div className="bg-[#151B23] border border-[#79D38A]/30 rounded-2xl p-5 shadow-2xl flex flex-col gap-3 font-sans relative overflow-hidden">
+        <div className="bg-[#151B23] border border-[#83D18B]/30 rounded-2xl p-5 shadow-2xl flex flex-col gap-3 font-sans relative overflow-hidden">
           
           {/* Progress bar line */}
-          <div className="absolute bottom-0 left-0 h-0.5 bg-[#79D38A] transition-all duration-100" style={{ width: `${percentProgress}%` }} />
+          <div className="absolute bottom-0 left-0 h-0.5 bg-[#83D18B] transition-all duration-100" style={{ width: `${percentProgress}%` }} />
 
           {/* Top Panel Control bar */}
           <div className="flex items-center justify-between border-b border-white/5 pb-2.5 select-none">
             <div className="flex items-center gap-2">
-              <Sparkles size={14} className="text-[#79D38A] animate-pulse" />
+              <Sparkles size={14} className="text-[#83D18B] animate-pulse" />
               <span className="text-11.5 font-bold uppercase tracking-wider text-white/80">
                 Guided Judge Tour · Step {currentStep} of 8
               </span>
@@ -248,7 +248,7 @@ export const DemoController: React.FC = () => {
               {isPaused ? (
                 <button
                   onClick={resumeDemo}
-                  className="flex items-center gap-1.5 px-4 py-1.5 bg-[#79D38A] text-[#0D1117] font-semibold text-11.5 rounded-lg hover:bg-[#79D38A]/90 transition-all"
+                  className="flex items-center gap-1.5 px-4 py-1.5 bg-[#83D18B] text-[#0D1117] font-semibold text-11.5 rounded-lg hover:bg-[#83D18B]/90 transition-all"
                 >
                   <Play size={11} fill="currentColor" /> Resume Demo
                 </button>

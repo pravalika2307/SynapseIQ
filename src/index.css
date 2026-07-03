@@ -1,12 +1,23 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #0D1117;
-  --color-card: #151B23;
-  --color-accent-sage: #79D38A;
-  --color-accent-sage-dim: rgba(121, 211, 138, 0.08);
-  --color-accent-sage-border: rgba(121, 211, 138, 0.20);
+  --color-background: #090B10;
+  --color-card: #12161D;
+  --color-card-elevated: #1A212B;
+  --color-accent-sage: #83D18B;
+  --color-accent-sage-dim: rgba(131, 209, 139, 0.06);
+  --color-accent-sage-border: rgba(131, 209, 139, 0.16);
   
+  --color-accent-secondary: #6FE3D6;
+  --color-accent-secondary-dim: rgba(111, 227, 214, 0.06);
+  --color-accent-secondary-border: rgba(111, 227, 214, 0.16);
+  
+  --color-critical: #E76F51;
+  --color-critical-dim: rgba(231, 111, 81, 0.06);
+  
+  --color-warn: #F6B84D;
+  --color-warn-dim: rgba(246, 184, 77, 0.06);
+
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-serif: 'Lora', Georgia, serif;
   
@@ -15,42 +26,42 @@
 
 @keyframes pulse-ring {
   0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(121, 211, 138, 0.5);
+    transform: scale(0.96);
+    box-shadow: 0 0 0 0 rgba(131, 209, 139, 0.4);
   }
   70% {
     transform: scale(1);
-    box-shadow: 0 0 0 6px rgba(121, 211, 138, 0);
+    box-shadow: 0 0 0 8px rgba(131, 209, 139, 0);
   }
   100% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(121, 211, 138, 0);
+    transform: scale(0.96);
+    box-shadow: 0 0 0 0 rgba(131, 209, 139, 0);
   }
 }
 
 /* Custom Scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0D1117;
+  background: #090B10;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1B222C;
-  border-radius: 3px;
+  background: #1A212B;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #202830;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 /* Base Body Styles */
 html, body, #root {
-  background-color: #0D1117;
-  color: #F5F7FA;
+  background-color: #090B10;
+  color: #F7F9FA;
   height: 100%;
   margin: 0;
   padding: 0;
@@ -65,10 +76,10 @@ html, body, #root {
   flex-direction: column;
 }
 
-/* Custom styles for grid backdrop */
+/* Subtle Spatial Grid pattern overlay */
 .grid-bg {
-  background-size: 40px 40px;
+  background-size: 50px 50px;
   background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+    linear-gradient(to right, rgba(255, 255, 255, 0.008) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.008) 1px, transparent 1px);
 }

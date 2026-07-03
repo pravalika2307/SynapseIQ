@@ -8,6 +8,8 @@ import { UploadZone } from '../components/UploadZone';
 import { AnalysisLoader } from '../components/AnalysisLoader';
 import { PageTransition } from '../components/PageTransition';
 
+import { IntelligenceMesh } from '../components/IntelligenceMesh';
+
 export const Landing: React.FC = () => {
   const navigate = useNavigate();
   const setDataset = useAppStore((state) => state.setDataset);
@@ -46,11 +48,12 @@ export const Landing: React.FC = () => {
   };
 
   return (
-    <PageTransition className="min-h-screen bg-[#0D1117] flex flex-col justify-between overflow-x-hidden text-[#F5F7FA]">
+    <PageTransition className="min-h-screen bg-[#090B10] flex flex-col justify-between overflow-x-hidden text-[#F7F9FA] relative">
+      <IntelligenceMesh />
       {/* Top Navigation */}
-      <header className="flex items-center justify-between px-10 md:px-16 h-14 border-b border-white/5 bg-[#0D1117] select-none z-10 shrink-0">
+      <header className="flex items-center justify-between px-10 md:px-16 h-14 border-b border-white/5 bg-[#090B10] select-none z-10 shrink-0 relative">
         <div className="flex items-center gap-2.5">
-          <Sparkles size={16} className="text-[#79D38A] animate-pulse" />
+          <Sparkles size={16} className="text-[#83D18B] animate-pulse" />
           <span className="text-13.5 font-bold tracking-tight text-white/90">SynapseIQ</span>
         </div>
         
@@ -83,7 +86,7 @@ export const Landing: React.FC = () => {
               <div className="flex-1 space-y-6">
                 <h1 className="text-36 md:text-48 font-bold tracking-tight text-white leading-[1.1] font-serif">
                   Your business already has the answers.<br />
-                  <span className="text-[#79D38A] italic font-normal font-serif">We help you discover them.</span>
+                  <span className="text-[#83D18B] italic font-normal font-serif">We help you discover them.</span>
                 </h1>
                 
                 <p className="text-14.5 text-white/40 leading-relaxed max-w-xl">
@@ -97,14 +100,14 @@ export const Landing: React.FC = () => {
                       const clickTarget = document.querySelector('input[type="file"]') as HTMLInputElement;
                       clickTarget?.click();
                     }}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#79D38A] text-[#0D1117] font-semibold text-13 hover:bg-[#79D38A]/90 active:scale-98 transition-all animate-pulse-subtle"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#83D18B] text-[#0D1117] font-semibold text-13 hover:bg-[#83D18B]/90 active:scale-98 transition-all animate-pulse-subtle"
                   >
                     Analyze My Data <ArrowRight size={14} />
                   </button>
 
                   <button 
                     onClick={handleStartGuidedDemo}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#79D38A]/10 border border-[#79D38A]/30 text-[#79D38A] hover:bg-[#79D38A]/20 transition-all font-semibold text-13"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#83D18B]/10 border border-[#83D18B]/30 text-[#83D18B] hover:bg-[#83D18B]/20 transition-all font-semibold text-13"
                   >
                     🎥 Start Guided Demo
                   </button>
@@ -146,8 +149,8 @@ export const Landing: React.FC = () => {
               className="w-full max-w-md bg-[#151B23] border border-white/5 rounded-2xl overflow-hidden shadow-2xl"
             >
               <div className="flex items-center justify-between px-5 py-3 border-b border-white/5 bg-white/[0.01] select-none">
-                <span className="text-[9px] font-bold text-[#79D38A] uppercase tracking-widest flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#79D38A] animate-pulse" />
+                <span className="text-[9px] font-bold text-[#83D18B] uppercase tracking-widest flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#83D18B] animate-pulse" />
                   Synthesis Pipeline
                 </span>
                 <span className="text-[9px] font-bold text-white/30 uppercase tracking-wider font-mono">

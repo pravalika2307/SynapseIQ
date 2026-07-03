@@ -38,7 +38,7 @@ export const AnalysisLoader: React.FC<AnalysisLoaderProps> = ({ onComplete }) =>
   return (
     <div className="w-full max-w-sm mx-auto space-y-4">
       <div className="flex flex-col gap-1 border-b border-white/5 pb-4 mb-6 select-none">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-[#79D38A] animate-pulse">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-accent-sage animate-pulse">
           Synthesis Engine Active
         </span>
         <span className="text-12 text-white/40">
@@ -58,7 +58,7 @@ export const AnalysisLoader: React.FC<AnalysisLoaderProps> = ({ onComplete }) =>
               className={`
                 flex items-center gap-3.5 text-13.5 transition-all duration-300
                 ${isCompleted ? 'text-white/80' : ''}
-                ${isActive ? 'text-[#79D38A]' : ''}
+                ${isActive ? 'text-accent-sage' : ''}
                 ${isPending ? 'text-white/20' : ''}
               `}
             >
@@ -71,7 +71,7 @@ export const AnalysisLoader: React.FC<AnalysisLoaderProps> = ({ onComplete }) =>
                       animate={{ scale: 1, opacity: 1 }}
                       exit={{ scale: 0, opacity: 0 }}
                       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                      className="text-[#79D38A]"
+                      className="text-accent-sage"
                     >
                       <Check size={14} strokeWidth={3} />
                     </motion.div>
@@ -81,7 +81,7 @@ export const AnalysisLoader: React.FC<AnalysisLoaderProps> = ({ onComplete }) =>
                       initial={{ scale: 0.8 }}
                       animate={{ scale: [1, 1.2, 1] }}
                       transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
-                      className="text-[#79D38A]"
+                      className="text-accent-sage"
                     >
                       <Dot size={24} strokeWidth={4} />
                     </motion.div>

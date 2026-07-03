@@ -96,8 +96,8 @@ export const BusinessSignals: React.FC = () => {
           const isRelated = isSignalRelatedToNode(signal.id, activeNodeId);
           const isDimmed = !isRelated;
 
-          const strokeColor = signal.trend === 'positive' ? '#79D38A' : signal.trend === 'negative' ? '#E76F51' : '#F5B14C';
-          const fillColor = signal.trend === 'positive' ? 'rgba(121, 211, 138, 0.08)' : signal.trend === 'negative' ? 'rgba(231, 111, 81, 0.08)' : 'rgba(245, 177, 76, 0.08)';
+          const strokeColor = signal.trend === 'positive' ? '#83D18B' : signal.trend === 'negative' ? '#E76F51' : '#F5B14C';
+          const fillColor = signal.trend === 'positive' ? 'rgba(131, 209, 139, 0.08)' : signal.trend === 'negative' ? 'rgba(231, 111, 81, 0.08)' : 'rgba(245, 177, 76, 0.08)';
 
           const isHighlightDemo = isDemoActive && currentStep === 5 && ['gross-margin', 'transit-latency', 'cac-efficiency'].includes(signal.id);
           const advisory = signalAdvisories[signal.id] || { insight: 'No signal anomalies detected.', impact: 'Stable.', action: 'Continue tracking.' };
@@ -109,7 +109,7 @@ export const BusinessSignals: React.FC = () => {
                 bg-[#151B23] border rounded-2xl p-6 flex flex-col gap-4.5 transition-all duration-500 shadow-lg
                 ${isDimmed && !isHighlightDemo ? 'opacity-20 border-white/5 grayscale-[50%] pointer-events-none' : 'border-white/5 hover:border-white/10 hover:-translate-y-1 hover:shadow-xl'}
                 ${isRelated && activeNodeId !== 'health' ? 'border-accent-sage/35 shadow-accent-sage/5 scale-[1.01]' : ''}
-                ${isHighlightDemo ? 'ring-2 ring-[#79D38A] scale-[1.01] shadow-[0_0_20px_rgba(121,211,138,0.15)] bg-[#79D38A]/5 border-transparent' : ''}
+                ${isHighlightDemo ? 'ring-2 ring-[#83D18B] scale-[1.01] shadow-[0_0_20px_rgba(131,209,139,0.15)] bg-[#83D18B]/5 border-transparent' : ''}
               `}
             >
               {/* Header */}
@@ -151,7 +151,7 @@ export const BusinessSignals: React.FC = () => {
               {/* CEO/Advisory Bulletins */}
               <div className="border-t border-white/5 pt-4 flex flex-col gap-3 font-serif">
                 <div className="space-y-1">
-                  <span className="text-[8.5px] uppercase font-sans font-bold tracking-widest text-[#79D38A]/70">AI Insight</span>
+                  <span className="text-[8.5px] uppercase font-sans font-bold tracking-widest text-[#83D18B]/70">AI Insight</span>
                   <p className="text-12 text-white/70 leading-normal">{advisory.insight}</p>
                 </div>
                 <div className="space-y-1">
@@ -177,8 +177,8 @@ export const BusinessSignals: React.FC = () => {
             exit={{ opacity: 0 }}
             className="w-full mt-4"
           >
-            <Card elevation="flat" className="p-6 border border-[#79D38A]/20 bg-[#79D38A]/5 shadow-xl flex flex-col gap-3">
-              <div className="flex items-center gap-1.5 text-[#79D38A]">
+            <Card elevation="flat" className="p-6 border border-[#83D18B]/20 bg-[#83D18B]/5 shadow-xl flex flex-col gap-3">
+              <div className="flex items-center gap-1.5 text-[#83D18B]">
                 <Zap size={14} className="animate-pulse" />
                 <span className="text-[10px] font-bold uppercase tracking-wider font-sans">AI Sourcing Recommendations</span>
               </div>

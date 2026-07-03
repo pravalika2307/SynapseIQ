@@ -64,7 +64,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
       className={`
         w-full bg-[#151B23] border border-dashed rounded-2xl py-12 px-6 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-300 select-none
         ${dragActive 
-          ? 'border-[#79D38A] bg-[#79D38A]/5 scale-[1.01]' 
+          ? 'border-[#83D18B] bg-[#83D18B]/5 scale-[1.01]' 
           : 'border-white/10 hover:border-white/20 hover:bg-white/[0.01]'
         }
       `}
@@ -77,7 +77,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
         className="hidden"
       />
       
-      <div className="w-12 h-12 rounded-full bg-white/[0.02] border border-white/5 flex items-center justify-center mb-4 transition-colors duration-300 group-hover:border-[#79D38A]/20">
+      <div className="w-12 h-12 rounded-full bg-white/[0.02] border border-white/5 flex items-center justify-center mb-4 transition-colors duration-300 group-hover:border-[#83D18B]/20">
         <UploadCloud size={20} className="text-white/30" />
       </div>
 

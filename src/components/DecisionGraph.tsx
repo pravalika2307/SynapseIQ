@@ -46,11 +46,11 @@ const CustomGraphNode: React.FC<NodeProps<Node<CustomNodeData>>> = ({ data }) =>
       className={`
         px-4 py-3 rounded-xl border bg-card transition-all duration-300 min-w-[150px] shadow-lg select-none cursor-pointer
         ${data.isActive 
-          ? 'border-[#79D38A] bg-accent-sage-dim shadow-accent-sage/5 scale-105 ring-2 ring-[#79D38A]/25 animate-pulse' 
+          ? 'border-[#83D18B] bg-accent-sage-dim shadow-accent-sage/5 scale-105 ring-2 ring-[#83D18B]/25 animate-pulse' 
           : 'border-white/5 hover:border-white/15'
         }
         ${data.isDimmed ? 'opacity-25 scale-95' : 'opacity-100'}
-        ${data.isHovered && !data.isActive ? 'border-[#79D38A]/50 bg-white/[0.01]' : ''}
+        ${data.isHovered && !data.isActive ? 'border-[#83D18B]/50 bg-white/[0.01]' : ''}
       `}
     >
       <Handle type="target" position={Position.Top} className="opacity-0" />
@@ -305,7 +305,7 @@ export const DecisionGraph: React.FC = () => {
           target: satId,
           animated: isHighlighted,
           style: {
-            stroke: isHighlighted ? '#79D38A' : isDimmed ? 'rgba(255,255,255,0.02)' : 'rgba(255, 255, 255, 0.08)',
+            stroke: isHighlighted ? '#83D18B' : isDimmed ? 'rgba(255,255,255,0.02)' : 'rgba(255, 255, 255, 0.08)',
             strokeWidth: isHighlighted ? 1.5 : 1,
             transition: 'stroke 0.3s, stroke-width 0.3s'
           }
@@ -336,17 +336,17 @@ export const DecisionGraph: React.FC = () => {
               <span className="text-[9.5px] uppercase font-bold tracking-wider text-white/30">
                 {hoveredNode.data.label}
               </span>
-              <span className="text-12.5 font-bold text-[#79D38A] font-mono flex items-center gap-0.5">
+              <span className="text-12.5 font-bold text-[#83D18B] font-mono flex items-center gap-0.5">
                 <ArrowUpRight size={12} /> {activeHoveredRel.metric}
               </span>
             </div>
             
             <div className="space-y-1">
-              <span className="text-[9px] uppercase font-bold tracking-widest text-[#79D38A]">Influenced By</span>
+              <span className="text-[9px] uppercase font-bold tracking-widest text-[#83D18B]">Influenced By</span>
               <div className="flex flex-col gap-1 text-12 text-white/65">
                 {activeHoveredRel.influence.map((inf, idx) => (
                   <span key={idx} className="flex items-center gap-1.5 leading-tight">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#79D38A] shrink-0 opacity-60" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#83D18B] shrink-0 opacity-60" />
                     {inf}
                   </span>
                 ))}

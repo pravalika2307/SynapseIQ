@@ -51,7 +51,7 @@ export const ExecutiveBrief: React.FC = () => {
         <div className="space-y-3">
           <h1 className="text-36 md:text-48 font-bold text-white tracking-tight leading-none font-serif">
             {greeting}.<br />
-            <span className="text-[#79D38A] italic font-normal font-serif">Your business analysis is ready.</span>
+            <span className="text-[#83D18B] italic font-normal font-serif">Your business analysis is ready.</span>
           </h1>
           <p className="text-13.5 text-white/40 max-w-lg leading-relaxed font-serif">
             Synthesized operational telemetry. Critical warning factors isolated.
@@ -64,7 +64,7 @@ export const ExecutiveBrief: React.FC = () => {
             <FileSpreadsheet size={14} className="text-white/30" />
             <div className="flex flex-col">
               <span className="text-[8px] font-bold text-white/30 uppercase tracking-wider">Dataset File</span>
-              <span className="font-mono text-[#79D38A] text-11 truncate max-w-[140px]">{datasetName || 'synapse_intel_matrix_q2.csv'}</span>
+              <span className="font-mono text-[#83D18B] text-11 truncate max-w-[140px]">{datasetName || 'synapse_intel_matrix_q2.csv'}</span>
             </div>
           </div>
 
@@ -72,7 +72,7 @@ export const ExecutiveBrief: React.FC = () => {
             <Calendar size={14} className="text-white/30" />
             <div className="flex flex-col">
               <span className="text-[8px] font-bold text-white/30 uppercase tracking-wider">Analyzed At</span>
-              <span className="font-mono text-[#79D38A] text-11">{analyzedTime}</span>
+              <span className="font-mono text-[#83D18B] text-11">{analyzedTime}</span>
             </div>
           </div>
         </div>
@@ -83,7 +83,7 @@ export const ExecutiveBrief: React.FC = () => {
         
         {/* Executive Summary Card */}
         <dMotion.div variants={itemVariants}>
-          <Card elevation="flat" className={`p-8 h-full flex flex-col gap-6 transition-all duration-500 ${isDemoActive && currentStep === 3 ? 'ring-2 ring-[#79D38A] scale-[1.01] shadow-[0_0_25px_rgba(121,211,138,0.18)] bg-[#79D38A]/5' : ''}`}>
+          <Card elevation="flat" className={`p-8 h-full flex flex-col gap-6 transition-all duration-500 ${isDemoActive && currentStep === 3 ? 'ring-2 ring-[#83D18B] scale-[1.01] shadow-[0_0_25px_rgba(131,209,139,0.18)] bg-[#83D18B]/5' : ''}`}>
             <div className="flex items-center gap-2 border-b border-white/5 pb-4">
               <Activity size={14} className="text-white/40" />
               <h2 className="text-13.5 font-bold uppercase tracking-wider text-white/60">Executive Synthesis</h2>
@@ -101,14 +101,14 @@ export const ExecutiveBrief: React.FC = () => {
 
         {/* Circular Business Health Widget */}
         <dMotion.div variants={itemVariants}>
-          <Card elevation="flat" className={`p-8 flex flex-col items-center justify-center text-center gap-6 h-full transition-all duration-500 ${isDemoActive && currentStep === 3 ? 'ring-2 ring-[#79D38A] scale-[1.01] shadow-[0_0_25px_rgba(121,211,138,0.18)] bg-[#79D38A]/5' : ''}`}>
+          <Card elevation="flat" className={`p-8 flex flex-col items-center justify-center text-center gap-6 h-full transition-all duration-500 ${isDemoActive && currentStep === 3 ? 'ring-2 ring-[#83D18B] scale-[1.01] shadow-[0_0_25px_rgba(131,209,139,0.18)] bg-[#83D18B]/5' : ''}`}>
             <span className="text-[10px] font-bold uppercase tracking-wider text-white/30 font-sans">Business Health Index</span>
             
             {/* SVG Circular indicator */}
             <div className="relative w-36 h-36 flex items-center justify-center">
               <svg className="absolute transform -rotate-90 w-full h-full" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.03)" strokeWidth="8" fill="transparent" />
-                <circle cx="50" cy="50" r="40" stroke="#79D38A" strokeWidth="8" fill="transparent" 
+                <circle cx="50" cy="50" r="40" stroke="#83D18B" strokeWidth="8" fill="transparent" 
                         strokeDasharray="251.2" strokeDashoffset="22.6" strokeLinecap="round" />
               </svg>
               <div className="flex flex-col items-center select-none">
@@ -128,7 +128,7 @@ export const ExecutiveBrief: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* Biggest Opportunity */}
-        <dMotion.div variants={itemVariants} className={`space-y-4 transition-all duration-500 rounded-2xl p-2 ${isDemoActive && currentStep === 3 ? 'ring-2 ring-[#79D38A] shadow-[0_0_25px_rgba(121,211,138,0.15)] bg-[#79D38A]/5 border-transparent' : ''}`}>
+        <dMotion.div variants={itemVariants} className={`space-y-4 transition-all duration-500 rounded-2xl p-2 ${isDemoActive && currentStep === 3 ? 'ring-2 ring-[#83D18B] shadow-[0_0_25px_rgba(131,209,139,0.15)] bg-[#83D18B]/5 border-transparent' : ''}`}>
           <SectionHeader 
             label="Strategic Pipeline"
             title="Biggest Opportunity"
@@ -136,20 +136,20 @@ export const ExecutiveBrief: React.FC = () => {
           <Card elevation="flat" className="p-6 flex flex-col gap-4 min-h-[220px]">
             <div className="flex justify-between items-start">
               <Badge variant="sage">High Priority</Badge>
-              <span className="text-11 font-mono text-[#79D38A] font-bold">+18% Lead Time</span>
+              <span className="text-11 font-mono text-[#83D18B] font-bold">+18% Lead Time</span>
             </div>
             <h3 className="text-15 font-semibold text-white/90 leading-snug tracking-tight">Guadalajara Sourcing Pivot</h3>
             <p className="text-13 text-white/45 leading-relaxed font-serif">
               Transitioning 25% of microcontroller logistics volumes overland through nearshore corridors recovers lead times to 14 days.
             </p>
-            <div className="border-t border-white/5 pt-3.5 mt-auto text-12 font-medium text-[#79D38A] font-sans">
+            <div className="border-t border-white/5 pt-3.5 mt-auto text-12 font-medium text-[#83D18B] font-sans">
               Projected ROI: 18.2% expansion
             </div>
           </Card>
         </dMotion.div>
 
         {/* Biggest Risk */}
-        <dMotion.div variants={itemVariants} className={`space-y-4 transition-all duration-500 rounded-2xl p-2 ${isDemoActive && currentStep === 3 ? 'ring-2 ring-[#79D38A] shadow-[0_0_25px_rgba(121,211,138,0.15)] bg-[#79D38A]/5 border-transparent' : ''}`}>
+        <dMotion.div variants={itemVariants} className={`space-y-4 transition-all duration-500 rounded-2xl p-2 ${isDemoActive && currentStep === 3 ? 'ring-2 ring-[#83D18B] shadow-[0_0_25px_rgba(131,209,139,0.15)] bg-[#83D18B]/5 border-transparent' : ''}`}>
           <SectionHeader 
             label="Anomalies Isolated"
             title="Biggest Risk"
@@ -170,14 +170,14 @@ export const ExecutiveBrief: React.FC = () => {
         </dMotion.div>
 
         {/* AI Recommendation */}
-        <dMotion.div variants={itemVariants} className={`space-y-4 transition-all duration-500 rounded-2xl p-2 ${isDemoActive && currentStep === 3 ? 'ring-2 ring-[#79D38A] shadow-[0_0_25px_rgba(121,211,138,0.15)] bg-[#79D38A]/5 border-transparent' : ''}`}>
+        <dMotion.div variants={itemVariants} className={`space-y-4 transition-all duration-500 rounded-2xl p-2 ${isDemoActive && currentStep === 3 ? 'ring-2 ring-[#83D18B] shadow-[0_0_25px_rgba(131,209,139,0.15)] bg-[#83D18B]/5 border-transparent' : ''}`}>
           <SectionHeader 
             label="Steering Directive"
             title="AI Recommendation"
           />
           <Card elevation="flat" className="p-6 bg-accent-sage-dim border border-accent-sage-border/30 rounded-2xl flex flex-col gap-4 min-h-[220px] justify-between">
             <div className="space-y-2">
-              <div className="flex items-center gap-1.5 text-[#79D38A]">
+              <div className="flex items-center gap-1.5 text-[#83D18B]">
                 <Compass size={14} className="animate-pulse" />
                 <span className="text-[10px] font-bold uppercase tracking-wider">Strategic Directive</span>
               </div>
@@ -190,7 +190,7 @@ export const ExecutiveBrief: React.FC = () => {
             </div>
 
             <div className="border-t border-accent-sage-border/20 pt-3 flex justify-between items-center text-11.5 font-mono">
-              <span className="text-white/45">Outcome: <strong className="text-[#79D38A]">Lead recovery</strong></span>
+              <span className="text-white/45">Outcome: <strong className="text-[#83D18B]">Lead recovery</strong></span>
               <span className="text-white/45">Timeline: <strong className="text-white/70">60 days</strong></span>
             </div>
           </Card>

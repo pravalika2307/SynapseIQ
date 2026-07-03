@@ -99,7 +99,7 @@ export const DecisionCopilot: React.FC = () => {
         {/* Header */}
         <div className="flex items-center justify-between px-8 py-4 border-b border-white/5 select-none bg-white/[0.01]">
           <div className="flex items-center gap-2">
-            <Compass size={16} className="text-[#79D38A] animate-spin-slow" />
+            <Compass size={16} className="text-[#83D18B] animate-spin-slow" />
             <h2 className="text-13.5 font-semibold text-white/95">Consultation Log</h2>
           </div>
           <button 
@@ -145,7 +145,7 @@ export const DecisionCopilot: React.FC = () => {
                       <div className="space-y-6">
                         {/* 1. Executive Summary */}
                         <div className="space-y-1">
-                          <span className="text-[9px] font-bold text-[#79D38A] uppercase tracking-wider block font-sans">
+                          <span className="text-[9px] font-bold text-[#83D18B] uppercase tracking-wider block font-sans">
                             1. Executive Summary
                           </span>
                           <p className="leading-relaxed">{msg.text}</p>
@@ -160,7 +160,7 @@ export const DecisionCopilot: React.FC = () => {
                             <div className="space-y-1.5 pl-3">
                               {msg.references.evidence.map((ev: string, eIdx: number) => (
                                 <div key={eIdx} className="flex gap-2 items-start text-13.5 text-white/60">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-[#79D38A] mt-2 shrink-0 opacity-70" />
+                                  <span className="w-1.5 h-1.5 rounded-full bg-[#83D18B] mt-2 shrink-0 opacity-70" />
                                   <span>{ev}</span>
                                 </div>
                               ))}
@@ -174,15 +174,15 @@ export const DecisionCopilot: React.FC = () => {
                             <div className="p-4 bg-white/[0.01] border border-white/5 rounded-xl flex flex-col justify-between gap-2.5">
                               <div className="flex justify-between items-center text-[9px] uppercase font-bold text-white/40 font-sans">
                                 <span>3. Audit Confidence</span>
-                                <span className="text-[#79D38A] font-mono">{msg.references.confidence}%</span>
+                                <span className="text-[#83D18B] font-mono">{msg.references.confidence}%</span>
                               </div>
                               <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
-                                <div className="h-full bg-[#79D38A]" style={{ width: `${msg.references.confidence}%` }} />
+                                <div className="h-full bg-[#83D18B]" style={{ width: `${msg.references.confidence}%` }} />
                               </div>
                             </div>
 
-                            <div className="p-4 bg-[#79D38A]/5 border border-[#79D38A]/10 rounded-xl space-y-1">
-                              <span className="text-[9px] uppercase font-bold text-[#79D38A] font-sans flex items-center gap-1">
+                            <div className="p-4 bg-[#83D18B]/5 border border-[#83D18B]/10 rounded-xl space-y-1">
+                              <span className="text-[9px] uppercase font-bold text-[#83D18B] font-sans flex items-center gap-1">
                                 <Zap size={10} /> 4. Recommended Action
                               </span>
                               <p className="text-12 text-white/70 font-serif leading-normal">
@@ -220,7 +220,7 @@ export const DecisionCopilot: React.FC = () => {
                         <button
                           key={cIdx}
                           onClick={() => handleFollowUpClick(chip)}
-                          className="px-3 py-1.5 rounded-lg bg-[#151B23] border border-white/5 text-12 text-white/50 hover:text-[#79D38A] hover:border-[#79D38A]/30 transition-all font-sans"
+                          className="px-3 py-1.5 rounded-lg bg-[#151B23] border border-white/5 text-12 text-white/50 hover:text-[#83D18B] hover:border-[#83D18B]/30 transition-all font-sans"
                         >
                           {chip}
                         </button>
@@ -234,7 +234,7 @@ export const DecisionCopilot: React.FC = () => {
 
           {isTyping && (
             <div className="flex items-center gap-2.5 text-white/30 text-12 italic font-serif select-none">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#79D38A] animate-ping" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#83D18B] animate-ping" />
               Strategy consult analyst is correlating signals...
             </div>
           )}
@@ -271,9 +271,9 @@ export const DecisionCopilot: React.FC = () => {
                     key={idx}
                     type="button"
                     onClick={() => handleSend(starter.query)}
-                    className="p-3.5 rounded-xl border border-white/5 bg-[#151B23] hover:border-[#79D38A]/30 hover:bg-[#79D38A]/5 transition-all text-left flex flex-col gap-1 cursor-pointer"
+                    className="p-3.5 rounded-xl border border-white/5 bg-[#151B23] hover:border-[#83D18B]/30 hover:bg-[#83D18B]/5 transition-all text-left flex flex-col gap-1 cursor-pointer"
                   >
-                    <span className="text-[9px] font-bold text-[#79D38A] uppercase tracking-wider">{starter.category}</span>
+                    <span className="text-[9px] font-bold text-[#83D18B] uppercase tracking-wider">{starter.category}</span>
                     <span className="text-12 text-white/70 w-full line-clamp-2 leading-relaxed">{starter.text}</span>
                   </button>
                 ))}
@@ -296,7 +296,7 @@ export const DecisionCopilot: React.FC = () => {
                   key={idx}
                   type="button"
                   onClick={() => handleSend(chip)}
-                  className="text-[11px] bg-[#151B23] border border-white/5 rounded-full px-3 py-1 text-white/55 hover:text-[#79D38A] hover:border-[#79D38A]/25 transition-all font-sans font-medium select-none cursor-pointer"
+                  className="text-[11px] bg-[#151B23] border border-white/5 rounded-full px-3 py-1 text-white/55 hover:text-[#83D18B] hover:border-[#83D18B]/25 transition-all font-sans font-medium select-none cursor-pointer"
                 >
                   {chip} &rarr;
                 </button>
@@ -317,12 +317,12 @@ export const DecisionCopilot: React.FC = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={`Consult advisory board on context: "${activeNodeContext.title}"...`}
-              className="flex-1 bg-[#151B23] border border-white/5 rounded-xl py-3 px-4 text-13.5 text-white/90 placeholder-white/20 outline-none transition-all focus:border-[#79D38A]/30 focus:ring-4 focus:ring-[#79D38A]/5 font-sans"
+              className="flex-1 bg-[#151B23] border border-white/5 rounded-xl py-3 px-4 text-13.5 text-white/90 placeholder-white/20 outline-none transition-all focus:border-[#83D18B]/30 focus:ring-4 focus:ring-[#83D18B]/5 font-sans"
             />
             <button 
               type="submit"
               disabled={!input.trim()}
-              className="w-11 h-11 rounded-xl bg-[#79D38A] text-[#0D1117] flex items-center justify-center transition-all hover:scale-105 active:scale-95 disabled:opacity-30 disabled:scale-100 disabled:pointer-events-none"
+              className="w-11 h-11 rounded-xl bg-[#83D18B] text-[#0D1117] flex items-center justify-center transition-all hover:scale-105 active:scale-95 disabled:opacity-30 disabled:scale-100 disabled:pointer-events-none"
             >
               <Send size={15} />
             </button>
@@ -340,7 +340,7 @@ export const DecisionCopilot: React.FC = () => {
         <div className="p-6 space-y-6">
           {/* Selected Metric Context */}
           <div className="space-y-2">
-            <span className="text-[9.5px] font-bold text-[#79D38A] uppercase tracking-widest block">Selected Metric</span>
+            <span className="text-[9.5px] font-bold text-[#83D18B] uppercase tracking-widest block">Selected Metric</span>
             <div className="p-4 bg-white/[0.01] border border-white/5 rounded-xl space-y-1">
               <span className="text-14 font-semibold text-white/95">{activeNodeContext.title}</span>
               <div className="flex justify-between items-center text-11 font-mono text-white/40 mt-1">
@@ -384,10 +384,10 @@ export const DecisionCopilot: React.FC = () => {
             <span className="text-[9.5px] font-bold text-white/30 uppercase tracking-wider">AI Confidence Rating</span>
             <div className="flex items-center justify-between text-11 font-mono">
               <span className="text-white/40">Reliability Index</span>
-              <span className="text-[#79D38A] font-bold">94%</span>
+              <span className="text-[#83D18B] font-bold">94%</span>
             </div>
             <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
-              <div className="h-full bg-[#79D38A] rounded-full" style={{ width: '94%' }} />
+              <div className="h-full bg-[#83D18B] rounded-full" style={{ width: '94%' }} />
             </div>
           </div>
 
