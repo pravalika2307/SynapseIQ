@@ -33,6 +33,8 @@ export interface DatasetSummary {
     max: number;
     values: number[];
   }>;
+  missingValueCount: number;
+  outlierCount: number;
 }
 
 export function parseCSV(csvText: string, fileName: string): DatasetSummary {
@@ -209,6 +211,34 @@ export function parseCSV(csvText: string, fileName: string): DatasetSummary {
   const totalProf = detectedMetrics.profit && kpiStats[detectedMetrics.profit] ? kpiStats[detectedMetrics.profit].sum : 0;
   const avgSat = detectedMetrics.satisfaction && kpiStats[detectedMetrics.satisfaction] ? kpiStats[detectedMetrics.satisfaction].mean : 0;
 
+  // Compute missing values
+  let missingValueCount = 0;
+  data.forEach(row => {
+    headers.forEach(h => {
+      if (row[h] === null || row[h] === undefined || row[h] === '') {
+        missingValueCount++;
+      }
+    });
+  });
+
+  // Outlier detection using Z-score >= 3
+  let outlierCount = 0;
+  numericHeaders.forEach(header => {
+    const stats = kpiStats[header];
+    if (stats && stats.values.length > 2) {
+      const mean = stats.mean;
+      const sqDiffSum = stats.values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0);
+      const stdDev = Math.sqrt(sqDiffSum / (stats.values.length - 1));
+      if (stdDev > 0) {
+        stats.values.forEach(val => {
+          if (Math.abs(val - mean) / stdDev >= 3.0) {
+            outlierCount++;
+          }
+        });
+      }
+    }
+  });
+
   return {
     fileName,
     rowCount: data.length,
@@ -227,5 +257,7 @@ export function parseCSV(csvText: string, fileName: string): DatasetSummary {
     },
     correlations,
     kpiStats,
+    missingValueCount,
+    outlierCount,
   };
 }

@@ -18,11 +18,13 @@ export const DecisionCopilot: React.FC = () => {
   const activeNodeId = useAppStore((state) => state.activeNodeId);
   const datasetName = useAppStore((state) => state.datasetName);
   const nodeContexts = useAppStore((state) => state.nodeContexts);
+  const parsedData = useAppStore((state) => state.parsedData);
   const geminiApiKey = useAppStore((state) => state.geminiApiKey);
   const setGeminiApiKey = useAppStore((state) => state.setGeminiApiKey);
   const copilotPreloadQuery = useAppStore((state) => state.copilotPreloadQuery);
   const setCopilotPreloadQuery = useAppStore((state) => state.setCopilotPreloadQuery);
   const explorationHistory = useAppStore((state) => state.explorationHistory);
+  const decisionReadiness = useAppStore((state) => state.decisionReadiness);
 
   const isDemoActive = useDemoStore((state) => state.isDemoActive);
   const currentStep = useDemoStore((state) => state.currentStep);
@@ -182,11 +184,38 @@ export const DecisionCopilot: React.FC = () => {
         matchedKey = 'Where should I invest next?';
       }
 
+      // Scrutinize query for parameters not in dataset (Honest AI guidelines)
+      let isInsufficient = false;
+      let insufficientReason = '';
+      if (lowerQuery.includes('churn') || lowerQuery.includes('retention') || lowerQuery.includes('nrr')) {
+        if (summary && !summary.detectedMetrics.satisfaction) {
+          isInsufficient = true;
+          insufficientReason = "The available data is insufficient to estimate customer churn accurately because no customer retention or satisfaction metrics were detected.";
+        }
+      } else if (lowerQuery.includes('employee') || lowerQuery.includes('salary') || lowerQuery.includes('headcount')) {
+        if (summary && !summary.columns.some(c => c.toLowerCase().includes('hire') || c.toLowerCase().includes('employee') || c.toLowerCase().includes('staff') || c.toLowerCase().includes('salary'))) {
+          isInsufficient = true;
+          insufficientReason = "The available data is insufficient to audit resource headcount structures because no employee payroll or staff metrics were detected.";
+        }
+      }
+
       const responseData = copilotAIResponses[matchedKey] || copilotAIResponses['default-query'];
       
       let customSummary = responseData.summary;
       let customEvidence = [...responseData.evidence];
       let customRec = responseData.recommendation;
+      let customConfidence = responseData.confidence || 95;
+
+      if (isInsufficient) {
+        customSummary = insufficientReason;
+        customEvidence = [
+          "Secure verification parsed 100% of available headers.",
+          "Related customer support parameters returned empty.",
+          "Forecasting disabled on non-existent dimensions to safeguard reasoning confidence."
+        ];
+        customRec = "We recommend uploading a supplementary customer lifecycle matrix.";
+        customConfidence = 45;
+      }
 
       if (summary) {
         const profile = summary.profile;
@@ -223,7 +252,7 @@ export const DecisionCopilot: React.FC = () => {
       streamResponse({
         summary: customSummary,
         evidence: customEvidence,
-        confidence: responseData.confidence,
+        confidence: customConfidence,
         recommendation: customRec,
         relatedMetrics: responseData.relatedMetrics || [],
         nextQuestion: responseData.nextQuestion || ''
@@ -543,6 +572,37 @@ export const DecisionCopilot: React.FC = () => {
             </span>
           </div>
 
+          {/* Ingested Dataset Profile */}
+          {parsedData && (
+            <div className="space-y-2 p-4 bg-white/[0.01] border border-white/5 rounded-xl text-12 text-left">
+              <span className="text-[9.5px] font-bold text-white/30 uppercase tracking-widest block">Dataset Profile</span>
+              <div className="space-y-1.5 font-mono text-11 text-white/50 pt-1">
+                <div className="flex justify-between">
+                  <span>Industry:</span>
+                  <span className="text-white/70 font-semibold">{parsedData.profile.industry}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Records:</span>
+                  <span className="text-white/70 font-semibold">{parsedData.rowCount.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Timeframe:</span>
+                  <span className="text-white/70 font-semibold truncate max-w-[130px]" title={parsedData.profile.timePeriod}>
+                    {parsedData.profile.timePeriod.split(' (')[0]}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Missing Values:</span>
+                  <span className="text-white/70 font-semibold">{parsedData.missingValueCount}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Detected Outliers:</span>
+                  <span className="text-white/70 font-semibold">{parsedData.outlierCount}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Current Focus Analysis */}
           <div className="space-y-1.5">
             <span className="text-[9.5px] font-bold text-white/30 uppercase tracking-widest block">Current Focus</span>
@@ -580,14 +640,14 @@ export const DecisionCopilot: React.FC = () => {
           </div>
 
           {/* AI Confidence Rating */}
-          <div className="space-y-2.5 p-4 bg-white/[0.01] border border-white/5 rounded-xl">
+          <div className="space-y-2.5 p-4 bg-white/[0.01] border border-white/5 rounded-xl" title="Confidence metrics dynamically calculated from record completeness, missing parameters, and Z-score outlier ratios.">
             <span className="text-[9.5px] font-bold text-white/30 uppercase tracking-wider block">AI Confidence Rating</span>
             <div className="flex items-center justify-between text-11 font-mono">
               <span className="text-white/40">Reliability Index</span>
-              <span className="text-[#83D18B] font-bold">94%</span>
+              <span className="text-[#83D18B] font-bold">{decisionReadiness}%</span>
             </div>
             <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
-              <div className="h-full bg-[#83D18B] rounded-full" style={{ width: '94%' }} />
+              <div className="h-full bg-[#83D18B] rounded-full" style={{ width: `${decisionReadiness}%` }} />
             </div>
           </div>
 

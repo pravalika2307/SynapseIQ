@@ -35,7 +35,7 @@ export const AIMissionControl: React.FC<AIMissionControlProps> = ({ onComplete }
   ], []);
 
   const checklist = useMemo(() => [
-    'Dataset Processed',
+    'Executive recommendations refreshed.',
     'Executive Brief prepared.',
     'Business relationships mapped.',
     'Strategic understanding established.'

@@ -199,6 +199,34 @@ export const useAppStore = create<AppState>((set, get) => ({
       const summary = parseCSV(csvText, fileName);
       set({ parsedData: summary });
       
+      // Calculate dynamic AI Confidence score based on data completeness
+      let confidence = 95;
+      const detected = summary.detectedMetrics;
+      const expectedMetrics = ['revenue', 'profit', 'marketing', 'inventory', 'satisfaction'];
+      expectedMetrics.forEach(metric => {
+        if (!detected[metric as keyof typeof detected]) {
+          confidence -= 6;
+        }
+      });
+      if (summary.rowCount < 10) {
+        confidence -= 15;
+      } else if (summary.rowCount < 50) {
+        confidence -= 8;
+      } else if (summary.rowCount > 500) {
+        confidence += 3;
+      }
+      const totalCells = summary.rowCount * summary.columns.length;
+      if (totalCells > 0) {
+        const missingRatio = summary.missingValueCount / totalCells;
+        confidence -= Math.round(missingRatio * 25);
+      }
+      if (summary.rowCount > 0) {
+        const statsKeysCount = Object.keys(summary.kpiStats).length || 1;
+        const outlierRatio = summary.outlierCount / (summary.rowCount * statsKeysCount);
+        confidence -= Math.round(outlierRatio * 15);
+      }
+      confidence = Math.max(40, Math.min(99, confidence));
+      
       const localInsights = generateLocalAnalysis(summary);
       const apiKey = get().geminiApiKey;
       
@@ -213,6 +241,7 @@ export const useAppStore = create<AppState>((set, get) => ({
             briefingReports: insights.briefingReports,
             timelineEvents: (insights as any).timelineEvents || localInsights.timelineEvents,
             strategyCanvasEdges: insights.strategyCanvasEdges,
+            decisionReadiness: confidence,
             isDatasetLoaded: true,
             isLoadingAnalysis: false
           });
@@ -263,6 +292,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         briefingReports: localInsights.briefingReports,
         timelineEvents: localInsights.timelineEvents,
         strategyCanvasEdges: edges,
+        decisionReadiness: confidence,
         isDatasetLoaded: true,
         isLoadingAnalysis: false
       });

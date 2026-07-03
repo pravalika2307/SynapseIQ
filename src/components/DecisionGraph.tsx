@@ -455,6 +455,25 @@ export const DecisionGraph: React.FC = () => {
                 ))}
               </div>
             </div>
+
+            {/* Dynamic relationship explanation */}
+            <div className="border-t border-white/5 pt-2 mt-1 space-y-1">
+              <span className="text-[8.5px] uppercase font-bold tracking-widest text-white/35">Correlation Insight</span>
+              <p className="text-11 text-white/50 leading-normal font-serif italic text-left">
+                {activeHoveredNodeId === 'marketing' 
+                  ? "Ad bidding scale directly influences lead capture rates and pipeline volume."
+                  : activeHoveredNodeId === 'revenue'
+                    ? "Volume growth expands structural leverage over fixed cost run-rates."
+                    : activeHoveredNodeId === 'inventory'
+                      ? "Buffer stock levels directly cushion Guadalajara production scheduling."
+                      : activeHoveredNodeId === 'customers'
+                        ? "Account NRR retention directly compounds long-term run-rate stability."
+                        : activeHoveredNodeId === 'profit'
+                          ? "Net operating income is derived from category margin mix adjustments."
+                          : "Calculated operational correlations indicate positive parameter dependencies."
+                }
+              </p>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
