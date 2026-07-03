@@ -63,6 +63,7 @@ interface AppState {
   
   // Layout states
   isSidebarCollapsed: boolean;
+  isPresentationMode: boolean;
   
   // Actions
   setDatasetName: (name: string | null) => void;
@@ -76,6 +77,7 @@ interface AppState {
   addMessage: (text: string, sender: 'user' | 'assistant', references?: CopilotMessage['references']) => void;
   resetMessages: () => void;
   setSidebarCollapsed: (collapsed: boolean) => void;
+  setPresentationMode: (active: boolean) => void;
   
   // Intelligence Actions
   setGeminiApiKey: (key: string | null) => void;
@@ -99,6 +101,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   activeNodeId: 'health',
   copilotContextNodeId: 'health',
   isSidebarCollapsed: false,
+  isPresentationMode: localStorage.getItem('synapse_presentation_mode') === 'true',
   
   selectedScenario: 'baseline',
   scenarioInputs: {
@@ -132,6 +135,10 @@ export const useAppStore = create<AppState>((set, get) => ({
     scenarioInputs: { ...state.scenarioInputs, ...inputs }
   })),
   setSidebarCollapsed: (collapsed) => set({ isSidebarCollapsed: collapsed }),
+  setPresentationMode: (active) => {
+    localStorage.setItem('synapse_presentation_mode', active ? 'true' : 'false');
+    set({ isPresentationMode: active });
+  },
   
   addMessage: (text, sender, references) => set((state) => ({
     messages: [

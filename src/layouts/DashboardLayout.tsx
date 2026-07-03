@@ -6,12 +6,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { IntelligenceMesh } from '../components/IntelligenceMesh';
 import { Sparkles, X } from 'lucide-react';
 import { useAppStore } from '../features/store';
+import { PresentationToolbar } from '../components/PresentationToolbar';
 
 export const DashboardLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const activeNodeId = useAppStore((state) => state.activeNodeId);
   const nodeContexts = useAppStore((state) => state.nodeContexts);
+  const isPresentationMode = useAppStore((state) => state.isPresentationMode);
 
   // Suggestion Toast State
   const [suggestion, setSuggestion] = useState<{ text: string; actionText: string; actionPath: string } | null>(null);
@@ -98,7 +100,7 @@ export const DashboardLayout: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen w-screen bg-background overflow-hidden relative">
+    <div className={`flex flex-col h-screen w-screen bg-background overflow-hidden relative ${isPresentationMode ? 'presentation-mode' : ''}`}>
       <IntelligenceMesh />
       <Topbar />
       <div className="flex flex-1 min-h-0 w-full overflow-hidden relative z-10">
@@ -155,6 +157,8 @@ export const DashboardLayout: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <PresentationToolbar />
     </div>
   );
 };

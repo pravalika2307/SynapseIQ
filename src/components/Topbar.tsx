@@ -8,6 +8,8 @@ export const Topbar: React.FC = () => {
   const datasetName = useAppStore((state) => state.datasetName);
   const isLoadingAnalysis = useAppStore((state) => state.isLoadingAnalysis);
   const isDatasetLoaded = useAppStore((state) => state.isDatasetLoaded);
+  const isPresentationMode = useAppStore((state) => state.isPresentationMode);
+  const setPresentationMode = useAppStore((state) => state.setPresentationMode);
 
   const profileMenuItems = [
     {
@@ -81,6 +83,19 @@ export const Topbar: React.FC = () => {
             </motion.span>
           </AnimatePresence>
         </div>
+
+        <button
+          onClick={() => setPresentationMode(!isPresentationMode)}
+          className={`
+            flex items-center gap-1.5 px-3 py-1.5 border rounded-xl text-11.5 font-bold transition-all cursor-pointer active:scale-95 select-none
+            ${isPresentationMode 
+              ? 'bg-[#83D18B] border-[#83D18B] text-[#050608]' 
+              : 'border-white/5 bg-white/[0.01] hover:bg-white/[0.03] text-white/60 hover:text-white/90 hover:border-white/10'
+            }
+          `}
+        >
+          <span>✨ Presentation Mode</span>
+        </button>
 
         <button className="w-8 h-8 rounded-lg flex items-center justify-center text-white/40 hover:text-white/80 hover:bg-white/[0.03] transition-all">
           <Bell size={15} />

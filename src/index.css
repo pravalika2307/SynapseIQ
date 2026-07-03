@@ -83,3 +83,95 @@ html, body, #root {
     linear-gradient(to right, rgba(255, 255, 255, 0.008) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.008) 1px, transparent 1px);
 }
+
+/* Presentation Mode Custom Projector Optimizations */
+.presentation-mode {
+  filter: contrast(1.05) saturate(1.05);
+}
+
+.presentation-mode h1, 
+.presentation-mode .text-32 {
+  font-size: 2.25rem !important; /* Larger headers */
+}
+
+.presentation-mode h2 {
+  font-size: 1.25rem !important;
+}
+
+.presentation-mode .max-w-\[1200px\] {
+  max-width: 1380px !important;
+  padding-left: 3.5rem !important;
+  padding-right: 3.5rem !important;
+}
+
+.presentation-mode .gap-10 {
+  gap: 3rem !important; /* Spacing increased */
+}
+
+.presentation-mode .gap-8 {
+  gap: 2.3rem !important;
+}
+
+.presentation-mode .gap-6 {
+  gap: 1.8rem !important;
+}
+
+.presentation-mode .text-white\/50,
+.presentation-mode .text-white\/40 {
+  color: rgba(255, 255, 255, 0.72) !important; /* Increased text contrast for projection */
+}
+
+.presentation-mode .text-white\/60 {
+  color: rgba(255, 255, 255, 0.82) !important;
+}
+
+.presentation-mode .text-white\/30 {
+  color: rgba(255, 255, 255, 0.55) !important;
+}
+
+/* Hide noise and side items */
+.presentation-mode .hide-in-presentation {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Presentation Focus Mode Spotlight */
+.presentation-mode .grid > div, 
+.presentation-mode .grid-cols-1 > div,
+.presentation-mode .grid-cols-2 > div,
+.presentation-mode .grid-cols-3 > div,
+.presentation-mode .grid-cols-\[1\.1fr_1\.5fr\] > div {
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.5s ease, box-shadow 0.5s ease;
+  position: relative;
+}
+
+.presentation-mode .grid > div:focus-within,
+.presentation-mode .grid > div:active,
+.presentation-mode .grid-cols-1 > div:focus-within,
+.presentation-mode .grid-cols-1 > div:active,
+.presentation-mode .grid-cols-2 > div:focus-within,
+.presentation-mode .grid-cols-2 > div:active,
+.presentation-mode .grid-cols-3 > div:focus-within,
+.presentation-mode .grid-cols-3 > div:active,
+.presentation-mode .grid-cols-\[1\.1fr_1\.5fr\] > div:focus-within,
+.presentation-mode .grid-cols-\[1\.1fr_1\.5fr\] > div:active {
+  outline: none;
+  opacity: 1 !important;
+  transform: scale(1.02) translateY(-2px) !important;
+  border-color: rgba(131, 209, 139, 0.5) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 20px rgba(131, 209, 139, 0.15) !important;
+  z-index: 30 !important;
+}
+
+/* Dim unrelated components inside parent grids */
+.presentation-mode .grid:focus-within > div:not(:focus-within),
+.presentation-mode .grid-cols-1:focus-within > div:not(:focus-within),
+.presentation-mode .grid-cols-2:focus-within > div:not(:focus-within),
+.presentation-mode .grid-cols-3:focus-within > div:not(:focus-within),
+.presentation-mode .grid-cols-\[1\.1fr_1\.5fr\]:focus-within > div:not(:focus-within) {
+  opacity: 0.32 !important;
+  filter: grayscale(35%) blur(0.3px) !important;
+}
+
+
