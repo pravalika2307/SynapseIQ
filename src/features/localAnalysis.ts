@@ -34,7 +34,7 @@ export function generateLocalAnalysis(summary: DatasetSummary): {
   // Find strongest correlations for opportunities/risks
   let opportunityText = 'Pivot production lines to high-performing product segments to optimize yield.';
   let riskText = 'Inventory carrying costs or operational delays in logistics lanes limit profit potential.';
-  let recommendationText = 'Reallocate marketing capital to high-margin revenue nodes.';
+  let recommendationText = 'We recommend reallocating marketing capital to high-margin revenue nodes.';
 
   const correlationPairs: { h1: string; h2: string; val: number }[] = [];
   Object.keys(summary.correlations).forEach(h1 => {
@@ -154,7 +154,7 @@ export function generateLocalAnalysis(summary: DatasetSummary): {
       trend: 'up',
       opportunity: `Expand operations in the highest correlation category node to unlock scalable capital.`,
       risk: `Overconcentration of sales in a single category node introduces sudden revenue drops.`,
-      recommendation: `Balance regional capital allocations across the ${profile.regions.length} active regions.`
+      recommendation: `We recommend balancing regional capital allocations across the ${profile.regions.length} active regions.`
     },
     profit: {
       id: 'profit',
@@ -165,7 +165,7 @@ export function generateLocalAnalysis(summary: DatasetSummary): {
       trend: marginVal > 40 ? 'up' : 'neutral',
       opportunity: `Optimizing cost of goods sold (COGS) by 5% yields an additional ${formatCurrency(totalRevenueVal * 0.05)} profit.`,
       risk: `Upstream margin compression from operational cost spikes.`,
-      recommendation: `Lock fixed carrier and sourcing contracts for the next 90 days.`
+      recommendation: `We recommend locking fixed carrier and sourcing contracts for the next 90 days.`
     },
     customers: {
       id: 'customers',
@@ -176,7 +176,7 @@ export function generateLocalAnalysis(summary: DatasetSummary): {
       trend: averageSatisfactionVal >= 75 ? 'up' : 'neutral',
       opportunity: `Utilize high satisfaction scores to secure recurring enterprise contract extensions.`,
       risk: `Unresolved anomalies in lower performing categories degrade composite brand loyalty.`,
-      recommendation: `Deploy customer success automation in regions with expanding complaint metrics.`
+      recommendation: `We recommend deploying customer success automation in regions with expanding complaint metrics.`
     }
   };
 

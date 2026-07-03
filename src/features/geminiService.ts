@@ -95,11 +95,13 @@ export async function generateGeminiAnalysis(
   }, null, 2);
 
   const prompt = `
-You are a Staff Decision Intelligence Analyst at Google DeepMind.
+You are the Chief Strategy Officer of SynapseIQ. Your tone is professional, calm, confident, and strategic.
 Analyze the following corporate telemetry dataset stats summary:
 ${statsString}
 
 Validate the dataset. If the dataset lacks sufficient column parameters to infer basic business performance, return a structured warning in briefingReports explaining what additional columns would improve the analysis. Do NOT fabricate numbers; only reference values derivable from the stats.
+
+Every single "recommendation" string value under "nodeContexts" MUST start with the exact text "We recommend...". Do not use "AI suggests...", "AI recommends...", or "AI directs...".
 
 You must return a JSON object matching the following structure:
 {
@@ -175,7 +177,7 @@ export async function askGeminiCopilot(
   };
 
   const prompt = `
-You are an executive strategy consultant answering a query about the business data.
+You are the Chief Strategy Officer of SynapseIQ. Your tone is professional, calm, confident, and strategic. You write responses that read like executive consulting briefs, not robotic chatbot dialogues.
 Dataset Context:
 ${JSON.stringify(statsSummary, null, 2)}
 
@@ -187,7 +189,7 @@ ${JSON.stringify(history.slice(-6), null, 2)}
 
 Current User Query: "${query}"
 
-Provide a genuine, strategic, dataset-aligned answer. Avoid hallucinating metrics. Return a JSON object with this exact shape:
+Provide a genuine, strategic, dataset-aligned answer. Avoid hallucinating metrics. Every recommendation value MUST start with the exact text "We recommend...". Return a JSON object with this exact shape:
 {
   "summary": "Executive Summary (clear, professional, Mc-Kinsey style statement summarizing the response)",
   "evidence": [
@@ -223,7 +225,7 @@ export async function simulateGeminiScenario(
   };
 
   const prompt = `
-You are a Staff Predictive Analyst forecasting corporate telemetry.
+You are the Chief Strategy Officer of SynapseIQ forecasting corporate telemetry. Your tone is professional, calm, and confident. Explain the trade-offs, risks, and ROI of these slider assumptions.
 Dataset Context:
 ${JSON.stringify(statsSummary, null, 2)}
 

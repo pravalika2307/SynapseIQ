@@ -151,15 +151,15 @@ export const BusinessSignals: React.FC = () => {
               {/* CEO/Advisory Bulletins */}
               <div className="border-t border-white/5 pt-4 flex flex-col gap-3 font-serif">
                 <div className="space-y-1">
-                  <span className="text-[8.5px] uppercase font-sans font-bold tracking-widest text-[#83D18B]/70">AI Insight</span>
+                  <span className="text-[8.5px] uppercase font-sans font-bold tracking-widest text-[#83D18B]/70">What changed?</span>
                   <p className="text-12 text-white/70 leading-normal">{advisory.insight}</p>
                 </div>
                 <div className="space-y-1">
-                  <span className="text-[8.5px] uppercase font-sans font-bold tracking-widest text-white/40">Business Impact</span>
+                  <span className="text-[8.5px] uppercase font-sans font-bold tracking-widest text-white/40">What happens next?</span>
                   <p className="text-12 text-white/60 leading-normal">{advisory.impact}</p>
                 </div>
                 <div className="space-y-1">
-                  <span className="text-[8.5px] uppercase font-sans font-bold tracking-widest text-white/40">Suggested Action</span>
+                  <span className="text-[8.5px] uppercase font-sans font-bold tracking-widest text-white/40">What should you do?</span>
                   <p className="text-12 text-white/65 leading-normal italic">{advisory.action}</p>
                 </div>
               </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sliders, Zap, CheckCircle, RefreshCw } from 'lucide-react';
+import { Sliders, Zap, CheckCircle, RefreshCw, Sparkles } from 'lucide-react';
 import { SectionHeader, Card, CountUp } from '../components/ui';
 import { useDemoStore } from '../features/demoStore';
 import { useAppStore } from '../features/store';
@@ -24,6 +24,11 @@ export const Forecast: React.FC = () => {
   const [aiRisks, setAiRisks] = useState<string>('');
   const [aiRoi, setAiRoi] = useState<string>('');
   const [isSimulating, setIsSimulating] = useState<boolean>(false);
+
+  const hasSlidersMoved = marketing !== 45 || price !== 10 || inventory !== 60 || hiring !== 15 || retention !== 88 || costs !== 5;
+  const scenarioStatus = hasSlidersMoved 
+    ? "Reducing operating costs improves profitability, but may reduce customer satisfaction over time."
+    : "If current momentum continues, quarterly revenue is projected to increase by approximately 11%.";
 
   const isDemoActive = useDemoStore((state) => state.isDemoActive);
   const currentStep = useDemoStore((state) => state.currentStep);
@@ -300,6 +305,11 @@ export const Forecast: React.FC = () => {
               <span className="text-[9.5px] font-mono text-white/30">
                 Confidence: {simulatedConfidence}%
               </span>
+            </div>
+
+            <div className="p-3.5 bg-accent-sage-dim/20 border border-accent-sage-border/25 rounded-xl text-12 font-serif text-[#83D18B] leading-normal flex items-start gap-2.5">
+              <Sparkles size={14} className="shrink-0 mt-0.5" />
+              <span>{scenarioStatus}</span>
             </div>
 
             <div className="space-y-3 font-serif">

@@ -10,9 +10,11 @@ import {
   Settings,
   ArrowRight,
   Check,
-  Sparkles
+  Sparkles,
+  ArrowRightCircle
 } from 'lucide-react';
 import { IntelligenceMesh } from './IntelligenceMesh';
+import { useAppStore } from '../features/store';
 
 interface AIMissionControlProps {
   onComplete: () => void;
@@ -42,19 +44,65 @@ export const AIMissionControl: React.FC<AIMissionControlProps> = ({ onComplete }
   const [activeStep, setActiveStep] = useState(0);
   const [isExiting, setIsExiting] = useState(false);
   const [checkIndex, setCheckIndex] = useState(-1);
+  
+  // Phase 2: Narrative states
+  const [showNarrative, setShowNarrative] = useState(false);
+  const [narrativeIndex, setNarrativeIndex] = useState(0);
+
+  const parsedData = useAppStore((state) => state.parsedData);
+  const nodeContexts = useAppStore((state) => state.nodeContexts);
+
+  // Time-based greeting
+  const greeting = useMemo(() => {
+    const hrs = new Date().getHours();
+    if (hrs < 12) return 'Good morning';
+    if (hrs < 18) return 'Good afternoon';
+    return 'Good evening';
+  }, []);
+
+  const healthScore = useMemo(() => {
+    const healthMetric = nodeContexts.health?.metric || '84/100';
+    return parseInt(healthMetric) || 84;
+  }, [nodeContexts]);
+
+  // Dynamic narrative sentences list
+  const narrativeSentences = useMemo(() => {
+    const rowCountText = parsedData?.rowCount 
+      ? `${parsedData.rowCount.toLocaleString()} records`
+      : 'the telemetry matrix';
+      
+    const opportunities = [
+      nodeContexts.revenue?.opportunity || 'Marketing efficiency increased by 18%.',
+      nodeContexts.profit?.opportunity || 'Inventory safety stock targets must shift nearshore.',
+      nodeContexts.customers?.opportunity || 'Customer satisfaction in the West region declined.'
+    ];
+
+    return [
+      `${greeting}.`,
+      `We've completed the analysis of your business performance across ${rowCountText}.`,
+      healthScore >= 75 
+        ? `The enterprise registers healthy operational parameters with a composite rating of ${healthScore}/100.`
+        : `Key indicators suggest operating strains, setting the composite index to ${healthScore}/100.`,
+      'However...',
+      'Three critical areas require immediate executive prioritization:',
+      `1. ${opportunities[0].replace('AI suggests ', 'We recommend ').replace('AI recommends ', 'We recommend ')}`,
+      `2. ${opportunities[1].replace('AI suggests ', 'We recommend ').replace('AI recommends ', 'We recommend ')}`,
+      `3. ${opportunities[2].replace('AI suggests ', 'We recommend ').replace('AI recommends ', 'We recommend ')}`,
+      "We've compiled the strategic action plan inside the boardroom briefings portal.",
+      'Welcome to your Decision Workspace.'
+    ];
+  }, [greeting, parsedData, healthScore, nodeContexts]);
 
   // Core step-advancing ticker
   useEffect(() => {
     if (activeStep >= steps.length - 1) {
-      // We are on "Analysis Complete". Stop auto-incrementing steps
-      // and start the checkmarks checkoff sequence!
       setCheckIndex(0);
       return;
     }
 
     const timer = setTimeout(() => {
       setActiveStep((prev) => prev + 1);
-    }, 700); // 700ms per step = 6.3 seconds before final step
+    }, 700);
 
     return () => clearTimeout(timer);
   }, [activeStep, steps.length]);
@@ -64,23 +112,31 @@ export const AIMissionControl: React.FC<AIMissionControlProps> = ({ onComplete }
     if (checkIndex === -1) return;
 
     if (checkIndex >= checklist.length) {
-      // Completed checking everything. Wait a bit, then exit
+      // Checklist complete. Dissolve checklist and start Narrative!
       const timer = setTimeout(() => {
-        setIsExiting(true);
-        const exitTimer = setTimeout(() => {
-          onComplete();
-        }, 800); // 800ms dissolve transition
-        return () => clearTimeout(exitTimer);
-      }, 1000);
+        setShowNarrative(true);
+      }, 600);
       return () => clearTimeout(timer);
     }
 
     const timer = setTimeout(() => {
       setCheckIndex((prev) => prev + 1);
-    }, 350); // 350ms per checkmark checkoff
+    }, 350);
 
     return () => clearTimeout(timer);
-  }, [checkIndex, checklist.length, onComplete]);
+  }, [checkIndex, checklist.length]);
+
+  // Narrative index advancing ticker
+  useEffect(() => {
+    if (!showNarrative) return;
+    if (narrativeIndex >= narrativeSentences.length) return;
+
+    const timer = setTimeout(() => {
+      setNarrativeIndex((prev) => prev + 1);
+    }, 1400); // 1.4 seconds per sentence to allow comfortable reading
+
+    return () => clearTimeout(timer);
+  }, [showNarrative, narrativeIndex, narrativeSentences.length]);
 
   const handleSkip = () => {
     setIsExiting(true);
@@ -145,7 +201,7 @@ export const AIMissionControl: React.FC<AIMissionControlProps> = ({ onComplete }
 
             <button
               onClick={handleSkip}
-              className="flex items-center gap-2 px-4 py-2 border border-white/5 hover:border-white/15 bg-white/[0.01] hover:bg-white/[0.03] rounded-xl text-12 font-medium text-white/50 hover:text-white/90 transition-all cursor-pointer active:scale-95"
+              className="flex items-center gap-2 px-4 py-2 border border-white/5 hover:border-white/15 bg-white/[0.01] hover:bg-white/[0.03] rounded-xl text-12 font-medium text-white/50 hover:text-white/90 transition-all cursor-pointer active:scale-95 z-20"
             >
               Skip Ingestion
               <ArrowRight size={13} />
@@ -231,7 +287,7 @@ export const AIMissionControl: React.FC<AIMissionControlProps> = ({ onComplete }
 
             {/* Ingestion Sequential Checklist overlay on completion */}
             <AnimatePresence>
-              {checkIndex !== -1 && (
+              {checkIndex !== -1 && !showNarrative && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.96, backdropFilter: 'blur(0px)' }}
                   animate={{ opacity: 1, scale: 1, backdropFilter: 'blur(4px)' }}
@@ -247,7 +303,7 @@ export const AIMissionControl: React.FC<AIMissionControlProps> = ({ onComplete }
                       <Sparkles className="text-[#83D18B] animate-pulse" size={18} />
                       <h3 className="text-14 font-bold text-white/90 uppercase tracking-wider">Strategic Synthesis Matrix</h3>
                     </div>
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-4 text-left">
                       {checklist.map((item, idx) => {
                         const isChecked = checkIndex > idx;
                         const isCurrent = checkIndex === idx;
@@ -288,6 +344,62 @@ export const AIMissionControl: React.FC<AIMissionControlProps> = ({ onComplete }
                       })}
                     </div>
                   </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* AI Narrative Engine Full-screen Overlay */}
+            <AnimatePresence>
+              {showNarrative && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.8 }}
+                  className="absolute inset-0 bg-[#050608] z-30 flex flex-col items-center justify-center p-12 overflow-y-auto select-none"
+                >
+                  <div className="w-full max-w-2xl flex flex-col gap-6 text-left relative">
+                    <AnimatePresence>
+                      {narrativeSentences.slice(0, Math.max(1, narrativeIndex + 1)).map((sentence, sIdx) => {
+                        const isOpportunity = sentence.startsWith('1.') || sentence.startsWith('2.') || sentence.startsWith('3.');
+                        
+                        return (
+                          <motion.p
+                            key={sIdx}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, ease: 'easeOut' }}
+                            className={`font-serif leading-relaxed text-white/90
+                              ${sIdx === 0 ? 'text-24 md:text-30 font-bold mb-3' : ''}
+                              ${sentence === 'However...' ? 'text-20 text-[#83D18B] font-bold italic py-1' : ''}
+                              ${isOpportunity ? 'pl-6 text-14 text-white/70 border-l border-[#83D18B]/30 py-1' : 'text-16'}
+                              ${sentence.includes('Welcome to') ? 'text-18 font-bold text-[#83D18B] mt-4' : ''}
+                            `}
+                          >
+                            {sentence}
+                          </motion.p>
+                        );
+                      })}
+                    </AnimatePresence>
+
+                    {/* Navigation trigger button once narrative ends */}
+                    {narrativeIndex >= narrativeSentences.length - 1 && (
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.8, duration: 0.5 }}
+                        className="mt-10 flex justify-start"
+                      >
+                        <button
+                          onClick={handleSkip}
+                          className="flex items-center gap-3.5 px-6 py-3.5 bg-[#83D18B] hover:bg-[#A5E6B3] text-[#050608] rounded-2xl font-semibold text-13.5 shadow-2xl transition-all hover:scale-[1.03] active:scale-[0.98] cursor-pointer"
+                        >
+                          Access Decision Workspace
+                          <ArrowRightCircle size={16} />
+                        </button>
+                      </motion.div>
+                    )}
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
