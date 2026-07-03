@@ -20,6 +20,8 @@ export const DecisionCopilot: React.FC = () => {
   const nodeContexts = useAppStore((state) => state.nodeContexts);
   const geminiApiKey = useAppStore((state) => state.geminiApiKey);
   const setGeminiApiKey = useAppStore((state) => state.setGeminiApiKey);
+  const copilotPreloadQuery = useAppStore((state) => state.copilotPreloadQuery);
+  const setCopilotPreloadQuery = useAppStore((state) => state.setCopilotPreloadQuery);
 
   const isDemoActive = useDemoStore((state) => state.isDemoActive);
   const currentStep = useDemoStore((state) => state.currentStep);
@@ -47,6 +49,18 @@ export const DecisionCopilot: React.FC = () => {
       return () => clearTimeout(timer);
     }
   }, [isDemoActive, currentStep, hasTriggeredDemo]);
+
+  // Listen for proactive AI Initiative query triggers
+  useEffect(() => {
+    if (copilotPreloadQuery) {
+      const queryToTrigger = copilotPreloadQuery;
+      setCopilotPreloadQuery(null);
+      const timer = setTimeout(() => {
+        handleSend(queryToTrigger);
+      }, 600);
+      return () => clearTimeout(timer);
+    }
+  }, [copilotPreloadQuery]);
 
   const streamResponse = (responseData: any) => {
     setIsTyping(false);

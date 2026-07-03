@@ -64,6 +64,7 @@ interface AppState {
   // Layout states
   isSidebarCollapsed: boolean;
   isPresentationMode: boolean;
+  copilotPreloadQuery: string | null;
   
   // Actions
   setDatasetName: (name: string | null) => void;
@@ -78,6 +79,7 @@ interface AppState {
   resetMessages: () => void;
   setSidebarCollapsed: (collapsed: boolean) => void;
   setPresentationMode: (active: boolean) => void;
+  setCopilotPreloadQuery: (query: string | null) => void;
   
   // Intelligence Actions
   setGeminiApiKey: (key: string | null) => void;
@@ -102,6 +104,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   copilotContextNodeId: 'health',
   isSidebarCollapsed: false,
   isPresentationMode: localStorage.getItem('synapse_presentation_mode') === 'true',
+  copilotPreloadQuery: null,
   
   selectedScenario: 'baseline',
   scenarioInputs: {
@@ -139,6 +142,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     localStorage.setItem('synapse_presentation_mode', active ? 'true' : 'false');
     set({ isPresentationMode: active });
   },
+  setCopilotPreloadQuery: (query) => set({ copilotPreloadQuery: query }),
   
   addMessage: (text, sender, references) => set((state) => ({
     messages: [
