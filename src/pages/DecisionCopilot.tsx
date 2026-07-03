@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, BookOpen, Zap, Compass, Sparkles } from 'lucide-react';
 import { useAppStore } from '../features/store';
@@ -22,6 +22,7 @@ export const DecisionCopilot: React.FC = () => {
   const setGeminiApiKey = useAppStore((state) => state.setGeminiApiKey);
   const copilotPreloadQuery = useAppStore((state) => state.copilotPreloadQuery);
   const setCopilotPreloadQuery = useAppStore((state) => state.setCopilotPreloadQuery);
+  const explorationHistory = useAppStore((state) => state.explorationHistory);
 
   const isDemoActive = useDemoStore((state) => state.isDemoActive);
   const currentStep = useDemoStore((state) => state.currentStep);
@@ -34,6 +35,43 @@ export const DecisionCopilot: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const activeNodeContext = nodeContexts[activeNodeId] || nodeContexts.health;
+
+  // Real-time AI Memory check on exploration logs
+  const memoryAnalysis = useMemo(() => {
+    const counts: Record<string, number> = {};
+    explorationHistory.forEach(topic => {
+      counts[topic] = (counts[topic] || 0) + 1;
+    });
+    
+    const sorted = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+    const topTopic = sorted[0];
+    
+    if (topTopic && counts[topTopic] >= 2) {
+      const labelMap: Record<string, string> = {
+        revenue: 'Revenue Streams',
+        profit: 'Operating Profits',
+        customers: 'Customer Support SLA performance',
+        inventory: 'Inventory buffer ratios',
+        marketing: 'Marketing Campaigns and Acquisition ROI'
+      };
+      
+      const relatedMap: Record<string, string> = {
+        revenue: 'Marketing Campaign Reallocations and ad ROI',
+        profit: 'Inventory safety stock thresholds',
+        customers: 'Regional Support SLA targets',
+        inventory: 'Upstream raw supply transportation delays',
+        marketing: 'Customer retention margins'
+      };
+
+      return {
+        hasMemoryAlert: true,
+        topicLabel: labelMap[topTopic] || topTopic,
+        relatedLabel: relatedMap[topTopic] || 'Operations optimization'
+      };
+    }
+    
+    return { hasMemoryAlert: false, topicLabel: '', relatedLabel: '' };
+  }, [explorationHistory]);
 
   // Auto-scroll to bottom of conversation
   useEffect(() => {
@@ -379,7 +417,20 @@ export const DecisionCopilot: React.FC = () => {
           
           {/* Intelligent Suggested Questions (Shown at mount or when logs are empty) */}
           {messages.length <= 1 && !isTyping && (
-            <div className="space-y-2">
+            <div className="space-y-4">
+              {memoryAnalysis.hasMemoryAlert && (
+                <motion.div
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-[#83D18B]/10 border border-[#83D18B]/20 rounded-xl p-3.5 flex items-center gap-3 text-left shadow-lg select-none"
+                >
+                  <Sparkles size={14} className="text-[#83D18B] shrink-0 animate-pulse" />
+                  <p className="text-12 text-white/80 leading-normal font-serif">
+                    Based on your earlier analysis of <strong>{memoryAnalysis.topicLabel}</strong>, we recommend reviewing related <strong>{memoryAnalysis.relatedLabel}</strong>.
+                  </p>
+                </motion.div>
+              )}
+
               <span className="text-[9.5px] font-bold text-white/20 uppercase tracking-widest block select-none">
                 Intelligent Consultation Starters
               </span>

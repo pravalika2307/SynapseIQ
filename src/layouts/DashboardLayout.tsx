@@ -7,6 +7,7 @@ import { IntelligenceMesh } from '../components/IntelligenceMesh';
 import { Sparkles, X } from 'lucide-react';
 import { useAppStore } from '../features/store';
 import { PresentationToolbar } from '../components/PresentationToolbar';
+import { LiveInsightStream } from '../components/LiveInsightStream';
 
 export const DashboardLayout: React.FC = () => {
   const location = useLocation();
@@ -162,6 +163,7 @@ export const DashboardLayout: React.FC = () => {
             </motion.div>
           </AnimatePresence>
         </main>
+        <LiveInsightStream />
       </div>
 
       {/* Dynamic Contextual AI Suggestion Toast */}

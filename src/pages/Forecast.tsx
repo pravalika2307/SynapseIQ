@@ -402,26 +402,31 @@ export const Forecast: React.FC = () => {
             </div>
           </div>
 
-          {/* Featured recommended card */}
-          <div className={`bg-[#83D18B]/5 border rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-xl select-none transition-all duration-500 ${isDemoActive && currentStep === 7 ? 'ring-2 ring-[#83D18B] shadow-[0_0_25px_rgba(131,209,139,0.18)] scale-[1.01] bg-[#83D18B]/10 border-transparent' : 'border-[#83D18B]/20 shadow-[#83D18B]/5'}`}>
-            <div className="space-y-1 max-w-md">
-              <div className="flex items-center gap-1 text-[#83D18B]">
+          {/* Featured recommended card (Decision Moment) */}
+          <div className={`bg-[#83D18B]/5 border rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-xl select-none transition-all duration-500 ${hasSlidersMoved ? 'ring-2 ring-[#83D18B]/60 shadow-[0_0_25px_rgba(131,209,139,0.2)] bg-[#83D18B]/10 border-transparent scale-[1.015]' : 'border-[#83D18B]/20 shadow-[#83D18B]/5'}`}>
+            <div className="space-y-1.5 max-w-md">
+              <div className="flex items-center gap-1.5 text-[#83D18B]">
                 <CheckCircle size={14} className="animate-pulse" />
-                <span className="text-[10px] font-bold uppercase tracking-wider font-sans">✨ Recommended Scenario</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider font-sans">
+                  {hasSlidersMoved ? "⚡ Decision Moment: Recommended Executive Action" : "✨ Recommended Scenario"}
+                </span>
               </div>
-              <h4 className="text-14 font-semibold text-white/95 tracking-tight font-serif">
-                Target 55% Marketing & Jalisco Logistics nearshore corridor
+              <h4 className="text-14.5 font-bold text-white/95 tracking-tight font-serif text-left">
+                {hasSlidersMoved ? "Execute Supply Chain Nearshoring Pivot" : "Target 55% Marketing & Jalisco Logistics nearshore corridor"}
               </h4>
-              <p className="text-12 text-white/40 font-serif leading-relaxed">
-                Shifting semiconductor logistics overland lowers transpacific delays from 32 days down to 14, safeguarding profit margins.
+              <p className="text-12 text-white/45 font-serif leading-relaxed text-left">
+                {hasSlidersMoved 
+                  ? "Shifting raw wafer custom channels to Laredo overland corridors reduces transit risk by 45%, protecting net margin profiles." 
+                  : "Shifting semiconductor logistics overland lowers transpacific delays from 32 days down to 14, safeguarding profit margins."
+                }
               </p>
             </div>
             
             <div className="flex flex-col gap-1 text-right sm:border-l border-white/10 sm:pl-6 shrink-0 font-mono text-11">
-              <div className="text-white/45">Expected ROI: <strong className="text-[#83D18B]">18.2%</strong></div>
-              <div className="text-white/45">Growth: <strong className="text-white/85">+16.4%</strong></div>
-              <div className="text-white/45">Risk: <strong className="text-white/85">Low</strong></div>
-              <div className="text-white/45">Timeframe: <strong className="text-white/85">45 Days</strong></div>
+              <div className="text-white/45">Expected Revenue Increase: <strong className="text-[#83D18B]">+8.3%</strong></div>
+              <div className="text-white/45">Implementation Complexity: <strong className="text-white/85">Medium</strong></div>
+              <div className="text-white/45">Confidence: <strong className="text-[#83D18B]">94%</strong></div>
+              <div className="text-white/45">Est. ROI: <strong className="text-white/85">12.4x</strong></div>
             </div>
           </div>
 

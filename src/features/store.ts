@@ -65,6 +65,8 @@ interface AppState {
   isSidebarCollapsed: boolean;
   isPresentationMode: boolean;
   copilotPreloadQuery: string | null;
+  explorationHistory: string[];
+  decisionReadiness: number;
   
   // Actions
   setDatasetName: (name: string | null) => void;
@@ -80,6 +82,7 @@ interface AppState {
   setSidebarCollapsed: (collapsed: boolean) => void;
   setPresentationMode: (active: boolean) => void;
   setCopilotPreloadQuery: (query: string | null) => void;
+  recordExploration: (topic: string) => void;
   
   // Intelligence Actions
   setGeminiApiKey: (key: string | null) => void;
@@ -105,6 +108,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   isSidebarCollapsed: false,
   isPresentationMode: localStorage.getItem('synapse_presentation_mode') === 'true',
   copilotPreloadQuery: null,
+  explorationHistory: [],
+  decisionReadiness: 87,
   
   selectedScenario: 'baseline',
   scenarioInputs: {
@@ -131,8 +136,14 @@ export const useAppStore = create<AppState>((set, get) => ({
   setIsUploading: (uploading) => set({ isUploading: uploading }),
   setIsDatasetLoaded: (loaded) => set({ isDatasetLoaded: loaded }),
   
-  setActiveNodeId: (id) => set({ activeNodeId: id }),
-  setCopilotContextNodeId: (id) => set({ copilotContextNodeId: id, activeNodeId: id }),
+  setActiveNodeId: (id) => {
+    set({ activeNodeId: id });
+    set((state) => ({ explorationHistory: [...state.explorationHistory, id] }));
+  },
+  setCopilotContextNodeId: (id) => {
+    set({ copilotContextNodeId: id, activeNodeId: id });
+    set((state) => ({ explorationHistory: [...state.explorationHistory, id] }));
+  },
   setSelectedScenario: (scenario) => set({ selectedScenario: scenario }),
   updateScenarioInputs: (inputs) => set((state) => ({
     scenarioInputs: { ...state.scenarioInputs, ...inputs }
@@ -143,6 +154,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({ isPresentationMode: active });
   },
   setCopilotPreloadQuery: (query) => set({ copilotPreloadQuery: query }),
+  recordExploration: (topic) => set((state) => ({ explorationHistory: [...state.explorationHistory, topic] })),
   
   addMessage: (text, sender, references) => set((state) => ({
     messages: [
