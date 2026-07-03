@@ -53,9 +53,9 @@ export const Topbar: React.FC = () => {
       {/* Search bar */}
       <div className="flex-1 max-w-md relative mx-auto">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" size={14} />
-        <input 
-          type="text" 
-          placeholder="Search signals, reports, metrics..." 
+        <input
+          type="text"
+          placeholder="Search signals, reports, metrics..."
           className="w-full bg-white/[0.03] border border-white/5 rounded-lg py-1.5 pl-9 pr-4 text-13 text-white/90 placeholder-white/20 outline-none transition-all duration-300 focus:border-accent-sage-border focus:bg-white/[0.05] focus:ring-4 focus:ring-accent-sage/5"
         />
       </div>
@@ -88,8 +88,8 @@ export const Topbar: React.FC = () => {
           onClick={() => setPresentationMode(!isPresentationMode)}
           className={`
             flex items-center gap-1.5 px-3 py-1.5 border rounded-xl text-11.5 font-bold transition-all cursor-pointer active:scale-95 select-none
-            ${isPresentationMode 
-              ? 'bg-[#83D18B] border-[#83D18B] text-[#050608]' 
+            ${isPresentationMode
+              ? 'bg-[#83D18B] border-[#83D18B] text-[#050608]'
               : 'border-white/5 bg-white/[0.01] hover:bg-white/[0.03] text-white/60 hover:text-white/90 hover:border-white/10'
             }
           `}
@@ -105,7 +105,7 @@ export const Topbar: React.FC = () => {
         <Dropdown
           trigger={
             <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-950 to-slate-900 border border-white/10 flex items-center justify-center text-10 font-bold text-white/70 hover:border-white/25 transition-all">
-              AM
+              PP
             </div>
           }
           items={profileMenuItems}

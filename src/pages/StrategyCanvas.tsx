@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ScatterChart, 
   Scatter, 
@@ -12,12 +12,25 @@ import {
 import { Compass, Info, TrendingUp } from 'lucide-react';
 import { DecisionGraph } from '../components/DecisionGraph';
 import { useDemoStore } from '../features/demoStore';
+import { useAppStore } from '../features/store';
 
 export const StrategyCanvas: React.FC = () => {
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
+  const [pulseHighlight, setPulseHighlight] = useState(false);
+  const parsedData = useAppStore((state) => state.parsedData);
   
   const isDemoActive = useDemoStore((state) => state.isDemoActive);
   const currentStep = useDemoStore((state) => state.currentStep);
+
+  useEffect(() => {
+    if (parsedData) {
+      setPulseHighlight(true);
+      const timer = setTimeout(() => {
+        setPulseHighlight(false);
+      }, 1800);
+      return () => clearTimeout(timer);
+    }
+  }, [parsedData]);
 
   // WAFER/Supplier Resilience Rating matrix
   const supplierData = [
@@ -29,7 +42,7 @@ export const StrategyCanvas: React.FC = () => {
   ];
 
   return (
-    <div className="max-w-[1200px] mx-auto px-10 py-12 flex flex-col gap-10">
+    <div className={`max-w-[1200px] mx-auto px-10 py-12 flex flex-col gap-10 transition-all duration-1000 ${pulseHighlight ? 'ring-1 ring-[#83D18B]/35 shadow-[0_0_40px_rgba(131,209,139,0.08)] bg-[#83D18B]/[0.01] rounded-[2rem]' : ''}`}>
       {/* Title */}
       <div className="flex flex-col gap-3 pt-8">
         <div className="flex items-center gap-2">

@@ -15,14 +15,14 @@ export const Button: React.FC<ButtonProps> = ({
   children,
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center font-sans font-semibold rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-sage/50 disabled:opacity-50 disabled:pointer-events-none select-none';
+  const baseStyles = 'inline-flex items-center justify-center font-sans font-semibold rounded-xl transition-all duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-sage/50 disabled:opacity-40 disabled:pointer-events-none select-none cursor-pointer';
   
   const variants = {
-    primary: 'bg-accent-sage text-background hover:bg-accent-sage/90 active:bg-accent-sage/80',
-    secondary: 'bg-white/[0.03] border border-white/5 text-white/80 hover:bg-white/[0.06] hover:text-white hover:border-white/10',
-    ghost: 'text-white/60 hover:text-white hover:bg-white/[0.04]',
-    critical: 'bg-critical/15 border border-critical/20 text-critical hover:bg-critical/25',
-    warn: 'bg-warn/15 border border-warn/20 text-warn hover:bg-warn/25',
+    primary: 'bg-accent-sage text-background shadow-md shadow-accent-sage/5 hover:bg-[#A5E6B3] active:bg-accent-sage/80 hover:shadow-[0_8px_20px_rgba(131,209,139,0.18)]',
+    secondary: 'bg-white/[0.03] border border-white/5 text-white/80 hover:bg-white/[0.06] hover:text-white hover:border-white/10 active:bg-white/[0.08]',
+    ghost: 'text-white/60 hover:text-white hover:bg-white/[0.04] active:bg-white/[0.06]',
+    critical: 'bg-critical/15 border border-critical/20 text-critical hover:bg-critical/25 active:bg-critical/30',
+    warn: 'bg-warn/15 border border-warn/20 text-warn hover:bg-warn/25 active:bg-warn/30',
   };
 
   const sizes = {

@@ -13,7 +13,9 @@ import {
 export const ExecutiveBrief: React.FC = () => {
   const datasetName = useAppStore((state) => state.datasetName);
   const nodeContexts = useAppStore((state) => state.nodeContexts);
+  const parsedData = useAppStore((state) => state.parsedData);
   const [greeting, setGreeting] = useState('Good Evening');
+  const [pulseHighlight, setPulseHighlight] = useState(false);
   
   const isDemoActive = useDemoStore((state) => state.isDemoActive);
   const currentStep = useDemoStore((state) => state.currentStep);
@@ -24,6 +26,16 @@ export const ExecutiveBrief: React.FC = () => {
     else if (hrs < 18) setGreeting('Good Afternoon');
     else setGreeting('Good Evening');
   }, []);
+
+  useEffect(() => {
+    if (parsedData) {
+      setPulseHighlight(true);
+      const timer = setTimeout(() => {
+        setPulseHighlight(false);
+      }, 1800);
+      return () => clearTimeout(timer);
+    }
+  }, [parsedData]);
 
   const analyzedTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
@@ -54,7 +66,7 @@ export const ExecutiveBrief: React.FC = () => {
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="max-w-[1200px] mx-auto px-10 py-12 flex flex-col gap-14 text-[#F5F7FA]"
+      className={`max-w-[1200px] mx-auto px-10 py-12 flex flex-col gap-14 text-[#F5F7FA] transition-all duration-1000 ${pulseHighlight ? 'ring-1 ring-[#83D18B]/35 shadow-[0_0_40px_rgba(131,209,139,0.08)] bg-[#83D18B]/[0.01] rounded-[2rem]' : ''}`}
     >
       {/* Header Section */}
       <dMotion.section variants={itemVariants} className="flex flex-col md:flex-row md:items-end justify-between gap-6 pt-8 border-b border-white/5 pb-8 select-none">

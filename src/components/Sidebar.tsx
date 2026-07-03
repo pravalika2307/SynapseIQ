@@ -1,13 +1,13 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FileText, 
-  Activity, 
-  Compass, 
-  MessageSquare, 
-  TrendingUp, 
-  Layers, 
+import {
+  FileText,
+  Activity,
+  Compass,
+  MessageSquare,
+  TrendingUp,
+  Layers,
   Database,
   ChevronLeft,
   ChevronRight,
@@ -81,13 +81,13 @@ export const Sidebar: React.FC = () => {
   ];
 
   return (
-    <motion.aside 
+    <motion.aside
       animate={{ width: isSidebarCollapsed ? 64 : 220 }}
       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
       className="bg-background border-r border-white/5 flex flex-col h-full shrink-0 select-none py-6 relative hide-in-presentation"
     >
       {/* Collapse Toggle Button */}
-      <button 
+      <button
         onClick={() => setSidebarCollapsed(!isSidebarCollapsed)}
         className="absolute top-5 -right-3 w-6 h-6 rounded-full border border-white/10 bg-[#151B23] flex items-center justify-center text-white/50 hover:text-white/90 hover:border-white/20 transition-all z-40 shadow-lg"
       >
@@ -98,7 +98,7 @@ export const Sidebar: React.FC = () => {
         {/* Workspace Label */}
         <AnimatePresence mode="wait">
           {!isSidebarCollapsed ? (
-            <motion.span 
+            <motion.span
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -125,22 +125,22 @@ export const Sidebar: React.FC = () => {
               {({ isActive }) => (
                 <>
                   {isActive && (
-                    <motion.div 
+                    <motion.div
                       layoutId="activeNavBackground"
                       className="absolute inset-0 bg-accent-sage/[0.04] border-l-2 border-accent-sage z-0"
                       transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                     />
                   )}
-                  
-                  <motion.span 
+
+                  <motion.span
                     animate={isActive ? { scale: 1.05 } : { scale: 1 }}
                     className="opacity-70 group-hover:opacity-100 min-w-[20px] z-10 flex items-center justify-center"
                   >
                     {item.icon}
                   </motion.span>
-                  
+
                   {!isSidebarCollapsed && (
-                    <motion.span 
+                    <motion.span
                       initial={{ opacity: 0, x: -5 }}
                       animate={{ opacity: 1, x: 0 }}
                       className="ml-3 flex-1 truncate z-10 text-left"
@@ -169,7 +169,7 @@ export const Sidebar: React.FC = () => {
         {/* Briefing Focus (Hidden in collapsed mode to save vertical visual weight) */}
         <AnimatePresence>
           {!isSidebarCollapsed && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
@@ -226,7 +226,7 @@ export const Sidebar: React.FC = () => {
           >
             <span className="opacity-70 group-hover:opacity-100 min-w-[20px]">{item.icon}</span>
             {!isSidebarCollapsed && (
-              <motion.span 
+              <motion.span
                 initial={{ opacity: 0, x: -5 }}
                 animate={{ opacity: 1, x: 0 }}
                 className="ml-3 truncate"
@@ -251,12 +251,12 @@ export const Sidebar: React.FC = () => {
               <User size={14} className="opacity-60" />
             </div>
             {!isSidebarCollapsed && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: -5 }}
                 animate={{ opacity: 1, x: 0 }}
                 className="flex flex-col min-w-0"
               >
-                <span className="text-12 font-medium text-white/80 truncate">Andrew Mercer</span>
+                <span className="text-12 font-medium text-white/80 truncate">Pravalika Palle</span>
                 <span className="text-[10px] text-white/30 truncate">Managing Director</span>
               </motion.div>
             )}

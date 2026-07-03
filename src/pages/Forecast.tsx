@@ -24,6 +24,7 @@ export const Forecast: React.FC = () => {
   const [aiRisks, setAiRisks] = useState<string>('');
   const [aiRoi, setAiRoi] = useState<string>('');
   const [isSimulating, setIsSimulating] = useState<boolean>(false);
+  const [recalcHighlight, setRecalcHighlight] = useState(false);
 
   const hasSlidersMoved = marketing !== 45 || price !== 10 || inventory !== 60 || hiring !== 15 || retention !== 88 || costs !== 5;
   const scenarioStatus = hasSlidersMoved 
@@ -32,6 +33,16 @@ export const Forecast: React.FC = () => {
 
   const isDemoActive = useDemoStore((state) => state.isDemoActive);
   const currentStep = useDemoStore((state) => state.currentStep);
+
+  useEffect(() => {
+    if (hasSlidersMoved) {
+      setRecalcHighlight(true);
+      const timer = setTimeout(() => {
+        setRecalcHighlight(false);
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [marketing, price, inventory, hiring, retention, costs]);
 
   // Automatically simulate a 15% increase in marketing budget (from 45% baseline to 60%) in Step 7
   useEffect(() => {
@@ -242,7 +253,7 @@ export const Forecast: React.FC = () => {
         </div>
 
         {/* Right Column: Outcomes & Projections */}
-        <div className="flex flex-col gap-6">
+        <div className={`flex flex-col gap-6 transition-all duration-700 ${recalcHighlight ? 'ring-1 ring-[#83D18B]/30 shadow-[0_0_30px_rgba(131,209,139,0.06)] bg-[#83D18B]/[0.005] rounded-3xl p-2' : ''}`}>
           
           {/* Live Outcome Metrics grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
