@@ -88,7 +88,7 @@ export const DemoController: React.FC = () => {
     setStep
   } = useDemoStore();
 
-  const setDataset = useAppStore((state) => state.setDataset);
+  const setDatasetName = useAppStore((state) => state.setDatasetName);
   const setIsDatasetLoaded = useAppStore((state) => state.setIsDatasetLoaded);
 
   const timerRef = useRef<any | null>(null);
@@ -108,10 +108,10 @@ export const DemoController: React.FC = () => {
 
     // Set demo matrix defaults
     if (currentStep >= 3) {
-      setDataset('synapse_intel_matrix_q2.csv');
+      setDatasetName('synapse_intel_matrix_q2.csv');
       setIsDatasetLoaded(true);
     }
-  }, [currentStep, isDemoActive, activeStepConfig.route, navigate, location.pathname, setDataset, setIsDatasetLoaded]);
+  }, [currentStep, isDemoActive, activeStepConfig.route, navigate, location.pathname, setDatasetName, setIsDatasetLoaded]);
 
   // Handle auto-advancing timers
   useEffect(() => {

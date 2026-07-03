@@ -12,8 +12,6 @@ import { IntelligenceMesh } from '../components/IntelligenceMesh';
 
 export const Landing: React.FC = () => {
   const navigate = useNavigate();
-  const setDataset = useAppStore((state) => state.setDataset);
-  const setIsDatasetLoaded = useAppStore((state) => state.setIsDatasetLoaded);
   
   const startDemo = useDemoStore((state) => state.startDemo);
   const isDemoActive = useDemoStore((state) => state.isDemoActive);
@@ -21,6 +19,29 @@ export const Landing: React.FC = () => {
 
   const [state, setState] = useState<'hero' | 'loading'>('hero');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const triggerAnalysis = useAppStore((state) => state.triggerAnalysis);
+
+  React.useEffect(() => {
+    if (state === 'loading') {
+      if (selectedFile) {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          const text = e.target?.result as string;
+          try {
+            await triggerAnalysis(text, selectedFile.name);
+          } catch (err) {
+            console.error('Error during dataset analysis:', err);
+          }
+        };
+        reader.readAsText(selectedFile);
+      } else {
+        // Load default dataset
+        import('../features/defaultDataset').then(({ DEFAULT_CSV }) => {
+          triggerAnalysis(DEFAULT_CSV, 'synapse_intel_matrix_q2.csv').catch(console.error);
+        });
+      }
+    }
+  }, [state, selectedFile, triggerAnalysis]);
 
   const handleFileSelect = (file: File) => {
     setSelectedFile(file);
@@ -28,8 +49,6 @@ export const Landing: React.FC = () => {
   };
 
   const handleAnalysisComplete = () => {
-    setDataset(selectedFile ? selectedFile.name : 'synapse_intel_matrix_q2.csv');
-    setIsDatasetLoaded(true);
     if (isDemoActive) {
       nextStep(); // Advance to Step 3 (Executive Brief)
     } else {

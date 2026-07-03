@@ -9,111 +9,12 @@ import {
 import { useAppStore } from '../features/store';
 import { SectionHeader, Badge, Card } from '../components/ui';
 
-interface TimelineEvent {
-  id: string;
-  date: string;
-  title: string;
-  summary: string;
-  impact: string;
-  confidence: number;
-  trend: string;
-  category: 'Revenue' | 'Marketing' | 'Inventory' | 'Customers' | 'Operations' | 'Risk' | 'Growth';
-  whatHappened: string;
-  why: string;
-  recommendedAction: string;
-  targetNodeId: string;
-}
-
-const timelineEvents: TimelineEvent[] = [
-  {
-    id: 'ev-1',
-    date: 'June 25, 2026',
-    title: 'Revenue run-rate expanded by 18% YoY',
-    summary: 'Q2 enterprise subscription contract conversions exceed target expectations by $3.2M ARR, led by security compliant sales wins in Western Europe.',
-    impact: '+$3.2M ARR expansion run-rate',
-    confidence: 96,
-    trend: 'Optimizing',
-    category: 'Revenue',
-    whatHappened: 'Subscriptions expanded due to local EU data compliance certifications.',
-    why: 'Enterprise accounts in Frankfurt and Paris convert at double the historical baseline.',
-    recommendedAction: 'Divert marketing lead generation budget to high-intent European accounts.',
-    targetNodeId: 'revenue'
-  },
-  {
-    id: 'ev-2',
-    date: 'June 18, 2026',
-    title: 'Account-Based Marketing (ABM) launch',
-    summary: 'Targeted campaign outreach launched across Fortune 500 manufacturing accounts to combat developer CPC search keyword inflation.',
-    impact: '↓ 8% Customer Acquisition Cost (CAC)',
-    confidence: 93,
-    trend: 'High ROI',
-    category: 'Marketing',
-    whatHappened: 'Outreach campaigns deployed to bypass developer keyword bid wars.',
-    why: 'Niche account-based targeting captures high-intent buyers directly.',
-    recommendedAction: 'Add the top 200 mid-market manufacturing logos to the outreach segment.',
-    targetNodeId: 'marketing'
-  },
-  {
-    id: 'ev-3',
-    date: 'June 10, 2026',
-    title: 'Vietnam MCU components supply strain',
-    summary: 'Upstream port transit backlogs at Ho Chi Minh docks delay semiconductor delivery, shrinking Jalisco assembly safety stock holding down to 14 days.',
-    impact: '+4 days transpacific shipping queue latency',
-    confidence: 92,
-    trend: 'Risk Alert',
-    category: 'Inventory',
-    whatHappened: 'MCU sub-assemblies delayed due to transpacific vessel backlogs.',
-    why: 'High port utilization and carrier container imbalances at Ho Chi Minh docks.',
-    recommendedAction: 'Approve wafer allocation shifting to domestic Arizona foundries.',
-    targetNodeId: 'inventory'
-  },
-  {
-    id: 'ev-4',
-    date: 'May 28, 2026',
-    title: 'Support SLA compliance compression',
-    summary: 'Customer success onboarding queues briefly bottleneck under rapid subscription scaling, slipping composite NPS down to 72.',
-    impact: '-2.4 hours support SLA response latency',
-    confidence: 89,
-    trend: 'SLA Strain',
-    category: 'Customers',
-    whatHappened: 'Support queue response delays logged during peak logo conversions.',
-    why: 'Customer success staffing ratios failed to match onboarding volume spikes.',
-    recommendedAction: 'Deploy automated AI-assisted ticket triage filters to lower response loops.',
-    targetNodeId: 'customers'
-  },
-  {
-    id: 'ev-5',
-    date: 'May 14, 2026',
-    title: 'GDPR compliance validation in Frankfurt',
-    summary: 'Frankfurt cloud node installations complete, enabling localized data hosting compliance certificates.',
-    impact: 'Unlocks $12M target pipeline in Central Europe',
-    confidence: 95,
-    trend: 'Growth Trigger',
-    category: 'Growth',
-    whatHappened: 'Local EU hosting capabilities initialized.',
-    why: 'Regulatory boundaries require localized data residence.',
-    recommendedAction: 'Publish success dossier for marketing outreach campaigns.',
-    targetNodeId: 'growth'
-  },
-  {
-    id: 'ev-6',
-    date: 'May 02, 2026',
-    title: 'Guadalajara capacity forecast index update',
-    summary: 'Mexico assembly line models simulated at 72% capacity scaling potential.',
-    impact: 'Reduces shipping latency from 32 to 14 days',
-    confidence: 91,
-    trend: 'Optimized',
-    category: 'Operations',
-    whatHappened: 'Procurement models updated to represent nearshoring pivots.',
-    why: 'Overland corridor clears customs 2.4 days faster than marine lanes.',
-    recommendedAction: 'Approve Jalisco supply chain corridor transition.',
-    targetNodeId: 'operations'
-  }
-];
+import type { TimelineEvent } from '../types';
 
 export const BusinessTimeline: React.FC = () => {
   const setCopilotContextNodeId = useAppStore((state) => state.setCopilotContextNodeId);
   const activeNodeId = useAppStore((state) => state.activeNodeId);
+  const timelineEvents = useAppStore((state) => state.timelineEvents);
 
   const [filter, setFilter] = useState<string>('All');
   const [hoveredEventId, setHoveredEventId] = useState<string | null>(null);
@@ -128,7 +29,7 @@ export const BusinessTimeline: React.FC = () => {
         setFilter('All'); // Force reset filters so the highlighted card is visible
       }
     }
-  }, [activeNodeId]);
+  }, [activeNodeId, timelineEvents]);
 
   const categories = ['All', 'Revenue', 'Marketing', 'Inventory', 'Customers', 'Operations', 'Risk', 'Growth'];
 

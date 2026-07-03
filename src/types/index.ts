@@ -29,4 +29,24 @@ export interface SignalItem {
   trend: 'positive' | 'negative' | 'neutral';
   note: string;
   chartData: Array<{ time: string; value: number; baseline?: number }>;
+  advisory?: {
+    insight: string;
+    impact: string;
+    action: string;
+  };
+}
+
+export interface TimelineEvent {
+  id: string;
+  date: string;
+  title: string;
+  summary: string;
+  impact: string;
+  confidence: number;
+  trend: string;
+  category: 'Revenue' | 'Marketing' | 'Inventory' | 'Customers' | 'Operations' | 'Risk' | 'Growth';
+  whatHappened: string;
+  why: string;
+  recommendedAction: string;
+  targetNodeId: string;
 }

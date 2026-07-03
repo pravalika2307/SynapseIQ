@@ -6,14 +6,26 @@ import {
   Tag, 
   CheckCircle,
 } from 'lucide-react';
-import { briefingReports } from '../features/data';
+import { useAppStore } from '../features/store';
 
 export const Reports: React.FC = () => {
-  const [selectedReportId, setSelectedReportId] = useState(briefingReports[0].id);
+  const briefingReports = useAppStore((state) => state.briefingReports);
+  const [selectedReportIdState, setSelectedReportIdState] = useState<string | null>(null);
   const [isCompiling, setIsCompiling] = useState(false);
   const [compileStatus, setCompileStatus] = useState('');
 
-  const activeReport = briefingReports.find((r) => r.id === selectedReportId) || briefingReports[0];
+  const selectedReportId = selectedReportIdState || (briefingReports[0]?.id || '');
+  const activeReport = briefingReports.find((r) => r.id === selectedReportId) || briefingReports[0] || {
+    id: '',
+    title: 'Executive Intelligence Dossier',
+    category: 'Strategic Planning',
+    date: 'July 2026',
+    riskLevel: 'Optimized',
+    summary: 'Executive-grade circulation brief.',
+    narrative: [
+      'No dataset uploaded. Please load telemetry data from the intake portal to compile dynamic boardroom dossiers.'
+    ]
+  };
 
   const handleCompile = () => {
     setIsCompiling(true);
@@ -56,7 +68,7 @@ export const Reports: React.FC = () => {
             {briefingReports.map((report) => (
               <button
                 key={report.id}
-                onClick={() => setSelectedReportId(report.id)}
+                onClick={() => setSelectedReportIdState(report.id)}
                 className={`
                   w-full text-left p-5 rounded-xl border transition-all duration-300 flex flex-col gap-2.5 bg-card
                   ${selectedReportId === report.id 

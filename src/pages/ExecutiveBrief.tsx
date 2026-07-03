@@ -12,6 +12,7 @@ import {
 
 export const ExecutiveBrief: React.FC = () => {
   const datasetName = useAppStore((state) => state.datasetName);
+  const nodeContexts = useAppStore((state) => state.nodeContexts);
   const [greeting, setGreeting] = useState('Good Evening');
   
   const isDemoActive = useDemoStore((state) => state.isDemoActive);
@@ -25,6 +26,10 @@ export const ExecutiveBrief: React.FC = () => {
   }, []);
 
   const analyzedTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  const health = nodeContexts.health || { summary: '', metric: '84/100', opportunity: '', risk: '', recommendation: '' };
+  const healthScore = parseInt(health.metric) || 84;
+  const strokeOffset = 251.2 - (251.2 * healthScore) / 100;
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -75,6 +80,14 @@ export const ExecutiveBrief: React.FC = () => {
               <span className="font-mono text-[#83D18B] text-11">{analyzedTime}</span>
             </div>
           </div>
+
+          <div className="flex items-center gap-2.5 px-4 py-2 bg-[#151B23] border border-white/5 rounded-xl text-12 text-white/60 shadow-lg">
+            <Activity size={14} className="text-white/30" />
+            <div className="flex flex-col">
+              <span className="text-[8px] font-bold text-white/30 uppercase tracking-wider">AI Confidence</span>
+              <span className="font-mono text-[#83D18B] text-11">94%</span>
+            </div>
+          </div>
         </div>
       </dMotion.section>
 
@@ -90,11 +103,7 @@ export const ExecutiveBrief: React.FC = () => {
             </div>
             
             <p className="text-17 text-white/90 leading-relaxed font-serif">
-              Our Q2 synthesis indicates a robust operational baseline with **18% revenue run-rate expansion**, primarily supported by enterprise renewal loops. However, maritime lane congestion in Southeast Asia introduces shipping risks, locking up capital allocations. Rerouting assembly logistics to nearshore hubs is recommended.
-            </p>
-
-            <p className="text-13.5 text-white/45 leading-relaxed font-serif -mt-2">
-              Introduction of Arizona wafer supply corridors acts as an active risk shield, stabilizing the composite solvency score.
+              {health.summary}
             </p>
           </Card>
         </dMotion.div>
@@ -109,16 +118,16 @@ export const ExecutiveBrief: React.FC = () => {
               <svg className="absolute transform -rotate-90 w-full h-full" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.03)" strokeWidth="8" fill="transparent" />
                 <circle cx="50" cy="50" r="40" stroke="#83D18B" strokeWidth="8" fill="transparent" 
-                        strokeDasharray="251.2" strokeDashoffset="22.6" strokeLinecap="round" />
+                        strokeDasharray="251.2" strokeDashoffset={strokeOffset} strokeLinecap="round" />
               </svg>
               <div className="flex flex-col items-center select-none">
-                <span className="text-36 font-bold tracking-tight text-white">91</span>
+                <span className="text-36 font-bold tracking-tight text-white">{healthScore}</span>
                 <span className="text-11 text-white/30 uppercase tracking-widest font-mono">/ 100</span>
               </div>
             </div>
 
             <p className="text-12.5 text-white/40 leading-relaxed max-w-xs font-serif italic">
-              Health score is optimized by consistent wafer production outputs and low contract attrition, but shipping backlogs cap maximal returns.
+              Health index is calculated dynamically by parsing key operational margins and customer retention telemetry.
             </p>
           </Card>
         </dMotion.div>
@@ -136,15 +145,12 @@ export const ExecutiveBrief: React.FC = () => {
           <Card elevation="flat" className="p-6 flex flex-col gap-4 min-h-[220px]">
             <div className="flex justify-between items-start">
               <Badge variant="sage">High Priority</Badge>
-              <span className="text-11 font-mono text-[#83D18B] font-bold">+18% Lead Time</span>
+              <span className="text-11 font-mono text-[#83D18B] font-bold">Correlation Action</span>
             </div>
-            <h3 className="text-15 font-semibold text-white/90 leading-snug tracking-tight">Guadalajara Sourcing Pivot</h3>
+            <h3 className="text-15 font-semibold text-white/90 leading-snug tracking-tight">Growth Pipeline</h3>
             <p className="text-13 text-white/45 leading-relaxed font-serif">
-              Transitioning 25% of microcontroller logistics volumes overland through nearshore corridors recovers lead times to 14 days.
+              {health.opportunity}
             </p>
-            <div className="border-t border-white/5 pt-3.5 mt-auto text-12 font-medium text-[#83D18B] font-sans">
-              Projected ROI: 18.2% expansion
-            </div>
           </Card>
         </dMotion.div>
 
@@ -157,15 +163,12 @@ export const ExecutiveBrief: React.FC = () => {
           <Card elevation="flat" className="p-6 flex flex-col gap-4 border-l-2 border-critical/55 min-h-[220px]">
             <div className="flex justify-between items-start">
               <Badge variant="critical">Critical Risk</Badge>
-              <span className="text-11 font-mono text-critical font-bold">32d Latency</span>
+              <span className="text-11 font-mono text-critical font-bold">Mitigation Target</span>
             </div>
-            <h3 className="text-15 font-semibold text-white/90 leading-snug tracking-tight">Vietnam Maritime Bottlenecks</h3>
+            <h3 className="text-15 font-semibold text-white/90 leading-snug tracking-tight">Vulnerability Core</h3>
             <p className="text-13 text-white/45 leading-relaxed font-serif">
-              Peak port queue constraints delay microcontroller components from Taiwan, risking factory assembly shut downs within 14 days.
+              {health.risk}
             </p>
-            <div className="border-t border-white/5 pt-3.5 mt-auto text-12 font-medium text-critical/80 font-sans">
-              Exposure: $4.2M Capital Lock
-            </div>
           </Card>
         </dMotion.div>
 
@@ -182,16 +185,16 @@ export const ExecutiveBrief: React.FC = () => {
                 <span className="text-[10px] font-bold uppercase tracking-wider">Strategic Directive</span>
               </div>
               <h3 className="text-14.5 font-semibold text-white/95 leading-snug tracking-tight">
-                Establish Arizona wafer corridors
+                Recommended Steering
               </h3>
               <p className="text-12.5 text-white/55 leading-relaxed font-serif">
-                Scaling buffer safety stocks to 60 days near domestic foundries insulates lines from transpacific logistics bottlenecks.
+                {health.recommendation}
               </p>
             </div>
 
             <div className="border-t border-accent-sage-border/20 pt-3 flex justify-between items-center text-11.5 font-mono">
               <span className="text-white/45">Outcome: <strong className="text-[#83D18B]">Lead recovery</strong></span>
-              <span className="text-white/45">Timeline: <strong className="text-white/70">60 days</strong></span>
+              <span className="text-white/45">Timeline: <strong className="text-white/70">90 days</strong></span>
             </div>
           </Card>
         </dMotion.div>

@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Sliders, Zap, CheckCircle } from 'lucide-react';
+import { Sliders, Zap, CheckCircle, RefreshCw } from 'lucide-react';
 import { SectionHeader, Card } from '../components/ui';
 import { useDemoStore } from '../features/demoStore';
 import { useAppStore } from '../features/store';
+import { simulateGeminiScenario } from '../features/geminiService';
+import { parseCSV } from '../features/csvParser';
 
 export const Forecast: React.FC = () => {
   const activeNodeId = useAppStore((state) => state.activeNodeId);
+  const geminiApiKey = useAppStore((state) => state.geminiApiKey);
+  const parsedData = useAppStore((state) => state.parsedData);
 
   // Simulation Controls Local State (with Current Strategy baselines)
   const [marketing, setMarketing] = useState(45);
@@ -14,6 +18,12 @@ export const Forecast: React.FC = () => {
   const [hiring, setHiring] = useState(15);
   const [retention, setRetention] = useState(88);
   const [costs, setCosts] = useState(5);
+
+  const [aiVerdict, setAiVerdict] = useState<string>('');
+  const [aiTradeoffs, setAiTradeoffs] = useState<string>('');
+  const [aiRisks, setAiRisks] = useState<string>('');
+  const [aiRoi, setAiRoi] = useState<string>('');
+  const [isSimulating, setIsSimulating] = useState<boolean>(false);
 
   const isDemoActive = useDemoStore((state) => state.isDemoActive);
   const currentStep = useDemoStore((state) => state.currentStep);
@@ -35,6 +45,41 @@ export const Forecast: React.FC = () => {
     }
   }, [isDemoActive, currentStep]);
 
+  // Debounced live scenario simulation with Gemini
+  useEffect(() => {
+    const handler = setTimeout(async () => {
+      if (!geminiApiKey || geminiApiKey.trim() === '') {
+        return; // Fallback to heuristic
+      }
+      setIsSimulating(true);
+      try {
+        let summary = parsedData;
+        if (!summary) {
+          const { DEFAULT_CSV } = await import('../features/defaultDataset');
+          summary = parseCSV(DEFAULT_CSV, 'synapse_intel_matrix_q2.csv');
+        }
+        const res = await simulateGeminiScenario(geminiApiKey, {
+          marketing,
+          price,
+          inventory,
+          hiring,
+          retention,
+          costs
+        }, summary);
+        setAiVerdict(res.verdict);
+        setAiTradeoffs(res.tradeoffs);
+        setAiRisks(res.risks);
+        setAiRoi(res.roi);
+      } catch (err) {
+        console.error('Gemini scenario simulation failed:', err);
+      } finally {
+        setIsSimulating(false);
+      }
+    }, 650);
+
+    return () => clearTimeout(handler);
+  }, [marketing, price, inventory, hiring, retention, costs, geminiApiKey, parsedData]);
+
   // Dynamic Math Equations for Real-Time Predictions
   const simulatedRevenue = 42.8 * (1 + price / 100) * (1 + (marketing - 45) * 0.0035) * (1 + (retention - 88) * 0.006);
   const simulatedProfit = 44.0 + (price * 0.35) - (costs * 0.25) - ((marketing - 45) * 0.04);
@@ -45,7 +90,7 @@ export const Forecast: React.FC = () => {
   
   const simulatedRisk = (inventory < 30 || costs > 12) ? 'Critical' : (inventory < 45 || costs > 8) ? 'High' : 'Low';
 
-  // Dynamic McKinsey-style Narrative Explanation
+  // Dynamic McKinsey-style Narrative Explanation (Heuristic Fallback)
   const getAIExplanation = () => {
     let text = '';
     if (marketing > 55) {
@@ -228,16 +273,48 @@ export const Forecast: React.FC = () => {
           </div>
 
           {/* Real-time AI explanation banner */}
-          <div className="bg-[#151B23] border border-white/5 rounded-2xl p-6 shadow-lg flex flex-col gap-3">
-            <div className="flex items-center gap-1.5 text-[#83D18B] select-none">
-              <Zap size={14} className="animate-pulse" />
-              <span className="text-[10px] font-bold uppercase tracking-wider font-sans">AI Scenario Verdict</span>
+          <div className="bg-[#151B23] border border-white/5 rounded-2xl p-6 shadow-lg flex flex-col gap-4 relative overflow-hidden">
+            {isSimulating && (
+              <div className="absolute inset-0 bg-[#090B10]/60 flex items-center justify-center gap-2 backdrop-blur-[1px] z-10">
+                <RefreshCw size={14} className="animate-spin text-[#83D18B]" />
+                <span className="text-11 font-mono text-white/50">Running predictive modeling...</span>
+              </div>
+            )}
+            
+            <div className="flex items-center justify-between text-[#83D18B] select-none border-b border-white/5 pb-2.5">
+              <div className="flex items-center gap-1.5">
+                <Zap size={14} className="animate-pulse" />
+                <span className="text-[10px] font-bold uppercase tracking-wider font-sans">Gemini Predictive Advisor</span>
+              </div>
+              <span className="text-[9.5px] font-mono text-white/30">
+                Confidence: {simulatedConfidence}%
+              </span>
             </div>
-            <p className="text-14 text-white/60 leading-relaxed font-serif">
-              {getAIExplanation()}
-            </p>
-            <div className="text-[10px] text-white/30 border-t border-white/5 pt-3 mt-1 select-none font-mono">
-              Confidence Index: {simulatedConfidence}% · Real-time simulation logic verified.
+
+            <div className="space-y-3 font-serif">
+              <div className="space-y-1">
+                <span className="text-[9px] uppercase font-sans font-bold tracking-widest text-[#83D18B]/70 animate-pulse">Verdict</span>
+                <p className="text-13.5 text-white/80 leading-relaxed">
+                  {aiVerdict || getAIExplanation()}
+                </p>
+              </div>
+
+              {(aiTradeoffs || aiRisks || aiRoi) && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-white/5 pt-3 mt-1.5">
+                  <div className="space-y-0.5">
+                    <span className="text-[8.5px] uppercase font-sans font-bold tracking-widest text-white/40">Trade-offs</span>
+                    <p className="text-11.5 text-white/50 leading-normal">{aiTradeoffs}</p>
+                  </div>
+                  <div className="space-y-0.5">
+                    <span className="text-[8.5px] uppercase font-sans font-bold tracking-widest text-white/40">Risks</span>
+                    <p className="text-11.5 text-white/50 leading-normal">{aiRisks}</p>
+                  </div>
+                  <div className="space-y-0.5">
+                    <span className="text-[8.5px] uppercase font-sans font-bold tracking-widest text-white/40">Expected ROI</span>
+                    <p className="text-11.5 text-[#83D18B] leading-normal">{aiRoi}</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

@@ -2,7 +2,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { useAppStore } from '../features/store';
 import { useDemoStore } from '../features/demoStore';
-import { businessSignals } from '../features/data';
 import { Card } from '../components/ui';
 import { Zap } from 'lucide-react';
 
@@ -54,6 +53,7 @@ const signalAdvisories: Record<string, { insight: string; impact: string; action
 
 export const BusinessSignals: React.FC = () => {
   const activeNodeId = useAppStore((state) => state.activeNodeId);
+  const businessSignals = useAppStore((state) => state.businessSignals);
   
   const isDemoActive = useDemoStore((state) => state.isDemoActive);
   const currentStep = useDemoStore((state) => state.currentStep);
@@ -100,7 +100,7 @@ export const BusinessSignals: React.FC = () => {
           const fillColor = signal.trend === 'positive' ? 'rgba(131, 209, 139, 0.08)' : signal.trend === 'negative' ? 'rgba(231, 111, 81, 0.08)' : 'rgba(245, 177, 76, 0.08)';
 
           const isHighlightDemo = isDemoActive && currentStep === 5 && ['gross-margin', 'transit-latency', 'cac-efficiency'].includes(signal.id);
-          const advisory = signalAdvisories[signal.id] || { insight: 'No signal anomalies detected.', impact: 'Stable.', action: 'Continue tracking.' };
+          const advisory = (signal as any).advisory || signalAdvisories[signal.id] || { insight: 'No signal anomalies detected.', impact: 'Stable.', action: 'Continue tracking.' };
 
           return (
             <div

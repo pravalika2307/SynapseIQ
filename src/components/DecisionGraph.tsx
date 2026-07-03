@@ -44,9 +44,9 @@ const CustomGraphNode: React.FC<NodeProps<Node<CustomNodeData>>> = ({ data }) =>
       onMouseEnter={data.onMouseEnter}
       onMouseLeave={data.onMouseLeave}
       className={`
-        px-4 py-3 rounded-xl border bg-card transition-all duration-300 min-w-[150px] shadow-lg select-none cursor-pointer
+        px-4 py-3 rounded-xl border bg-[#151B23] transition-all duration-300 min-w-[150px] shadow-lg select-none cursor-pointer
         ${data.isActive 
-          ? 'border-[#83D18B] bg-accent-sage-dim shadow-accent-sage/5 scale-105 ring-2 ring-[#83D18B]/25 animate-pulse' 
+          ? 'border-[#83D18B] bg-accent-sage-dim shadow-accent-sage/5 scale-105 ring-2 ring-[#83D18B]/25' 
           : 'border-white/5 hover:border-white/15'
         }
         ${data.isDimmed ? 'opacity-25 scale-95' : 'opacity-100'}
@@ -73,8 +73,8 @@ const nodeTypes = {
   customNode: CustomGraphNode
 };
 
-// Relationship details map for the tooltip
-const relationshipMap: Record<string, { metric: string; influence: string[] }> = {
+// Relationship details map for the tooltip (Static fallbacks)
+const fallbackRelationshipMap: Record<string, { metric: string; influence: string[] }> = {
   health: { metric: '84/100', influence: ['Revenue Run-rate', 'SLA Compliances', 'Safety stocks'] },
   revenue: { metric: '↑ 18%', influence: ['Marketing campaigns', 'Enterprise Customers', 'South Region'] },
   profit: { metric: '44.0%', influence: [' wafer margins', 'corridor rerouting', 'wafer spot-rates'] },
@@ -91,6 +91,9 @@ import { useDemoStore } from '../features/demoStore';
 export const DecisionGraph: React.FC = () => {
   const activeNodeId = useAppStore((state) => state.activeNodeId);
   const setCopilotContextNodeId = useAppStore((state) => state.setCopilotContextNodeId);
+  const nodeContexts = useAppStore((state) => state.nodeContexts);
+  const parsedData = useAppStore((state) => state.parsedData);
+  const dynamicCanvasEdges = useAppStore((state) => state.strategyCanvasEdges);
   
   const isDemoActive = useDemoStore((state) => state.isDemoActive);
   const currentStep = useDemoStore((state) => state.currentStep);
@@ -115,11 +118,58 @@ export const DecisionGraph: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
 
+  // Compute dynamic relationships based on actual correlations
+  const relationshipMap = useMemo(() => {
+    const map: Record<string, { metric: string; influence: string[] }> = {};
+    
+    Object.keys(nodeContexts).forEach(key => {
+      const ctx = nodeContexts[key];
+      let influence: string[] = [];
+
+      if (parsedData) {
+        // Map standard keys to csv columns
+        const standardCol = parsedData.detectedMetrics[key as keyof typeof parsedData.detectedMetrics];
+        if (standardCol) {
+          const corrs = parsedData.correlations[standardCol] || {};
+          const sortedCorrs = Object.keys(corrs)
+            .filter(c => c !== standardCol && Math.abs(corrs[c]) > 0.25)
+            .sort((a, b) => Math.abs(corrs[b]) - Math.abs(corrs[a]))
+            .slice(0, 3);
+          influence = sortedCorrs;
+        }
+      }
+
+      if (influence.length === 0) {
+        influence = fallbackRelationshipMap[key]?.influence || ['System variables'];
+      }
+
+      map[key] = {
+        metric: ctx?.metric || 'Nominal',
+        influence
+      };
+    });
+
+    // Ensure growth exists
+    if (!map['growth']) {
+      map['growth'] = { metric: '+14% YoY', influence: ['Sales pipeline', 'Regulatory path'] };
+    }
+
+    return map;
+  }, [nodeContexts, parsedData]);
+
   // Set of connections linked to any hovered node to dictate fading
   const connectedNodes = useMemo(() => {
     if (!activeHoveredNodeId) return new Set<string>();
     
-    // Health is connected to all
+    const linked = new Set<string>([activeHoveredNodeId]);
+    
+    // Scan dynamic edges to see what's connected to hovered node
+    dynamicCanvasEdges.forEach(e => {
+      if (e.source === activeHoveredNodeId) linked.add(e.target);
+      if (e.target === activeHoveredNodeId) linked.add(e.source);
+    });
+
+    // If health is hovered, connect to all
     if (activeHoveredNodeId === 'health') {
       return new Set([
         'health', 'revenue', 'profit', 'marketing', 'customers', 
@@ -127,9 +177,10 @@ export const DecisionGraph: React.FC = () => {
       ]);
     }
 
-    // Direct neighborhood list
-    return new Set(['health', activeHoveredNodeId]);
-  }, [activeHoveredNodeId]);
+    // Always keep health connected
+    linked.add('health');
+    return linked;
+  }, [activeHoveredNodeId, dynamicCanvasEdges]);
 
   // Layout node definitions
   const fullNodes = useMemo(() => [
@@ -139,7 +190,7 @@ export const DecisionGraph: React.FC = () => {
       position: { x: 300, y: 195 },
       data: {
         label: 'Business Health',
-        metric: '84/100',
+        metric: nodeContexts.health?.metric || '84/100',
         icon: <Heart size={14} />,
         isActive: activeNodeId === 'health',
         isHovered: activeHoveredNodeId === 'health',
@@ -154,7 +205,7 @@ export const DecisionGraph: React.FC = () => {
       position: { x: 300, y: 15 },
       data: {
         label: 'Revenue',
-        metric: '$42.8M',
+        metric: nodeContexts.revenue?.metric || '$42.8M',
         icon: <DollarSign size={14} />,
         isActive: activeNodeId === 'revenue',
         isHovered: activeHoveredNodeId === 'revenue',
@@ -169,7 +220,7 @@ export const DecisionGraph: React.FC = () => {
       position: { x: 490, y: 75 },
       data: {
         label: 'Profit',
-        metric: '44.0%',
+        metric: nodeContexts.profit?.metric || '44.0%',
         icon: <Percent size={14} />,
         isActive: activeNodeId === 'profit',
         isHovered: activeHoveredNodeId === 'profit',
@@ -184,7 +235,7 @@ export const DecisionGraph: React.FC = () => {
       position: { x: 530, y: 195 },
       data: {
         label: 'Satisfaction',
-        metric: '72 NPS',
+        metric: nodeContexts['customer-satisfaction']?.metric || '72 NPS',
         icon: <Smile size={14} />,
         isActive: activeNodeId === 'customer-satisfaction',
         isHovered: activeHoveredNodeId === 'customer-satisfaction',
@@ -199,7 +250,7 @@ export const DecisionGraph: React.FC = () => {
       position: { x: 490, y: 315 },
       data: {
         label: 'Marketing',
-        metric: '4.8x ROI',
+        metric: nodeContexts.marketing?.metric || '4.8x ROI',
         icon: <Megaphone size={14} />,
         isActive: activeNodeId === 'marketing',
         isHovered: activeHoveredNodeId === 'marketing',
@@ -214,7 +265,7 @@ export const DecisionGraph: React.FC = () => {
       position: { x: 300, y: 375 },
       data: {
         label: 'Operations',
-        metric: '92.4%',
+        metric: nodeContexts.operations?.metric || '92.4%',
         icon: <Settings size={14} />,
         isActive: activeNodeId === 'operations',
         isHovered: activeHoveredNodeId === 'operations',
@@ -229,7 +280,7 @@ export const DecisionGraph: React.FC = () => {
       position: { x: 110, y: 315 },
       data: {
         label: 'Inventory',
-        metric: '6.2x Turns',
+        metric: nodeContexts.inventory?.metric || '6.2x Turns',
         icon: <Boxes size={14} />,
         isActive: activeNodeId === 'inventory',
         isHovered: activeHoveredNodeId === 'inventory',
@@ -244,7 +295,7 @@ export const DecisionGraph: React.FC = () => {
       position: { x: 70, y: 195 },
       data: {
         label: 'Customers',
-        metric: '118% NRR',
+        metric: nodeContexts.customers?.metric || '118% NRR',
         icon: <Users size={14} />,
         isActive: activeNodeId === 'customers',
         isHovered: activeHoveredNodeId === 'customers',
@@ -259,7 +310,7 @@ export const DecisionGraph: React.FC = () => {
       position: { x: 110, y: 75 },
       data: {
         label: 'Growth Index',
-        metric: '+14% YoY',
+        metric: nodeContexts.growth?.metric || '+14% YoY',
         icon: <TrendingUp size={14} />,
         isActive: activeNodeId === 'growth',
         isHovered: activeHoveredNodeId === 'growth',
@@ -268,56 +319,67 @@ export const DecisionGraph: React.FC = () => {
         onMouseLeave: () => setHoveredNodeId(null)
       }
     }
-  ], [activeNodeId, activeHoveredNodeId, connectedNodes]);
+  ], [activeNodeId, activeHoveredNodeId, connectedNodes, nodeContexts]);
 
   // Display only assembled nodes
   const nodes = useMemo(() => {
     return fullNodes.slice(0, nodesAssembled);
   }, [fullNodes, nodesAssembled]);
 
-  // Connected relationship edges
+  // Connected relationship edges (Derived dynamically from correlation mapping)
   const edges: Edge[] = useMemo(() => {
-    const satellites = [
-      'revenue',
-      'profit',
-      'marketing',
-      'customers',
-      'inventory',
-      'operations',
-      'customer-satisfaction',
-      'growth'
-    ];
+    // Render store strategyCanvasEdges
+    const renderedEdges = dynamicCanvasEdges.map((e, idx) => {
+      const isSourceActive = activeNodeId === e.source || activeNodeId === e.target;
+      const isHighlighted = activeHoveredNodeId === e.source || activeHoveredNodeId === e.target || isSourceActive;
+      const isDimmed = activeHoveredNodeId !== null && activeHoveredNodeId !== e.source && activeHoveredNodeId !== e.target;
 
-    // Only render edges if endpoints are already assembled
-    return satellites
-      .filter((_, idx) => idx + 1 < nodesAssembled)
-      .map((satId) => {
-        const isCenterHovered = activeHoveredNodeId === 'health';
-        const isSatHovered = activeHoveredNodeId === satId;
-        
-        // Highlight logic
-        const isHighlighted = isCenterHovered || isSatHovered || (activeNodeId === satId || activeNodeId === 'health');
-        const isDimmed = activeHoveredNodeId !== null && !isCenterHovered && !isSatHovered;
+      return {
+        id: `edge-${e.source}-${e.target}-${idx}`,
+        source: e.source,
+        target: e.target,
+        animated: isHighlighted,
+        style: {
+          stroke: isHighlighted ? '#83D18B' : isDimmed ? 'rgba(255,255,255,0.02)' : 'rgba(255, 255, 255, 0.08)',
+          strokeWidth: isHighlighted ? 1.5 : 1,
+          transition: 'stroke 0.3s, stroke-width 0.3s'
+        }
+      };
+    });
 
-        return {
-          id: `edge-${satId}`,
-          source: 'health',
-          target: satId,
-          animated: isHighlighted,
-          style: {
-            stroke: isHighlighted ? '#83D18B' : isDimmed ? 'rgba(255,255,255,0.02)' : 'rgba(255, 255, 255, 0.08)',
-            strokeWidth: isHighlighted ? 1.5 : 1,
-            transition: 'stroke 0.3s, stroke-width 0.3s'
-          }
-        };
-      });
-  }, [activeNodeId, activeHoveredNodeId, nodesAssembled]);
+    // Hub-and-spoke edge fallback if nodes are loaded but store is initial
+    if (renderedEdges.length === 0) {
+      const satellites = ['revenue', 'profit', 'marketing', 'customers', 'inventory', 'operations', 'customer-satisfaction', 'growth'];
+      return satellites
+        .filter((_, idx) => idx + 1 < nodesAssembled)
+        .map((satId) => {
+          const isCenterHovered = activeHoveredNodeId === 'health';
+          const isSatHovered = activeHoveredNodeId === satId;
+          const isHighlighted = isCenterHovered || isSatHovered || (activeNodeId === satId || activeNodeId === 'health');
+          const isDimmed = activeHoveredNodeId !== null && !isCenterHovered && !isSatHovered;
+
+          return {
+            id: `edge-fallback-${satId}`,
+            source: 'health',
+            target: satId,
+            animated: isHighlighted,
+            style: {
+              stroke: isHighlighted ? '#83D18B' : isDimmed ? 'rgba(255,255,255,0.02)' : 'rgba(255, 255, 255, 0.08)',
+              strokeWidth: isHighlighted ? 1.5 : 1,
+              transition: 'stroke 0.3s, stroke-width 0.3s'
+            }
+          };
+        });
+    }
+
+    return renderedEdges;
+  }, [activeNodeId, activeHoveredNodeId, nodesAssembled, dynamicCanvasEdges]);
 
   const activeHoveredRel = activeHoveredNodeId ? relationshipMap[activeHoveredNodeId] : null;
   const hoveredNode = activeHoveredNodeId ? fullNodes.find(n => n.id === activeHoveredNodeId) : null;
 
   return (
-    <div className="w-full h-[580px] relative bg-background border border-white/5 rounded-2xl overflow-hidden shadow-2xl">
+    <div className="w-full h-[580px] relative bg-[#090B10] border border-white/5 rounded-2xl overflow-hidden shadow-2xl">
       <div className="absolute top-4 left-4 z-10 flex flex-col gap-0.5">
         <span className="text-[10px] font-bold uppercase tracking-wider text-white/30">System Blueprint</span>
         <span className="text-12 font-medium text-white/70">Interactive Relationship Graph</span>
@@ -342,10 +404,10 @@ export const DecisionGraph: React.FC = () => {
             </div>
             
             <div className="space-y-1">
-              <span className="text-[9px] uppercase font-bold tracking-widest text-[#83D18B]">Influenced By</span>
+              <span className="text-[9px] uppercase font-bold tracking-widest text-[#83D18B]">Related Nodes / Influences</span>
               <div className="flex flex-col gap-1 text-12 text-white/65">
                 {activeHoveredRel.influence.map((inf, idx) => (
-                  <span key={idx} className="flex items-center gap-1.5 leading-tight">
+                  <span key={idx} className="flex items-center gap-1.5 leading-tight truncate">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#83D18B] shrink-0 opacity-60" />
                     {inf}
                   </span>

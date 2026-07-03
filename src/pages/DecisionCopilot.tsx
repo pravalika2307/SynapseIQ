@@ -2,7 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, BookOpen, Zap, Compass } from 'lucide-react';
 import { useAppStore } from '../features/store';
-import { copilotStarters, copilotAIResponses, nodeContexts } from '../features/data';
+import { copilotStarters, copilotAIResponses } from '../features/data';
+import { askGeminiCopilot } from '../features/geminiService';
+import { parseCSV } from '../features/csvParser';
 import { Badge } from '../components/ui';
 
 import { useDemoStore } from '../features/demoStore';
@@ -15,6 +17,9 @@ export const DecisionCopilot: React.FC = () => {
   // Workspace active/context node state
   const activeNodeId = useAppStore((state) => state.activeNodeId);
   const datasetName = useAppStore((state) => state.datasetName);
+  const nodeContexts = useAppStore((state) => state.nodeContexts);
+  const geminiApiKey = useAppStore((state) => state.geminiApiKey);
+  const setGeminiApiKey = useAppStore((state) => state.setGeminiApiKey);
 
   const isDemoActive = useDemoStore((state) => state.isDemoActive);
   const currentStep = useDemoStore((state) => state.currentStep);
@@ -41,40 +46,117 @@ export const DecisionCopilot: React.FC = () => {
     }
   }, [isDemoActive, currentStep, hasTriggeredDemo]);
 
-  const handleSend = (text: string) => {
+  const handleSend = async (text: string) => {
     if (!text.trim()) return;
 
-    // Add user query
     addMessage(text, 'user');
     setInput('');
     setIsTyping(true);
 
-    // Simulate McKinsey Consultant Strategy analysis
+    const store = useAppStore.getState();
+    const apiKey = store.geminiApiKey;
+    let summary = store.parsedData;
+    if (!summary) {
+      try {
+        const { DEFAULT_CSV } = await import('../features/defaultDataset');
+        summary = parseCSV(DEFAULT_CSV, 'synapse_intel_matrix_q2.csv');
+      } catch (err) {
+        console.error('Failed to parse default CSV:', err);
+      }
+    }
+
+    if (apiKey && apiKey.trim() !== '' && summary) {
+      try {
+        const history = store.messages.map(m => ({ sender: m.sender, text: m.text }));
+        const responseData = await askGeminiCopilot(apiKey, text, history, summary, activeNodeContext);
+        addMessage(
+          responseData.summary,
+          'assistant',
+          {
+            summary: responseData.summary,
+            evidence: responseData.evidence,
+            confidence: responseData.confidence,
+            recommendation: responseData.recommendation,
+            nextQuestion: responseData.nextQuestion
+          }
+        );
+        setIsTyping(false);
+        return;
+      } catch (err) {
+        console.warn('Gemini Copilot failed, falling back to local reasoning:', err);
+      }
+    }
+
+    // Heuristic analysis fallback using parsed CSV data
     setTimeout(() => {
-      // Find matching custom response or fallback
-      const matchedKey = Object.keys(copilotAIResponses).find(
-        (key) => text.toLowerCase().includes(key.toLowerCase()) || key.toLowerCase().includes(text.toLowerCase())
-      );
+      const lowerQuery = text.toLowerCase();
+      let matchedKey = 'default-query';
+      if (lowerQuery.includes('revenue') || lowerQuery.includes('sale') || lowerQuery.includes('earn')) {
+        matchedKey = 'Why did revenue increase?';
+      } else if (lowerQuery.includes('region') || lowerQuery.includes('perform') || lowerQuery.includes('underperform')) {
+        matchedKey = 'Which region is underperforming?';
+      } else if (lowerQuery.includes('profit') || lowerQuery.includes('margin') || lowerQuery.includes('net')) {
+        matchedKey = "Predict next month's profit.";
+      } else if (lowerQuery.includes('risk') || lowerQuery.includes('hazard') || lowerQuery.includes('danger') || lowerQuery.includes('expose')) {
+        matchedKey = 'What is my biggest business risk?';
+      } else if (lowerQuery.includes('market') || lowerQuery.includes('cac') || lowerQuery.includes('ad')) {
+        matchedKey = 'Which marketing campaign had the best ROI?';
+      } else if (lowerQuery.includes('invest') || lowerQuery.includes('allocate') || lowerQuery.includes('where')) {
+        matchedKey = 'Where should I invest next?';
+      }
+
+      const responseData = copilotAIResponses[matchedKey] || copilotAIResponses['default-query'];
       
-      const responseData = matchedKey 
-        ? copilotAIResponses[matchedKey] 
-        : copilotAIResponses['default-query'];
+      let customSummary = responseData.summary;
+      let customEvidence = [...responseData.evidence];
+      let customRec = responseData.recommendation;
+
+      if (summary) {
+        const profile = summary.profile;
+        const metrics = summary.detectedMetrics;
+        const kpiStats = summary.kpiStats;
+
+        const formatCurrency = (val: number) => {
+          if (val >= 1e9) return `$${(val / 1e9).toFixed(2)}B`;
+          if (val >= 1e6) return `$${(val / 1e6).toFixed(2)}M`;
+          if (val >= 1e3) return `$${(val / 1e3).toFixed(1)}k`;
+          return `$${val.toFixed(2)}`;
+        };
+
+        const totalRevenue = formatCurrency(profile.totalRevenue);
+        const totalProfit = formatCurrency(profile.totalProfit);
+
+        if (matchedKey === 'Why did revenue increase?' && metrics.revenue && kpiStats[metrics.revenue]) {
+          customSummary = `Revenue expanded over the period, totaling ${totalRevenue} across ${profile.categories.join(', ')} categories.`;
+          customEvidence = [
+            `Total accumulated revenue was validated at ${totalRevenue} across ${summary.rowCount} periods.`,
+            `Average revenue per period registered at ${formatCurrency(kpiStats[metrics.revenue].mean)}.`,
+            `Peak revenue period reached a maximum of ${formatCurrency(kpiStats[metrics.revenue].max)}.`
+          ];
+        } else if (matchedKey === "Predict next month's profit." && metrics.profit && kpiStats[metrics.profit]) {
+          customSummary = `Gross operating profits stabilized, totaling a baseline of ${totalProfit} over the tracked period.`;
+          customEvidence = [
+            `Total net profit generated was ${totalProfit} with an average of ${formatCurrency(kpiStats[metrics.profit].mean)} per record.`,
+            `Max profit record logged was ${formatCurrency(kpiStats[metrics.profit].max)}.`,
+            `Risk margin is capped at the minimum profit baseline of ${formatCurrency(kpiStats[metrics.profit].min)}.`
+          ];
+        }
+      }
 
       addMessage(
-        responseData.summary,
+        customSummary,
         'assistant',
         {
-          summary: responseData.summary,
-          evidence: responseData.evidence,
+          summary: customSummary,
+          evidence: customEvidence,
           confidence: responseData.confidence,
-          recommendation: responseData.recommendation,
-          // Support for additional fields in data types
+          recommendation: customRec,
           relatedMetrics: responseData.relatedMetrics || [],
           nextQuestion: responseData.nextQuestion || ''
         }
       );
       setIsTyping(false);
-    }, 1600);
+    }, 1200);
   };
 
   // Follow-up chips actions
@@ -379,9 +461,24 @@ export const DecisionCopilot: React.FC = () => {
             </div>
           </div>
 
+          {/* Gemini API Key Configuration */}
+          <div className="space-y-2.5 p-4 bg-white/[0.01] border border-white/5 rounded-xl">
+            <span className="text-[9.5px] font-bold text-white/30 uppercase tracking-wider block">Gemini API Key</span>
+            <input
+              type="password"
+              value={geminiApiKey || ''}
+              onChange={(e) => setGeminiApiKey(e.target.value)}
+              placeholder="Enter API Key to supercharge AI..."
+              className="w-full bg-[#0D1117] border border-white/5 rounded-lg px-2.5 py-1.5 text-11 text-white/70 placeholder-white/20 outline-none focus:border-[#83D18B]/30"
+            />
+            <span className="text-[9px] text-white/20 block leading-tight">
+              {geminiApiKey ? '✅ Key Loaded. True Gemini Pipeline active.' : '💡 Optional. Falls back to localized data insights.'}
+            </span>
+          </div>
+
           {/* AI Confidence Rating */}
           <div className="space-y-2.5 p-4 bg-white/[0.01] border border-white/5 rounded-xl">
-            <span className="text-[9.5px] font-bold text-white/30 uppercase tracking-wider">AI Confidence Rating</span>
+            <span className="text-[9.5px] font-bold text-white/30 uppercase tracking-wider block">AI Confidence Rating</span>
             <div className="flex items-center justify-between text-11 font-mono">
               <span className="text-white/40">Reliability Index</span>
               <span className="text-[#83D18B] font-bold">94%</span>
