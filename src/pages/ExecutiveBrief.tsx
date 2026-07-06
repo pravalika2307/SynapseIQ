@@ -105,7 +105,7 @@ export const ExecutiveBrief: React.FC = () => {
             <Activity size={14} className="text-white/30" />
             <div className="flex flex-col">
               <span className="text-[8px] font-bold text-white/30 uppercase tracking-wider">AI Confidence</span>
-              <span className="font-mono text-[#83D18B] text-11">{decisionReadiness}%</span>
+              <span className="font-mono text-[#83D18B] text-11"><CountUp value={decisionReadiness} />%</span>
             </div>
           </div>
         </div>
@@ -264,7 +264,7 @@ export const ExecutiveBrief: React.FC = () => {
                 <div className="grid grid-cols-2 gap-2 text-11 border-t border-white/5 pt-3.5 text-left">
                   <div className="flex flex-col">
                     <span className="text-[8px] font-bold text-white/30 uppercase">Confidence</span>
-                    <span className="text-white/80 font-bold font-mono text-11.5">{item.confidence}%</span>
+                    <span className="text-white/80 font-bold font-mono text-11.5"><CountUp value={item.confidence} />%</span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-[8px] font-bold text-white/30 uppercase">Est. ROI</span>

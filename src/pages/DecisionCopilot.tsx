@@ -5,7 +5,7 @@ import { useAppStore } from '../features/store';
 import { copilotStarters, copilotAIResponses } from '../features/data';
 import { askGeminiCopilot } from '../features/geminiService';
 import { parseCSV } from '../features/csvParser';
-import { Badge } from '../components/ui';
+import { Badge, AIThinkingLoader } from '../components/ui';
 
 import { useDemoStore } from '../features/demoStore';
 
@@ -434,10 +434,7 @@ export const DecisionCopilot: React.FC = () => {
           )}
 
           {isTyping && (
-            <div className="flex items-center gap-2.5 text-white/30 text-12 italic font-serif select-none">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#83D18B] animate-ping" />
-              Strategy consult analyst is correlating signals...
-            </div>
+            <AIThinkingLoader />
           )}
           <div ref={messagesEndRef} />
         </div>

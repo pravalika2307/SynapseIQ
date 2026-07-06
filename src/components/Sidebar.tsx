@@ -146,8 +146,13 @@ export const Sidebar: React.FC = () => {
                   )}
 
                   <motion.span
-                    animate={isActive ? { scale: 1.05 } : { scale: 1 }}
-                    className="opacity-70 group-hover:opacity-100 min-w-[20px] z-10 flex items-center justify-center"
+                    animate={isActive 
+                      ? { scale: 1.05, color: '#83D18B', opacity: 1 } 
+                      : { scale: 1, color: '#ffffff', opacity: 0.5 }
+                    }
+                    whileHover={{ opacity: 0.85, color: '#83D18B' }}
+                    transition={{ duration: 0.25 }}
+                    className="min-w-[20px] z-10 flex items-center justify-center"
                   >
                     {item.icon}
                   </motion.span>
@@ -155,8 +160,13 @@ export const Sidebar: React.FC = () => {
                   {!isSidebarCollapsed && (
                     <motion.span
                       initial={{ opacity: 0, x: -5 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      className="ml-3 flex-1 truncate z-10 text-left"
+                      animate={isActive 
+                        ? { opacity: 1, x: 0, color: '#ffffff' } 
+                        : { opacity: 0.5, x: 0, color: 'rgba(255,255,255,0.5)' }
+                      }
+                      whileHover={{ opacity: 0.85 }}
+                      transition={{ duration: 0.25 }}
+                      className="ml-3 flex-1 truncate z-10 text-left font-sans"
                     >
                       {item.label}
                     </motion.span>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Sliders, Zap, CheckCircle, RefreshCw, Sparkles } from 'lucide-react';
-import { SectionHeader, Card, CountUp } from '../components/ui';
+import { Sliders, Zap, CheckCircle, Sparkles } from 'lucide-react';
+import { SectionHeader, Card, CountUp, AIThinkingLoader } from '../components/ui';
 import { useDemoStore } from '../features/demoStore';
 import { useAppStore } from '../features/store';
 import { simulateGeminiScenario } from '../features/geminiService';
@@ -302,9 +302,8 @@ export const Forecast: React.FC = () => {
           {/* Real-time AI explanation banner */}
           <div className="bg-[#151B23] border border-white/5 rounded-2xl p-6 shadow-lg flex flex-col gap-4 relative overflow-hidden">
             {isSimulating && (
-              <div className="absolute inset-0 bg-[#090B10]/60 flex items-center justify-center gap-2 backdrop-blur-[1px] z-10">
-                <RefreshCw size={14} className="animate-spin text-[#83D18B]" />
-                <span className="text-11 font-mono text-white/50">Running predictive modeling...</span>
+              <div className="absolute inset-0 bg-[#090B10]/85 flex items-center justify-center gap-2 backdrop-blur-[1px] z-10">
+                <AIThinkingLoader />
               </div>
             )}
             

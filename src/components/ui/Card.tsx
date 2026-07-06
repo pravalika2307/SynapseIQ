@@ -13,7 +13,7 @@ export const Card: React.FC<CardProps> = ({
   children,
   ...props
 }) => {
-  const baseStyles = 'rounded-2xl border transition-all duration-500 ease-out overflow-hidden';
+  const baseStyles = 'rounded-2xl border transition-all duration-[250ms] ease-out overflow-hidden';
   
   const elevations = {
     flat: 'bg-card border-white/5 shadow-sm',
@@ -22,7 +22,7 @@ export const Card: React.FC<CardProps> = ({
   };
 
   const hoverStyles = hoverEffect 
-    ? 'hover:border-white/10 hover:scale-[1.015] hover:-translate-y-1 hover:shadow-[0_15px_35px_rgba(0,0,0,0.4)] hover:bg-white/[0.015]' 
+    ? 'hover:border-[#83D18B]/20 hover:-translate-y-1.5 hover:shadow-[0_12px_40px_rgba(0,0,0,0.55),0_0_20px_rgba(131,209,139,0.05)] hover:bg-white/[0.015]' 
     : '';
 
   return (

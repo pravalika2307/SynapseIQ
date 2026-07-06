@@ -75,13 +75,30 @@ export const LiveInsightStream: React.FC = () => {
         <span className="text-11.5 font-bold uppercase tracking-wider text-white/80">Live Telemetry</span>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3.5">
-        <AnimatePresence initial={false}>
+      <motion.div 
+        variants={{
+          hidden: { opacity: 0 },
+          show: {
+            opacity: 1,
+            transition: {
+              staggerChildren: 0.1
+            }
+          }
+        }}
+        initial="hidden"
+        animate="show"
+        className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3.5"
+      >
+        <AnimatePresence>
           {insights.map((insight) => (
             <motion.div
               key={insight.id}
-              initial={{ opacity: 0, x: 20, height: 0 }}
-              animate={{ opacity: 1, x: 0, height: 'auto' }}
+              variants={{
+                hidden: { opacity: 0, y: 15 },
+                show: { opacity: 1, y: 0 }
+              }}
+              initial="hidden"
+              animate="show"
               exit={{ opacity: 0, x: -20, height: 0 }}
               transition={{ type: 'spring', stiffness: 180, damping: 18 }}
               className="bg-[#12161D] border border-white/5 rounded-xl p-3.5 flex flex-col gap-1.5 shadow-md relative overflow-hidden group hover:border-[#83D18B]/20 transition-all"
@@ -102,7 +119,7 @@ export const LiveInsightStream: React.FC = () => {
             </motion.div>
           ))}
         </AnimatePresence>
-      </div>
+      </motion.div>
     </div>
   );
 };
