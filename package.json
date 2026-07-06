@@ -1,7 +1,33 @@
 {
   "name": "synapseiq",
+  "version": "1.0.0",
+  "description": "AI-powered Decision Intelligence Platform that transforms business datasets into executive-ready insights using Google Gemini",
+  "author": "Pravalika Palle <pravalika2307@github>",
+  "license": "MIT",
+  "homepage": "https://github.com/pravalika2307/SynapseIQ#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pravalika2307/SynapseIQ.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pravalika2307/SynapseIQ/issues"
+  },
+  "keywords": [
+    "ai",
+    "business-intelligence",
+    "decision-intelligence",
+    "google-gemini",
+    "executive-dashboard",
+    "react",
+    "typescript",
+    "data-visualization",
+    "hackathon"
+  ],
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
   "private": true,
-  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
