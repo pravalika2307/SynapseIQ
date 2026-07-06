@@ -249,15 +249,22 @@ sequenceDiagram
 
 ---
 
-### Deployment Architecture — Google Cloud Run
+### Deployment Architecture — Vercel
 
 ```mermaid
 graph LR
-    Dev["💻 Local Dev\nnpm run dev"] -->|git push| GH["🐙 GitHub\npravalika2307/SynapseIQ"]
-    GH -->|Cloud Build Trigger| CB["⚙️ Cloud Build\nMulti-stage Docker"]
-    CB -->|Push Image| AR["📦 Artifact Registry\ngcr.io/PROJECT_ID/synapseiq"]
-    AR -->|Deploy| CR["☁️ Cloud Run\nServerless · HTTPS · Auto-scale"]
+    Dev["💻 Local Development<br/>React + TypeScript + Vite"] -->|git push| GH["🐙 GitHub Repository<br/>pravalika2307/SynapseIQ"]
 
+    GH -->|Automatic CI/CD| Vercel["▲ Vercel Platform<br/>Build & Deploy"]
+
+    Vercel -->|Production Deployment| Web["🌐 SynapseIQ Web Application<br/>HTTPS · Global CDN"]
+
+    Web -->|API Request| Gemini["🤖 Google Gemini API<br/>AI Decision Intelligence"]
+
+    Gemini -->|AI Responses| Web
+
+    Users["👨‍💼 Executives<br/>📊 Analysts<br/>📈 Managers"] -->|Access via Browser| Web
+```
     style GH fill:#0D1117,stroke:#fff,stroke-width:1px,color:#fff
     style CR fill:#0D1117,stroke:#4285F4,stroke-width:2px,color:#fff
 ```
