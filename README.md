@@ -604,7 +604,7 @@ MCA Graduate · AI & Data Enthusiast · Builder of SynapseIQ
 
 This project is licensed under the **MIT License** — see the [LICENSE](./LICENSE) file for full details.
 
-Copyright © 2025 Pravalika Palle
+Copyright © 2026 Pravalika Palle
 
 <br />
 
@@ -612,7 +612,7 @@ Copyright © 2025 Pravalika Palle
 
 <div align="center">
 
-**Built with ❤️ for the Google GenAI Academy Hackathon 2025**
+**Built with ❤️ for the Google GenAI Academy Hackathon 2026**
 
 ⭐ If SynapseIQ impressed you, consider giving the repository a star!
 
