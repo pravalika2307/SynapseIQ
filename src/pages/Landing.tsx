@@ -12,7 +12,7 @@ import { IntelligenceMesh } from '../components/IntelligenceMesh';
 
 export const Landing: React.FC = () => {
   const navigate = useNavigate();
-  
+
   const startDemo = useDemoStore((state) => state.startDemo);
   const isDemoActive = useDemoStore((state) => state.isDemoActive);
   const nextStep = useDemoStore((state) => state.nextStep);
@@ -82,12 +82,12 @@ export const Landing: React.FC = () => {
           <Sparkles size={16} className="text-[#83D18B] animate-pulse" />
           <span className="text-13.5 font-bold tracking-tight text-white/90">SynapseIQ</span>
         </div>
-        
+
         <nav className="hidden md:flex items-center gap-8 text-12 text-white/40">
           <a href="#docs" onClick={() => alert('Accessing SynapseIQ documentation.')} className="hover:text-white transition-colors">Documentation</a>
           <a href="https://github.com/pravalika2307/SynapseIQ" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">GitHub</a>
           <a href="#about" onClick={() => alert('SynapseIQ — Executive Decision Intelligence Engine.')} className="hover:text-white transition-colors">About</a>
-          <button 
+          <button
             onClick={() => setState('loading')}
             className="px-4 py-1.5 bg-white/[0.03] border border-white/5 rounded-lg text-white hover:bg-white/[0.06] hover:border-white/10 transition-all font-semibold"
           >
@@ -100,7 +100,7 @@ export const Landing: React.FC = () => {
       <main className="flex-1 flex items-center justify-center py-16 px-6 md:px-12 relative">
         <AnimatePresence mode="wait">
           {state === 'hero' ? (
-            <motion.div 
+            <motion.div
               key="hero"
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
@@ -114,13 +114,13 @@ export const Landing: React.FC = () => {
                   Your business already has the answers.<br />
                   <span className="text-[#83D18B] italic font-normal font-serif">We help you discover them.</span>
                 </h1>
-                
+
                 <p className="text-14.5 text-white/40 leading-relaxed max-w-xl">
                   Upload your business data and let SynapseIQ uncover trends, risks, opportunities and strategic recommendations using AI.
                 </p>
 
                 <div className="flex flex-wrap gap-4 items-center justify-center lg:justify-start pt-2">
-                  <button 
+                  <button
                     onClick={() => {
                       // Trigger file input upload manually
                       const clickTarget = document.querySelector('input[type="file"]') as HTMLInputElement;
@@ -131,14 +131,14 @@ export const Landing: React.FC = () => {
                     Analyze My Data <ArrowRight size={14} />
                   </button>
 
-                  <button 
+                  <button
                     onClick={handleStartGuidedDemo}
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#83D18B]/10 border border-[#83D18B]/30 text-[#83D18B] hover:bg-[#83D18B]/20 transition-all font-semibold text-13"
                   >
                     🎥 Start Guided Demo
                   </button>
 
-                  <button 
+                  <button
                     onClick={handleDemoClick}
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white/[0.03] border border-white/5 text-white/80 hover:bg-white/[0.06] hover:border-white/10 hover:text-white transition-all font-semibold text-13"
                   >
@@ -193,8 +193,8 @@ export const Landing: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className="flex items-center justify-between px-10 md:px-16 h-12 border-t border-white/5 text-[11px] text-white/20 relative z-10 shrink-0">
-        <span>© 2026 SynapseIQ Corporation. All rights reserved.</span>
+      <footer className="flex items-center justify-between px-10 md:px-16 h-12 border-t border-white/5 text-[12px] text-white/20 relative z-10 shrink-0">
+        <span>© 2026 Built by Pravalika Palle. All rights reserved.</span>
         <span>Executive Intelligence System · Region Q2</span>
       </footer>
     </PageTransition>

@@ -1,5 +1,5 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useRef, useEffect } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FileText,
@@ -22,6 +22,19 @@ export const Sidebar: React.FC = () => {
   const activeNodeId = useAppStore((state) => state.activeNodeId);
   const isSidebarCollapsed = useAppStore((state) => state.isSidebarCollapsed);
   const setSidebarCollapsed = useAppStore((state) => state.setSidebarCollapsed);
+
+  const navContainerRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const activeEl = navContainerRef.current?.querySelector('.active');
+      if (activeEl) {
+        activeEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
 
   const navItems = [
     {
@@ -94,7 +107,7 @@ export const Sidebar: React.FC = () => {
         {isSidebarCollapsed ? <ChevronRight size={12} /> : <ChevronLeft size={12} />}
       </button>
 
-      <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden px-1 scrollbar-none">
+      <div ref={navContainerRef} className="flex flex-col flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-1 scrollbar-none">
         {/* Workspace Label */}
         <AnimatePresence mode="wait">
           {!isSidebarCollapsed ? (
@@ -119,7 +132,7 @@ export const Sidebar: React.FC = () => {
               to={item.to}
               className={({ isActive }) => `
                 flex items-center px-4 py-2.5 text-13 transition-all duration-300 relative group
-                ${isActive ? 'text-white font-medium font-sans' : 'text-white/50 hover:text-white/85'}
+                ${isActive ? 'text-white font-medium font-sans active' : 'text-white/50 hover:text-white/85'}
               `}
             >
               {({ isActive }) => (

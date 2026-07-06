@@ -174,4 +174,14 @@ html, body, #root {
   filter: grayscale(35%) blur(0.3px) !important;
 }
 
+/* Hide scrollbar visually while keeping scroll functional */
+.scrollbar-none {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Opera */
+}
+
+
 
