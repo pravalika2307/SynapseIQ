@@ -264,7 +264,7 @@ graph LR
     Gemini -->|AI Responses| Web
 
     Users["👨‍💼 Executives<br/>📊 Analysts<br/>📈 Managers"] -->|Access via Browser| Web
-```
+
     style GH fill:#0D1117,stroke:#fff,stroke-width:1px,color:#fff
     style CR fill:#0D1117,stroke:#4285F4,stroke-width:2px,color:#fff
 ```
