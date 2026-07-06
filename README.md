@@ -638,7 +638,7 @@ MCA Graduate · AI & Data Enthusiast · Builder of SynapseIQ
 
 This project is licensed under the **MIT License** — see the [LICENSE](./LICENSE) file for details.
 
-Copyright © 2025 Pravalika Palle
+Copyright © 2026 Pravalika Palle
 
 <br />
 
