@@ -10,25 +10,29 @@
 
 <br />
 
+> 🏆 **Built for Google GenAI Academy Hackathon 2026**
+
+<br />
+
 [![React](https://img.shields.io/badge/React-19.x-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Vite](https://img.shields.io/badge/Vite-8.x-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
-[![Google Gemini](https://img.shields.io/badge/Google_Gemini-API-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev)
+[![Google Gemini](https://img.shields.io/badge/Google_Gemini-Powered-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22C55E?style=for-the-badge)](./LICENSE)
 
 <br />
 
-[![Hackathon](https://img.shields.io/badge/🏆_Google_GenAI_Academy-Hackathon_2025-FF6B35?style=flat-square)](https://developers.google.com/learn/topics/genai)
+[![Hackathon Submission](https://img.shields.io/badge/Google_GenAI_Academy-Hackathon_Submission-FF6B35?style=flat-square)](https://developers.google.com/learn/topics/genai)
 [![Build](https://img.shields.io/badge/Build-Passing-22C55E?style=flat-square&logo=vite)](./package.json)
-[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-A855F7?style=flat-square)](./CONTRIBUTING.md)
 [![Version](https://img.shields.io/badge/Version-1.0.0-0EA5E9?style=flat-square)](./CHANGELOG.md)
+[![Cloud Run Ready](https://img.shields.io/badge/Cloud_Run-Ready-4285F4?style=flat-square&logo=googlecloud&logoColor=white)](./Dockerfile)
 
 <br />
 
 ---
 
-### 🎥 [Watch Demo](#-demo) &nbsp;·&nbsp; 🚀 [Live App](#-deployment) &nbsp;·&nbsp; 📄 [Presentation](#-demo) &nbsp;·&nbsp; 📚 [Documentation](#-table-of-contents)
+### 🎥 [Watch Demo](#-demo) &nbsp;·&nbsp; 🚀 [Live App](#️-deployment) &nbsp;·&nbsp; 📄 [Presentation](#-demo) &nbsp;·&nbsp; 📚 [Documentation](#-table-of-contents)
 
 ---
 
@@ -36,13 +40,35 @@
 
 <br />
 
+<div align="center">
+
+![SynapseIQ Demo](./docs/screenshots/landing.png)
+
+*Landing Portal — Drag-and-drop CSV intake with automatic business profiling*
+
+</div>
+
+<br />
+
+<div align="center">
+
+| ⚡ Intelligent Dataset Analysis | 🧠 Google Gemini Powered | 📊 8 AI-Driven Modules | 📑 Automated Executive Reports | ☁️ Cloud Run Ready |
+|:---:|:---:|:---:|:---:|:---:|
+| Profiles industry, KPIs, outliers | Live AI reasoning + offline fallback | End-to-end decision intelligence | Boardroom-ready in one click | Production Docker + Nginx |
+
+</div>
+
+<br />
+
+---
+
 ## 📋 Table of Contents
 
 - [Overview](#-overview)
-- [Problem Statement](#️-problem-statement)
+- [Why SynapseIQ?](#-why-synapseiq)
 - [Key Features](#-key-features)
 - [Architecture](#-architecture)
-- [Technology Stack](#-technology-stack)
+- [Technology Stack](#️-technology-stack)
 - [Project Structure](#-project-structure)
 - [Screenshots](#-screenshots)
 - [Demo](#-demo)
@@ -50,7 +76,6 @@
 - [Environment Variables](#-environment-variables)
 - [Deployment](#️-deployment)
 - [Roadmap](#-roadmap)
-- [Contributing](#-contributing)
 - [Team](#-team)
 - [License](#-license)
 
@@ -60,7 +85,7 @@
 
 ## 🌐 Overview
 
-**SynapseIQ** is an AI-powered **Decision Intelligence Platform** that transforms structured business datasets into executive-ready insights, strategic recommendations, interactive business relationships, forecasting simulations, and boardroom-ready reports — all powered by **Google Gemini**.
+**SynapseIQ** is an AI-powered **Decision Intelligence Platform** that transforms structured business datasets into executive-ready insights, strategic recommendations, interactive business relationship maps, forecasting simulations, and boardroom-ready reports — all powered by **Google Gemini**.
 
 Unlike traditional BI dashboards that passively display charts, SynapseIQ acts as a **living AI operating system** that proactively surfaces strategic narratives, detects anomalies, simulates business scenarios, and guides executives toward high-confidence decisions.
 
@@ -70,19 +95,20 @@ Unlike traditional BI dashboards that passively display charts, SynapseIQ acts a
 
 ---
 
-## ⚠️ Problem Statement
+## 🆚 Why SynapseIQ?
 
-Modern enterprises operate with fragmented insight pipelines:
-
-| Challenge | Impact |
-|---|---|
-| **The "What vs Why" Gap** | Tools show *what* changed but never explain *why* it happened |
-| **Untestable Decisions** | Executives make multi-million dollar pivots without a risk sandbox |
-| **Context-Free AI** | Generic chatbots that lack page and metric awareness |
-| **Report Paralysis** | Hours spent manually compiling boardroom presentations |
-| **Reactive Operations** | Businesses discover issues after damage is already done |
-
-SynapseIQ eliminates each of these with a unified, AI-native decision surface.
+| Capability | Traditional Business Intelligence | ⚡ SynapseIQ |
+|---|---|---|
+| **Output** | Static charts and dashboards | Executive decisions and strategic recommendations |
+| **Analysis** | Shows *what* happened | Explains *why* it happened + what to do next |
+| **Reporting** | Manual, hours-long process | Auto-generated boardroom reports in seconds |
+| **AI Integration** | Generic chatbot widget | Context-aware strategist with full dataset awareness |
+| **Insights** | Reactive — discovered after damage | Proactive — AI Initiative Cards surface issues first |
+| **Scenarios** | Not possible | Live scenario simulation with real-time trade-off analysis |
+| **Relationships** | Siloed metric views | Interactive correlation graph (Strategy Canvas) |
+| **Confidence** | No quality signals | Dynamic AI confidence scoring per dataset |
+| **Data Limits** | Silent failures | Honest AI declarations when data is insufficient |
+| **Deployment** | Enterprise software license | Open-source, Docker-ready, Cloud Run in minutes |
 
 <br />
 
@@ -95,13 +121,13 @@ SynapseIQ eliminates each of these with a unified, AI-native decision surface.
 <td width="50%">
 
 ### 📊 Executive Brief
-The dashboard begins with an AI-narrated executive summary. Business health scores, top opportunities, critical risks, and today's strategic priorities are presented in a clean boardroom-ready layout with animated data ingestion.
+AI-narrated business health summary with today's strategic priorities, top opportunities, critical risks, and dynamic confidence scoring — built for immediate boardroom consumption.
 
 </td>
 <td width="50%">
 
 ### 🧠 Strategy Canvas
-An interactive relationship graph — powered by React Flow — visualizes how core business metrics (Revenue, Profit, Marketing ROI, Inventory, Customer Satisfaction) are mathematically correlated. Hover over any node to see correlation strength and strategic explanations.
+Interactive React Flow relationship graph that maps mathematical correlations between Revenue, Profit, Marketing ROI, Inventory, and Customer Satisfaction. Hover any node for correlation strength and strategic insight.
 
 </td>
 </tr>
@@ -109,13 +135,13 @@ An interactive relationship graph — powered by React Flow — visualizes how c
 <td width="50%">
 
 ### 📡 Business Signals
-A real-time telemetry matrix that detects and surfaces meaningful business events: revenue-profit divergence, satisfaction drops, inventory pressure, and marketing ROI outliers — with McKinsey-style explanations for each signal.
+Real-time anomaly telemetry matrix detecting meaningful business events — revenue-profit divergence, satisfaction drops, inventory pressure, and marketing ROI outliers — with McKinsey-style explanations.
 
 </td>
 <td width="50%">
 
 ### 🤖 AI Strategist (Decision Copilot)
-A split-pane AI consulting interface powered by Google Gemini. Ask questions about your dataset in natural language and receive structured executive responses: **Summary → Evidence → Interpretation → Recommendation → Confidence → Follow-up**.
+Gemini-powered split-pane consulting interface delivering structured executive responses: **Summary → Evidence → Interpretation → Recommendation → Confidence → Follow-up**.
 
 </td>
 </tr>
@@ -123,13 +149,13 @@ A split-pane AI consulting interface powered by Google Gemini. Ask questions abo
 <td width="50%">
 
 ### 📈 Forecast Studio
-A live scenario simulator with intuitive sliders for Marketing Spend, Pricing, Inventory, Hiring, Customer Retention, and Operational Costs. The AI explains trade-offs in real time as parameters change, generating projected revenue, profit margin, and risk scores.
+Six-lever scenario simulator — Marketing, Pricing, Inventory, Hiring, Retention, Costs — with real-time AI trade-off analysis and projected revenue, margin, and risk scoring.
 
 </td>
 <td width="50%">
 
 ### 📅 Business Timeline
-A chronological narrative ledger that translates raw dataset events into a human-readable business story. Filter by category, explore growth patterns, and understand seasonal dynamics at a glance.
+Chronological narrative ledger translating raw dataset records into a human-readable business story with category filtering and trend visualization.
 
 </td>
 </tr>
@@ -137,28 +163,24 @@ A chronological narrative ledger that translates raw dataset events into a human
 <td width="50%">
 
 ### 📑 Boardroom Report
-Auto-generates a full executive report with structured sections: Executive Summary, Business Health, Key Opportunities, Critical Risks, Forecast, Strategic Recommendations, and 90-Day Action Plan — formatted for immediate board presentation.
+Seven-section auto-generated executive report: Executive Summary · Business Health · Key Opportunities · Critical Risks · Forecast · Strategic Recommendations · 90-Day Action Plan.
 
 </td>
 <td width="50%">
 
 ### 📂 Intelligent Dataset Upload
-Upload any CSV business dataset. SynapseIQ automatically profiles the data: detects industry, infers key business metrics, identifies missing values and statistical outliers, and adapts all analysis modules to your specific data context.
+Upload any CSV business dataset. SynapseIQ auto-profiles the data: detects industry type, infers key business metrics, identifies missing values and Z-score outliers, and adapts all modules to your context.
 
 </td>
 </tr>
 </table>
 
-<br />
-
-### Additional Platform Capabilities
-
-- 🎬 **AI Narrative Engine** — Full-screen animated narrative after analysis completes, guiding executives through key findings
-- 🌐 **Intelligence Mesh Background** — Ambient animated particle system that responds to data state changes
-- ✨ **Presentation Mode** — One-click clean mode optimized for projector display and hackathon judging
-- 🧭 **Guided Demo Tour** — Automated step-by-step product walkthrough for evaluators with no setup required
-- 🔒 **Honest AI Declarations** — When data is insufficient, SynapseIQ clearly states limitations instead of hallucinating
-- 📊 **Dynamic Confidence Scoring** — AI confidence adapts based on dataset completeness, outlier density, and column availability
+**Additional Capabilities:**
+- 🎬 **AI Narrative Engine** — Full-screen animated narrative post-analysis guiding executives through key findings
+- ✨ **Presentation Mode** — One-click projector-optimized interface with expanded spacing and focused layouts
+- 🧭 **Guided Demo Tour** — Automated 3-minute walkthrough built for hackathon judges — no setup required
+- 🔒 **Honest AI Declarations** — Clear diagnostic banners when data is insufficient; no hallucinated answers
+- 🌐 **Intelligence Mesh** — Ambient animated particle background responding to data state changes
 
 <br />
 
@@ -166,71 +188,87 @@ Upload any CSV business dataset. SynapseIQ automatically profiles the data: dete
 
 ## 🏗 Architecture
 
-### System Architecture
+### System Architecture — End-to-End Data Flow
 
 ```mermaid
 graph TD
-    A["📂 Dataset Upload\nCSV / Default Demo"] --> B["🔬 Data Processing Engine\ncsvParser.ts"]
+    A["📂 Dataset Upload\nCSV Drag-and-Drop"] --> B["🔬 csvParser.ts\nData Processing Engine"]
 
-    B --> C["📊 Statistical Analysis\nKPIs · Correlations · Outliers · Z-score"]
-    B --> D["🏭 Industry & Profile Detection\nRetail · SaaS · Manufacturing"]
+    B --> C["📊 Statistical Analysis\nKPIs · Pearson Correlations\nZ-Score Outliers · Missing Values"]
+    B --> D["🏭 Auto-Profiling\nIndustry · Metrics · Timeframe"]
 
-    C --> E["🤖 Google Gemini API\ngeminiService.ts"]
+    C --> E["🤖 geminiService.ts\nGoogle Gemini API"]
     D --> E
 
-    E --> F["🧠 Decision Intelligence Engine\nlocalAnalysis.ts · store.ts"]
-    F --> G["💾 Zustand Global State Store"]
+    E --> F["🧠 Decision Intelligence Engine\nlocalAnalysis.ts"]
+    F --> G["💾 store.ts\nZustand Global State"]
 
-    G --> H["📋 Executive Brief\nHealth · Priorities · Opportunities"]
-    G --> I["🕸 Strategy Canvas\nRelationship Graph · Correlation Map"]
-    G --> J["🤖 AI Strategist\nContext-aware Chat · Evidence · Recommendations"]
-    G --> K["📈 Forecast Studio\nScenario Sliders · Trade-off Analysis"]
-    G --> L["📑 Boardroom Report\nAuto-generated Executive Report"]
-    G --> M["📡 Business Signals\nAnomaly Detection · Signal Cards"]
-    G --> N["📅 Business Timeline\nChronological Narrative Ledger"]
+    G --> H["📋 Executive Brief\nHealth · Priorities · Confidence"]
+    G --> I["🕸 Strategy Canvas\nCorrelation Relationship Graph"]
+    G --> J["🤖 AI Strategist\nContext Chat · Evidence · Actions"]
+    G --> K["📈 Forecast Studio\nScenario Sliders · Trade-offs"]
+    G --> L["📑 Boardroom Report\n7-Section Auto-Report"]
+    G --> M["📡 Business Signals\nAnomaly Detection Cards"]
+    G --> N["📅 Business Timeline\nChronological Narrative"]
+
+    style A fill:#0D1117,stroke:#83D18B,stroke-width:2px,color:#fff
+    style E fill:#0D1117,stroke:#4285F4,stroke-width:2px,color:#fff
+    style G fill:#0D1117,stroke:#A855F7,stroke-width:2px,color:#fff
 ```
 
-### AI Workflow — Decision Copilot
+> The CSV parser computes Pearson correlations, Z-score outliers (±3σ), and missing value ratios. This statistical profile feeds Google Gemini to generate a context-rich analysis JSON, which hydrates the Zustand global store powering every module simultaneously.
+
+---
+
+### AI Processing Pipeline — Decision Copilot
 
 ```mermaid
 sequenceDiagram
-    participant User as Executive
-    participant Graph as Strategy Canvas
-    participant Store as Zustand Store
-    participant Gemini as Google Gemini
-    participant Fallback as Local Reasoning Engine
+    participant E as Executive
+    participant SC as Strategy Canvas
+    participant S as Zustand Store
+    participant G as Google Gemini
+    participant L as Local Reasoning Engine
 
-    User->>Graph: Hover node (e.g., Revenue)
-    Graph->>User: Show correlation relationships + strength
-    User->>Graph: Click node (Revenue)
-    Graph->>Store: Dispatch activeNodeId = "revenue"
-    Store->>User: Refresh all context panels
+    E->>SC: Hover node (Revenue)
+    SC->>E: Show correlated nodes + correlation strength
+    E->>SC: Click node (Revenue)
+    SC->>S: setActiveNodeId("revenue")
+    S->>E: Refresh context panel with node data
 
-    User->>Gemini: "Why did revenue increase?"
-    alt Gemini API Available
-        Gemini->>User: Executive Summary · Evidence · Recommendation · Confidence
-    else Offline / No API Key
-        Fallback->>User: Dataset-grounded heuristic analysis response
+    E->>G: "Why did revenue increase?"
+    alt Gemini API configured
+        G->>E: Summary · Evidence · Recommendation · Confidence
+    else No API key / Offline
+        L->>E: Dataset-grounded heuristic response
     end
-
-    Note over User,Fallback: All responses follow Summary then Evidence then Interpretation then Recommendation then Confidence then Follow-up
+    Note over E,L: Format: Summary → Evidence → Interpretation → Recommendation → Confidence → Follow-up
 ```
 
-### Deployment Architecture
+> Every AI response — whether from Gemini or the local fallback — follows the same structured executive format. The local reasoning engine uses computed KPI stats (mean, max, min, total) from the parsed dataset to provide data-grounded answers without an API key.
+
+---
+
+### Deployment Architecture — Google Cloud Run
 
 ```mermaid
 graph LR
-    Dev["Local Development\nnpm run dev"] -->|git push| GH["GitHub\npravalika2307/SynapseIQ"]
-    GH -->|Cloud Build Trigger| CB["Google Cloud Build\nMulti-stage Docker"]
-    CB -->|Push Image| AR["Artifact Registry\ngcr.io/PROJECT"]
-    AR -->|Deploy| CR["Google Cloud Run\nServerless · Auto-scale"]
+    Dev["💻 Local Dev\nnpm run dev"] -->|git push| GH["🐙 GitHub\npravalika2307/SynapseIQ"]
+    GH -->|Cloud Build Trigger| CB["⚙️ Cloud Build\nMulti-stage Docker"]
+    CB -->|Push Image| AR["📦 Artifact Registry\ngcr.io/PROJECT_ID/synapseiq"]
+    AR -->|Deploy| CR["☁️ Cloud Run\nServerless · HTTPS · Auto-scale"]
+
+    style GH fill:#0D1117,stroke:#fff,stroke-width:1px,color:#fff
+    style CR fill:#0D1117,stroke:#4285F4,stroke-width:2px,color:#fff
 ```
+
+> The multi-stage Dockerfile compiles the React SPA in a Node.js builder container, then serves static assets via a minimal Nginx Alpine image on port 8080 — ideal for Google Cloud Run's serverless container model.
 
 <br />
 
 ---
 
-## 🛠 Technology Stack
+## 🛠️ Technology Stack
 
 ### Frontend
 
@@ -241,38 +279,34 @@ graph LR
 | [Vite](https://vite.dev) | 8.x | Build Tool & Dev Server |
 | [Tailwind CSS](https://tailwindcss.com) | v4 | Utility-first Dark Theme Styling |
 | [Framer Motion](https://www.framer.com/motion) | 12.x | Animations & Page Transitions |
-| [React Router](https://reactrouter.com) | v7 | Client-side Routing |
-
-### State Management
-
-| Technology | Version | Purpose |
-|---|---|---|
+| [React Router](https://reactrouter.com) | v7 | Client-side Hash Routing |
 | [Zustand](https://zustand-demo.pmnd.rs) | 5.x | Global Application State |
 
-### AI & Intelligence
+### AI & Data Intelligence
 
 | Technology | Purpose |
 |---|---|
-| [Google Gemini API](https://ai.google.dev) | Executive briefs · Copilot responses · Scenario analysis |
-| Local Reasoning Engine | Offline-capable heuristic fallback AI |
-| Z-Score Outlier Detection | Statistical anomaly identification |
-| Pearson Correlation Analysis | Business metric relationship mapping |
+| [Google Gemini API](https://ai.google.dev) | Executive briefs · Copilot chat · Scenario reasoning |
+| Local Reasoning Engine | Offline heuristic analysis grounded in computed dataset statistics |
+| Pearson Correlation Engine | Business metric relationship mapping for Strategy Canvas |
+| Z-Score Outlier Detection | Statistical anomaly identification (±3σ threshold) |
+| Dynamic Confidence Scoring | AI quality index based on dataset completeness and outlier density |
 
-### Data Visualization
+### Visualization
 
 | Technology | Version | Purpose |
 |---|---|---|
-| [React Flow (xyflow)](https://reactflow.dev) | 12.x | Interactive Strategy Canvas graph |
-| [Recharts](https://recharts.org) | 3.x | Business charts & visualizations |
+| [React Flow (xyflow)](https://reactflow.dev) | 12.x | Interactive Strategy Canvas node graph |
+| [Recharts](https://recharts.org) | 3.x | Business charts, scatter plots, line charts |
 
-### Deployment & Infrastructure
+### Infrastructure
 
 | Technology | Purpose |
 |---|---|
-| [Docker](https://docker.com) | Multi-stage containerization |
-| [Nginx](https://nginx.org) | Static SPA serving with fallback routing |
-| [Google Cloud Run](https://cloud.google.com/run) | Serverless container deployment |
-| [Google Cloud Build](https://cloud.google.com/build) | CI/CD pipeline automation |
+| [Docker](https://docker.com) | Multi-stage production container (Node builder → Nginx Alpine) |
+| [Nginx](https://nginx.org) | Static SPA serving with hash-router fallback rules |
+| [Google Cloud Run](https://cloud.google.com/run) | Serverless HTTPS container deployment |
+| [Google Cloud Build](https://cloud.google.com/build) | CI/CD from GitHub to Artifact Registry |
 
 <br />
 
@@ -283,71 +317,60 @@ graph LR
 ```
 SynapseIQ/
 │
-├── Dockerfile                  # Multi-stage production container image
-├── nginx.conf                  # SPA routing fallback + static serving config
-├── package.json                # NPM manifest, scripts, and dependencies
-├── tsconfig.json               # TypeScript compiler configuration
-├── vite.config.ts              # Vite build and plugin configuration
-├── .prettierrc                 # Code formatting rules
+├── Dockerfile                  # Multi-stage production container
+├── nginx.conf                  # SPA routing + static serving config
+├── package.json                # NPM manifest (v1.0.0)
+├── tsconfig.json               # TypeScript strict configuration
+├── vite.config.ts              # Vite build configuration
+├── CHANGELOG.md                # Version history
+├── CONTRIBUTING.md             # Contribution guidelines
+├── SECURITY.md                 # Security policy
+│
+├── docs/
+│   └── screenshots/            # README screenshots (7 pages)
 │
 ├── public/
-│   └── favicon.svg             # Application icon (SVG)
+│   └── favicon.svg             # Application icon
 │
 └── src/
-    ├── App.tsx                 # Root router — HashRouter + route definitions
+    ├── App.tsx                 # Root HashRouter + route definitions
     ├── main.tsx                # React DOM entry point
-    ├── index.css               # Global design tokens + Tailwind directives
-    │
-    ├── assets/
-    │   └── hero.png            # Hero image asset
+    ├── index.css               # Global design tokens + Tailwind
     │
     ├── components/             # Shared UI components
-    │   ├── ui/                 # Atomic design system primitives
-    │   │   ├── Badge.tsx       # Status and label badges
-    │   │   ├── Button.tsx      # Tactile interactive buttons
-    │   │   ├── Card.tsx        # Content card wrappers
-    │   │   ├── ChartContainer.tsx  # Recharts wrapper with animations
-    │   │   ├── CountUp.tsx     # Animated number counter
-    │   │   ├── Dropdown.tsx    # Select dropdown component
-    │   │   ├── Input.tsx       # Form input fields
-    │   │   ├── MetricCard.tsx  # KPI metric display cards
-    │   │   └── SectionHeader.tsx   # Page section headers
-    │   │
+    │   ├── ui/                 # Atomic design system (Button, Card, Badge…)
     │   ├── DecisionGraph.tsx   # React Flow interactive relationship graph
-    │   ├── AIMissionControl.tsx    # Animated AI narrative engine overlay
+    │   ├── AIMissionControl.tsx    # Animated AI narrative overlay
     │   ├── DemoController.tsx  # Guided demo tour state machine
     │   ├── IntelligenceMesh.tsx    # Ambient animated particle background
-    │   ├── LiveInsightStream.tsx   # Live activity sidebar ticker
-    │   ├── PageTransition.tsx  # Route transition animations
-    │   ├── PresentationToolbar.tsx # Presentation mode toggle + controls
-    │   ├── Sidebar.tsx         # Collapsible navigation sidebar
-    │   ├── Topbar.tsx          # Top navigation bar + AI status indicators
-    │   └── UploadZone.tsx      # CSV drag-and-drop upload component
+    │   ├── LiveInsightStream.tsx   # Live activity ticker sidebar
+    │   ├── PresentationToolbar.tsx # Presentation mode toggle
+    │   ├── Sidebar.tsx         # Collapsible navigation panel
+    │   ├── Topbar.tsx          # Top bar + AI status indicators
+    │   └── UploadZone.tsx      # CSV drag-and-drop upload
     │
-    ├── features/               # Core business logic and AI services
+    ├── features/               # Business logic & AI services
     │   ├── csvParser.ts        # CSV ingestion · profiling · correlation engine
-    │   ├── data.ts             # Node context and telemetry data mappings
+    │   ├── data.ts             # Node context and telemetry data maps
     │   ├── defaultDataset.ts   # Built-in demo dataset (NovaRetail Q2)
     │   ├── demoStore.ts        # Guided tour Zustand state machine
-    │   ├── geminiService.ts    # Google Gemini API integration layer
+    │   ├── geminiService.ts    # Google Gemini API integration
     │   ├── localAnalysis.ts    # Offline heuristic analysis engine
     │   └── store.ts            # Global application state (Zustand)
     │
     ├── layouts/
-    │   └── DashboardLayout.tsx # Sidebar + Topbar shell layout wrapper
+    │   └── DashboardLayout.tsx # Sidebar + Topbar shell wrapper
     │
-    ├── pages/                  # Full-page view components
-    │   ├── Landing.tsx         # Upload portal + AI intake sequence
-    │   ├── ExecutiveBrief.tsx  # Executive summary · health · priorities
-    │   ├── BusinessTimeline.tsx    # Chronological event narrative ledger
-    │   ├── BusinessSignals.tsx # Anomaly telemetry signal matrix
-    │   ├── StrategyCanvas.tsx  # Strategy graph + scatter analysis
-    │   ├── DecisionCopilot.tsx # AI strategist chat interface
-    │   ├── Forecast.tsx        # Scenario simulator + projections
-    │   ├── Reports.tsx         # Boardroom executive report generator
-    │   └── DataExplorer.tsx    # Raw dataset exploration viewer
-    │
-    └── types/                  # Shared TypeScript type definitions
+    └── pages/                  # Full-page view components
+        ├── Landing.tsx         # Upload portal + AI intake sequence
+        ├── ExecutiveBrief.tsx  # Executive summary + health + priorities
+        ├── BusinessTimeline.tsx    # Chronological event narrative
+        ├── BusinessSignals.tsx # Anomaly telemetry matrix
+        ├── StrategyCanvas.tsx  # Strategy graph + scatter analysis
+        ├── DecisionCopilot.tsx # AI strategist chat interface
+        ├── Forecast.tsx        # Scenario simulator + projections
+        ├── Reports.tsx         # Boardroom report generator
+        └── DataExplorer.tsx    # Raw dataset exploration viewer
 ```
 
 <br />
@@ -356,42 +379,91 @@ SynapseIQ/
 
 ## 📸 Screenshots
 
-> The following screenshots demonstrate SynapseIQ running with the built-in NovaRetail Q2 demo dataset. No API key is required for the demo experience.
+> All screenshots below show SynapseIQ running live with the built-in NovaRetail Q2 demo dataset. No API key is required for the demo experience.
 
 <br />
+
+<div align="center">
 
 **Landing Portal — Intelligent Dataset Intake**
-> Drag-and-drop CSV upload with automatic data profiling, industry detection, and validation feedback.
+
+![Landing Portal](./docs/screenshots/landing.png)
+
+*Drag-and-drop CSV upload · Auto-profiling · Industry detection · Validation feedback*
+
+</div>
 
 <br />
+
+<div align="center">
 
 **Executive Brief — AI-Narrated Business Summary**
-> Business health score, today's strategic priorities, top opportunities, critical risks, and confidence scoring.
+
+![Executive Brief](./docs/screenshots/executive_brief.png)
+
+*Business Health Score 90/100 · Decision Readiness 87/100 · AI Confidence 95% · Strategic Priorities · Live Telemetry*
+
+</div>
 
 <br />
+
+<div align="center">
 
 **Strategy Canvas — Interactive Business Relationship Graph**
-> React Flow powered node graph showing mathematical correlations between Revenue, Profit, Marketing, Inventory, and Customer Satisfaction with correlation strength tooltips.
+
+![Strategy Canvas](./docs/screenshots/strategy_canvas.png)
+
+*Pearson correlation mapping · Revenue $246.78M · Node relationship tooltips · Animated edges*
+
+</div>
 
 <br />
+
+<div align="center">
 
 **AI Strategist — Context-Aware Decision Copilot**
-> Split-pane Gemini-powered chat interface delivering structured executive responses with evidence, recommendation, and follow-up suggestions.
+
+![Decision Copilot](./docs/screenshots/decision_copilot.png)
+
+*Gemini-powered executive chat · Dataset Profile panel · McKinsey response format · Confidence scoring*
+
+</div>
 
 <br />
+
+<div align="center">
 
 **Forecast Studio — Live Scenario Simulator**
-> Interactive sliders for 6 business levers with real-time AI trade-off analysis and projected outcome scoring.
+
+![Forecast Studio](./docs/screenshots/forecast_studio.png)
+
+*Six business levers · Projected Revenue $49.6M · Gross Margin 45.7% · Real-time AI trade-off analysis*
+
+</div>
 
 <br />
+
+<div align="center">
 
 **Business Timeline — Chronological Narrative Ledger**
-> Event-driven business story from dataset with category filtering and trend visualization.
+
+![Business Timeline](./docs/screenshots/business_timeline.png)
+
+*Event-driven business story · Category filter chips · Trend visualization · Seasonal dynamics*
+
+</div>
 
 <br />
 
+<div align="center">
+
 **Boardroom Report — Auto-Generated Executive Report**
-> Full structured executive report with 7 sections ready for immediate board presentation.
+
+![Boardroom Report](./docs/screenshots/boardroom_report.png)
+
+*7-section executive brief · Strategic Planning dossier · Investor-ready format*
+
+</div>
 
 <br />
 
@@ -409,16 +481,16 @@ SynapseIQ/
 
 </div>
 
-### Guided Demo Experience
+### ▶️ Guided Demo Experience — For Hackathon Judges
 
-SynapseIQ includes a built-in **Guided Demo Tour** designed specifically for hackathon evaluators with limited time.
+SynapseIQ includes a built-in **Guided Demo Tour** that requires zero configuration.
 
-1. Launch the application and click **Start Guided Demo** on the landing screen
-2. The system auto-navigates through every feature with mock data pre-loaded
-3. Spotlights highlight relevant UI sections at each step
-4. The complete tour runs in under **3 minutes**
+1. Open the application — the built-in NovaRetail Q2 dataset loads automatically
+2. Click **Start Guided Demo** on the landing screen
+3. The system auto-navigates through all 8 key features with spotlights and narration
+4. **Completes in under 3 minutes**
 
-> **No API key required.** The guided demo uses an intelligent offline reasoning engine with the bundled NovaRetail Q2 dataset.
+> **No Gemini API key required.** The guided demo uses an intelligent offline reasoning engine backed by pre-computed statistical analysis of the bundled dataset.
 
 <br />
 
@@ -428,9 +500,11 @@ SynapseIQ includes a built-in **Guided Demo Tour** designed specifically for hac
 
 ### Prerequisites
 
-- **Node.js** ≥ 20.x
-- **npm** ≥ 10.x
-- **Google Gemini API Key** *(optional — full offline mode is available without one)*
+| Requirement | Version |
+|---|---|
+| Node.js | ≥ 20.x |
+| npm | ≥ 10.x |
+| Gemini API Key | Optional |
 
 ### Installation
 
@@ -441,30 +515,22 @@ cd SynapseIQ
 
 # 2. Install dependencies
 npm install
-```
 
-### Running Locally
-
-```bash
-# Start the development server with hot-reload
+# 3. Start the development server
 npm run dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-### Production Build
+### Other Commands
 
 ```bash
-# Type-check + compile optimized production bundle
+# Type-check + compile production bundle
 npm run build
 
 # Preview the production build locally
 npm run preview
-```
 
-### Linting
-
-```bash
 # Run ESLint code quality checks
 npm run lint
 ```
@@ -475,22 +541,15 @@ npm run lint
 
 ## 🔐 Environment Variables
 
-SynapseIQ is designed to work **fully offline** with its built-in reasoning engine. A Gemini API key unlocks the full live AI capabilities.
+SynapseIQ works **fully offline** with its built-in reasoning engine. A Gemini API key unlocks live AI capabilities.
 
 | Variable | Required | Description |
 |---|---|---|
-| `GEMINI_API_KEY` | Optional | Google Gemini API key for live AI analysis and executive briefs |
+| `GEMINI_API_KEY` | Optional | Google Gemini API key for live executive briefs and copilot chat |
 
-### How to Configure
+**How to configure:** No `.env` file is required. Enter your Gemini API key directly in the app UI at the landing screen. The key is stored in browser session memory only and is never persisted or transmitted to any external server other than the Google Gemini API.
 
-No `.env` file is required. The Gemini API key is entered directly in the application UI:
-
-1. Launch the application
-2. Upload a dataset (or use the built-in demo)
-3. Enter your Gemini API key in the **API Key** field on the landing screen
-4. The key is stored in browser session memory only — it is never transmitted to any external server
-
-> **Privacy:** SynapseIQ processes all data client-side in your browser. No data is uploaded to any external service unless you explicitly provide a Gemini API key to enable live AI analysis.
+> **Privacy:** All data processing happens client-side in your browser. No dataset or business data leaves your device unless you explicitly enable Gemini API integration.
 
 <br />
 
@@ -498,19 +557,17 @@ No `.env` file is required. The Gemini API key is entered directly in the applic
 
 ## ☁️ Deployment
 
-### Google Cloud Run (Recommended)
-
-This project ships with a production-ready multi-stage `Dockerfile` and Nginx configuration optimized for Google Cloud Run.
+### Google Cloud Run
 
 ```bash
-# 1. Authenticate with Google Cloud
+# Authenticate
 gcloud auth login
 gcloud config set project YOUR_PROJECT_ID
 
-# 2. Build and push container image via Cloud Build
+# Build and push via Cloud Build
 gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/synapseiq:latest
 
-# 3. Deploy to Cloud Run
+# Deploy to Cloud Run
 gcloud run deploy synapseiq \
   --image gcr.io/YOUR_PROJECT_ID/synapseiq:latest \
   --platform managed \
@@ -519,28 +576,21 @@ gcloud run deploy synapseiq \
   --port 8080
 ```
 
-### Docker (Local Container)
+### Docker (Local)
 
 ```bash
-# Build the Docker image
 docker build -t synapseiq:latest .
-
-# Run the container
 docker run -p 8080:8080 synapseiq:latest
 ```
 
 Open [http://localhost:8080](http://localhost:8080)
 
-### Static Hosting (Vercel / Netlify / GitHub Pages)
+### Static Hosting (Vercel / Netlify)
 
 ```bash
-# Build production assets
 npm run build
-
-# Deploy the generated dist/ directory to your preferred static host
+# Deploy the dist/ directory — no server-side requirements
 ```
-
-The `dist/` directory contains a fully self-contained SPA with no server-side requirements.
 
 <br />
 
@@ -548,33 +598,17 @@ The `dist/` directory contains a fully self-contained SPA with no server-side re
 
 ## 🔮 Roadmap
 
-| Status | Version | Milestone | Description |
-|---|---|---|---|
-| ✅ Complete | v1.0.0 | **Hackathon Prototype** | Full-featured AI decision platform with Gemini integration |
-| 🔄 In Progress | v1.1 | **Real-time Analytics** | WebSocket-powered live data streaming |
-| 📅 Planned | v1.2 | **Multi-user Collaboration** | Shared workspaces with role-based permissions |
-| 📅 Planned | v1.3 | **ERP Integration** | SAP, Oracle NetSuite, Microsoft Dynamics connectors |
-| 📅 Planned | v1.4 | **CRM Integration** | Salesforce, HubSpot, and Pipedrive data ingestion |
-| 📅 Planned | v2.0 | **Explainable AI** | Full causal reasoning chains with source citations |
-| 📅 Planned | v2.1 | **Enterprise Auth** | SSO with Google Workspace, Okta, and Azure AD |
-| 📅 Planned | v2.2 | **Board Meeting Exports** | One-click PowerPoint and PDF boardroom report generation |
-| 🌟 Vision | v3.0 | **Vertex AI Integration** | Google Vertex AI Workbench with custom fine-tuned models |
-
-<br />
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! SynapseIQ is an open project built for the community.
-
-1. **Fork** the repository on GitHub
-2. **Create** a feature branch: `git checkout -b feat/your-feature-name`
-3. **Commit** your changes following [Conventional Commits](https://www.conventionalcommits.org): `git commit -m 'feat: add amazing feature'`
-4. **Push** to your branch: `git push origin feat/your-feature-name`
-5. **Open** a Pull Request describing your changes
-
-Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed contribution guidelines, code style requirements, and the pull request process.
+| Status | Version | Milestone |
+|---|---|---|
+| ✅ Complete | v1.0.0 | Hackathon Prototype — Full AI decision platform with Gemini |
+| 🔄 In Progress | v1.1 | Real-time analytics via WebSocket streaming |
+| 📅 Planned | v1.2 | Multi-user collaborative workspaces with role-based access |
+| 📅 Planned | v1.3 | ERP connectors — SAP, Oracle NetSuite, Microsoft Dynamics |
+| 📅 Planned | v1.4 | CRM connectors — Salesforce, HubSpot, Pipedrive |
+| 📅 Planned | v2.0 | Explainable AI with full causal reasoning chains |
+| 📅 Planned | v2.1 | Enterprise SSO — Google Workspace, Okta, Azure AD |
+| 📅 Planned | v2.2 | One-click PowerPoint and PDF boardroom export |
+| 🌟 Vision | v3.0 | Google Vertex AI integration with custom fine-tuned models |
 
 <br />
 
@@ -602,7 +636,7 @@ MCA Graduate · AI & Data Enthusiast · Builder of SynapseIQ
 
 ## 📄 License
 
-This project is licensed under the **MIT License** — see the [LICENSE](./LICENSE) file for full details.
+This project is licensed under the **MIT License** — see the [LICENSE](./LICENSE) file for details.
 
 Copyright © 2025 Pravalika Palle
 
@@ -612,9 +646,21 @@ Copyright © 2025 Pravalika Palle
 
 <div align="center">
 
-**Built with ❤️ for the Google GenAI Academy Hackathon 2025**
+<br />
 
-⭐ If SynapseIQ impressed you, consider giving the repository a star!
+**⚡ SynapseIQ**
+
+*Where Data Becomes Decisions*
+
+AI Operating System for Executive Decision Making
+
+Powered by Google Gemini · Built for Google GenAI Academy Hackathon 2026
+
+<br />
+
+*If you found this project interesting, please consider giving it a ⭐ on GitHub.*
+
+<br />
 
 [⬆ Back to Top](#-synapseiq)
 
