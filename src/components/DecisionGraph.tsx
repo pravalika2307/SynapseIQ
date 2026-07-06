@@ -4,7 +4,10 @@ import {
   Background, 
   Position, 
   Handle,
+  ReactFlowProvider,
+  useReactFlow
 } from '@xyflow/react';
+import { useLocation } from 'react-router-dom';
 import type { 
   Node, 
   Edge, 
@@ -129,7 +132,7 @@ const fallbackRelationshipMap: Record<string, { metric: string; influence: strin
 
 import { useDemoStore } from '../features/demoStore';
 
-export const DecisionGraph: React.FC = () => {
+const DecisionGraphInner: React.FC = () => {
   const activeNodeId = useAppStore((state) => state.activeNodeId);
   const setCopilotContextNodeId = useAppStore((state) => state.setCopilotContextNodeId);
   const nodeContexts = useAppStore((state) => state.nodeContexts);
@@ -141,6 +144,39 @@ export const DecisionGraph: React.FC = () => {
 
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [nodesAssembled, setNodesAssembled] = useState(0);
+
+  const { fitView } = useReactFlow();
+  const location = useLocation();
+
+  // Automatically fit complete graph inside the available viewport at multiple intervals
+  useEffect(() => {
+    const timers = [
+      setTimeout(() => fitView({ padding: 0.22 }), 100),
+      setTimeout(() => fitView({ padding: 0.22 }), 600),
+      setTimeout(() => fitView({ padding: 0.22 }), 1200),
+      setTimeout(() => fitView({ padding: 0.22 }), 1800),
+      setTimeout(() => fitView({ padding: 0.22 }), 2500),
+    ];
+    return () => timers.forEach(clearTimeout);
+  }, [location.pathname, fitView]);
+
+  useEffect(() => {
+    if (nodesAssembled >= 9) {
+      const timer = setTimeout(() => {
+        fitView({ padding: 0.22, duration: 300 });
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [nodesAssembled, fitView]);
+
+  // Handle window resize dynamically to prevent clipping
+  useEffect(() => {
+    const handleResize = () => {
+      fitView({ padding: 0.22 });
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [fitView]);
 
   // Auto-hover revenue to display relationships in Step 4
   const activeHoveredNodeId = (isDemoActive && currentStep === 4) ? 'revenue' : hoveredNodeId;
@@ -484,17 +520,25 @@ export const DecisionGraph: React.FC = () => {
         nodeTypes={nodeTypes}
         onNodeClick={(_, node) => setCopilotContextNodeId(node.id)}
         fitView
-        fitViewOptions={{ padding: 0.15 }}
+        fitViewOptions={{ padding: 0.20 }}
         nodesConnectable={false}
         nodesDraggable={false}
         elementsSelectable={true}
-        zoomOnScroll={false}
-        zoomOnPinch={false}
-        panOnDrag={false}
+        zoomOnScroll={true}
+        zoomOnPinch={true}
+        panOnDrag={true}
         className="w-full h-full"
       >
         <Background color="#1b222c" gap={20} size={1} />
       </ReactFlow>
     </div>
+  );
+};
+
+export const DecisionGraph: React.FC = () => {
+  return (
+    <ReactFlowProvider>
+      <DecisionGraphInner />
+    </ReactFlowProvider>
   );
 };
