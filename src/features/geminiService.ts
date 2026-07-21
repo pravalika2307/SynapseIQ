@@ -152,16 +152,15 @@ You must return a JSON object matching the following structure:
       "riskLevel": "Optimized|High|Critical",
       "summary": "Polished executive report derived from real AI insights.",
       "narrative": [
-        "Executive Summary: [Provide a high-level strategic synthesis and overview of performance]",
-        "Business Context: [Detail the operational and industry environment, explaining the WHY behind the telemetry]",
-        "Key Findings: [List the core observations derived from the data averages, maximums and minimums]",
-        "Root Causes: [Outline the underlying structural or operational drivers of the trends]",
-        "Business Risks: [Detail the most critical bottom-line and operational threats]",
-        "Growth Opportunities: [Identify the top high-margin strategic upsides]",
-        "Strategic Recommendations: [Specific, context-rich steering actions, always beginning with 'We recommend...']",
-        "Immediate Actions: [Priority step-by-step rollout plan for the next 30 days]",
-        "Expected Impact: [Quantify the expected performance improvements and financial outcomes]",
-        "Confidence Score: [A strategic summary of why the telemetry supports these findings with high reliability]"
+        "Executive Summary: [High-level strategic synthesis and overview of overall business performance, explaining the key takeaway]",
+        "Current Business Status: [Detail the active operational and financial health parameters based on the BI telemetry]",
+        "Top Opportunities: [Synthesize the highest-potential high-margin opportunities identified by data covariance]",
+        "Critical Risks: [Highlight critical bottom-line and operational threats, detailing Hanoi or carrier queue exposures]",
+        "Performance Highlights: [Detail statistical high-points, maximums and key KPI beats from telemetry]",
+        "Strategic Recommendations: [List targeted context-rich steering actions, always beginning with 'We recommend...']",
+        "Implementation Roadmap: [Step-by-step priority rollout timeline for immediate administrative execution]",
+        "Expected Outcomes: [Quantify the expected operating margin benefits and financial ARR multipliers]",
+        "Conclusion: [Final synthesis and strategic outlook for boardroom presentation]"
       ]
     }
   ],
@@ -188,7 +187,7 @@ You must return a JSON object matching the following structure:
 
 Instructions:
 1. Return structured JSON ONLY. Do not wrap response in markdown.
-2. In 'briefingReports', the 'narrative' array MUST contain exactly 10 paragraphs.
+2. In 'briefingReports', the 'narrative' array MUST contain exactly 9 paragraphs.
 3. Every recommendation string inside nodeContexts and timelineEvents must be JSON-serialized so it can be parsed as a structured object.
 `;
 
