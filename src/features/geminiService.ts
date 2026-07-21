@@ -42,28 +42,96 @@ function logStructured(meta: {
   }));
 }
 
-// Schema Validators
-function validateAnalysisResponse(data: any): boolean {
-  if (!data || typeof data !== 'object') return false;
-  if (!data.nodeContexts || !data.businessSignals || !data.briefingReports) return false;
+// ----------------------------------------------------
+// EXECUTIVE REWRITE RULES & REPETITIVE SENTENCE CHECKERS
+// ----------------------------------------------------
+function rewriteExecutiveLanguage(text: string): string {
+  if (!text) return '';
+  let cleaned = text;
+  const mappings = [
+    { pattern: /based on the provided data/gi, replacement: "Strategic evaluation of the telemetry indicates" },
+    { pattern: /based on the data/gi, replacement: "Operational telemetry indicates" },
+    { pattern: /it appears that/gi, replacement: "Telemetry audits demonstrate" },
+    { pattern: /it appears/gi, replacement: "Audits demonstrate" },
+    { pattern: /the dataset suggests/gi, replacement: "Operational patterns confirm" },
+    { pattern: /the data suggests/gi, replacement: "Telemetry registers" },
+    { pattern: /as we can see/gi, replacement: "Executive analysis highlights" }
+  ];
+  for (const map of mappings) {
+    cleaned = cleaned.replace(map.pattern, map.replacement);
+  }
+  return cleaned;
+}
+
+function hasDuplicateSentences(text: string): boolean {
+  if (!text) return false;
+  const sentences = text.split(/[.!?]+/).map(s => s.trim().toLowerCase()).filter(s => s.length > 25);
+  const seen = new Set<string>();
+  for (const s of sentences) {
+    if (seen.has(s)) {
+      return true;
+    }
+    seen.add(s);
+  }
+  return false;
+}
+
+// ----------------------------------------------------
+// SCHEMA VALIDATORS
+// ----------------------------------------------------
+function cleanAndValidateAnalysis(parsed: any): boolean {
+  if (!parsed || typeof parsed !== 'object') return false;
+  if (!parsed.nodeContexts || !parsed.businessSignals || !parsed.briefingReports) return false;
+  
   const required = ['health', 'revenue', 'profit', 'customers'];
   for (const req of required) {
-    if (!data.nodeContexts[req] || typeof data.nodeContexts[req].recommendation !== 'string') {
+    if (!parsed.nodeContexts[req] || typeof parsed.nodeContexts[req].recommendation !== 'string') {
       return false;
     }
   }
+
+  if (parsed.briefingReports[0] && parsed.briefingReports[0].narrative) {
+    const narrative = parsed.briefingReports[0].narrative;
+    if (!Array.isArray(narrative) || narrative.length !== 9) return false;
+    for (let i = 0; i < narrative.length; i++) {
+      narrative[i] = rewriteExecutiveLanguage(narrative[i]);
+      if (hasDuplicateSentences(narrative[i])) return false;
+      if (/based on the provided data|it appears|the dataset suggests/i.test(narrative[i])) return false;
+    }
+  }
+
+  const nodes = Object.keys(parsed.nodeContexts);
+  for (const nodeKey of nodes) {
+    const node = parsed.nodeContexts[nodeKey];
+    node.summary = rewriteExecutiveLanguage(node.summary || '');
+    if (hasDuplicateSentences(node.summary)) return false;
+    if (/based on the provided data|it appears|the dataset suggests/i.test(node.summary)) return false;
+  }
+  
   return true;
 }
 
-function validateCopilotResponse(data: any): boolean {
-  if (!data || typeof data !== 'object') return false;
-  if (typeof data.summary !== 'string' || typeof data.recommendation !== 'string') return false;
+function cleanAndValidateCopilot(parsed: any): boolean {
+  if (!parsed || typeof parsed !== 'object') return false;
+  if (typeof parsed.summary !== 'string' || typeof parsed.recommendation !== 'string') return false;
+  if (parsed.confidence && parsed.confidence < 50) return false;
+
+  parsed.summary = rewriteExecutiveLanguage(parsed.summary);
+  if (hasDuplicateSentences(parsed.summary)) return false;
+  if (/based on the provided data|it appears|the dataset suggests/i.test(parsed.summary)) return false;
+
   return true;
 }
 
-function validateScenarioResponse(data: any): boolean {
-  if (!data || typeof data !== 'object') return false;
-  if (typeof data.verdict !== 'string' || !data.recommendedAction || typeof data.recommendedAction.impact !== 'string') return false;
+function cleanAndValidateScenario(parsed: any): boolean {
+  if (!parsed || typeof parsed !== 'object') return false;
+  if (typeof parsed.verdict !== 'string' || !parsed.recommendedAction || typeof parsed.recommendedAction.impact !== 'string') return false;
+  if (parsed.confidence && parsed.confidence < 50) return false;
+
+  parsed.verdict = rewriteExecutiveLanguage(parsed.verdict);
+  if (hasDuplicateSentences(parsed.verdict)) return false;
+  if (/based on the provided data|it appears|the dataset suggests/i.test(parsed.verdict)) return false;
+
   return true;
 }
 
@@ -150,7 +218,6 @@ async function callGeminiRawWithRetry(
         throw error;
       }
 
-      // Check for Rate Limit 429 inside error message
       const isRateLimit = error.message.includes('429') || error.message.toLowerCase().includes('rate limit') || error.message.toLowerCase().includes('quota');
       const delay = (isRateLimit ? initialDelay * 3 : initialDelay) * Math.pow(2, attempt - 1);
       
@@ -235,14 +302,21 @@ Return JSON shape exactly:
 Only return clean JSON. narrative array must have exactly 9 paragraphs.
 `;
 
-  const responseText = await callGeminiRawWithRetry(apiKey, prompt, 'generateGeminiAnalysis', signal);
-  const parsed = JSON.parse(responseText);
-  
-  if (!validateAnalysisResponse(parsed)) {
-    throw new Error('Analysis response schema validation failed');
+  let attempt = 0;
+  while (attempt < 2) {
+    attempt++;
+    try {
+      const responseText = await callGeminiRawWithRetry(apiKey, prompt, 'generateGeminiAnalysis', signal);
+      const parsed = JSON.parse(responseText);
+      if (cleanAndValidateAnalysis(parsed)) {
+        return parsed as AnalysisResponse;
+      }
+      logStructured({ operation: 'generateGeminiAnalysis', status: 'retry', durationMs: 0, attempt, error: 'Validation failed. Regenerating...' });
+    } catch (err: any) {
+      if (attempt >= 2) throw err;
+    }
   }
-
-  return parsed as AnalysisResponse;
+  throw new Error('generateGeminiAnalysis failed validation audit.');
 }
 
 export async function askGeminiCopilot(
@@ -289,14 +363,21 @@ Return JSON shape:
 }
 `;
 
-  const responseText = await callGeminiRawWithRetry(apiKey, prompt, 'askGeminiCopilot', signal);
-  const parsed = JSON.parse(responseText);
-
-  if (!validateCopilotResponse(parsed)) {
-    throw new Error('Copilot response schema validation failed');
+  let attempt = 0;
+  while (attempt < 2) {
+    attempt++;
+    try {
+      const responseText = await callGeminiRawWithRetry(apiKey, prompt, 'askGeminiCopilot', signal);
+      const parsed = JSON.parse(responseText);
+      if (cleanAndValidateCopilot(parsed)) {
+        return parsed as CopilotResponse;
+      }
+      logStructured({ operation: 'askGeminiCopilot', status: 'retry', durationMs: 0, attempt, error: 'Validation failed. Regenerating...' });
+    } catch (err: any) {
+      if (attempt >= 2) throw err;
+    }
   }
-
-  return parsed as CopilotResponse;
+  throw new Error('askGeminiCopilot failed validation audit.');
 }
 
 export async function simulateGeminiScenario(
@@ -350,14 +431,21 @@ Return JSON shape:
 }
 `;
 
-  const responseText = await callGeminiRawWithRetry(apiKey, prompt, 'simulateGeminiScenario', signal);
-  const parsed = JSON.parse(responseText);
-
-  if (!validateScenarioResponse(parsed)) {
-    throw new Error('Scenario response schema validation failed');
+  let attempt = 0;
+  while (attempt < 2) {
+    attempt++;
+    try {
+      const responseText = await callGeminiRawWithRetry(apiKey, prompt, 'simulateGeminiScenario', signal);
+      const parsed = JSON.parse(responseText);
+      if (cleanAndValidateScenario(parsed)) {
+        return parsed as ScenarioResponse;
+      }
+      logStructured({ operation: 'simulateGeminiScenario', status: 'retry', durationMs: 0, attempt, error: 'Validation failed. Regenerating...' });
+    } catch (err: any) {
+      if (attempt >= 2) throw err;
+    }
   }
-
-  return parsed as ScenarioResponse;
+  throw new Error('simulateGeminiScenario failed validation audit.');
 }
 
 // ----------------------------------------------------
