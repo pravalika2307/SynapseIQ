@@ -446,8 +446,21 @@ export function askLocalCopilot(
   const totalRevenue = formatCurrency(profile.totalRevenue);
   const totalProfit = formatCurrency(profile.totalProfit);
 
+  // Resolve conversation context follow-up checks
+  let resolvedQuery = lowerQuery;
+  if (_history && _history.length > 0) {
+    const lastUserMsg = [..._history].reverse().find(msg => msg.sender === 'user');
+    if (lastUserMsg) {
+      const lastText = lastUserMsg.text.toLowerCase();
+      // If the current query is a short follow-up (like "why", "elaborate", "tell me more", "how", "what are risks")
+      if (lowerQuery.length < 35 && (lowerQuery.includes('why') || lowerQuery.includes('elaborate') || lowerQuery.includes('more') || lowerQuery.includes('how') || lowerQuery.includes('detail') || lowerQuery.includes('risk') || lowerQuery.includes('recommend') || lowerQuery.includes('suggest') || lowerQuery.includes('action'))) {
+        resolvedQuery = `${lastText} - follow up: ${lowerQuery}`;
+      }
+    }
+  }
 
-  if (lowerQuery.includes('churn') || lowerQuery.includes('retention') || lowerQuery.includes('nrr')) {
+
+  if (resolvedQuery.includes('churn') || resolvedQuery.includes('retention') || resolvedQuery.includes('nrr')) {
     if (!metrics.satisfaction) {
       return {
         summary: "Executive Summary & Business Context: The available data is insufficient to estimate customer churn accurately because no customer retention or satisfaction metrics were detected.",
@@ -472,7 +485,7 @@ export function askLocalCopilot(
     }
   }
 
-  if (lowerQuery.includes('employee') || lowerQuery.includes('salary') || lowerQuery.includes('headcount')) {
+  if (resolvedQuery.includes('employee') || resolvedQuery.includes('salary') || resolvedQuery.includes('headcount')) {
     if (!summary.columns.some(c => c.toLowerCase().includes('hire') || c.toLowerCase().includes('employee') || c.toLowerCase().includes('staff') || c.toLowerCase().includes('salary'))) {
       return {
         summary: "Executive Summary & Business Context: The available data is insufficient to audit resource headcount structures because no employee payroll or staff metrics were detected.",
@@ -497,7 +510,7 @@ export function askLocalCopilot(
     }
   }
 
-  if (lowerQuery.includes('revenue') || lowerQuery.includes('sale') || lowerQuery.includes('earn')) {
+  if (resolvedQuery.includes('revenue') || resolvedQuery.includes('sale') || resolvedQuery.includes('earn')) {
     const revAvg = metrics.revenue && kpiStats[metrics.revenue] ? formatCurrency(kpiStats[metrics.revenue].mean) : "$0.00";
     const revMax = metrics.revenue && kpiStats[metrics.revenue] ? formatCurrency(kpiStats[metrics.revenue].max) : "$0.00";
     
@@ -523,7 +536,7 @@ export function askLocalCopilot(
     };
   }
 
-  if (lowerQuery.includes('profit') || lowerQuery.includes('margin') || lowerQuery.includes('net')) {
+  if (resolvedQuery.includes('profit') || resolvedQuery.includes('margin') || resolvedQuery.includes('net')) {
     const marginVal = profile.totalRevenue > 0 ? (profile.totalProfit / profile.totalRevenue) * 100 : 44.0;
     const profAvg = metrics.profit && kpiStats[metrics.profit] ? formatCurrency(kpiStats[metrics.profit].mean) : "$0.00";
     const profMin = metrics.profit && kpiStats[metrics.profit] ? formatCurrency(kpiStats[metrics.profit].min) : "$0.00";
@@ -550,7 +563,7 @@ export function askLocalCopilot(
     };
   }
 
-  if (lowerQuery.includes('risk') || lowerQuery.includes('hazard') || lowerQuery.includes('danger') || lowerQuery.includes('expose')) {
+  if (resolvedQuery.includes('risk') || resolvedQuery.includes('hazard') || resolvedQuery.includes('danger') || resolvedQuery.includes('expose')) {
     return {
       summary: `Executive Summary & Business Context: The primary risk vectors center on supply chain transit queues and inventory carrying pressures. Historical transit queues from Asian assembly routes average 32 days, creating capital lockups.`,
       evidence: [
@@ -573,7 +586,7 @@ export function askLocalCopilot(
     };
   }
 
-  if (lowerQuery.includes('market') || lowerQuery.includes('cac') || lowerQuery.includes('ad') || lowerQuery.includes('roi')) {
+  if (resolvedQuery.includes('market') || resolvedQuery.includes('cac') || resolvedQuery.includes('ad') || resolvedQuery.includes('roi')) {
     return {
       summary: `Executive Summary & Business Context: Marketing performance shows high efficiency in North American paid ad channels, with customer acquisition cost indexes dropping by 8% over the evaluated period.`,
       evidence: [
@@ -596,7 +609,8 @@ export function askLocalCopilot(
     };
   }
 
-  if (lowerQuery.includes('region') || lowerQuery.includes('perform') || lowerQuery.includes('underperform')) {
+  if (resolvedQuery.includes('region') || resolvedQuery.includes('perform') || resolvedQuery.includes('underperform')) {
+
     return {
       summary: `Executive Summary & Business Context: Performance audit across ${profile.regions.join(', ')} territories isolation shows regional divergence, with slower conversion speeds in the West and APAC channels.`,
       evidence: [
