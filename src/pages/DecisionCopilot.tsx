@@ -79,6 +79,16 @@ export const DecisionCopilot: React.FC = () => {
   const [streamingMessage, setStreamingMessage] = useState<any | null>(null);
   const [streamingText, setStreamingText] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const copilotAbortControllerRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (copilotAbortControllerRef.current) {
+        copilotAbortControllerRef.current.abort();
+      }
+    };
+  }, []);
+
 
   const activeNodeContext = nodeContexts[activeNodeId] || nodeContexts.health;
 
@@ -183,6 +193,12 @@ export const DecisionCopilot: React.FC = () => {
   const handleSend = async (text: string) => {
     if (!text.trim()) return;
 
+    if (copilotAbortControllerRef.current) {
+      copilotAbortControllerRef.current.abort();
+    }
+    const abortController = new AbortController();
+    copilotAbortControllerRef.current = abortController;
+
     addMessage(text, 'user');
     setInput('');
     setIsTyping(true);
@@ -202,14 +218,21 @@ export const DecisionCopilot: React.FC = () => {
     if (summary) {
       try {
         const history = store.messages.map(m => ({ sender: m.sender, text: m.text }));
-        const responseData = await getCopilotResponse(apiKey, text, history, summary, activeNodeContext);
+        const responseData = await getCopilotResponse(apiKey, text, history, summary, activeNodeContext, abortController.signal);
         streamResponse(responseData);
-      } catch (err) {
+      } catch (err: any) {
+        if (err.name === 'AbortError') {
+          console.log('Copilot request cancelled');
+          return;
+        }
         console.error('Failed to obtain copilot response:', err);
         setIsTyping(false);
+      } finally {
+        if (copilotAbortControllerRef.current === abortController) {
+          copilotAbortControllerRef.current = null;
+        }
       }
     }
-
   };
 
   // Follow-up chips actions

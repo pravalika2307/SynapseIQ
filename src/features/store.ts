@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import type { NodeContext, SignalItem, BriefingReport, TimelineEvent } from '../types';
 import { parseCSV, type DatasetSummary } from './csvParser';
-import { generateGeminiAnalysis, getStoredApiKey, setStoredApiKey } from './geminiService';
+import { getAnalysisResponse, getStoredApiKey, setStoredApiKey } from './geminiService';
 import { generateLocalAnalysis } from './localAnalysis';
 import { 
   nodeContexts as defaultNodeContexts, 
@@ -230,26 +230,23 @@ export const useAppStore = create<AppState>((set, get) => ({
       const localInsights = generateLocalAnalysis(summary);
       const apiKey = get().geminiApiKey;
       
-      if (apiKey && apiKey.trim() !== '') {
-        try {
-          // 2. Call Gemini for high-fidelity contextual insights
-          const insights = await generateGeminiAnalysis(apiKey, summary);
-          
-          set({
-            nodeContexts: insights.nodeContexts,
-            businessSignals: insights.businessSignals,
-            briefingReports: insights.briefingReports,
-            timelineEvents: insights.timelineEvents || localInsights.timelineEvents,
-            strategyCanvasEdges: insights.strategyCanvasEdges,
-            decisionReadiness: confidence,
-            isDatasetLoaded: true,
-            isLoadingAnalysis: false
-          });
-          return;
-        } catch (apiErr: any) {
-          console.warn('Gemini API Analysis failed, falling back to local heuristic calculations:', apiErr);
-          set({ analysisError: `Gemini API Call failed: ${apiErr.message}. Loaded in local analysis fallback mode.` });
-        }
+      try {
+        const insights = await getAnalysisResponse(apiKey, summary);
+        
+        set({
+          nodeContexts: insights.nodeContexts,
+          businessSignals: insights.businessSignals,
+          briefingReports: insights.briefingReports,
+          timelineEvents: insights.timelineEvents || localInsights.timelineEvents,
+          strategyCanvasEdges: insights.strategyCanvasEdges,
+          decisionReadiness: confidence,
+          isDatasetLoaded: true,
+          isLoadingAnalysis: false
+        });
+        return;
+      } catch (apiErr: any) {
+        console.warn('Gemini API Analysis failed, falling back to local heuristic calculations:', apiErr);
+        set({ analysisError: `Gemini API Call failed: ${apiErr.message}. Loaded in local analysis fallback mode.` });
       }
       
       // 3. Heuristic Fallback Analysis

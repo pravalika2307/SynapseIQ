@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Sliders, Zap, CheckCircle, Sparkles } from 'lucide-react';
 import { SectionHeader, Card, CountUp, AIThinkingLoader } from '../components/ui';
 import { useDemoStore } from '../features/demoStore';
@@ -56,6 +56,16 @@ export const Forecast: React.FC = () => {
   const activeNodeId = useAppStore((state) => state.activeNodeId);
   const geminiApiKey = useAppStore((state) => state.geminiApiKey);
   const parsedData = useAppStore((state) => state.parsedData);
+  const forecastAbortControllerRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (forecastAbortControllerRef.current) {
+        forecastAbortControllerRef.current.abort();
+      }
+    };
+  }, []);
+
 
   // Simulation Controls Local State (with Current Strategy baselines)
   const [marketing, setMarketing] = useState(45);
@@ -152,6 +162,12 @@ export const Forecast: React.FC = () => {
 
   // Debounced live scenario simulation with AI Service Layer
   useEffect(() => {
+    if (forecastAbortControllerRef.current) {
+      forecastAbortControllerRef.current.abort();
+    }
+    const abortController = new AbortController();
+    forecastAbortControllerRef.current = abortController;
+
     const handler = setTimeout(async () => {
       setIsSimulating(true);
       try {
@@ -167,7 +183,7 @@ export const Forecast: React.FC = () => {
           hiring,
           retention,
           costs
-        }, summary);
+        }, summary, abortController.signal);
 
         setAiVerdict(res.verdict);
         setAiTradeoffs(res.tradeoffs);
@@ -183,14 +199,24 @@ export const Forecast: React.FC = () => {
         if (res.confidence) {
           setDynamicConfidence(res.confidence);
         }
-      } catch (err) {
+      } catch (err: any) {
+        if (err.name === 'AbortError') {
+          console.log('Scenario simulation request cancelled');
+          return;
+        }
         console.error('Scenario simulation failed:', err);
       } finally {
+        if (forecastAbortControllerRef.current === abortController) {
+          forecastAbortControllerRef.current = null;
+        }
         setIsSimulating(false);
       }
     }, 650);
 
-    return () => clearTimeout(handler);
+    return () => {
+      clearTimeout(handler);
+      abortController.abort();
+    };
   }, [marketing, price, inventory, hiring, retention, costs, geminiApiKey, parsedData]);
 
   // Dynamic Math Equations for Real-Time Predictions (rendered inside Comparison Cards)

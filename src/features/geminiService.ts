@@ -1,6 +1,6 @@
 import type { DatasetSummary } from './csvParser';
 import type { NodeContext, SignalItem, BriefingReport, CopilotResponse, ScenarioResponse, TimelineEvent } from '../types';
-import { askLocalCopilot, simulateLocalScenario } from './localAnalysis';
+import { askLocalCopilot, simulateLocalScenario, generateLocalAnalysis } from './localAnalysis';
 
 export interface AnalysisResponse {
   nodeContexts: Record<string, NodeContext>;
@@ -28,59 +28,149 @@ export function setStoredApiKey(key: string | null) {
   }
 }
 
-async function callGeminiRaw(apiKey: string, prompt: string): Promise<string> {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-  
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      contents: [{
-        parts: [{ text: prompt }]
-      }],
-      generationConfig: {
-        responseMimeType: 'application/json'
-      }
-    })
-  });
-
-  if (!response.ok) {
-    const errText = await response.text();
-    throw new Error(`Gemini API Error: ${response.status} - ${errText}`);
-  }
-
-  const resJson = await response.json();
-  const rawText = resJson?.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!rawText) {
-    throw new Error('Gemini API returned an empty response.');
-  }
-
-  return rawText;
+// Structured Logging helper
+function logStructured(meta: {
+  operation: string;
+  status: 'success' | 'retry' | 'fallback' | 'error' | 'cancelled';
+  durationMs: number;
+  attempt?: number;
+  error?: string;
+}) {
+  console.info(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    ...meta
+  }));
 }
 
-async function callGeminiRawWithRetry(apiKey: string, prompt: string, retries = 3, initialDelay = 1000): Promise<string> {
+// Schema Validators
+function validateAnalysisResponse(data: any): boolean {
+  if (!data || typeof data !== 'object') return false;
+  if (!data.nodeContexts || !data.businessSignals || !data.briefingReports) return false;
+  const required = ['health', 'revenue', 'profit', 'customers'];
+  for (const req of required) {
+    if (!data.nodeContexts[req] || typeof data.nodeContexts[req].recommendation !== 'string') {
+      return false;
+    }
+  }
+  return true;
+}
+
+function validateCopilotResponse(data: any): boolean {
+  if (!data || typeof data !== 'object') return false;
+  if (typeof data.summary !== 'string' || typeof data.recommendation !== 'string') return false;
+  return true;
+}
+
+function validateScenarioResponse(data: any): boolean {
+  if (!data || typeof data !== 'object') return false;
+  if (typeof data.verdict !== 'string' || !data.recommendedAction || typeof data.recommendedAction.impact !== 'string') return false;
+  return true;
+}
+
+// Raw Gemini fetch with Timeout & Abort controller
+async function callGeminiRaw(apiKey: string, prompt: string, signal?: AbortSignal): Promise<string> {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+  
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 12000); // 12 seconds timeout
+  
+  if (signal) {
+    if (signal.aborted) {
+      controller.abort();
+    } else {
+      signal.addEventListener('abort', () => controller.abort(), { once: true });
+    }
+  }
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{ text: prompt }]
+        }],
+        generationConfig: {
+          responseMimeType: 'application/json'
+        }
+      }),
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Gemini API Error: ${response.status} - ${errText}`);
+    }
+
+    const resJson = await response.json();
+    const rawText = resJson?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!rawText) {
+      throw new Error('Gemini API returned an empty response.');
+    }
+
+    return rawText;
+  } catch (err) {
+    clearTimeout(timeoutId);
+    throw err;
+  }
+}
+
+// Retry loop with exponential backoff and rate-limiting (429) checks
+async function callGeminiRawWithRetry(
+  apiKey: string, 
+  prompt: string, 
+  operation: string,
+  signal?: AbortSignal,
+  retries = 3, 
+  initialDelay = 1000
+): Promise<string> {
   let attempt = 0;
+  const start = performance.now();
+  
   while (true) {
+    attempt++;
     try {
-      return await callGeminiRaw(apiKey, prompt);
+      const res = await callGeminiRaw(apiKey, prompt, signal);
+      const duration = Math.round(performance.now() - start);
+      logStructured({ operation, status: 'success', durationMs: duration, attempt });
+      return res;
     } catch (error: any) {
-      attempt++;
-      if (attempt >= retries) {
-        console.error(`Gemini API: All ${retries} attempts failed.`);
+      const duration = Math.round(performance.now() - start);
+      
+      if (signal?.aborted || error.name === 'AbortError') {
+        logStructured({ operation, status: 'cancelled', durationMs: duration, attempt, error: 'Request aborted by user' });
         throw error;
       }
-      const delay = initialDelay * Math.pow(2, attempt - 1);
-      console.warn(`Gemini API: Attempt ${attempt} failed. Retrying in ${delay}ms... Error: ${error.message}`);
-      await new Promise(resolve => setTimeout(resolve, delay));
+
+      if (attempt >= retries) {
+        logStructured({ operation, status: 'error', durationMs: duration, attempt, error: error.message });
+        throw error;
+      }
+
+      // Check for Rate Limit 429 inside error message
+      const isRateLimit = error.message.includes('429') || error.message.toLowerCase().includes('rate limit') || error.message.toLowerCase().includes('quota');
+      const delay = (isRateLimit ? initialDelay * 3 : initialDelay) * Math.pow(2, attempt - 1);
+      
+      logStructured({ operation, status: 'retry', durationMs: duration, attempt, error: `Error encountered: ${error.message}. Retrying in ${delay}ms` });
+      
+      await new Promise((resolve, reject) => {
+        const timeout = setTimeout(resolve, delay);
+        signal?.addEventListener('abort', () => {
+          clearTimeout(timeout);
+          reject(new DOMException('Aborted', 'AbortError'));
+        }, { once: true });
+      });
     }
   }
 }
 
 export async function generateGeminiAnalysis(
   apiKey: string, 
-  summary: DatasetSummary
+  summary: DatasetSummary,
+  signal?: AbortSignal
 ): Promise<AnalysisResponse> {
   const statsString = JSON.stringify({
     fileName: summary.fileName,
@@ -145,8 +235,14 @@ Return JSON shape exactly:
 Only return clean JSON. narrative array must have exactly 9 paragraphs.
 `;
 
-  const responseText = await callGeminiRawWithRetry(apiKey, prompt);
-  return JSON.parse(responseText) as AnalysisResponse;
+  const responseText = await callGeminiRawWithRetry(apiKey, prompt, 'generateGeminiAnalysis', signal);
+  const parsed = JSON.parse(responseText);
+  
+  if (!validateAnalysisResponse(parsed)) {
+    throw new Error('Analysis response schema validation failed');
+  }
+
+  return parsed as AnalysisResponse;
 }
 
 export async function askGeminiCopilot(
@@ -154,7 +250,8 @@ export async function askGeminiCopilot(
   query: string,
   history: { sender: 'user' | 'assistant'; text: string }[],
   summary: DatasetSummary,
-  activeNodeContext: NodeContext
+  activeNodeContext: NodeContext,
+  signal?: AbortSignal
 ): Promise<CopilotResponse> {
   const statsSummary = {
     fileName: summary.fileName,
@@ -192,8 +289,14 @@ Return JSON shape:
 }
 `;
 
-  const responseText = await callGeminiRawWithRetry(apiKey, prompt);
-  return JSON.parse(responseText) as CopilotResponse;
+  const responseText = await callGeminiRawWithRetry(apiKey, prompt, 'askGeminiCopilot', signal);
+  const parsed = JSON.parse(responseText);
+
+  if (!validateCopilotResponse(parsed)) {
+    throw new Error('Copilot response schema validation failed');
+  }
+
+  return parsed as CopilotResponse;
 }
 
 export async function simulateGeminiScenario(
@@ -206,7 +309,8 @@ export async function simulateGeminiScenario(
     retention: number;
     costs: number;
   },
-  summary: DatasetSummary
+  summary: DatasetSummary,
+  signal?: AbortSignal
 ): Promise<ScenarioResponse> {
   const statsSummary = {
     fileName: summary.fileName,
@@ -246,8 +350,45 @@ Return JSON shape:
 }
 `;
 
-  const responseText = await callGeminiRawWithRetry(apiKey, prompt);
-  return JSON.parse(responseText) as ScenarioResponse;
+  const responseText = await callGeminiRawWithRetry(apiKey, prompt, 'simulateGeminiScenario', signal);
+  const parsed = JSON.parse(responseText);
+
+  if (!validateScenarioResponse(parsed)) {
+    throw new Error('Scenario response schema validation failed');
+  }
+
+  return parsed as ScenarioResponse;
+}
+
+// ----------------------------------------------------
+// DEDICATED AI SERVICE wrappers with robust fallback & structured logs
+// ----------------------------------------------------
+export async function getAnalysisResponse(
+  apiKey: string | null,
+  summary: DatasetSummary,
+  signal?: AbortSignal
+): Promise<AnalysisResponse> {
+  const start = performance.now();
+  if (apiKey && apiKey.trim() !== '') {
+    try {
+      return await generateGeminiAnalysis(apiKey, summary, signal);
+    } catch (err: any) {
+      const duration = Math.round(performance.now() - start);
+      if (err.name === 'AbortError' || signal?.aborted) {
+        logStructured({ operation: 'getAnalysisResponse', status: 'cancelled', durationMs: duration, error: 'Cancelled' });
+        throw err;
+      }
+      logStructured({ operation: 'getAnalysisResponse', status: 'fallback', durationMs: duration, error: err.message });
+    }
+  }
+  const localAnalysis = generateLocalAnalysis(summary);
+  return {
+    ...localAnalysis,
+    strategyCanvasEdges: [
+      { source: 'revenue', target: 'marketing', correlation: 0.8 },
+      { source: 'profit', target: 'revenue', correlation: 0.9 }
+    ]
+  };
 }
 
 export async function getCopilotResponse(
@@ -255,13 +396,20 @@ export async function getCopilotResponse(
   query: string,
   history: { sender: 'user' | 'assistant'; text: string }[],
   summary: DatasetSummary,
-  activeNodeContext: NodeContext
+  activeNodeContext: NodeContext,
+  signal?: AbortSignal
 ): Promise<CopilotResponse> {
+  const start = performance.now();
   if (apiKey && apiKey.trim() !== '') {
     try {
-      return await askGeminiCopilot(apiKey, query, history, summary, activeNodeContext);
+      return await askGeminiCopilot(apiKey, query, history, summary, activeNodeContext, signal);
     } catch (err: any) {
-      console.warn(`Gemini Copilot API failed, falling back to local engine: ${err.message}`);
+      const duration = Math.round(performance.now() - start);
+      if (err.name === 'AbortError' || signal?.aborted) {
+        logStructured({ operation: 'getCopilotResponse', status: 'cancelled', durationMs: duration, error: 'Cancelled' });
+        throw err;
+      }
+      logStructured({ operation: 'getCopilotResponse', status: 'fallback', durationMs: duration, error: err.message });
     }
   }
   return askLocalCopilot(query, history, summary, activeNodeContext);
@@ -277,13 +425,20 @@ export async function getScenarioSimulation(
     retention: number;
     costs: number;
   },
-  summary: DatasetSummary
+  summary: DatasetSummary,
+  signal?: AbortSignal
 ): Promise<ScenarioResponse> {
+  const start = performance.now();
   if (apiKey && apiKey.trim() !== '') {
     try {
-      return await simulateGeminiScenario(apiKey, sliderValues, summary);
+      return await simulateGeminiScenario(apiKey, sliderValues, summary, signal);
     } catch (err: any) {
-      console.warn(`Gemini Scenario simulation API failed, falling back to local reasoning: ${err.message}`);
+      const duration = Math.round(performance.now() - start);
+      if (err.name === 'AbortError' || signal?.aborted) {
+        logStructured({ operation: 'getScenarioSimulation', status: 'cancelled', durationMs: duration, error: 'Cancelled' });
+        throw err;
+      }
+      logStructured({ operation: 'getScenarioSimulation', status: 'fallback', durationMs: duration, error: err.message });
     }
   }
   return simulateLocalScenario(sliderValues, summary);
