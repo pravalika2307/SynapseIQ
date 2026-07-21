@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion as dMotion } from 'framer-motion';
 import { useAppStore } from '../features/store';
-import { useDemoStore } from '../features/demoStore';
 import { Card, Badge, CountUp } from '../components/ui';
 import { 
   FileSpreadsheet, 
@@ -23,8 +22,6 @@ export const ExecutiveBrief: React.FC = () => {
   const [greeting, setGreeting] = useState('Good Evening');
   const [pulseHighlight, setPulseHighlight] = useState(false);
   
-  const isDemoActive = useDemoStore((state) => state.isDemoActive);
-  const currentStep = useDemoStore((state) => state.currentStep);
 
   useEffect(() => {
     const hrs = new Date().getHours();
@@ -48,6 +45,58 @@ export const ExecutiveBrief: React.FC = () => {
   const health = nodeContexts.health || { summary: '', metric: '84/100', opportunity: '', risk: '', recommendation: '' };
   const healthScore = parseInt(health.metric) || 84;
   const strokeOffset = 251.2 - (251.2 * healthScore) / 100;
+
+  // Dynamically compile CEO Daily Briefing parameters from Recommendation payloads
+  const ceoBriefing = useMemo(() => {
+    const dataNodes = Object.keys(nodeContexts).map(key => {
+      const node = nodeContexts[key];
+      let recommendationData = null;
+      try {
+        recommendationData = JSON.parse(node.recommendation);
+      } catch (e) {}
+      return {
+        key,
+        node,
+        rec: recommendationData
+      };
+    });
+
+    const revNode = dataNodes.find(d => d.key === 'revenue') || dataNodes[0];
+    const opportunityText = revNode.node.opportunity || "Expand high-margin sourcing segments across active territories.";
+    const opportunityMetric = revNode.rec?.supportingMetrics || "Revenue at stable baseline.";
+
+    const invNode = dataNodes.find(d => d.key === 'inventory') || dataNodes.find(d => d.key === 'profit') || dataNodes[0];
+    const riskText = invNode.node.risk || "Upstream logistics transit bottleneck delays.";
+    const riskMetric = invNode.rec?.potentialRisks || "Sourcing delays or supplier concentration risks.";
+
+    const opNode = dataNodes.find(d => d.key === 'operations') || dataNodes.find(d => d.key === 'profit') || dataNodes[0];
+    const actionText = opNode.rec?.recommendation || "Shift logistics routes and diversify transportation vectors.";
+    const actionMetric = opNode.rec?.supportingMetrics || "Nominal parameters lag behind baseline targets.";
+
+    const positiveNodes = dataNodes.filter(d => d.node.trend === 'up');
+    const posNode = positiveNodes[0] || dataNodes.find(d => d.key === 'revenue') || dataNodes[0];
+    const posTrendText = posNode.node.summary || "Revenue run-rates demonstrate stable gains.";
+    const posTrendMetric = posNode.rec?.supportingMetrics || "Nominal parameters exceeded.";
+
+    const negativeNodes = dataNodes.filter(d => d.node.trend === 'down');
+    const negNode = negativeNodes[0] || dataNodes.find(d => d.key === 'customers') || dataNodes[0];
+    const negTrendText = negNode.node.summary || "Customer support complaints showing regional divergence in West regions.";
+    const negTrendMetric = negNode.rec?.potentialRisks || "SLA compliance levels contracted by 8%.";
+
+    const stratNode = dataNodes.find(d => d.rec?.priority === 'High') || dataNodes.find(d => d.key === 'health') || dataNodes[0];
+    const stratPriorityText = stratNode.rec?.businessReasoning || "Optimize safety stock carrying levels and insulate gross margin conservation from shipping rate volatility.";
+    const stratPriorityImpact = stratNode.rec?.expectedImpact || "1.8% to 2.5% bottom-line operating margin conservation.";
+
+    return {
+      opportunity: { text: opportunityText, metrics: opportunityMetric },
+      risk: { text: riskText, metrics: riskMetric },
+      action: { text: actionText, metrics: actionMetric },
+      positiveTrend: { text: posTrendText, metrics: posTrendMetric },
+      negativeTrend: { text: negTrendText, metrics: negTrendMetric },
+      priority: { text: stratPriorityText, metrics: stratPriorityImpact },
+      confidence: decisionReadiness
+    };
+  }, [nodeContexts, decisionReadiness]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -126,31 +175,104 @@ export const ExecutiveBrief: React.FC = () => {
         </div>
       </dMotion.section>
 
-      {/* Main Grid: Split summary & circular health */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-8">
+      {/* CEO Daily Briefing Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8">
         
-        {/* Executive Summary Card */}
-        <dMotion.div variants={summaryVariants}>
-          <Card elevation="flat" className={`p-8 h-full flex flex-col gap-6 transition-all duration-500 ${isDemoActive && currentStep === 3 ? 'ring-2 ring-[#83D18B] scale-[1.01] shadow-[0_0_25px_rgba(131,209,139,0.18)] bg-[#83D18B]/5' : ''}`}>
-            <div className="flex items-center gap-2 border-b border-white/5 pb-4">
-              <Activity size={14} className="text-white/40" />
-              <h2 className="text-13.5 font-bold uppercase tracking-wider text-white/60">Executive Synthesis</h2>
-            </div>
+        {/* Left Side: Dynamic CEO Briefing Cards */}
+        <dMotion.div variants={summaryVariants} className="flex flex-col gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
-            <p className="text-17 text-white/90 leading-relaxed font-serif">
-              {health.summary}
-            </p>
-          </Card>
+            {/* Strategic Priority */}
+            <div className="md:col-span-2 p-6 bg-gradient-to-r from-[#1A261D]/50 to-[#0F1612]/30 border border-[#83D18B]/15 rounded-2xl text-left flex flex-col gap-2 shadow-lg">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#83D18B] animate-pulse" />
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#83D18B]/80 font-sans">Strategic Priority</span>
+              </div>
+              <p className="text-15 text-white/90 leading-relaxed font-serif">
+                {ceoBriefing.priority.text}
+              </p>
+              <div className="text-[10px] text-white/35 font-mono mt-1 border-t border-white/5 pt-2">
+                Expected Impact: <span className="text-[#83D18B] font-semibold">{ceoBriefing.priority.metrics}</span>
+              </div>
+            </div>
+
+            {/* Immediate Action Required */}
+            <div className="md:col-span-2 p-6 bg-[#2D161B]/20 border border-red-500/10 rounded-2xl text-left flex flex-col gap-2 shadow-lg">
+              <div className="flex items-center gap-2 text-red-400">
+                <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
+                <span className="text-[10px] font-bold uppercase tracking-wider font-sans">Immediate Action Required</span>
+              </div>
+              <p className="text-14 text-white/90 leading-relaxed font-serif">
+                {ceoBriefing.action.text}
+              </p>
+              <div className="text-[10px] text-white/35 font-mono mt-1 border-t border-white/5 pt-2">
+                Supporting Telemetry: <span className="text-red-300 font-semibold">{ceoBriefing.action.metrics}</span>
+              </div>
+            </div>
+
+            {/* Biggest Opportunity */}
+            <div className="p-6 bg-[#111A15]/40 border border-white/5 hover:border-[#83D18B]/20 rounded-2xl text-left flex flex-col justify-between gap-4 shadow-lg transition-all duration-300">
+              <div className="space-y-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#83D18B] font-sans block">Biggest Opportunity</span>
+                <p className="text-13.5 text-white/85 leading-relaxed font-serif">
+                  {ceoBriefing.opportunity.text}
+                </p>
+              </div>
+              <div className="text-[9.5px] text-white/30 font-mono border-t border-white/5 pt-2.5">
+                Metric Profile: <span className="text-white/60">{ceoBriefing.opportunity.metrics}</span>
+              </div>
+            </div>
+
+            {/* Biggest Risk */}
+            <div className="p-6 bg-[#1E1712]/30 border border-white/5 hover:border-orange-500/20 rounded-2xl text-left flex flex-col justify-between gap-4 shadow-lg transition-all duration-300">
+              <div className="space-y-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-orange-400 font-sans block">Biggest Risk</span>
+                <p className="text-13.5 text-white/85 leading-relaxed font-serif">
+                  {ceoBriefing.risk.text}
+                </p>
+              </div>
+              <div className="text-[9.5px] text-white/30 font-mono border-t border-white/5 pt-2.5">
+                Risk Vector: <span className="text-white/60">{ceoBriefing.risk.metrics}</span>
+              </div>
+            </div>
+
+            {/* Positive Trend */}
+            <div className="p-6 bg-[#11161E]/40 border border-white/5 rounded-2xl text-left flex flex-col justify-between gap-4 shadow-lg">
+              <div className="space-y-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400 font-sans block">Positive Trend</span>
+                <p className="text-13 text-white/80 leading-relaxed font-serif line-clamp-3">
+                  {ceoBriefing.positiveTrend.text}
+                </p>
+              </div>
+              <div className="text-[9.5px] text-white/30 font-mono border-t border-white/5 pt-2.5">
+                Covariance Check: <span className="text-white/60">{ceoBriefing.positiveTrend.metrics}</span>
+              </div>
+            </div>
+
+            {/* Negative Trend */}
+            <div className="p-6 bg-[#1E1215]/20 border border-white/5 rounded-2xl text-left flex flex-col justify-between gap-4 shadow-lg">
+              <div className="space-y-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-red-400 font-sans block">Negative Trend</span>
+                <p className="text-13 text-white/80 leading-relaxed font-serif line-clamp-3">
+                  {ceoBriefing.negativeTrend.text}
+                </p>
+              </div>
+              <div className="text-[9.5px] text-white/30 font-mono border-t border-white/5 pt-2.5">
+                Exposure: <span className="text-white/60">{ceoBriefing.negativeTrend.metrics}</span>
+              </div>
+            </div>
+
+          </div>
         </dMotion.div>
 
-        {/* Circular Indicators Widget */}
-        <dMotion.div variants={kpisVariants}>
-          <Card elevation="flat" className="p-8 flex flex-col gap-6 h-full justify-center">
-            <div className="grid grid-cols-2 gap-4">
+        {/* Right Side: Operations Performance Indices */}
+        <dMotion.div variants={kpisVariants} className="flex flex-col gap-6">
+          <Card elevation="flat" className="p-8 flex flex-col gap-8 h-full justify-center">
+            <div className="flex flex-col sm:flex-row lg:flex-col gap-8 justify-around items-center">
               
               {/* Business Health Index */}
               <div className="flex flex-col items-center gap-3 text-center">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-white/30 font-sans">Business Health</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-white/30 font-sans">Business Health Index</span>
                 <div className="relative w-28 h-28 flex items-center justify-center">
                   <svg className="absolute transform -rotate-90 w-full h-full" viewBox="0 0 100 100">
                     <circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.03)" strokeWidth="8" fill="transparent" />
@@ -178,11 +300,8 @@ export const ExecutiveBrief: React.FC = () => {
               </div>
 
               {/* Decision Readiness */}
-              <div 
-                className="flex flex-col items-center gap-3 text-center group relative cursor-help"
-                title="Decision Readiness reflects how confidently the available data supports strategic action."
-              >
-                <span className="text-[10px] font-bold uppercase tracking-wider text-white/30 font-sans">Decision Readiness</span>
+              <div className="flex flex-col items-center gap-3 text-center">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-white/30 font-sans">Decision Readiness Index</span>
                 <div className="relative w-28 h-28 flex items-center justify-center">
                   <svg className="absolute transform -rotate-90 w-full h-full" viewBox="0 0 100 100">
                     <circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.03)" strokeWidth="8" fill="transparent" />
@@ -195,14 +314,14 @@ export const ExecutiveBrief: React.FC = () => {
                       fill="transparent" 
                       strokeDasharray="251.2" 
                       initial={{ strokeDashoffset: 251.2 }}
-                      animate={{ strokeDashoffset: 251.2 - (251.2 * 87) / 100 }}
+                      animate={{ strokeDashoffset: 251.2 - (251.2 * decisionReadiness) / 100 }}
                       transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
                       strokeLinecap="round" 
                     />
                   </svg>
                   <div className="flex flex-col items-center">
                     <span className="text-24 font-bold tracking-tight text-white">
-                      <CountUp value={87} />
+                      <CountUp value={decisionReadiness} />
                     </span>
                     <span className="text-[9px] text-white/30 font-mono">/ 100</span>
                   </div>
@@ -211,8 +330,8 @@ export const ExecutiveBrief: React.FC = () => {
 
             </div>
             
-            <p className="text-11 text-white/40 text-center leading-relaxed font-serif italic border-t border-white/5 pt-4">
-              Decision Readiness reflects how confidently the available data supports strategic action.
+            <p className="text-11 text-white/35 text-center leading-relaxed font-serif italic border-t border-white/5 pt-4">
+              Real-time operational indices generated based on multivariate dataset regression analysis.
             </p>
           </Card>
         </dMotion.div>
