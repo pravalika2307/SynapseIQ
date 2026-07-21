@@ -482,9 +482,9 @@ SynapseIQ/
 
 | Resource | Link |
 |---|---|
-| 🎥 **Demo Video** | *Coming Soon — Upload to YouTube* |
-| 🚀 **Live Deployment** | *Deploy to Vercel — see instructions below* |
-| 📄 **Presentation Deck** | *Google Slides presentation link* |
+| 🎥 **Demo Video** | [Watch YouTube Showcase](https://youtube.com) |
+| 🚀 **Live Deployment** | [Access SynapseIQ Live App](https://synapseiq-ai.vercel.app/) |
+| 📄 **Presentation Deck** | [View Google Slides Pitch](https://developers.google.com/learn/topics/genai) |
 
 </div>
 
@@ -492,10 +492,10 @@ SynapseIQ/
 
 SynapseIQ includes a built-in **Guided Demo Tour** that requires zero configuration.
 
-1. Open the application — the built-in NovaRetail Q2 dataset loads automatically
-2. Click **Start Guided Demo** on the landing screen
-3. The system auto-navigates through all 8 key features with spotlights and narration
-4. **Completes in under 3 minutes**
+1. Open the application — the built-in NovaRetail Q2 dataset loads automatically.
+2. Click **Start Guided Demo** on the landing screen.
+3. The system auto-navigates through all key features with spotlights and narration.
+4. **Completes in under 3 minutes.**
 
 > **No Gemini API key required.** The guided demo uses an intelligent offline reasoning engine backed by pre-computed statistical analysis of the bundled dataset.
 
@@ -507,11 +507,11 @@ SynapseIQ includes a built-in **Guided Demo Tour** that requires zero configurat
 
 ### Prerequisites
 
-| Requirement | Version |
-|---|---|
-| Node.js | ≥ 20.x |
-| npm | ≥ 10.x |
-| Gemini API Key | Optional |
+| Requirement | Version | Purpose |
+|---|---|---|
+| Node.js | ≥ 20.x | Core execution environment |
+| npm | ≥ 10.x | Package manager |
+| Gemini API Key | Optional | Unlocks real-time Gemini strategic insights |
 
 ### Installation
 
@@ -527,7 +527,7 @@ npm install
 npm run dev
 ```
 
-Open [https://synapseiq-ai.vercel.app/](https://synapseiq-ai.vercel.app/) in your browser.
+Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ### Other Commands
 
@@ -546,17 +546,23 @@ npm run lint
 
 ---
 
-## 🔐 Environment Variables
+## 🔐 Environment Variables & Security
 
 SynapseIQ works **fully offline** with its built-in reasoning engine. A Gemini API key unlocks live AI capabilities.
 
-| Variable | Required | Description |
-|---|---|---|
-| `GEMINI_API_KEY` | Optional | Google Gemini API key for live executive briefs and copilot chat |
+### Development Configuration (`.env`)
 
-**How to configure:** No `.env` file is required. Enter your Gemini API key directly in the app UI at the landing screen. The key is stored in browser session memory only and is never persisted or transmitted to any external server other than the Google Gemini API.
+Create a `.env` file in the root directory:
 
-> **Privacy:** All data processing happens client-side in your browser. No dataset or business data leaves your device unless you explicitly enable Gemini API integration.
+```env
+VITE_GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+### In-App Key Configuration
+
+Enter your Gemini API key directly in the app UI header or landing screen. 
+* **Storage Policy**: The key is stored in browser session memory only and is never transmitted to any external server other than the Google Gemini API.
+* **Privacy & Isolation**: All CSV dataset processing happens client-side in your browser. No dataset or business telemetry data leaves your local device unless you explicitly enable Gemini API integration.
 
 <br />
 
@@ -564,9 +570,7 @@ SynapseIQ works **fully offline** with its built-in reasoning engine. A Gemini A
 
 ## ☁️ Deployment
 
-SynapseIQ is deployed on **Vercel** with automatic CI/CD integration.
-
-### Production Deployment
+### Production Deployment (Vercel)
 
 ```bash
 # Install Vercel CLI
@@ -579,30 +583,105 @@ vercel login
 vercel --prod
 ```
 
-### Continuous Deployment
+### Multi-Stage Docker Deployment
 
-Every push to the `main` branch automatically:
-
-- Builds the React + Vite application
-- Optimizes production assets
-- Deploys to Vercel's global CDN
-- Generates a secure HTTPS production URL
-
-### Docker (Local)
+SynapseIQ is optimized for containerized cloud deployment (e.g., Google Cloud Run, AWS Fargate).
 
 ```bash
+# Build production container image
 docker build -t synapseiq:latest .
+
+# Run container locally
 docker run -p 8080:8080 synapseiq:latest
 ```
 
-Open [http://localhost:8080](http://localhost:8080)
+The Docker container runs a lightweight Nginx Alpine server on port `8080` configured to handle Single Page Application (SPA) routes.
 
-### Static Hosting (Vercel / Netlify)
+<br />
 
-```bash
-npm run build
-# Deploy the dist/ directory — no server-side requirements
+---
+
+## 🧠 Prompt Engineering & Industry Adaptation
+
+SynapseIQ utilizes advanced prompt design strategies to enforce consistent, high-density responses from Google Gemini.
+
+### McKinsey/BCG Advisory Persona Role-Play
+
+Every prompt configures Gemini as a Chief Strategy Officer or Senior Management Consultant. This changes the output tone from generic conversational chatbot responses to rigorous, metric-backed strategic directives.
+
+```text
+Role: Executive Business Advisor (McKinsey/BCG).
+Constraints:
+1. No repetitive wording. No generic phrasing.
+2. Focus on trends (slopes, MoM vectors) and covariance between metrics.
+3. Recommendations must include expected business impact, confidence score, and implementation difficulty.
 ```
+
+### Adaptive Industry Intelligence
+
+Before invoking Gemini, SynapseIQ analyzes the column headers of your dataset to auto-detect its business domain. Every prompt is custom-tailored with specific strategic focus areas:
+
+| Detected Domain | strategic Directive | Example Focus Areas |
+|---|---|---|
+| **Sales & CRM** | Revenue Strategy | Deal close velocity, Pipeline conversion rates, Regional performance |
+| **HR & Workforce** | Human Capital Strategy | Talent retention, Headcount capacity, Employee attrition indicators |
+| **Financial Operations** | Capital Allocation | EBITDA growth, Net operating margins, Variable cost structures |
+| **Supply Chain & Logistics** | Operational Resiliency | Transit latency, Warehousing stock limits, Sourcing bottlenecks |
+| **Healthcare & Medical** | Healthcare Operations | Patient throughput, Clinical quality, Resource conservation |
+| **Education** | Academic Operations | Course enrollment, Student retention, Budget balances |
+| **Technology / SaaS** | SaaS Unit Economics | NRR, MRR expansion, Customer CAC payback, Churn margins |
+
+### Structured JSON Serialization Constraints
+
+Gemini is constrained to return structured JSON payloads matching this TypeScript interface:
+
+```typescript
+interface RecommendationPayload {
+  recommendation: string;      // Core action suggestion starting with 'We recommend...'
+  businessReasoning: string;   // Management consulting justification
+  supportingMetrics: string;   // Reference to actual telemetry indicators
+  expectedImpact: string;      // Expected ARR/operating margin impact
+  confidenceScore: string;     // AI evaluation confidence (0-100)
+  potentialRisks: string;      // Associated execution risks
+  implementationDifficulty: 'Low' | 'Medium' | 'High';
+  priority: 'Low' | 'Medium' | 'High';
+  suggestedTimeline: string;   // Suggested action window (e.g. '14 days')
+}
+```
+
+<br />
+
+---
+
+## 🤖 Gemini API Integration & Resiliency
+
+SynapseIQ includes an enterprise-grade reliability wrapper around all API requests to ensure a seamless UI experience even in the event of API throttling or connectivity failures.
+
+```mermaid
+graph TD
+    A[Start API Call] --> B{Key Present?}
+    B -- No --> C[Local Heuristic Fallback]
+    B -- Yes --> D[Initiate Request with 12s Timeout]
+    D --> E{Success?}
+    E -- Yes --> F[AI Response Validation Layer]
+    E -- No: Timeout / 429 --> G{Retries Left?}
+    G -- Yes --> H[Exponential Backoff Delay] --> D
+    G -- No --> C
+    
+    F --> I{Valid JSON & Quality Score >= 50?}
+    I -- Yes --> J[Hydrate UI Store]
+    I -- No --> K[One-Time Auto-Regeneration Attempt] --> D
+```
+
+### Key Resiliency Features:
+
+1. **Timeout Handling**: All requests are capped at a strict 12-second timeout window using `AbortController` controllers to avoid blocking the main thread.
+2. **Concurrencies & Cancellations**: Live slider adjustments dynamically cancel in-flight API requests, preventing race conditions during rapid user input.
+3. **Exponential Backoff**: Automates backoff delays for API rate limits (`429 Quota Exceeded`) to maximize throughput.
+4. **AI Response Validation Layer**:
+   * **Language Rewrite Scanner**: Scans for generic AI chat phrases (e.g. *"Based on the data..."*, *"It appears that..."*) and rewrites them into boardroom-ready language.
+   * **Repetition Blocker**: Detects and filters out duplicated sentences.
+   * **Graceful Degradation**: Automatically falls back to the client-side local statistical engine if the validation loop fails or limits are exceeded.
 
 <br />
 
@@ -612,15 +691,35 @@ npm run build
 
 | Status | Version | Milestone |
 |---|---|---|
-| ✅ Complete | v1.0.0 | Hackathon Prototype — Full AI decision platform with Gemini |
-| 🔄 In Progress | v1.1 | Real-time analytics via WebSocket streaming |
-| 📅 Planned | v1.2 | Multi-user collaborative workspaces with role-based access |
-| 📅 Planned | v1.3 | ERP connectors — SAP, Oracle NetSuite, Microsoft Dynamics |
-| 📅 Planned | v1.4 | CRM connectors — Salesforce, HubSpot, Pipedrive |
-| 📅 Planned | v2.0 | Explainable AI with full causal reasoning chains |
-| 📅 Planned | v2.1 | Enterprise SSO — Google Workspace, Okta, Azure AD |
-| 📅 Planned | v2.2 | One-click PowerPoint and PDF boardroom export |
-| 🌟 Vision | v3.0 | Google Vertex AI integration with custom fine-tuned models |
+| ✅ Complete | v1.0.0 | Full AI decision platform with dynamic Gemini integration and local fallback |
+| 🔄 In Progress | v1.1 | Real-time analytics via WebSocket telemetry feeds |
+| 📅 Planned | v1.2 | Multi-user collaborative workspaces with role-based access controls |
+| 📅 Planned | v1.3 | ERP Integrations (SAP, Oracle NetSuite, Microsoft Dynamics) |
+| 📅 Planned | v1.4 | CRM Connectors (Salesforce, HubSpot, Pipedrive) |
+| 📅 Planned | v2.0 | Advanced causal reasoning graphs |
+| 📅 Planned | v2.1 | Enterprise SSO (Okta, Google Workspace, Azure AD) |
+| 📅 Planned | v2.2 | One-click PowerPoint and PDF boardroom deck compilation |
+
+<br />
+
+---
+
+## ⚠️ Known Limitations & Troubleshooting
+
+### Limitations
+1. **Client-side Memory Limits**: Large CSV datasets exceeding 10MB or 150,000 rows may cause lag during client-side Pearson correlation calculations.
+2. **Rate Limiting**: Users on Gemini API free tiers may encounter `429 Rate Limit Exceeded` warnings during rapid scenario adjustments.
+3. **Column Mapping Rules**: The CSV parser expects at least one numeric indicator to represent performance KPIs.
+
+### Troubleshooting Guide
+
+#### 🔴 "Decision readiness stays at 0% or cards show placeholder text"
+* **Cause**: Your API key may have expired or reached its quota limit.
+* **Solution**: Check your browser console. If you see a `429` status code, wait 60 seconds or switch to a paid API tier. The app will continue running using local heuristic fallbacks.
+
+#### 🔴 "Outliers or missing value indicators do not match my sheet"
+* **Cause**: Outlier detection checks for Z-scores $\ge |3.0|$. Missing fields check for empty cells or null values.
+* **Solution**: Clean your CSV dataset by removing trailing empty rows before ingestion.
 
 <br />
 
@@ -630,8 +729,6 @@ npm run build
 
 <div align="center">
 
-<br />
-
 **Pravalika Palle**
 
 *Lead Engineer · Product Designer · AI Architect*
@@ -639,8 +736,6 @@ npm run build
 MCA Graduate · AI & Data Enthusiast · Builder of SynapseIQ
 
 [![GitHub](https://img.shields.io/badge/GitHub-pravalika2307-181717?style=flat-square&logo=github)](https://github.com/pravalika2307)
-
-<br />
 
 </div>
 
