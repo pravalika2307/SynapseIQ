@@ -182,6 +182,19 @@ export const Landing: React.FC = () => {
                     )}
 
                     <UploadZone onFileSelected={handleFileSelect} />
+
+                    <div className="flex items-center justify-between border-t border-white/5 pt-4 mt-3">
+                      <span className="text-[11px] text-white/40 font-serif">Don't have a dataset?</span>
+                      <button
+                        onClick={() => {
+                          setSelectedFile(null);
+                          setState('loading');
+                        }}
+                        className="px-4 py-2 bg-[#83D18B]/10 hover:bg-[#83D18B] border border-[#83D18B]/30 hover:border-[#83D18B] text-[#83D18B] hover:text-[#0D1117] font-semibold text-11.5 rounded-xl transition-all cursor-pointer select-none active:scale-95 flex items-center gap-1.5"
+                      >
+                        ⚡ Try Demo Dataset
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
