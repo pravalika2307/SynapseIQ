@@ -119,7 +119,7 @@ export const ExecutiveBrief: React.FC = () => {
           <div className="flex items-center gap-2.5 px-4 py-2 bg-[#151B23] border border-white/5 rounded-xl text-12 text-white/60 shadow-lg" title="Confidence metrics dynamically calculated from record completeness, missing parameters, and Z-score outlier ratios.">
             <Activity size={14} className="text-white/30" />
             <div className="flex flex-col">
-              <span className="text-[8px] font-bold text-white/30 uppercase tracking-wider">AI Confidence</span>
+              <span className="text-[8px] font-bold text-white/30 uppercase tracking-wider">Decision Confidence</span>
               <span className="font-mono text-[#83D18B] text-11"><CountUp value={decisionReadiness} />%</span>
             </div>
           </div>

@@ -596,24 +596,24 @@ export const DecisionCopilot: React.FC = () => {
             </div>
           </div>
 
-          {/* Gemini API Key Configuration */}
+          {/* Decision Intelligence API Credentials */}
           <div className="space-y-2.5 p-4 bg-white/[0.01] border border-white/5 rounded-xl">
-            <span className="text-[9.5px] font-bold text-white/30 uppercase tracking-wider block">Gemini API Key</span>
+            <span className="text-[9.5px] font-bold text-white/30 uppercase tracking-wider block">Decision Intelligence API Credentials</span>
             <input
               type="password"
               value={geminiApiKey || ''}
               onChange={(e) => setGeminiApiKey(e.target.value)}
-              placeholder="Enter API Key to supercharge AI..."
+              placeholder="Enter API Credentials to supercharge decision advisory..."
               className="w-full bg-[#0D1117] border border-white/5 rounded-lg px-2.5 py-1.5 text-11 text-white/70 placeholder-white/20 outline-none focus:border-[#83D18B]/30"
             />
             <span className="text-[9px] text-white/20 block leading-tight">
-              {geminiApiKey ? '✅ Key Loaded. True Gemini Pipeline active.' : '💡 Optional. Falls back to localized data insights.'}
+              {geminiApiKey ? '✅ Credentials Loaded. Enterprise Intelligence Pipeline active.' : '💡 Optional. Falls back to Local Strategy Advisory Node.'}
             </span>
           </div>
 
-          {/* AI Confidence Rating */}
-          <div className="space-y-2.5 p-4 bg-white/[0.01] border border-white/5 rounded-xl" title="Confidence metrics dynamically calculated from record completeness, missing parameters, and Z-score outlier ratios.">
-            <span className="text-[9.5px] font-bold text-white/30 uppercase tracking-wider block">AI Confidence Rating</span>
+          {/* Decision Confidence Rating */}
+          <div className="space-y-2.5 p-4 bg-white/[0.01] border border-white/5 rounded-xl" title="Confidence metrics dynamically calculated from record completeness, KPI status completeness, and Z-score outlier ratios.">
+            <span className="text-[9.5px] font-bold text-white/30 uppercase tracking-wider block">Decision Confidence Rating</span>
             <div className="flex items-center justify-between text-11 font-mono">
               <span className="text-white/40">Reliability Index</span>
               <span className="text-[#83D18B] font-bold">{decisionReadiness}%</span>
