@@ -73,7 +73,6 @@ async function callGeminiRawWithRetry(apiKey: string, prompt: string, retries = 
         console.error(`Gemini API: All ${retries} attempts failed.`);
         throw error;
       }
-      // Calculate delay with exponential backoff (e.g. 1000ms, 2000ms, 4000ms)
       const delay = initialDelay * Math.pow(2, attempt - 1);
       console.warn(`Gemini API: Attempt ${attempt} failed. Retrying in ${delay}ms... Error: ${error.message}`);
       await new Promise(resolve => setTimeout(resolve, delay));
@@ -101,7 +100,9 @@ export async function generateGeminiAnalysis(
   }, null, 2);
 
   const prompt = `
-You are a Senior Management Consultant and the Chief Strategy Officer of SynapseIQ. Your tone is professional, concise, data-driven, and executive-friendly.
+You are a Senior Strategy Consultant from McKinsey, BCG, Bain, Deloitte, or Google Cloud Consulting. Your tone is highly professional, concise, data-driven, and executive-friendly.
+Never provide generic summaries. Avoid repeating numbers unnecessarily. Every recommendation must include reasoning, and every insight must explain the underlying WHY.
+
 Analyze the following corporate telemetry dataset stats summary:
 ${statsString}
 
@@ -132,8 +133,8 @@ You must return a JSON object matching the following structure:
       "note": "AI Bulletins - What happened? Why? Expected impact? Suggested action.", 
       "chartData": [ { "time": "M1", "value": 80 }, { "time": "M2", "value": 81 }, { "time": "M3", "value": 85.2 } ],
       "advisory": {
-        "insight": "Consultant-level observation of this metric's trend.",
-        "impact": "What this means for the bottom line or operations.",
+        "insight": "Consultant-level observation of this metric's trend, explaining the WHY.",
+        "impact": "Operational or financial implications.",
         "action": "Immediate recommended management action."
       }
     }
@@ -147,13 +148,16 @@ You must return a JSON object matching the following structure:
       "riskLevel": "Optimized|High|Critical",
       "summary": "Polished executive report derived from real AI insights.",
       "narrative": [
-        "Executive Summary: [Narrative directly referencing actual revenue/profit/returns/CAC values]",
-        "Business Health: [Detailed analysis of core metrics & health rating]",
-        "Key Opportunities: [Actionable opportunities based on correlation matrix]",
-        "Critical Risks: [Detailed threats identified in inventory or region segments]",
-        "Forecast: [Vivid forward projection based on trends]",
-        "Strategic Recommendations: [Specific, context-rich steering actions]",
-        "90-Day Action Plan: [Step-by-step priority rollout plan]"
+        "Executive Summary: [Provide a high-level strategic synthesis and overview of performance]",
+        "Business Context: [Detail the operational and industry environment, explaining the WHY behind the telemetry]",
+        "Key Findings: [List the core observations derived from the data averages, maximums and minimums]",
+        "Root Causes: [Outline the underlying structural or operational drivers of the trends]",
+        "Business Risks: [Detail the most critical bottom-line and operational threats]",
+        "Growth Opportunities: [Identify the top high-margin strategic upsides]",
+        "Strategic Recommendations: [Specific, context-rich steering actions, always beginning with 'We recommend...']",
+        "Immediate Actions: [Priority step-by-step rollout plan for the next 30 days]",
+        "Expected Impact: [Quantify the expected performance improvements and financial outcomes]",
+        "Confidence Score: [A strategic summary of why the telemetry supports these findings with high reliability]"
       ]
     }
   ],
@@ -171,19 +175,17 @@ You must return a JSON object matching the following structure:
       "trend": "Optimized",
       "category": "Growth|Revenue|Marketing|Inventory|Customers|Operations|Risk",
       "whatHappened": "What occurred in telemetry.",
-      "why": "Underlying business rationale.",
-      "recommendedAction": "Actionable steering guidance.",
+      "why": "Underlying business rationale explaining the WHY.",
+      "recommendedAction": "Actionable steering guidance starting with 'We recommend...'.",
       "targetNodeId": "health|revenue|profit|customers|marketing|inventory|operations|customer-satisfaction"
     }
   ]
 }
 
 Instructions:
-1. Format nodeContext summaries with actual numbers, avoid placeholders. Make statements context-rich and trustworthy.
-2. In 'businessSignals', write a detailed markdown formatted note. You MUST populate the 'advisory' object with senior consultant insights, impact, and actions. Populate at least 5 signals corresponding to columns in the dataset.
-3. In 'briefingReports', construct a highly polished Boardroom Report under the narrative array, with the exact headings: Executive Summary, Business Health, Key Opportunities, Critical Risks, Forecast, Strategic Recommendations, 90-Day Action Plan.
-4. Establish canvas edge relationships dynamically using actual high correlations (absolute value > 0.3) from the correlation stats provided.
-5. Create at least 3 custom, highly detailed timelineEvents mapping milestones detected in the dataset.
+1. Return structured JSON ONLY. Do not wrap response in markdown.
+2. In 'briefingReports', the 'narrative' array MUST contain exactly 10 paragraphs corresponding to the headings: Executive Summary, Business Context, Key Findings, Root Causes, Business Risks, Growth Opportunities, Strategic Recommendations, Immediate Actions, Expected Impact, and Confidence Score. Each paragraph must be prefixed with its heading name (e.g. 'Executive Summary: ...').
+3. Explain the underlying WHY behind every key data trend. Make statements context-rich, concise, and professional.
 `;
 
   const responseText = await callGeminiRawWithRetry(apiKey, prompt);
@@ -205,7 +207,9 @@ export async function askGeminiCopilot(
   };
 
   const prompt = `
-You are a Senior Management Consultant and the Chief Strategy Officer of SynapseIQ. Your tone is professional, concise, data-driven, and executive-friendly. You write responses that read like executive consulting briefs, not robotic chatbot dialogues.
+You are a Senior Strategy Consultant from McKinsey, BCG, Bain, Deloitte, or Google Cloud Consulting. Your tone is highly professional, concise, data-driven, and executive-friendly.
+Never provide generic summaries. Avoid repeating numbers unnecessarily. Every recommendation must include reasoning, and every insight must explain the underlying WHY.
+
 Dataset Context:
 ${JSON.stringify(statsSummary, null, 2)}
 
@@ -217,15 +221,17 @@ ${JSON.stringify(history.slice(-6), null, 2)}
 
 Current User Query: "${query}"
 
-Provide a genuine, strategic, dataset-aligned answer. Avoid hallucinating metrics. Every recommendation value MUST start with the exact text "We recommend...". Return a JSON object with this exact shape:
+Provide a genuine, strategic, dataset-aligned answer. Avoid hallucinating metrics. Every recommendation value MUST start with the exact text "We recommend...". Return structured JSON only.
+
+Return a JSON object with this exact shape:
 {
-  "summary": "Executive Summary (clear, professional, McKinsey-style statement summarizing the response)",
+  "summary": "Executive Summary & Business Context: [Consolidated high-level strategic synthesis and the industry WHY behind this query]",
   "evidence": [
-    "Specific data bullet points referencing actual columns, averages, or counts",
-    "Further supporting stats from the dataset"
+    "Key Findings: [Specific data observation backed by statistics]",
+    "Root Causes: [Underlying operational driver explaining this data trend]"
   ],
   "confidence": 95,
-  "recommendation": "Recommended Action (specific action plan related to the query)",
+  "recommendation": "Strategic Recommendations, Immediate Actions & Expected Impact: [We recommend specific steering actions, detail immediate next steps, and outline expected bottom-line impacts]",
   "nextQuestion": "Next Suggested Question (intelligent question starter related to this answer)"
 }
 `;
@@ -253,8 +259,9 @@ export async function simulateGeminiScenario(
   };
 
   const prompt = `
-You are a Senior Management Consultant and the Chief Strategy Officer of SynapseIQ forecasting corporate telemetry. Your tone is professional, concise, data-driven, and executive-friendly.
-Explain the trade-offs, risks, and ROI of these slider assumptions.
+You are a Senior Strategy Consultant from McKinsey, BCG, Bain, Deloitte, or Google Cloud Consulting forecasting corporate telemetry. Your tone is highly professional, concise, data-driven, and executive-friendly.
+Never provide generic summaries. Avoid repeating numbers unnecessarily. Every recommendation must include reasoning, and every insight must explain the underlying WHY.
+
 Dataset Context:
 ${JSON.stringify(statsSummary, null, 2)}
 
@@ -266,18 +273,19 @@ Assumed slider inputs adjusted by the executive:
 - Customer Retention target: ${sliderValues.retention}% NRR
 - Operating overhead costs: ${sliderValues.costs}%
 
-Model the forecast. Return a JSON object explaining the trade-offs, risks, and ROI.
-Structure:
+Model the forecast. Return structured JSON only.
+
+JSON Structure:
 {
-  "verdict": "Why the prediction changed (explain how pricing, marketing, or retention shifts the forecasted path)",
-  "tradeoffs": "Business trade-offs (e.g. higher marketing raises acquisition but drives up short term costs)",
-  "risks": "Potential risks (e.g. inventory stockouts or retention slip risks)",
-  "roi": "Expected ROI (e.g. projected margin shift or ARR multiplier)",
+  "verdict": "Executive Summary, Business Context, Key Findings & Root Causes: [Synthesised forecast path showing how sliders shift operations, explaining the WHY and structural root causes]",
+  "tradeoffs": "Growth Opportunities & Trade-offs: [Explain how pipeline velocity or near-term margins are balanced by these sliders]",
+  "risks": "Business Risks: [Detailed operational and financial threats created by these configurations]",
+  "roi": "Strategic Recommendations, Immediate Actions & Expected Impact: [We recommend specific steering targets, detailed immediate actions, and estimated ROI multipliers]",
   "confidence": 88,
-  "scenarioStatus": "McKinsey-style status description banner",
+  "scenarioStatus": "McKinsey-style status description banner summarizing the model outlook",
   "recommendedAction": {
     "title": "Short action title",
-    "impact": "Detailed explanation of implementation benefits",
+    "impact": "Detailed explanation of implementation benefits and reasoning",
     "expectedRevenueIncrease": "+8.3%",
     "complexity": "Low|Medium|High",
     "confidence": 94,
@@ -324,7 +332,7 @@ export async function getScenarioSimulation(
     try {
       return await simulateGeminiScenario(apiKey, sliderValues, summary);
     } catch (err: any) {
-      console.warn(`Gemini Scenario simulation API failed, falling back to local engine: ${err.message}`);
+      console.warn(`Gemini Scenario simulation API failed, falling back to local reasoning: ${err.message}`);
     }
   }
   return simulateLocalScenario(sliderValues, summary);
