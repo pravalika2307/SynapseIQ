@@ -483,7 +483,7 @@ SynapseIQ/
 | Resource | Link |
 |---|---|
 | 🎥 **Demo Video** | *Coming Soon — Upload to YouTube* |
-| 🚀 **Live Deployment** | *Deploy to Google Cloud Run — see instructions below* |
+| 🚀 **Live Deployment** | *Deploy to Vercel — see instructions below* |
 | 📄 **Presentation Deck** | *Google Slides presentation link* |
 
 </div>
@@ -527,7 +527,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) in your browser.
+Open [https://synapseiq-ai.vercel.app/](https://synapseiq-ai.vercel.app/) in your browser.
 
 ### Other Commands
 
@@ -564,24 +564,29 @@ SynapseIQ works **fully offline** with its built-in reasoning engine. A Gemini A
 
 ## ☁️ Deployment
 
-### Google Cloud Run
+SynapseIQ is deployed on **Vercel** with automatic CI/CD integration.
+
+### Production Deployment
 
 ```bash
-# Authenticate
-gcloud auth login
-gcloud config set project YOUR_PROJECT_ID
+# Install Vercel CLI
+npm install -g vercel
 
-# Build and push via Cloud Build
-gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/synapseiq:latest
+# Login
+vercel login
 
-# Deploy to Cloud Run
-gcloud run deploy synapseiq \
-  --image gcr.io/YOUR_PROJECT_ID/synapseiq:latest \
-  --platform managed \
-  --region us-central1 \
-  --allow-unauthenticated \
-  --port 8080
+# Deploy
+vercel --prod
 ```
+
+### Continuous Deployment
+
+Every push to the `main` branch automatically:
+
+- Builds the React + Vite application
+- Optimizes production assets
+- Deploys to Vercel's global CDN
+- Generates a secure HTTPS production URL
 
 ### Docker (Local)
 
