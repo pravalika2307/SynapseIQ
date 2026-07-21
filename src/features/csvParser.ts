@@ -1,3 +1,48 @@
+export interface BIAnalysis {
+  revenueTrends: {
+    direction: 'upward' | 'downward' | 'stable' | 'insufficient_data';
+    slope: number;
+    description: string;
+  };
+  growthRate: {
+    percentage: number;
+    description: string;
+  };
+  outliers: {
+    count: number;
+    columnsWithOutliers: string[];
+    description: string;
+  };
+  correlations: {
+    strongestPositive: { col1: string; col2: string; coefficient: number }[];
+    strongestNegative: { col1: string; col2: string; coefficient: number }[];
+    description: string;
+  };
+  topPerformingCategories: { category: string; revenue: number; profit: number }[];
+  bottomPerformingCategories: { category: string; revenue: number; profit: number }[];
+  seasonality: {
+    detected: boolean;
+    description: string;
+  };
+  missingValues: {
+    totalCount: number;
+    ratio: number;
+    byColumn: Record<string, number>;
+  };
+  dataQuality: {
+    score: number; // 0 - 100
+    grade: 'Excellent' | 'Good' | 'Fair' | 'Poor';
+    description: string;
+  };
+  kpiSummary: {
+    metric: string;
+    sum: number;
+    mean: number;
+    min: number;
+    max: number;
+  }[];
+}
+
 export interface DatasetSummary {
   fileName: string;
   rowCount: number;
@@ -35,6 +80,7 @@ export interface DatasetSummary {
   }>;
   missingValueCount: number;
   outlierCount: number;
+  biAnalysis: BIAnalysis;
 }
 
 export function parseCSV(csvText: string, fileName: string): DatasetSummary {
@@ -239,6 +285,255 @@ export function parseCSV(csvText: string, fileName: string): DatasetSummary {
     }
   });
 
+  // ----------------------------------------------------
+  // BUSINESS INTELLIGENCE PREPROCESSING LAYER
+  // ----------------------------------------------------
+  
+  // 1. KPI Summary
+  const kpiSummary = Object.keys(kpiStats).map(metric => ({
+    metric,
+    sum: kpiStats[metric].sum,
+    mean: kpiStats[metric].mean,
+    min: kpiStats[metric].min,
+    max: kpiStats[metric].max
+  }));
+
+  // 2. Revenue Trends
+  let revenueTrends: {
+    direction: 'upward' | 'downward' | 'stable' | 'insufficient_data';
+    slope: number;
+    description: string;
+  } = {
+    direction: 'insufficient_data',
+    slope: 0,
+    description: 'No revenue metric detected to analyze trends.'
+  };
+
+
+  const revCol = detectedMetrics.revenue;
+  if (revCol && kpiStats[revCol] && kpiStats[revCol].values.length >= 2) {
+    const revVals = kpiStats[revCol].values;
+    const n = revVals.length;
+    let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+    for (let idx = 0; idx < n; idx++) {
+      sumX += idx;
+      sumY += revVals[idx];
+      sumXY += idx * revVals[idx];
+      sumXX += idx * idx;
+    }
+    const num = (n * sumXY) - (sumX * sumY);
+    const den = (n * sumXX) - (sumX * sumX);
+    const slope = den === 0 ? 0 : num / den;
+    
+    let direction: 'upward' | 'downward' | 'stable' = 'stable';
+    const relativeSlope = slope / (kpiStats[revCol].mean || 1);
+    if (relativeSlope > 0.005) {
+      direction = 'upward';
+    } else if (relativeSlope < -0.005) {
+      direction = 'downward';
+    }
+
+    revenueTrends = {
+      direction,
+      slope,
+      description: `Revenue exhibits a localized ${direction} trend with a calculated period slope of ${slope.toFixed(1)} units.`
+    };
+  }
+
+  // 3. Growth Rate
+  let growthRate = {
+    percentage: 0,
+    description: 'Growth rate calculation requires active revenue timelines.'
+  };
+  if (revCol && kpiStats[revCol] && kpiStats[revCol].values.length >= 2) {
+    const revVals = kpiStats[revCol].values;
+    const startVal = revVals[0];
+    const endVal = revVals[revVals.length - 1];
+    const percentage = startVal > 0 ? ((endVal - startVal) / startVal) * 100 : 0;
+    growthRate = {
+      percentage,
+      description: `Net growth rate over the period registers at ${percentage.toFixed(1)}%, shifting from a starting baseline of ${startVal.toFixed(1)} to an endpoint of ${endVal.toFixed(1)}.`
+    };
+  }
+
+  // 4. Outliers
+  const outlierCols: string[] = [];
+  numericHeaders.forEach(header => {
+    const stats = kpiStats[header];
+    if (stats && stats.values.length > 2) {
+      const mean = stats.mean;
+      const sqDiffSum = stats.values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0);
+      const stdDev = Math.sqrt(sqDiffSum / (stats.values.length - 1));
+      if (stdDev > 0) {
+        let hasOutlier = false;
+        stats.values.forEach(val => {
+          if (Math.abs(val - mean) / stdDev >= 3.0) {
+            hasOutlier = true;
+          }
+        });
+        if (hasOutlier) {
+          outlierCols.push(header);
+        }
+      }
+    }
+  });
+
+  const outliers = {
+    count: outlierCount,
+    columnsWithOutliers: outlierCols,
+    description: outlierCount > 0 
+      ? `A total of ${outlierCount} data points exceeded ±3σ Z-score thresholds, localized within columns: ${outlierCols.join(', ')}.`
+      : 'No Z-score outlier anomalies were detected in the telemetry dataset.'
+  };
+
+  // 5. Correlation Summary
+  const strongPositive: { col1: string; col2: string; coefficient: number }[] = [];
+  const strongNegative: { col1: string; col2: string; coefficient: number }[] = [];
+  Object.keys(correlations).forEach(col1 => {
+    Object.keys(correlations[col1]).forEach(col2 => {
+      if (col1 < col2) {
+        const coef = correlations[col1][col2];
+        if (coef > 0.4) {
+          strongPositive.push({ col1, col2, coefficient: coef });
+        } else if (coef < -0.4) {
+          strongNegative.push({ col1, col2, coefficient: coef });
+        }
+      }
+    });
+  });
+  strongPositive.sort((a, b) => b.coefficient - a.coefficient);
+  strongNegative.sort((a, b) => a.coefficient - b.coefficient);
+
+  const correlation = {
+    strongestPositive: strongPositive.slice(0, 3),
+    strongestNegative: strongNegative.slice(0, 3),
+    description: strongPositive.length > 0
+      ? `Strongest positive alignment detected between "${strongPositive[0]?.col1}" and "${strongPositive[0]?.col2}" (Pearson coefficient of ${strongPositive[0]?.coefficient.toFixed(2)}).`
+      : 'No high-magnitude linear correlations detected in the telemetry.'
+  };
+
+  // 6. Category Performance Analysis
+  let topPerformingCategories: { category: string; revenue: number; profit: number }[] = [];
+  let bottomPerformingCategories: { category: string; revenue: number; profit: number }[] = [];
+  
+  const catCol = detectedMetrics.category;
+  if (catCol) {
+    const catGroup: Record<string, { revenue: number; profit: number }> = {};
+    data.forEach(row => {
+      const catVal = String(row[catCol] || 'Unassigned');
+      if (!catGroup[catVal]) {
+        catGroup[catVal] = { revenue: 0, profit: 0 };
+      }
+      if (revCol) catGroup[catVal].revenue += Number(row[revCol] || 0);
+      const profCol = detectedMetrics.profit;
+      if (profCol) catGroup[catVal].profit += Number(row[profCol] || 0);
+    });
+
+    const catList = Object.keys(catGroup).map(category => ({
+      category,
+      revenue: catGroup[category].revenue,
+      profit: catGroup[category].profit
+    }));
+
+    catList.sort((a, b) => b.revenue - a.revenue);
+    topPerformingCategories = catList.slice(0, 3);
+    bottomPerformingCategories = catList.slice(-3).reverse();
+  }
+
+  // 7. Seasonality Analysis
+  let seasonality = {
+    detected: false,
+    description: 'Seasonality analysis requires sequential timestamp series.'
+  };
+  if (dateCol && revCol && data.length >= 6) {
+    const monthlySales: Record<number, number[]> = {};
+    data.forEach(row => {
+      const dVal = new Date(row[dateCol]);
+      if (!isNaN(dVal.getTime())) {
+        const month = dVal.getMonth();
+        if (!monthlySales[month]) monthlySales[month] = [];
+        monthlySales[month].push(Number(row[revCol] || 0));
+      }
+    });
+
+    const monthMeans = Object.keys(monthlySales).map(m => {
+      const vals = monthlySales[Number(m)];
+      const sum = vals.reduce((a, b) => a + b, 0);
+      return sum / vals.length;
+    });
+
+    if (monthMeans.length >= 3) {
+      const avg = monthMeans.reduce((a, b) => a + b, 0) / monthMeans.length;
+      const sqDiffs = monthMeans.map(m => Math.pow(m - avg, 2));
+      const variance = sqDiffs.reduce((a, b) => a + b, 0) / monthMeans.length;
+      const stdDev = Math.sqrt(variance);
+      const cv = avg > 0 ? stdDev / avg : 0;
+      
+      const detected = cv > 0.15;
+      seasonality = {
+        detected,
+        description: detected
+          ? `Telemetry displays significant cyclical seasonality, with a ${Math.round(cv * 100)}% coefficient of variation in sales across monthly cohorts.`
+          : 'Sales distribution is relatively uniform across monthly periods, suggesting low seasonality.'
+      };
+    }
+  }
+
+  // 8. Missing Values
+  const missingByCol: Record<string, number> = {};
+  headers.forEach(h => {
+    missingByCol[h] = 0;
+  });
+  data.forEach(row => {
+    headers.forEach(h => {
+      if (row[h] === null || row[h] === undefined || row[h] === '') {
+        missingByCol[h]++;
+      }
+    });
+  });
+
+  const totalCells = data.length * headers.length;
+  const missingRatio = totalCells > 0 ? missingValueCount / totalCells : 0;
+  const missingValues = {
+    totalCount: missingValueCount,
+    ratio: missingRatio,
+    byColumn: missingByCol
+  };
+
+  // 9. Data Quality Score
+  let qualityScore = 100;
+  qualityScore -= missingRatio * 60;
+  qualityScore -= Math.min(15, (outlierCount / Math.max(1, data.length)) * 40);
+  
+  if (!detectedMetrics.revenue) qualityScore -= 10;
+  if (!detectedMetrics.profit) qualityScore -= 10;
+  if (!detectedMetrics.date) qualityScore -= 5;
+  qualityScore = Math.max(10, Math.min(100, Math.round(qualityScore)));
+
+  let grade: 'Excellent' | 'Good' | 'Fair' | 'Poor' = 'Poor';
+  if (qualityScore >= 90) grade = 'Excellent';
+  else if (qualityScore >= 75) grade = 'Good';
+  else if (qualityScore >= 50) grade = 'Fair';
+
+  const dataQuality = {
+    score: qualityScore,
+    grade,
+    description: `Telemetry data quality audited as ${grade} (${qualityScore}/100 score). Ingested ${data.length} records across ${headers.length} columns, with ${missingValueCount} missing entries.`
+  };
+
+  const biAnalysis: BIAnalysis = {
+    revenueTrends,
+    growthRate,
+    outliers,
+    correlations: correlation,
+    topPerformingCategories,
+    bottomPerformingCategories,
+    seasonality,
+    missingValues,
+    dataQuality,
+    kpiSummary
+  };
+
   return {
     fileName,
     rowCount: data.length,
@@ -259,5 +554,6 @@ export function parseCSV(csvText: string, fileName: string): DatasetSummary {
     kpiStats,
     missingValueCount,
     outlierCount,
+    biAnalysis
   };
 }

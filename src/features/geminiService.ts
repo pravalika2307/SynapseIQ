@@ -84,20 +84,13 @@ export async function generateGeminiAnalysis(
   apiKey: string, 
   summary: DatasetSummary
 ): Promise<AnalysisResponse> {
-  // Format metadata summary for prompt to optimize token usage
   const statsString = JSON.stringify({
     fileName: summary.fileName,
     rowCount: summary.rowCount,
     profile: summary.profile,
-    kpis: Object.keys(summary.kpiStats).map(h => ({
-      name: h,
-      avg: summary.kpiStats[h].mean,
-      sum: summary.kpiStats[h].sum,
-      min: summary.kpiStats[h].min,
-      max: summary.kpiStats[h].max
-    })),
-    correlations: summary.correlations
+    biAnalysis: summary.biAnalysis
   }, null, 2);
+
 
   const prompt = `
 You are a Senior Strategy Consultant from McKinsey, BCG, Bain, Deloitte, or Google Cloud Consulting. Your tone is highly professional, concise, data-driven, and executive-friendly.
@@ -202,8 +195,7 @@ export async function askGeminiCopilot(
   const statsSummary = {
     fileName: summary.fileName,
     profile: summary.profile,
-    kpis: Object.keys(summary.kpiStats).map(h => `${h}: avg=${summary.kpiStats[h].mean.toFixed(1)}`),
-    correlations: summary.correlations
+    biAnalysis: summary.biAnalysis
   };
 
   const prompt = `
@@ -255,7 +247,7 @@ export async function simulateGeminiScenario(
   const statsSummary = {
     fileName: summary.fileName,
     profile: summary.profile,
-    kpis: Object.keys(summary.kpiStats).map(h => `${h}: avg=${summary.kpiStats[h].mean.toFixed(1)}`)
+    biAnalysis: summary.biAnalysis
   };
 
   const prompt = `
