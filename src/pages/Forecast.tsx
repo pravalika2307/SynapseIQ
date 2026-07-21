@@ -471,28 +471,40 @@ export const Forecast: React.FC = () => {
             </div>
 
             <div className="space-y-3 font-serif">
-              <div className="space-y-1">
-                <span className="text-[9px] uppercase font-sans font-bold tracking-widest text-[#83D18B]/70 animate-pulse">Verdict</span>
-                <p className="text-13.5 text-white/80 leading-relaxed">
-                  {aiVerdict}
-                </p>
-              </div>
-
-              {(aiTradeoffs || aiRisks || aiRoi) && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-white/5 pt-3 mt-1.5">
-                  <div className="space-y-0.5">
-                    <span className="text-[8.5px] uppercase font-sans font-bold tracking-widest text-white/40">Trade-offs</span>
-                    <p className="text-11.5 text-white/50 leading-normal">{aiTradeoffs}</p>
-                  </div>
-                  <div className="space-y-0.5">
-                    <span className="text-[8.5px] uppercase font-sans font-bold tracking-widest text-white/40">Risks</span>
-                    <p className="text-11.5 text-white/50 leading-normal">{aiRisks}</p>
-                  </div>
-                  <div className="space-y-0.5">
-                    <span className="text-[8.5px] uppercase font-sans font-bold tracking-widest text-white/40">Expected ROI</span>
-                    <p className="text-11.5 text-[#83D18B] leading-normal">{aiRoi}</p>
-                  </div>
+              {!hasSlidersMoved ? (
+                <div className="flex flex-col items-center justify-center py-10 px-4 text-center border border-dashed border-white/10 rounded-xl bg-white/[0.01]">
+                  <Sliders size={28} className="text-[#83D18B] mb-3 animate-pulse" />
+                  <span className="text-14 font-bold text-white/80 font-sans block mb-1">No forecasts available</span>
+                  <p className="text-11.5 text-white/40 leading-relaxed font-serif max-w-sm">
+                    Generate predictions using historical business trends. Adjust any strategy slider on the left to simulate real-time performance impacts.
+                  </p>
                 </div>
+              ) : (
+                <>
+                  <div className="space-y-1">
+                    <span className="text-[9px] uppercase font-sans font-bold tracking-widest text-[#83D18B]/70 animate-pulse">Verdict</span>
+                    <p className="text-13.5 text-white/80 leading-relaxed">
+                      {aiVerdict}
+                    </p>
+                  </div>
+
+                  {(aiTradeoffs || aiRisks || aiRoi) && (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-white/5 pt-3 mt-1.5">
+                      <div className="space-y-0.5">
+                        <span className="text-[8.5px] uppercase font-sans font-bold tracking-widest text-white/40">Trade-offs</span>
+                        <p className="text-11.5 text-white/50 leading-normal">{aiTradeoffs}</p>
+                      </div>
+                      <div className="space-y-0.5">
+                        <span className="text-[8.5px] uppercase font-sans font-bold tracking-widest text-white/40">Risks</span>
+                        <p className="text-11.5 text-white/50 leading-normal">{aiRisks}</p>
+                      </div>
+                      <div className="space-y-0.5">
+                        <span className="text-[8.5px] uppercase font-sans font-bold tracking-widest text-white/40">Expected ROI</span>
+                        <p className="text-11.5 text-[#83D18B] leading-normal">{aiRoi}</p>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </motion.div>

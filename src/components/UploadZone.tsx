@@ -85,11 +85,14 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
         <UploadCloud size={20} className="text-white/30" />
       </div>
 
-      <h3 className="text-15 font-semibold text-white/90 mb-1 font-sans tracking-tight">
-        Drop your analytics spreadsheet
+      <h3 className="text-15 font-semibold text-white/90 mb-1.5 font-sans tracking-tight">
+        No dataset uploaded yet.
       </h3>
-      <p className="text-12 text-white/40 mb-5 font-serif italic">
-        or click to browse local files
+      <p className="text-12.5 text-[#83D18B] mb-1.5 font-serif">
+        Upload your first dataset to unlock AI-powered executive insights.
+      </p>
+      <p className="text-11 text-white/30 mb-5 font-sans">
+        Drop your CSV or XLSX spreadsheet here, or click to browse local files.
       </p>
 
       <div className="flex gap-2">

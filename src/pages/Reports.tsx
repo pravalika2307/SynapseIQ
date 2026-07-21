@@ -143,14 +143,37 @@ export const Reports: React.FC = () => {
 
           {/* Narrative paragraphs */}
           <div className="space-y-6 flex-1">
-            {activeReport.narrative.map((paragraph, idx) => (
-              <p 
-                key={idx} 
-                className={`text-15 text-white/60 leading-relaxed font-serif ${idx === 0 ? 'first-letter:text-48 first-letter:text-accent-sage first-letter:font-serif first-letter:mr-2.5 first-letter:float-left first-letter:leading-none' : ''}`}
-              >
-                {paragraph}
-              </p>
-            ))}
+            {!isCompiled ? (
+              <div className="flex flex-col items-center justify-center py-16 px-6 text-center border border-dashed border-white/10 rounded-2xl bg-white/[0.01] my-4 min-h-[300px]">
+                <div className="w-12 h-12 rounded-full bg-white/[0.02] border border-white/5 flex items-center justify-center mb-4 text-[#83D18B]">
+                  <Download size={18} className="animate-bounce" />
+                </div>
+                <h3 className="text-15 font-bold text-white/95 mb-1.5 font-sans">No report generated</h3>
+                <p className="text-12.5 text-[#83D18B] mb-2 font-serif">
+                  Create a boardroom-ready report in one click.
+                </p>
+                <p className="text-11.5 text-white/35 mb-6 font-sans max-w-sm">
+                  Click 'Compile Board Briefing' below to generate your executive analytical dossier.
+                </p>
+                <button
+                  onClick={handleCompile}
+                  disabled={isCompiling}
+                  className="px-5 py-2.5 bg-accent-sage hover:bg-accent-sage/90 text-background font-bold text-12 rounded-xl transition-all shadow-lg active:scale-95 flex items-center gap-2 cursor-pointer disabled:opacity-40"
+                >
+                  <RefreshCw size={13} className={isCompiling ? 'animate-spin' : ''} />
+                  Compile Report Now
+                </button>
+              </div>
+            ) : (
+              activeReport.narrative.map((paragraph, idx) => (
+                <p 
+                  key={idx} 
+                  className={`text-15 text-white/60 leading-relaxed font-serif ${idx === 0 ? 'first-letter:text-48 first-letter:text-accent-sage first-letter:font-serif first-letter:mr-2.5 first-letter:float-left first-letter:leading-none' : ''}`}
+                >
+                  {paragraph}
+                </p>
+              ))
+            )}
           </div>
 
           {/* Action footer */}
