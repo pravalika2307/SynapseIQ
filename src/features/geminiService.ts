@@ -13,7 +13,6 @@ export interface AnalysisResponse {
 const STORAGE_KEY = 'synapseiq_gemini_api_key';
 
 export function getStoredApiKey(): string | null {
-  // Check env variable first
   const envKey = import.meta.env.VITE_GEMINI_API_KEY;
   if (envKey && envKey.trim() !== '') {
     return envKey;
@@ -61,7 +60,6 @@ async function callGeminiRaw(apiKey: string, prompt: string): Promise<string> {
   return rawText;
 }
 
-// Production-grade retry logic with exponential backoff
 async function callGeminiRawWithRetry(apiKey: string, prompt: string, retries = 3, initialDelay = 1000): Promise<string> {
   let attempt = 0;
   while (true) {
@@ -92,29 +90,17 @@ export async function generateGeminiAnalysis(
   }, null, 2);
 
   const prompt = `
-You are a Senior Strategy Consultant from McKinsey, BCG, Bain, Deloitte, or Google Cloud Consulting. Your tone is highly professional, concise, data-driven, and executive-friendly.
-Never provide generic summaries. Avoid repeating numbers unnecessarily. Every recommendation must include reasoning, and every insight must explain the underlying WHY.
-
-Analyze the following corporate telemetry dataset stats summary:
+Role: Executive Business Advisor (McKinsey/BCG).
+Dataset:
 ${statsString}
 
-Validate the dataset. If the dataset lacks sufficient column parameters to infer basic business performance, return a structured warning in briefingReports explaining what additional columns would improve the analysis. Do NOT fabricate numbers; only reference values derivable from the stats.
+Constraints:
+1. No repetitive wording. No generic phrasing. No hallucinations.
+2. Focus on trends (slopes, MoM vectors) and covariance between metrics instead of isolated numbers.
+3. Every Context recommendation AND timeline recommendedAction MUST be a stringified JSON object:
+{"recommendation": "We recommend... [core suggestion starting with 'We recommend...']", "businessReasoning": "...", "supportingMetrics": "...", "expectedImpact": "...", "confidenceScore": "...", "potentialRisks": "...", "implementationDifficulty": "Low|Medium|High", "priority": "Low|Medium|High", "suggestedTimeline": "..."}
 
-CRITICAL REQUIREMENT:
-Every single "recommendation" string value under "nodeContexts" AND every "recommendedAction" string value under "timelineEvents" MUST be a stringified JSON object (JSON.stringify) representing the following structure:
-{
-  "recommendation": "We recommend... [The core consulting suggestion, must start with 'We recommend...']",
-  "businessReasoning": "[Strategic rationale explaining the WHY behind this suggestion]",
-  "supportingMetrics": "[Concrete metrics from telemetry validating the need]",
-  "expectedImpact": "[Quantified bottom-line or operational lift expected]",
-  "confidenceScore": "[e.g. 92%]",
-  "potentialRisks": "[Primary operational or capital hazard introduced by the recommendation]",
-  "implementationDifficulty": "[Low|Medium|High]",
-  "priority": "[Low|Medium|High]",
-  "suggestedTimeline": "[e.g. Next 14 Days]"
-}
-
-You must return a JSON object matching the following structure:
+Return JSON shape exactly:
 {
   "nodeContexts": {
     "health": { "id": "health", "title": "Business Health Index", "summary": "...", "metricLabel": "...", "metric": "...", "trend": "up|down|neutral", "opportunity": "...", "risk": "...", "recommendation": "STRINGIFIED_RECOMMENDATION_JSON" },
@@ -128,67 +114,35 @@ You must return a JSON object matching the following structure:
   },
   "businessSignals": [
     {
-      "id": "...", 
-      "title": "...", 
-      "category": "...", 
-      "score": 85.2, 
-      "delta": "+2.4%", 
-      "trend": "positive|negative|neutral", 
-      "note": "AI Bulletins - What happened? Why? Expected impact? Suggested action.", 
-      "chartData": [ { "time": "M1", "value": 80 }, { "time": "M2", "value": 81 }, { "time": "M3", "value": 85.2 } ],
-      "advisory": {
-        "insight": "Consultant-level observation of this metric's trend, explaining the WHY.",
-        "impact": "Operational or financial implications.",
-        "action": "Immediate recommended management action."
-      }
+      "id": "...", "title": "...", "category": "...", "score": 85.2, "delta": "+2.4%", "trend": "positive|negative|neutral", "note": "...", "chartData": [ { "time": "M1", "value": 80 } ],
+      "advisory": { "insight": "...", "impact": "...", "action": "..." }
     }
   ],
   "briefingReports": [
     {
-      "id": "boardroom-report",
-      "title": "Boardroom Briefing Dossier",
-      "category": "Strategic Planning",
-      "date": "July 2026",
-      "riskLevel": "Optimized|High|Critical",
-      "summary": "Polished executive report derived from real AI insights.",
+      "id": "boardroom-report", "title": "Boardroom Briefing Dossier", "category": "Strategic Planning", "date": "July 2026", "riskLevel": "Optimized|High|Critical", "summary": "...",
       "narrative": [
-        "Executive Summary: [High-level strategic synthesis and overview of overall business performance, explaining the key takeaway]",
-        "Current Business Status: [Detail the active operational and financial health parameters based on the BI telemetry]",
-        "Top Opportunities: [Synthesize the highest-potential high-margin opportunities identified by data covariance]",
-        "Critical Risks: [Highlight critical bottom-line and operational threats, detailing Hanoi or carrier queue exposures]",
-        "Performance Highlights: [Detail statistical high-points, maximums and key KPI beats from telemetry]",
-        "Strategic Recommendations: [List targeted context-rich steering actions, always beginning with 'We recommend...']",
-        "Implementation Roadmap: [Step-by-step priority rollout timeline for immediate administrative execution]",
-        "Expected Outcomes: [Quantify the expected operating margin benefits and financial ARR multipliers]",
-        "Conclusion: [Final synthesis and strategic outlook for boardroom presentation]"
+        "Executive Summary: [Takeaway summary]",
+        "Current Business Status: [BI telemetry health status]",
+        "Top Opportunities: [Data-driven opportunities]",
+        "Critical Risks: [Operational threats, logistics bottlenecks]",
+        "Performance Highlights: [Telemetry beats, maximums]",
+        "Strategic Recommendations: [Steering actions, starting with 'We recommend...']",
+        "Implementation Roadmap: [Step-by-step priority rollout timeline]",
+        "Expected Outcomes: [ARR/operating margin lift expected]",
+        "Conclusion: [Final synthesis for boardroom]"
       ]
     }
   ],
-  "strategyCanvasEdges": [
-    { "source": "revenue", "target": "marketing", "correlation": 0.85 }
-  ],
+  "strategyCanvasEdges": [ { "source": "revenue", "target": "marketing", "correlation": 0.85 } ],
   "timelineEvents": [
     {
-      "id": "ev-1",
-      "date": "July 2026",
-      "title": "Dataset Loaded",
-      "summary": "Data-driven summary of the file loading.",
-      "impact": "Operational impact details.",
-      "confidence": 95,
-      "trend": "Optimized",
-      "category": "Growth|Revenue|Marketing|Inventory|Customers|Operations|Risk",
-      "whatHappened": "What occurred in telemetry.",
-      "why": "Underlying business rationale explaining the WHY.",
-      "recommendedAction": "STRINGIFIED_RECOMMENDATION_JSON",
-      "targetNodeId": "health|revenue|profit|customers|marketing|inventory|operations|customer-satisfaction"
+      "id": "ev-1", "date": "July 2026", "title": "...", "summary": "...", "impact": "...", "confidence": 95, "trend": "Optimized", "category": "Growth", "whatHappened": "...", "why": "...", "recommendedAction": "STRINGIFIED_RECOMMENDATION_JSON", "targetNodeId": "health"
     }
   ]
 }
 
-Instructions:
-1. Return structured JSON ONLY. Do not wrap response in markdown.
-2. In 'briefingReports', the 'narrative' array MUST contain exactly 9 paragraphs.
-3. Every recommendation string inside nodeContexts and timelineEvents must be JSON-serialized so it can be parsed as a structured object.
+Only return clean JSON. narrative array must have exactly 9 paragraphs.
 `;
 
   const responseText = await callGeminiRawWithRetry(apiKey, prompt);
@@ -209,53 +163,32 @@ export async function askGeminiCopilot(
   };
 
   const prompt = `
-You are an Executive Business Advisor. Your goal is to guide corporate leaders using objective analysis of the provided dataset. Your tone is highly professional, concise, analytical, authoritative, and client-centric.
+Role: Executive Business Advisor (McKinsey/BCG).
+Dataset:
+${JSON.stringify(statsSummary)}
 
-Dataset Context:
-${JSON.stringify(statsSummary, null, 2)}
+Selected Node Context:
+${JSON.stringify(activeNodeContext)}
 
-Current Selected Node focus in Workspace:
-${JSON.stringify(activeNodeContext, null, 2)}
+History:
+${JSON.stringify(history.slice(-4))}
 
-Chat history:
-${JSON.stringify(history.slice(-6), null, 2)}
+User Query: "${query}"
 
-Current User Query: "${query}"
+Guidelines:
+1. Speak concisely, analytically, and authoritatively. Avoid generic/repetitive phrasing.
+2. Ground all insights in local biAnalysis. If columns are missing (e.g. payroll, satisfaction), state: "The available data is insufficient to analyze this dimension because no X metrics were detected."
+3. Explain trends, compare KPIs, suggest next steps, and maintain conversation history context for follow-up questions.
+4. "recommendation" MUST be a stringified JSON object matching:
+{"recommendation": "We recommend... [core suggestion starting with 'We recommend...']", "businessReasoning": "...", "supportingMetrics": "...", "expectedImpact": "...", "confidenceScore": "...", "potentialRisks": "...", "implementationDifficulty": "Low|Medium|High", "priority": "Low|Medium|High", "suggestedTimeline": "..."}
 
-Instructions for your response:
-1. ANSWER WITH CONTEXT: Answer queries using the preprocessed local biAnalysis and profile data (e.g. trends, outliers, seasonality, categories).
-2. EXPLAIN TRENDS: Explain why a KPI is moving in a certain direction (upward/downward) based on correlation factors.
-3. COMPARE KPIS: Compare different categories, regions, or indicators to highlight operational performance.
-4. RECOMMEND ACTIONS: Provide concrete actions (always starting with "We recommend...") backed by business reasoning and expected impact.
-5. FORECASTING RATIONALE: Provide clear business rationale for any potential outcomes or predictions.
-6. RISK IDENTIFICATION: Surface potential risks (e.g., transport bottlenecks, inventory levels, missing parameters).
-7. CONTEXT MAINTENANCE & FOLLOW-UPS: Maintain conversation context based on past chat history. If the query is a logical follow-up (e.g., "why?", "what are the risks?", "recommend next steps"), resolve it in reference to the prior conversation.
-8. GROUNDED & AVOID HALLUCINATIONS: Ground everything in the telemetry. If the required fields do not exist (e.g., satisfaction scores, staffing payroll, or inventory metrics), clearly state: "The available data is insufficient to analyze this dimension because no X metrics were detected." Never make assumptions or fabricate columns.
-
-CRITICAL REQUIREMENT:
-The "recommendation" string value MUST be a stringified JSON object (JSON.stringify) representing the following structure:
+Return JSON shape:
 {
-  "recommendation": "We recommend... [The core consulting suggestion, must start with 'We recommend...']",
-  "businessReasoning": "[Strategic rationale explaining the WHY behind this suggestion]",
-  "supportingMetrics": "[Concrete metrics from telemetry validating the need]",
-  "expectedImpact": "[Quantified bottom-line or operational lift expected]",
-  "confidenceScore": "[e.g. 92%]",
-  "potentialRisks": "[Primary operational or capital hazard introduced by the recommendation]",
-  "implementationDifficulty": "[Low|Medium|High]",
-  "priority": "[Low|Medium|High]",
-  "suggestedTimeline": "[e.g. Next 14 Days]"
-}
-
-Return a JSON object with this exact shape:
-{
-  "summary": "Executive Summary & Business Context: [Consolidated high-level strategic synthesis and the industry WHY behind this query]",
-  "evidence": [
-    "Key Findings: [Specific data observation backed by statistics]",
-    "Root Causes: [Underlying operational driver explaining this data trend]"
-  ],
+  "summary": "Executive Summary & Business Context: [Strategic context and explanatory WHY]",
+  "evidence": [ "Key Findings: [observation]", "Root Causes: [operational driver]" ],
   "confidence": 95,
   "recommendation": "STRINGIFIED_RECOMMENDATION_JSON",
-  "nextQuestion": "Next Suggested Question (intelligent question starter related to this answer)"
+  "nextQuestion": "Follow-up question starter"
 }
 `;
 
@@ -282,46 +215,28 @@ export async function simulateGeminiScenario(
   };
 
   const prompt = `
-You are a Senior Strategy Consultant from McKinsey, BCG, Bain, Deloitte, or Google Cloud Consulting forecasting corporate telemetry. Your tone is highly professional, concise, data-driven, and executive-friendly.
-Never provide generic summaries. Avoid repeating numbers unnecessarily. Every recommendation must include reasoning, and every insight must explain the underlying WHY.
+Role: Executive Business Advisor (McKinsey/BCG) forecasting telemetry.
+Context:
+${JSON.stringify(statsSummary)}
 
-Dataset Context:
-${JSON.stringify(statsSummary, null, 2)}
+Slider inputs:
+- Marketing: ${sliderValues.marketing}%, Price: ${sliderValues.price}%, Inventory: ${sliderValues.inventory}d, Hiring: ${sliderValues.hiring}%, Retention: ${sliderValues.retention}%, Costs: ${sliderValues.costs}%
 
-Assumed slider inputs adjusted by the executive:
-- Marketing Budget allocation: ${sliderValues.marketing}%
-- Product Price adjustment: ${sliderValues.price}%
-- Inventory stock level target: ${sliderValues.inventory} days
-- Headcount Hiring growth: ${sliderValues.hiring}%
-- Customer Retention target: ${sliderValues.retention}% NRR
-- Operating overhead costs: ${sliderValues.costs}%
+Guidelines:
+1. Model forecast trends using telemetry. No generic/repetitive phrasing. No hallucinations.
+2. recommendedAction.impact MUST be a stringified JSON object matching:
+{"recommendation": "We recommend... [core suggestion starting with 'We recommend...']", "businessReasoning": "...", "supportingMetrics": "...", "expectedImpact": "...", "confidenceScore": "...", "potentialRisks": "...", "implementationDifficulty": "Low|Medium|High", "priority": "Low|Medium|High", "suggestedTimeline": "..."}
 
-Model the forecast. Return structured JSON only.
-
-CRITICAL REQUIREMENT:
-The "recommendedAction.impact" string value MUST be a stringified JSON object (JSON.stringify) representing the following structure:
+Return JSON shape:
 {
-  "recommendation": "We recommend... [The core consulting suggestion, must start with 'We recommend...']",
-  "businessReasoning": "[Strategic rationale explaining the WHY behind this suggestion]",
-  "supportingMetrics": "[Concrete metrics from telemetry validating the need]",
-  "expectedImpact": "[Quantified bottom-line or operational lift expected]",
-  "confidenceScore": "[e.g. 92%]",
-  "potentialRisks": "[Primary operational or capital hazard introduced by the recommendation]",
-  "implementationDifficulty": "[Low|Medium|High]",
-  "priority": "[Low|Medium|High]",
-  "suggestedTimeline": "[e.g. Next 14 Days]"
-}
-
-JSON Structure:
-{
-  "verdict": "Executive Summary, Business Context, Key Findings & Root Causes: [Synthesised forecast path showing how sliders shift operations, explaining the WHY and structural root causes]",
-  "tradeoffs": "Growth Opportunities & Trade-offs: [Explain how pipeline velocity or near-term margins are balanced by these sliders]",
-  "risks": "Business Risks: [Detailed operational and financial threats created by these configurations]",
-  "roi": "Strategic Recommendations, Immediate Actions & Expected Impact: [General explanation of ROI factors]",
+  "verdict": "Executive Summary, Business Context, Key Findings & Root Causes: [synthesis of slider impact]",
+  "tradeoffs": "Growth Opportunities & Trade-offs: [budget/margin balance]",
+  "risks": "Business Risks: [operational bottlenecks]",
+  "roi": "Strategic Recommendations, Immediate Actions & Expected Impact: [ROI rationale]",
   "confidence": 88,
-  "scenarioStatus": "McKinsey-style status description banner summarizing the model outlook",
+  "scenarioStatus": "McKinsey-style summary description banner",
   "recommendedAction": {
-    "title": "Short action title",
+    "title": "Short title",
     "impact": "STRINGIFIED_RECOMMENDATION_JSON",
     "expectedRevenueIncrease": "+8.3%",
     "complexity": "Low|Medium|High",
@@ -335,7 +250,6 @@ JSON Structure:
   return JSON.parse(responseText) as ScenarioResponse;
 }
 
-// Dedicated AI Service Layer Wrappers to Decouple Business Reasoning from Frontend
 export async function getCopilotResponse(
   apiKey: string | null,
   query: string,
