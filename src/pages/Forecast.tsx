@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Sliders, Zap, CheckCircle, Sparkles } from 'lucide-react';
 import { SectionHeader, Card, CountUp, AIThinkingLoader } from '../components/ui';
 import { useDemoStore } from '../features/demoStore';
 import { useAppStore } from '../features/store';
-import { simulateGeminiScenario } from '../features/geminiService';
+import { getScenarioSimulation } from '../features/geminiService';
 import { parseCSV } from '../features/csvParser';
+import { motion } from 'framer-motion';
+import { AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 
 export const Forecast: React.FC = () => {
   const activeNodeId = useAppStore((state) => state.activeNodeId);
@@ -26,10 +28,53 @@ export const Forecast: React.FC = () => {
   const [isSimulating, setIsSimulating] = useState<boolean>(false);
   const [recalcHighlight, setRecalcHighlight] = useState(false);
 
+  // AI-Service Managed Dynamic Scenario Content
+  const [dynamicScenarioStatus, setDynamicScenarioStatus] = useState<string>(
+    "If current momentum continues, quarterly revenue is projected to increase by approximately 11%."
+  );
+  const [dynamicRecommendedAction, setDynamicRecommendedAction] = useState<{
+    title: string;
+    impact: string;
+    expectedRevenueIncrease: string;
+    complexity: string;
+    confidence: number;
+    roi: string;
+  }>({
+    title: "Target 55% Marketing & Jalisco Logistics nearshore corridor",
+    impact: "Shifting semiconductor logistics overland lowers transpacific delays from 32 days down to 14, safeguarding profit margins.",
+    expectedRevenueIncrease: "+12.1%",
+    complexity: "Low",
+    confidence: 90,
+    roi: "8.2x"
+  });
+  const [dynamicConfidence, setDynamicConfidence] = useState<number>(94);
+
   const hasSlidersMoved = marketing !== 45 || price !== 10 || inventory !== 60 || hiring !== 15 || retention !== 88 || costs !== 5;
-  const scenarioStatus = hasSlidersMoved 
-    ? "Reducing operating costs improves profitability, but may reduce customer satisfaction over time."
-    : "If current momentum continues, quarterly revenue is projected to increase by approximately 11%.";
+
+  const chartData = useMemo(() => {
+    const scale = (marketing - 45) * 0.005 + (price - 10) * 0.01 - (costs - 5) * 0.003 + (retention - 88) * 0.006;
+    return [
+      { month: 'Jul', base: 42.8, simulated: Number((42.8 * (1 + scale * 0.2)).toFixed(1)) },
+      { month: 'Aug', base: 43.5, simulated: Number((43.5 * (1 + scale * 0.4)).toFixed(1)) },
+      { month: 'Sep', base: 44.2, simulated: Number((44.2 * (1 + scale * 0.6)).toFixed(1)) },
+      { month: 'Oct', base: 45.0, simulated: Number((45.0 * (1 + scale * 0.8)).toFixed(1)) },
+      { month: 'Nov', base: 46.2, simulated: Number((46.2 * (1 + scale * 1.0)).toFixed(1)) },
+      { month: 'Dec', base: 48.0, simulated: Number((48.0 * (1 + scale * 1.2)).toFixed(1)) }
+    ];
+  }, [marketing, price, costs, retention]);
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.08 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' as const } }
+  };
 
   const isDemoActive = useDemoStore((state) => state.isDemoActive);
   const currentStep = useDemoStore((state) => state.currentStep);
@@ -61,12 +106,9 @@ export const Forecast: React.FC = () => {
     }
   }, [isDemoActive, currentStep]);
 
-  // Debounced live scenario simulation with Gemini
+  // Debounced live scenario simulation with AI Service Layer
   useEffect(() => {
     const handler = setTimeout(async () => {
-      if (!geminiApiKey || geminiApiKey.trim() === '') {
-        return; // Fallback to heuristic
-      }
       setIsSimulating(true);
       try {
         let summary = parsedData;
@@ -74,7 +116,7 @@ export const Forecast: React.FC = () => {
           const { DEFAULT_CSV } = await import('../features/defaultDataset');
           summary = parseCSV(DEFAULT_CSV, 'synapse_intel_matrix_q2.csv');
         }
-        const res = await simulateGeminiScenario(geminiApiKey, {
+        const res = await getScenarioSimulation(geminiApiKey, {
           marketing,
           price,
           inventory,
@@ -82,12 +124,23 @@ export const Forecast: React.FC = () => {
           retention,
           costs
         }, summary);
+
         setAiVerdict(res.verdict);
         setAiTradeoffs(res.tradeoffs);
         setAiRisks(res.risks);
         setAiRoi(res.roi);
+        
+        if (res.scenarioStatus) {
+          setDynamicScenarioStatus(res.scenarioStatus);
+        }
+        if (res.recommendedAction) {
+          setDynamicRecommendedAction(res.recommendedAction);
+        }
+        if (res.confidence) {
+          setDynamicConfidence(res.confidence);
+        }
       } catch (err) {
-        console.error('Gemini scenario simulation failed:', err);
+        console.error('Scenario simulation failed:', err);
       } finally {
         setIsSimulating(false);
       }
@@ -96,41 +149,15 @@ export const Forecast: React.FC = () => {
     return () => clearTimeout(handler);
   }, [marketing, price, inventory, hiring, retention, costs, geminiApiKey, parsedData]);
 
-  // Dynamic Math Equations for Real-Time Predictions
+  // Dynamic Math Equations for Real-Time Predictions (rendered inside Comparison Cards)
   const simulatedRevenue = 42.8 * (1 + price / 100) * (1 + (marketing - 45) * 0.0035) * (1 + (retention - 88) * 0.006);
   const simulatedProfit = 44.0 + (price * 0.35) - (costs * 0.25) - ((marketing - 45) * 0.04);
+  const simulatedHealth = Math.min(100, Math.max(0, Math.round(84 + (marketing - 45) * 0.08 + (retention - 88) * 0.45 - (costs * 0.15) - (inventory < 30 ? (30 - inventory) * 0.6 : 0))));
   const simulatedCustGrowth = 12.0 + (marketing - 45) * 0.12 - (price * 0.15) + (hiring - 15) * 0.04;
   const simulatedMarketShare = 18.5 + (marketing - 45) * 0.06 + (retention - 88) * 0.08 - (price * 0.04);
-  const simulatedHealth = Math.min(100, Math.max(0, Math.round(84 + (marketing - 45) * 0.08 + (retention - 88) * 0.45 - (costs * 0.15) - (inventory < 30 ? (30 - inventory) * 0.6 : 0))));
-  const simulatedConfidence = Math.max(80, Math.min(99, 94 - Math.abs(price - 10) * 0.15 - Math.abs(costs - 5) * 0.1));
-  
   const simulatedRisk = (inventory < 30 || costs > 12) ? 'Critical' : (inventory < 45 || costs > 8) ? 'High' : 'Low';
 
-  // Dynamic McKinsey-style Narrative Explanation (Heuristic Fallback)
-  const getAIExplanation = () => {
-    let text = '';
-    if (marketing > 55) {
-      text += `Increasing marketing allocations to ${marketing}% is projected to accelerate logo acquisition targets. However, customer conversion CAC is expected to elevate, squeezing near-term margin. `;
-    } else if (marketing < 35) {
-      text += `Reducing marketing buffers down to ${marketing}% minimizes overhead capital but limits target pipeline conversion velocity in European expansion lanes. `;
-    }
 
-    if (inventory < 35) {
-      text += `Scaling inventory targets down to ${inventory}% leaves Fab-14 sub-assembly lines exposed to Vietnamese shipping terminal delays. Sourcing nearshoring is recommended immediately. `;
-    } else {
-      text += `Maintaining buffer inventories above 45 days ensures continuous plant utilization even during transpacific logistics congestion. `;
-    }
-
-    if (price > 18) {
-      text += `A price increase of ${price}% is expected to support overall margins but limits mid-market NRR velocity to ${Math.round(retention * 0.95)}%. `;
-    }
-
-    if (text === '') {
-      text = `Simulated parameters are within optimal operating bounds. Telemetry registers stable gross profit margins at ${simulatedProfit.toFixed(1)}% with an executive health rating of ${simulatedHealth}/100.`;
-    }
-
-    return text;
-  };
 
   return (
     <div className="max-w-[1200px] mx-auto px-10 py-12 flex flex-col gap-10 text-[#F5F7FA]">
@@ -253,10 +280,15 @@ export const Forecast: React.FC = () => {
         </div>
 
         {/* Right Column: Outcomes & Projections */}
-        <div className={`flex flex-col gap-6 transition-all duration-700 ${recalcHighlight ? 'ring-1 ring-[#83D18B]/30 shadow-[0_0_30px_rgba(131,209,139,0.06)] bg-[#83D18B]/[0.005] rounded-3xl p-2' : ''}`}>
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+          className={`flex flex-col gap-6 transition-all duration-700 ${recalcHighlight ? 'ring-1 ring-[#83D18B]/30 shadow-[0_0_30px_rgba(131,209,139,0.06)] bg-[#83D18B]/[0.005] rounded-3xl p-2' : ''}`}
+        >
           
           {/* Live Outcome Metrics grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div className="p-5 bg-[#151B23] border border-white/5 rounded-2xl flex flex-col gap-1 shadow-lg">
               <span className="text-[9.5px] uppercase font-bold text-white/30 tracking-wider">Projected Revenue</span>
               <span className="text-22 font-bold text-white tracking-tight">
@@ -297,10 +329,56 @@ export const Forecast: React.FC = () => {
               <span className="text-[9.5px] uppercase font-bold text-white/30 tracking-wider">Operational Risk</span>
               <span className={`text-22 font-bold tracking-tight ${simulatedRisk === 'Critical' ? 'text-critical animate-pulse' : 'text-white'}`}>{simulatedRisk}</span>
             </div>
-          </div>
+          </motion.div>
+
+          {/* Live Projections Chart Card */}
+          <motion.div variants={itemVariants} className="bg-[#151B23] border border-white/5 rounded-2xl p-6 shadow-lg space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-[9.5px] uppercase font-bold text-white/30 tracking-wider">Projected Revenue Growth Path</span>
+              <span className="text-[10px] text-[#83D18B] font-mono font-bold">Base vs. Simulated</span>
+            </div>
+            
+            <div className="h-44 w-full select-none">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="simulatedColor" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#83D18B" stopOpacity={0.2}/>
+                      <stop offset="95%" stopColor="#83D18B" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="month" stroke="rgba(255,255,255,0.15)" fontSize={10} />
+                  <YAxis stroke="rgba(255,255,255,0.15)" fontSize={10} domain={['auto', 'auto']} />
+                  <Tooltip 
+                    contentStyle={{ background: '#18212C', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', fontSize: '11px', color: '#fff' }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="simulated" 
+                    stroke="#83D18B" 
+                    strokeWidth={2}
+                    fillOpacity={1} 
+                    fill="url(#simulatedColor)" 
+                    isAnimationActive={true} 
+                    animationDuration={850} 
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="base" 
+                    stroke="rgba(255, 255, 255, 0.25)" 
+                    strokeWidth={1.5}
+                    strokeDasharray="4 4"
+                    fill="none" 
+                    isAnimationActive={true} 
+                    animationDuration={850} 
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </motion.div>
 
           {/* Real-time AI explanation banner */}
-          <div className="bg-[#151B23] border border-white/5 rounded-2xl p-6 shadow-lg flex flex-col gap-4 relative overflow-hidden">
+          <motion.div variants={itemVariants} className="bg-[#151B23] border border-white/5 rounded-2xl p-6 shadow-lg flex flex-col gap-4 relative overflow-hidden">
             {isSimulating && (
               <div className="absolute inset-0 bg-[#090B10]/85 flex items-center justify-center gap-2 backdrop-blur-[1px] z-10">
                 <AIThinkingLoader />
@@ -313,20 +391,20 @@ export const Forecast: React.FC = () => {
                 <span className="text-[10px] font-bold uppercase tracking-wider font-sans">Gemini Predictive Advisor</span>
               </div>
               <span className="text-[9.5px] font-mono text-white/30">
-                Confidence: {simulatedConfidence}%
+                Confidence: {dynamicConfidence}%
               </span>
             </div>
 
             <div className="p-3.5 bg-accent-sage-dim/20 border border-accent-sage-border/25 rounded-xl text-12 font-serif text-[#83D18B] leading-normal flex items-start gap-2.5">
               <Sparkles size={14} className="shrink-0 mt-0.5" />
-              <span>{scenarioStatus}</span>
+              <span>{dynamicScenarioStatus}</span>
             </div>
 
             <div className="space-y-3 font-serif">
               <div className="space-y-1">
                 <span className="text-[9px] uppercase font-sans font-bold tracking-widest text-[#83D18B]/70 animate-pulse">Verdict</span>
                 <p className="text-13.5 text-white/80 leading-relaxed">
-                  {aiVerdict || getAIExplanation()}
+                  {aiVerdict}
                 </p>
               </div>
 
@@ -347,10 +425,10 @@ export const Forecast: React.FC = () => {
                 </div>
               )}
             </div>
-          </div>
+          </motion.div>
 
           {/* Strategy Comparison Mode */}
-          <div className="space-y-4">
+          <motion.div variants={itemVariants} className="space-y-4">
             <h3 className="text-14 font-semibold text-white/95 select-none font-sans">Strategic Comparison</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               
@@ -399,10 +477,10 @@ export const Forecast: React.FC = () => {
               </Card>
 
             </div>
-          </div>
+          </motion.div>
 
           {/* Featured recommended card (Decision Moment) */}
-          <div className={`bg-[#83D18B]/5 border rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-xl select-none transition-all duration-500 ${hasSlidersMoved ? 'ring-2 ring-[#83D18B]/60 shadow-[0_0_25px_rgba(131,209,139,0.2)] bg-[#83D18B]/10 border-transparent scale-[1.015]' : 'border-[#83D18B]/20 shadow-[#83D18B]/5'}`}>
+          <motion.div variants={itemVariants} className={`bg-[#83D18B]/5 border rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-xl select-none transition-all duration-500 ${hasSlidersMoved ? 'ring-2 ring-[#83D18B]/60 shadow-[0_0_25px_rgba(131,209,139,0.2)] bg-[#83D18B]/10 border-transparent scale-[1.015]' : 'border-[#83D18B]/20 shadow-[#83D18B]/5'}`}>
             <div className="space-y-1.5 max-w-md">
               <div className="flex items-center gap-1.5 text-[#83D18B]">
                 <CheckCircle size={14} className="animate-pulse" />
@@ -411,25 +489,23 @@ export const Forecast: React.FC = () => {
                 </span>
               </div>
               <h4 className="text-14.5 font-bold text-white/95 tracking-tight font-serif text-left">
-                {hasSlidersMoved ? "Execute Supply Chain Nearshoring Pivot" : "Target 55% Marketing & Jalisco Logistics nearshore corridor"}
+                {dynamicRecommendedAction.title}
               </h4>
               <p className="text-12 text-white/45 font-serif leading-relaxed text-left">
-                {hasSlidersMoved 
-                  ? "Shifting raw wafer custom channels to Laredo overland corridors reduces transit risk by 45%, protecting net margin profiles." 
-                  : "Shifting semiconductor logistics overland lowers transpacific delays from 32 days down to 14, safeguarding profit margins."
-                }
+                {dynamicRecommendedAction.impact}
               </p>
             </div>
             
             <div className="flex flex-col gap-1 text-right sm:border-l border-white/10 sm:pl-6 shrink-0 font-mono text-11">
-              <div className="text-white/45">Expected Revenue Increase: <strong className="text-[#83D18B]">+8.3%</strong></div>
-              <div className="text-white/45">Implementation Complexity: <strong className="text-white/85">Medium</strong></div>
-              <div className="text-white/45">Confidence: <strong className="text-[#83D18B]">94%</strong></div>
-              <div className="text-white/45">Est. ROI: <strong className="text-white/85">12.4x</strong></div>
+              <div className="text-white/45">Expected Revenue Increase: <strong className="text-[#83D18B]">{dynamicRecommendedAction.expectedRevenueIncrease}</strong></div>
+              <div className="text-white/45">Implementation Complexity: <strong className="text-white/85">{dynamicRecommendedAction.complexity}</strong></div>
+              <div className="text-white/45">Confidence: <strong className="text-[#83D18B]">{dynamicRecommendedAction.confidence}%</strong></div>
+              <div className="text-white/45">Est. ROI: <strong className="text-white/85">{dynamicRecommendedAction.roi}</strong></div>
             </div>
-          </div>
+          </motion.div>
 
-        </div>
+
+        </motion.div>
 
       </div>
 

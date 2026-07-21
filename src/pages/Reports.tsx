@@ -7,11 +7,13 @@ import {
   CheckCircle,
 } from 'lucide-react';
 import { useAppStore } from '../features/store';
+import { motion } from 'framer-motion';
 
 export const Reports: React.FC = () => {
   const briefingReports = useAppStore((state) => state.briefingReports);
   const [selectedReportIdState, setSelectedReportIdState] = useState<string | null>(null);
   const [isCompiling, setIsCompiling] = useState(false);
+  const [isCompiled, setIsCompiled] = useState(false);
   const [compileStatus, setCompileStatus] = useState('');
 
   const selectedReportId = selectedReportIdState || (briefingReports[0]?.id || '');
@@ -29,21 +31,30 @@ export const Reports: React.FC = () => {
 
   const handleCompile = () => {
     setIsCompiling(true);
-    setCompileStatus('Initializing PDF compilation engine...');
+    setIsCompiled(false);
+    setCompileStatus('📄 Compiling Executive Report...');
     
     setTimeout(() => {
-      setCompileStatus('Mapping relational database graphs...');
-    }, 1000);
+      setCompileStatus('📊 Aggregating Business Insights...');
+    }, 800);
 
     setTimeout(() => {
-      setCompileStatus('Exporting high-fidelity briefing dossier...');
-    }, 2000);
+      setCompileStatus('🧠 Finalizing AI Recommendations...');
+    }, 1600);
+
+    setTimeout(() => {
+      setCompileStatus('✓ Report Ready');
+    }, 2400);
 
     setTimeout(() => {
       setIsCompiling(false);
-      alert(`Dossier "${activeReport.title}" compiled successfully and saved to downloads folder.`);
+      setIsCompiled(true);
     }, 3200);
   };
+
+  React.useEffect(() => {
+    setIsCompiled(false);
+  }, [selectedReportId]);
 
   return (
     <div className="max-w-[1200px] mx-auto px-10 py-12 flex flex-col gap-10">
@@ -105,6 +116,30 @@ export const Reports: React.FC = () => {
               {activeReport.title}
             </h2>
           </div>
+
+          {isCompiled && (
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-[#83D18B]/10 border border-[#83D18B]/20 rounded-xl p-4.5 flex items-center justify-between gap-4 mt-2"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-[#83D18B]/20 flex items-center justify-center text-[#83D18B]">
+                  <CheckCircle size={18} />
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="text-13 font-bold text-white/90 font-sans">Report Compiled successfully</span>
+                  <span className="text-11 text-white/40 font-serif">Saved to your strategic briefings folder.</span>
+                </div>
+              </div>
+              <button 
+                onClick={() => alert(`Opening "${activeReport.title}" PDF dossier...`)}
+                className="px-4 py-1.5 bg-[#83D18B] hover:bg-[#83D18B]/95 text-[#090B10] font-bold text-11 rounded-lg transition-all font-sans cursor-pointer active:scale-95"
+              >
+                Open Briefing
+              </button>
+            </motion.div>
+          )}
 
           {/* Narrative paragraphs */}
           <div className="space-y-6 flex-1">

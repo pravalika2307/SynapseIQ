@@ -45,7 +45,12 @@ const CustomGraphNode: React.FC<NodeProps<Node<CustomNodeData>>> = ({ id, data }
   const breatheNode = id === 'health' || data.label === 'Business Health' || data.label === 'Business Health Index';
 
   return (
-    <div className="relative">
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      className="relative"
+    >
       {/* Subtle radial glow backdrop */}
       {(data.isActive || breatheNode) && (
         <motion.div 
@@ -109,7 +114,7 @@ const CustomGraphNode: React.FC<NodeProps<Node<CustomNodeData>>> = ({ id, data }
         </div>
       </div>
     </motion.div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -132,6 +137,8 @@ const fallbackRelationshipMap: Record<string, { metric: string; influence: strin
 
 import { useDemoStore } from '../features/demoStore';
 
+let strategyCanvasHasPlayedAnimation = false;
+
 const DecisionGraphInner: React.FC = () => {
   const activeNodeId = useAppStore((state) => state.activeNodeId);
   const setCopilotContextNodeId = useAppStore((state) => state.setCopilotContextNodeId);
@@ -143,7 +150,9 @@ const DecisionGraphInner: React.FC = () => {
   const currentStep = useDemoStore((state) => state.currentStep);
 
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
-  const [nodesAssembled, setNodesAssembled] = useState(0);
+  const [nodesAssembled, setNodesAssembled] = useState(
+    strategyCanvasHasPlayedAnimation ? 9 : 0
+  );
 
   const { fitView } = useReactFlow();
   const location = useLocation();
@@ -181,17 +190,20 @@ const DecisionGraphInner: React.FC = () => {
   // Auto-hover revenue to display relationships in Step 4
   const activeHoveredNodeId = (isDemoActive && currentStep === 4) ? 'revenue' : hoveredNodeId;
 
-  // Assemble nodes sequentially over 1.6s
+  // Assemble nodes sequentially over 1.2s
   useEffect(() => {
+    if (strategyCanvasHasPlayedAnimation) return;
+
     const timer = setInterval(() => {
       setNodesAssembled((prev) => {
         if (prev >= 9) {
           clearInterval(timer);
+          strategyCanvasHasPlayedAnimation = true;
           return 9;
         }
         return prev + 1;
       });
-    }, 150);
+    }, 130);
     return () => clearInterval(timer);
   }, []);
 
@@ -406,7 +418,9 @@ const DecisionGraphInner: React.FC = () => {
   // Connected relationship edges (Derived dynamically from correlation mapping)
   const edges: Edge[] = useMemo(() => {
     // Render store strategyCanvasEdges
-    const renderedEdges = dynamicCanvasEdges.map((e, idx) => {
+    const renderedEdges = dynamicCanvasEdges
+      .filter(e => nodes.some(n => n.id === e.source) && nodes.some(n => n.id === e.target))
+      .map((e, idx) => {
       const isSourceActive = activeNodeId === e.source || activeNodeId === e.target;
       const isHighlighted = activeHoveredNodeId === e.source || activeHoveredNodeId === e.target || isSourceActive;
       const isDimmed = activeHoveredNodeId !== null && activeHoveredNodeId !== e.source && activeHoveredNodeId !== e.target;
@@ -428,7 +442,7 @@ const DecisionGraphInner: React.FC = () => {
     if (renderedEdges.length === 0) {
       const satellites = ['revenue', 'profit', 'marketing', 'customers', 'inventory', 'operations', 'customer-satisfaction', 'growth'];
       return satellites
-        .filter((_, idx) => idx + 1 < nodesAssembled)
+        .filter((satId, idx) => idx + 1 < nodesAssembled && nodes.some(n => n.id === satId))
         .map((satId) => {
           const isCenterHovered = activeHoveredNodeId === 'health';
           const isSatHovered = activeHoveredNodeId === satId;

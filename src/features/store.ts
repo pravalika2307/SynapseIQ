@@ -239,7 +239,7 @@ export const useAppStore = create<AppState>((set, get) => ({
             nodeContexts: insights.nodeContexts,
             businessSignals: insights.businessSignals,
             briefingReports: insights.briefingReports,
-            timelineEvents: (insights as any).timelineEvents || localInsights.timelineEvents,
+            timelineEvents: insights.timelineEvents || localInsights.timelineEvents,
             strategyCanvasEdges: insights.strategyCanvasEdges,
             decisionReadiness: confidence,
             isDatasetLoaded: true,

@@ -50,3 +50,30 @@ export interface TimelineEvent {
   recommendedAction: string;
   targetNodeId: string;
 }
+
+export interface CopilotResponse {
+  summary: string;
+  evidence: string[];
+  confidence: number;
+  recommendation: string;
+  nextQuestion: string;
+  relatedMetrics?: string[];
+}
+
+export interface ScenarioResponse {
+  verdict: string;
+  tradeoffs: string;
+  risks: string;
+  roi: string;
+  confidence: number;
+  scenarioStatus?: string;
+  recommendedAction?: {
+    title: string;
+    impact: string;
+    expectedRevenueIncrease: string;
+    complexity: string;
+    confidence: number;
+    roi: string;
+  };
+}
+

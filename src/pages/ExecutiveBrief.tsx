@@ -57,9 +57,24 @@ export const ExecutiveBrief: React.FC = () => {
     }
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 15 },
-    show: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 100, damping: 15 } }
+  const headerVariants = {
+    hidden: { opacity: 0, y: 12 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' as const, delay: 0.0 } }
+  };
+
+  const kpisVariants = {
+    hidden: { opacity: 0, y: 12 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' as const, delay: 0.08 } }
+  };
+
+  const summaryVariants = {
+    hidden: { opacity: 0, y: 12 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' as const, delay: 0.16 } }
+  };
+
+  const prioritiesVariants = {
+    hidden: { opacity: 0, y: 12 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' as const, delay: 0.24 } }
   };
 
 
@@ -72,7 +87,7 @@ export const ExecutiveBrief: React.FC = () => {
       className={`max-w-[1200px] mx-auto px-10 py-12 flex flex-col gap-14 text-[#F5F7FA] transition-all duration-1000 ${pulseHighlight ? 'ring-1 ring-[#83D18B]/35 shadow-[0_0_40px_rgba(131,209,139,0.08)] bg-[#83D18B]/[0.01] rounded-[2rem]' : ''}`}
     >
       {/* Header Section */}
-      <dMotion.section variants={itemVariants} className="flex flex-col md:flex-row md:items-end justify-between gap-6 pt-8 border-b border-white/5 pb-8 select-none">
+      <dMotion.section variants={headerVariants} className="flex flex-col md:flex-row md:items-end justify-between gap-6 pt-8 border-b border-white/5 pb-8 select-none">
         <div className="space-y-3">
           <h1 className="text-36 md:text-48 font-bold text-white tracking-tight leading-none font-serif">
             {greeting}.<br />
@@ -115,7 +130,7 @@ export const ExecutiveBrief: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-8">
         
         {/* Executive Summary Card */}
-        <dMotion.div variants={itemVariants}>
+        <dMotion.div variants={summaryVariants}>
           <Card elevation="flat" className={`p-8 h-full flex flex-col gap-6 transition-all duration-500 ${isDemoActive && currentStep === 3 ? 'ring-2 ring-[#83D18B] scale-[1.01] shadow-[0_0_25px_rgba(131,209,139,0.18)] bg-[#83D18B]/5' : ''}`}>
             <div className="flex items-center gap-2 border-b border-white/5 pb-4">
               <Activity size={14} className="text-white/40" />
@@ -129,7 +144,7 @@ export const ExecutiveBrief: React.FC = () => {
         </dMotion.div>
 
         {/* Circular Indicators Widget */}
-        <dMotion.div variants={itemVariants}>
+        <dMotion.div variants={kpisVariants}>
           <Card elevation="flat" className="p-8 flex flex-col gap-6 h-full justify-center">
             <div className="grid grid-cols-2 gap-4">
               
@@ -204,7 +219,7 @@ export const ExecutiveBrief: React.FC = () => {
       </div>
 
       {/* Today's Priorities Section */}
-      <div className="flex flex-col gap-6">
+      <dMotion.div variants={prioritiesVariants} className="flex flex-col gap-6">
         <div className="flex items-center justify-between border-b border-white/5 pb-4">
           <div className="flex items-center gap-2">
             <TrendingUp className="text-[#83D18B]" size={15} />
@@ -291,7 +306,7 @@ export const ExecutiveBrief: React.FC = () => {
             </Card>
           ))}
         </div>
-      </div>
+      </dMotion.div>
     </dMotion.div>
   );
 };

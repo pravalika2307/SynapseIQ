@@ -18,38 +18,6 @@ const isSignalRelatedToNode = (signalId: string, nodeId: string): boolean => {
   return false;
 };
 
-const signalAdvisories: Record<string, { insight: string; impact: string; action: string }> = {
-  'transit-latency': {
-    insight: 'Upstream ocean transport delays remain constrained near 32 days.',
-    impact: 'Increases local buffer strain, locking up $4.2M working capital.',
-    action: 'Divert 25% shipping volume to Guadalajara nearshore corridors.'
-  },
-  'solvency-constraints': {
-    insight: 'Predictive modeling flags Hanoi suppliers with warning debt-to-equity debt ratios.',
-    impact: 'Elevates run-out risks at factory assembly nodes within 14 days.',
-    action: 'Establish wafer validation trials near Arizona foundry lines.'
-  },
-  'cac-efficiency': {
-    insight: 'Net Revenue Retention targets expand to 118% via security enterprise packages.',
-    impact: 'Optimizes acquisition spend, lowering direct CAC margins by 8%.',
-    action: 'Reallocate 20% display marketing budget to EU regulatory webinars.'
-  },
-  'gross-margin': {
-    insight: 'Gross operating profit holds steady at 44.0%, protected by forward contracts.',
-    impact: 'Insulates local pricing models from maritime freight rate spikes.',
-    action: 'Lock locked ocean freight contract agreements immediately.'
-  },
-  'order-fill-rate': {
-    insight: 'Austin assembly center optimization yields 96.8% perfect deliveries.',
-    impact: 'Resolves down-channel SLA bottlenecks, lifting support loops by 12%.',
-    action: 'Replicate assembly floor configurations in Munich facilities.'
-  },
-  'customs-holdings': {
-    insight: 'Fast-tracked pre-clearances at Laredo portal reduce latency to 1.8 days.',
-    impact: 'Bypasses border processing holdups, securing delivery corridors.',
-    action: 'Deploy electronic border pre-clearance filings.'
-  }
-};
 
 export const BusinessSignals: React.FC = () => {
   const activeNodeId = useAppStore((state) => state.activeNodeId);
@@ -91,7 +59,16 @@ export const BusinessSignals: React.FC = () => {
       </motion.div>
 
       {/* Grid */}
-      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <motion.div 
+        variants={{
+          hidden: { opacity: 0 },
+          show: {
+            opacity: 1,
+            transition: { staggerChildren: 0.08 }
+          }
+        }}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      >
         {businessSignals.map((signal) => {
           const isRelated = isSignalRelatedToNode(signal.id, activeNodeId);
           const isDimmed = !isRelated;
@@ -100,11 +77,15 @@ export const BusinessSignals: React.FC = () => {
           const fillColor = signal.trend === 'positive' ? 'rgba(131, 209, 139, 0.08)' : signal.trend === 'negative' ? 'rgba(231, 111, 81, 0.08)' : 'rgba(245, 177, 76, 0.08)';
 
           const isHighlightDemo = isDemoActive && currentStep === 5 && ['gross-margin', 'transit-latency', 'cac-efficiency'].includes(signal.id);
-          const advisory = (signal as any).advisory || signalAdvisories[signal.id] || { insight: 'No signal anomalies detected.', impact: 'Stable.', action: 'Continue tracking.' };
+          const advisory = signal.advisory || { insight: 'No signal anomalies detected.', impact: 'Stable.', action: 'Continue tracking.' };
 
           return (
-            <div
+            <motion.div
               key={signal.id}
+              variants={{
+                hidden: { opacity: 0, y: 15 },
+                show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
+              }}
               className={`
                 bg-[#151B23] border rounded-2xl p-6 flex flex-col gap-4.5 transition-all duration-500 shadow-lg
                 ${isDimmed && !isHighlightDemo ? 'opacity-20 border-white/5 grayscale-[50%] pointer-events-none' : 'border-white/5 hover:border-white/10 hover:-translate-y-1 hover:shadow-xl'}
@@ -118,12 +99,39 @@ export const BusinessSignals: React.FC = () => {
                   <span className="text-[9px] font-bold text-white/20 uppercase tracking-wider">{signal.category}</span>
                   <h3 className="text-14 font-semibold text-white/90 leading-tight">{signal.title}</h3>
                 </div>
-                <div className={`
-                  text-11.5 font-bold px-2 py-0.5 rounded
-                  ${signal.trend === 'positive' ? 'bg-accent-sage-dim text-accent-sage' : signal.trend === 'negative' ? 'bg-critical-dim text-critical' : 'bg-warn-dim text-warn'}
-                `}>
+                <motion.div 
+                  animate={
+                    signal.trend === 'negative'
+                      ? {
+                          boxShadow: [
+                            '0 0 0px rgba(231,111,81,0)',
+                            '0 0 8px rgba(231,111,81,0.35)',
+                            '0 0 0px rgba(231,111,81,0)'
+                          ]
+                        }
+                      : signal.trend === 'positive'
+                        ? {
+                            scale: [0.97, 1.03, 0.97],
+                            boxShadow: [
+                              '0 0 0px rgba(131,209,139,0)',
+                              '0 0 8px rgba(131,209,139,0.25)',
+                              '0 0 0px rgba(131,209,139,0)'
+                            ]
+                          }
+                        : {}
+                  }
+                  transition={{
+                    repeat: Infinity,
+                    duration: signal.trend === 'negative' ? 1.6 : 2.4,
+                    ease: "easeInOut"
+                  }}
+                  className={`
+                    text-11.5 font-bold px-2 py-0.5 rounded select-none
+                    ${signal.trend === 'positive' ? 'bg-accent-sage-dim text-accent-sage' : signal.trend === 'negative' ? 'bg-critical-dim text-critical' : 'bg-warn-dim text-warn'}
+                  `}
+                >
                   {signal.delta}
-                </div>
+                </motion.div>
               </div>
 
               {/* Sparkline (Supporting evidence) */}
@@ -163,7 +171,7 @@ export const BusinessSignals: React.FC = () => {
                   <p className="text-12 text-white/65 leading-normal italic">{advisory.action}</p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           );
         })}
       </motion.div>

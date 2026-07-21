@@ -2,8 +2,8 @@ import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, BookOpen, Zap, Compass, Sparkles } from 'lucide-react';
 import { useAppStore } from '../features/store';
-import { copilotStarters, copilotAIResponses } from '../features/data';
-import { askGeminiCopilot } from '../features/geminiService';
+import { copilotStarters } from '../features/data';
+import { getCopilotResponse } from '../features/geminiService';
 import { parseCSV } from '../features/csvParser';
 import { Badge, AIThinkingLoader } from '../components/ui';
 
@@ -155,109 +155,17 @@ export const DecisionCopilot: React.FC = () => {
       }
     }
 
-    if (apiKey && apiKey.trim() !== '' && summary) {
+    if (summary) {
       try {
         const history = store.messages.map(m => ({ sender: m.sender, text: m.text }));
-        const responseData = await askGeminiCopilot(apiKey, text, history, summary, activeNodeContext);
+        const responseData = await getCopilotResponse(apiKey, text, history, summary, activeNodeContext);
         streamResponse(responseData);
-        return;
       } catch (err) {
-        console.warn('Gemini Copilot failed, falling back to local reasoning:', err);
+        console.error('Failed to obtain copilot response:', err);
+        setIsTyping(false);
       }
     }
 
-    // Heuristic analysis fallback using parsed CSV data
-    setTimeout(() => {
-      const lowerQuery = text.toLowerCase();
-      let matchedKey = 'default-query';
-      if (lowerQuery.includes('revenue') || lowerQuery.includes('sale') || lowerQuery.includes('earn')) {
-        matchedKey = 'Why did revenue increase?';
-      } else if (lowerQuery.includes('region') || lowerQuery.includes('perform') || lowerQuery.includes('underperform')) {
-        matchedKey = 'Which region is underperforming?';
-      } else if (lowerQuery.includes('profit') || lowerQuery.includes('margin') || lowerQuery.includes('net')) {
-        matchedKey = "Predict next month's profit.";
-      } else if (lowerQuery.includes('risk') || lowerQuery.includes('hazard') || lowerQuery.includes('danger') || lowerQuery.includes('expose')) {
-        matchedKey = 'What is my biggest business risk?';
-      } else if (lowerQuery.includes('market') || lowerQuery.includes('cac') || lowerQuery.includes('ad')) {
-        matchedKey = 'Which marketing campaign had the best ROI?';
-      } else if (lowerQuery.includes('invest') || lowerQuery.includes('allocate') || lowerQuery.includes('where')) {
-        matchedKey = 'Where should I invest next?';
-      }
-
-      // Scrutinize query for parameters not in dataset (Honest AI guidelines)
-      let isInsufficient = false;
-      let insufficientReason = '';
-      if (lowerQuery.includes('churn') || lowerQuery.includes('retention') || lowerQuery.includes('nrr')) {
-        if (summary && !summary.detectedMetrics.satisfaction) {
-          isInsufficient = true;
-          insufficientReason = "The available data is insufficient to estimate customer churn accurately because no customer retention or satisfaction metrics were detected.";
-        }
-      } else if (lowerQuery.includes('employee') || lowerQuery.includes('salary') || lowerQuery.includes('headcount')) {
-        if (summary && !summary.columns.some(c => c.toLowerCase().includes('hire') || c.toLowerCase().includes('employee') || c.toLowerCase().includes('staff') || c.toLowerCase().includes('salary'))) {
-          isInsufficient = true;
-          insufficientReason = "The available data is insufficient to audit resource headcount structures because no employee payroll or staff metrics were detected.";
-        }
-      }
-
-      const responseData = copilotAIResponses[matchedKey] || copilotAIResponses['default-query'];
-      
-      let customSummary = responseData.summary;
-      let customEvidence = [...responseData.evidence];
-      let customRec = responseData.recommendation;
-      let customConfidence = responseData.confidence || 95;
-
-      if (isInsufficient) {
-        customSummary = insufficientReason;
-        customEvidence = [
-          "Secure verification parsed 100% of available headers.",
-          "Related customer support parameters returned empty.",
-          "Forecasting disabled on non-existent dimensions to safeguard reasoning confidence."
-        ];
-        customRec = "We recommend uploading a supplementary customer lifecycle matrix.";
-        customConfidence = 45;
-      }
-
-      if (summary) {
-        const profile = summary.profile;
-        const metrics = summary.detectedMetrics;
-        const kpiStats = summary.kpiStats;
-
-        const formatCurrency = (val: number) => {
-          if (val >= 1e9) return `$${(val / 1e9).toFixed(2)}B`;
-          if (val >= 1e6) return `$${(val / 1e6).toFixed(2)}M`;
-          if (val >= 1e3) return `$${(val / 1e3).toFixed(1)}k`;
-          return `$${val.toFixed(2)}`;
-        };
-
-        const totalRevenue = formatCurrency(profile.totalRevenue);
-        const totalProfit = formatCurrency(profile.totalProfit);
-
-        if (matchedKey === 'Why did revenue increase?' && metrics.revenue && kpiStats[metrics.revenue]) {
-          customSummary = `Revenue expanded over the period, totaling ${totalRevenue} across ${profile.categories.join(', ')} categories.`;
-          customEvidence = [
-            `Total accumulated revenue was validated at ${totalRevenue} across ${summary.rowCount} periods.`,
-            `Average revenue per period registered at ${formatCurrency(kpiStats[metrics.revenue].mean)}.`,
-            `Peak revenue period reached a maximum of ${formatCurrency(kpiStats[metrics.revenue].max)}.`
-          ];
-        } else if (matchedKey === "Predict next month's profit." && metrics.profit && kpiStats[metrics.profit]) {
-          customSummary = `Gross operating profits stabilized, totaling a baseline of ${totalProfit} over the tracked period.`;
-          customEvidence = [
-            `Total net profit generated was ${totalProfit} with an average of ${formatCurrency(kpiStats[metrics.profit].mean)} per record.`,
-            `Max profit record logged was ${formatCurrency(kpiStats[metrics.profit].max)}.`,
-            `Risk margin is capped at the minimum profit baseline of ${formatCurrency(kpiStats[metrics.profit].min)}.`
-          ];
-        }
-      }
-
-      streamResponse({
-        summary: customSummary,
-        evidence: customEvidence,
-        confidence: customConfidence,
-        recommendation: customRec,
-        relatedMetrics: responseData.relatedMetrics || [],
-        nextQuestion: responseData.nextQuestion || ''
-      });
-    }, 1200);
   };
 
   // Follow-up chips actions
@@ -428,7 +336,7 @@ export const DecisionCopilot: React.FC = () => {
               </div>
               <p className="text-13 leading-relaxed font-serif text-white/90">
                 {streamingText}
-                <span className="inline-block w-1.5 h-3.5 bg-[#83D18B] ml-1 animate-pulse" />
+                <span className="inline-block text-[#83D18B] ml-1 font-bold animate-[pulse_0.75s_infinite]">▋</span>
               </p>
             </motion.div>
           )}

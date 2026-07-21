@@ -153,10 +153,10 @@ export const DashboardLayout: React.FC = () => {
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
-              initial={{ opacity: 0, y: 6, filter: 'blur(3px)' }}
+              initial={{ opacity: 0, y: 10, filter: 'blur(2px)' }}
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, y: -6, filter: 'blur(3px)' }}
-              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }} // Calmer Apple-like premium transition
+              exit={{ opacity: 0, y: -10, filter: 'blur(2px)' }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }} // Calmer Apple-like premium transition
               className="w-full h-full relative z-10"
             >
               <Outlet />

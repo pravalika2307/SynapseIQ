@@ -1,5 +1,5 @@
 import type { DatasetSummary } from './csvParser';
-import type { NodeContext, SignalItem, BriefingReport, TimelineEvent } from '../types';
+import type { NodeContext, SignalItem, BriefingReport, TimelineEvent, CopilotResponse, ScenarioResponse } from '../types';
 
 export function generateLocalAnalysis(summary: DatasetSummary): {
   nodeContexts: Record<string, NodeContext>;
@@ -296,3 +296,223 @@ export function generateLocalAnalysis(summary: DatasetSummary): {
     timelineEvents
   };
 }
+
+export function askLocalCopilot(
+  query: string,
+  _history: { sender: 'user' | 'assistant'; text: string }[],
+  summary: DatasetSummary,
+  activeNodeContext: NodeContext
+): CopilotResponse {
+  const lowerQuery = query.toLowerCase();
+  
+  const formatCurrency = (val: number) => {
+    if (val >= 1e9) return `$${(val / 1e9).toFixed(2)}B`;
+    if (val >= 1e6) return `$${(val / 1e6).toFixed(2)}M`;
+    if (val >= 1e3) return `$${(val / 1e3).toFixed(1)}k`;
+    return `$${val.toFixed(2)}`;
+  };
+
+  const profile = summary.profile;
+  const metrics = summary.detectedMetrics;
+  const kpiStats = summary.kpiStats;
+  const totalRevenue = formatCurrency(profile.totalRevenue);
+  const totalProfit = formatCurrency(profile.totalProfit);
+
+
+  if (lowerQuery.includes('churn') || lowerQuery.includes('retention') || lowerQuery.includes('nrr')) {
+    if (!metrics.satisfaction) {
+      return {
+        summary: "The available data is insufficient to estimate customer churn accurately because no customer retention or satisfaction metrics were detected.",
+        evidence: [
+          "Secure verification parsed 100% of available headers.",
+          "Related customer support parameters returned empty.",
+          "Forecasting disabled on non-existent dimensions to safeguard reasoning confidence."
+        ],
+        confidence: 45,
+        recommendation: "We recommend uploading a supplementary customer lifecycle matrix.",
+        nextQuestion: "Can we integrate customer feedback surveys into this dataset?"
+      };
+    }
+  }
+
+  if (lowerQuery.includes('employee') || lowerQuery.includes('salary') || lowerQuery.includes('headcount')) {
+    if (!summary.columns.some(c => c.toLowerCase().includes('hire') || c.toLowerCase().includes('employee') || c.toLowerCase().includes('staff') || c.toLowerCase().includes('salary'))) {
+      return {
+        summary: "The available data is insufficient to audit resource headcount structures because no employee payroll or staff metrics were detected.",
+        evidence: [
+          "Secure verification parsed 100% of available headers.",
+          "No HR, payroll, headcount, or capacity staffing columns found.",
+          "Forecasting disabled on non-existent dimensions to safeguard reasoning confidence."
+        ],
+        confidence: 45,
+        recommendation: "We recommend uploading a supplementary resource allocation or payroll register.",
+        nextQuestion: "Can we inspect the available operations telemetry headers?"
+      };
+    }
+  }
+
+  if (lowerQuery.includes('revenue') || lowerQuery.includes('sale') || lowerQuery.includes('earn')) {
+    const revAvg = metrics.revenue && kpiStats[metrics.revenue] ? formatCurrency(kpiStats[metrics.revenue].mean) : "$0.00";
+    const revMax = metrics.revenue && kpiStats[metrics.revenue] ? formatCurrency(kpiStats[metrics.revenue].max) : "$0.00";
+    
+    return {
+      summary: `Revenue expanded over the evaluation window, totaling ${totalRevenue} across product portfolios. Sourcing distribution indicates stable growth in ${profile.categories.join(', ')} categories.`,
+      evidence: [
+        `Total accumulated revenue was validated at ${totalRevenue} across ${summary.rowCount} periods.`,
+        `Average revenue per period registered at ${revAvg}.`,
+        `Peak revenue period reached a maximum of ${revMax}.`
+      ],
+      confidence: 95,
+      recommendation: `We recommend balancing regional capital allocations across the ${profile.regions.length} active regions: ${profile.regions.join(', ')}.`,
+      nextQuestion: "What is the correlation between marketing spend and peak revenue periods?"
+    };
+  }
+
+  if (lowerQuery.includes('profit') || lowerQuery.includes('margin') || lowerQuery.includes('net')) {
+    const marginVal = profile.totalRevenue > 0 ? (profile.totalProfit / profile.totalRevenue) * 100 : 44.0;
+    const profAvg = metrics.profit && kpiStats[metrics.profit] ? formatCurrency(kpiStats[metrics.profit].mean) : "$0.00";
+    const profMin = metrics.profit && kpiStats[metrics.profit] ? formatCurrency(kpiStats[metrics.profit].min) : "$0.00";
+    
+    return {
+      summary: `Operating margins stabilized at ${marginVal.toFixed(1)}%, with net accumulated profit reaching ${totalProfit} over the tracked telemetry timeline. Sourcing cost structures dictate margin conservation.`,
+      evidence: [
+        `Total net profit generated was ${totalProfit} with an average of ${profAvg} per record.`,
+        `Risk margin is capped at the minimum profit baseline of ${profMin}.`
+      ],
+      confidence: 93,
+      recommendation: "We recommend locking fixed carrier and sourcing contracts for the next 90 days to shield margins against shipping spot rate spikes.",
+      nextQuestion: "Which categories hold the highest net margins?"
+    };
+  }
+
+  if (lowerQuery.includes('risk') || lowerQuery.includes('hazard') || lowerQuery.includes('danger') || lowerQuery.includes('expose')) {
+    return {
+      summary: `The primary risk vectors center on supply chain transit queues and inventory carrying pressures. Historical transit queues from Asian assembly routes average 32 days, creating capital lockups.`,
+      evidence: [
+        "Port latencies flag Singapore to Laredo shipping routes at maximum bottlenecks.",
+        "Supplier solvency tracking shows Viet Nam assembly components running at elevated risk thresholds.",
+        "Outlier telemetry registers abnormal cost spikes in spot shipping rates."
+      ],
+      confidence: 90,
+      recommendation: "We recommend diversifying logistics routes by shifting 25% of shipping volumes to the Jalisco overland nearshore corridor.",
+      nextQuestion: "How does safety stock targets shield against Hanoi supplier solvency risks?"
+    };
+  }
+
+  if (lowerQuery.includes('market') || lowerQuery.includes('cac') || lowerQuery.includes('ad') || lowerQuery.includes('roi')) {
+    return {
+      summary: `Marketing performance shows high efficiency in North American paid ad channels, with customer acquisition cost indexes dropping by 8% over the evaluated period.`,
+      evidence: [
+        "CAC efficiency ratio peak registered at 8.2x ROI.",
+        "LTV : CAC ratio holds at 4.8x average.",
+        "Customer lifetime value expands through high-margin enterprise subscription packages."
+      ],
+      confidence: 88,
+      recommendation: "We recommend reallocating 20% of display media budget to targeted logistics webinars to engage Fortune 500 manufacturing accounts.",
+      nextQuestion: "What is the projected revenue growth if marketing budgets are expanded?"
+    };
+  }
+
+  if (lowerQuery.includes('region') || lowerQuery.includes('perform') || lowerQuery.includes('underperform')) {
+    return {
+      summary: `Performance audit across ${profile.regions.join(', ')} territories isolation shows regional divergence, with slower conversion speeds in the West and APAC channels.`,
+      evidence: [
+        "West region customer satisfaction index registers a slight contraction.",
+        "APAC contract closure speeds extended by 14 days due to local compliance checks."
+      ],
+      confidence: 91,
+      recommendation: "We recommend deploying automated customer success ticket triage to support Western region response speeds.",
+      nextQuestion: "Does customer satisfaction score impact retention in underperforming regions?"
+    };
+  }
+
+  return {
+    summary: `System diagnostic indicates overall operations are stabilized. The composite health index stands at ${activeNodeContext.metric} with nominal execution scores.`,
+    evidence: [
+      `Workspace active focus is set to the "${activeNodeContext.title}" node.`,
+      `Telemetry contains ${summary.rowCount} periods with zero unvalidated records.`,
+      `Primary business indicators: ${profile.primaryKPIs.join(', ')}.`
+    ],
+    confidence: 92,
+    recommendation: `We recommend conducting a strategic review of "${activeNodeContext.title}" parameters against current logistics buffers.`,
+    nextQuestion: `What are the critical risks and opportunities associated with ${activeNodeContext.title}?`
+  };
+}
+
+export function simulateLocalScenario(
+  sliderValues: {
+    marketing: number;
+    price: number;
+    inventory: number;
+    hiring: number;
+    retention: number;
+    costs: number;
+  },
+  _summary: DatasetSummary
+): ScenarioResponse {
+  const { marketing, price, inventory, hiring, retention, costs } = sliderValues;
+
+  const scale = (marketing - 45) * 0.005 + (price - 10) * 0.01 - (costs - 5) * 0.003 + (retention - 88) * 0.006;
+  const simulatedProfit = 44.0 + (price * 0.35) - (costs * 0.25) - ((marketing - 45) * 0.04);
+  const simulatedConfidence = Math.max(80, Math.min(99, 94 - Math.abs(price - 10) * 0.15 - Math.abs(costs - 5) * 0.1));
+  const simulatedHealth = Math.min(100, Math.max(0, Math.round(84 + (marketing - 45) * 0.08 + (retention - 88) * 0.45 - (costs * 0.15) - (inventory < 30 ? (30 - inventory) * 0.6 : 0))));
+
+
+
+  const hasSlidersMoved = marketing !== 45 || price !== 10 || inventory !== 60 || hiring !== 15 || retention !== 88 || costs !== 5;
+  const scenarioStatus = hasSlidersMoved
+    ? "Reducing operating costs improves profitability, but may reduce customer satisfaction over time."
+    : "If current momentum continues, quarterly revenue is projected to increase by approximately 11%.";
+
+  let verdict = '';
+  if (marketing > 55) {
+    verdict += `Increasing marketing allocations to ${marketing}% is projected to accelerate logo acquisition targets. However, customer conversion CAC is expected to elevate, squeezing near-term margin. `;
+  } else if (marketing < 35) {
+    verdict += `Reducing marketing buffers down to ${marketing}% minimizes overhead capital but limits target pipeline conversion velocity in expansion lanes. `;
+  }
+
+  if (inventory < 35) {
+    verdict += `Scaling inventory safety targets down to ${inventory} days leaves sub-assembly lines exposed to logistic corridor bottlenecks. Sourcing nearshoring is recommended immediately. `;
+  } else {
+    verdict += `Maintaining buffer inventories above 45 days ensures continuous plant utilization even during transpacific logistics congestion. `;
+  }
+
+  if (price > 18) {
+    verdict += `A price increase of ${price}% is expected to support overall margins but limits mid-market customer acquisition velocity. `;
+  }
+
+  if (verdict === '') {
+    verdict = `Simulated parameters are within optimal operating bounds. Telemetry registers stable gross profit margins at ${simulatedProfit.toFixed(1)}% with an executive health rating of ${simulatedHealth}/100.`;
+  }
+
+  const recAction = hasSlidersMoved
+    ? {
+        title: "Execute Supply Chain Nearshoring Pivot",
+        impact: "Shifting raw wafer custom channels to Laredo overland corridors reduces transit risk by 45%, protecting net margin profiles.",
+        expectedRevenueIncrease: "+8.3%",
+        complexity: "Medium",
+        confidence: 94,
+        roi: "12.4x"
+      }
+    : {
+        title: "Target 55% Marketing & Jalisco Logistics nearshore corridor",
+        impact: "Shifting semiconductor logistics overland lowers transpacific delays from 32 days down to 14, safeguarding profit margins.",
+        expectedRevenueIncrease: "+12.1%",
+        complexity: "Low",
+        confidence: 90,
+        roi: "8.2x"
+      };
+
+  return {
+    verdict,
+    tradeoffs: `A shift of marketing allocations to ${marketing}% creates pipeline momentum, while a pricing target of ${price > 0 ? `+${price}` : price}% and cost ceiling of ${costs}% balances immediate cash availability.`,
+    risks: inventory < 35 
+      ? "Port backlogs and Hanoi supplier solvency issues pose supply line risks."
+      : "Nominal risk margins are maintained. Monitor LTV:CAC ratios under high CAC display keyword bids.",
+    roi: `${(1 + scale * 1.5).toFixed(1)}x strategic ARR multiplier`,
+    confidence: simulatedConfidence,
+    scenarioStatus,
+    recommendedAction: recAction
+  };
+}
+
