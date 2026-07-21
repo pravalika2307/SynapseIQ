@@ -11,6 +11,50 @@ import { SectionHeader, Badge, Card } from '../components/ui';
 
 import type { TimelineEvent } from '../types';
 
+const renderRecommendation = (recText: string) => {
+  if (!recText) return null;
+  try {
+    const data = JSON.parse(recText);
+    if (data && typeof data === 'object' && data.recommendation) {
+      return (
+        <div className="space-y-2 mt-1 font-sans text-left text-11.5">
+          <div className="leading-relaxed"><strong className="text-white/80 font-sans block text-[10px] uppercase text-white/30 tracking-wider">Recommendation</strong> <span className="text-white/85 font-serif text-12 leading-relaxed block">{data.recommendation}</span></div>
+          <div className="leading-relaxed"><strong className="text-white/80 font-sans block text-[10px] uppercase text-white/30 tracking-wider">Business Reasoning</strong> <span className="text-white/70 font-serif leading-relaxed block">{data.businessReasoning}</span></div>
+          <div className="leading-relaxed"><strong className="text-white/80 font-sans block text-[10px] uppercase text-white/30 tracking-wider">Supporting Metrics</strong> <span className="text-white/70 font-serif leading-relaxed block">{data.supportingMetrics}</span></div>
+          <div className="leading-relaxed"><strong className="text-white/80 font-sans block text-[10px] uppercase text-white/30 tracking-wider">Expected Impact</strong> <span className="text-white/70 font-serif leading-relaxed block">{data.expectedImpact}</span></div>
+          
+          <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 border-t border-white/5 pt-2 mt-2 font-mono text-[10.5px]">
+            <div>
+              <span className="text-white/20 block uppercase text-[8px] tracking-wide">Confidence</span>
+              <span className="text-[#83D18B] font-bold">{data.confidenceScore}</span>
+            </div>
+            <div>
+              <span className="text-white/20 block uppercase text-[8px] tracking-wide">Risks</span>
+              <span className="text-white/50 block truncate max-w-[130px]" title={data.potentialRisks}>{data.potentialRisks}</span>
+            </div>
+            <div>
+              <span className="text-white/20 block uppercase text-[8px] tracking-wide">Difficulty</span>
+              <span className="text-white/60">{data.implementationDifficulty}</span>
+            </div>
+            <div>
+              <span className="text-white/20 block uppercase text-[8px] tracking-wide">Priority</span>
+              <span className="text-white/60">{data.priority}</span>
+            </div>
+            <div className="col-span-2">
+              <span className="text-white/20 block uppercase text-[8px] tracking-wide">Suggested Timeline</span>
+              <span className="text-[#83D18B]/80 font-semibold">{data.suggestedTimeline}</span>
+            </div>
+          </div>
+        </div>
+      );
+    }
+  } catch (e) {
+    // Treat as raw text
+  }
+  return <span className="font-serif leading-relaxed">"{recText}"</span>;
+};
+
+
 export const BusinessTimeline: React.FC = () => {
   const setCopilotContextNodeId = useAppStore((state) => state.setCopilotContextNodeId);
   const activeNodeId = useAppStore((state) => state.activeNodeId);
@@ -194,9 +238,9 @@ export const BusinessTimeline: React.FC = () => {
                             <span className="text-[9px] uppercase font-bold text-[#83D18B] font-sans flex items-center gap-1">
                               <Zap size={11} /> Recommended Strategic Action
                             </span>
-                            <p className="text-12.5 text-white/70 font-serif leading-relaxed">
-                              "{ev.recommendedAction}"
-                            </p>
+                             <div className="text-12.5 text-white/70 leading-relaxed text-left">
+                               {renderRecommendation(ev.recommendedAction)}
+                             </div>
                           </div>
                         </div>
 

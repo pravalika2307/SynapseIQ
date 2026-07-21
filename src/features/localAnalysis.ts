@@ -1,6 +1,30 @@
 import type { DatasetSummary } from './csvParser';
 import type { NodeContext, SignalItem, BriefingReport, TimelineEvent, CopilotResponse, ScenarioResponse } from '../types';
 
+export function buildEnhancedRecommendation(
+  recommendation: string,
+  businessReasoning: string,
+  supportingMetrics: string,
+  expectedImpact: string,
+  confidenceScore: string,
+  potentialRisks: string,
+  implementationDifficulty: 'Low' | 'Medium' | 'High',
+  priority: 'Low' | 'Medium' | 'High',
+  suggestedTimeline: string
+): string {
+  return JSON.stringify({
+    recommendation,
+    businessReasoning,
+    supportingMetrics,
+    expectedImpact,
+    confidenceScore,
+    potentialRisks,
+    implementationDifficulty,
+    priority,
+    suggestedTimeline
+  });
+}
+
 export function generateLocalAnalysis(summary: DatasetSummary): {
   nodeContexts: Record<string, NodeContext>;
   businessSignals: SignalItem[];
@@ -34,33 +58,41 @@ export function generateLocalAnalysis(summary: DatasetSummary): {
   // Find strongest correlations for opportunities/risks
   let opportunityText = 'Pivot production lines to high-performing product segments to optimize yield.';
   let riskText = 'Inventory carrying costs or operational delays in logistics lanes limit profit potential.';
-  let recommendationText = 'We recommend reallocating marketing capital to high-margin revenue nodes.';
+  let recommendationText = 'We recommend establishing a safety buffer target of 45 days.';
 
-  const correlationPairs: { h1: string; h2: string; val: number }[] = [];
-  Object.keys(summary.correlations).forEach(h1 => {
-    Object.keys(summary.correlations[h1]).forEach(h2 => {
-      if (h1 < h2) {
-        correlationPairs.push({ h1, h2, val: summary.correlations[h1][h2] });
-      }
+  if (summary.correlations) {
+    let bestPos = -1;
+    let bestPosCols: [string, string] = ['', ''];
+    let worstNeg = 1;
+    let worstNegCols: [string, string] = ['', ''];
+
+    Object.keys(summary.correlations).forEach(c1 => {
+      Object.keys(summary.correlations[c1]).forEach(c2 => {
+        if (c1 !== c2) {
+          const val = summary.correlations[c1][c2];
+          if (val > bestPos && val < 0.99) {
+            bestPos = val;
+            bestPosCols = [c1, c2];
+          }
+          if (val < worstNeg) {
+            worstNeg = val;
+            worstNegCols = [c1, c2];
+          }
+        }
+      });
     });
-  });
 
-  // Sort by absolute correlation
-  correlationPairs.sort((a, b) => Math.abs(b.val) - Math.abs(a.val));
-  const strongPos = correlationPairs.find(p => p.val > 0.4 && p.h1 !== p.h2);
-  const strongNeg = correlationPairs.find(p => p.val < -0.4 && p.h1 !== p.h2);
-
-  if (strongPos) {
-    opportunityText = `Accelerate customer exposure in "${strongPos.h1}" to drive "${strongPos.h2}" (positive correlation of ${strongPos.val.toFixed(2)}).`;
-  }
-  if (strongNeg) {
-    riskText = `Historical inverse correlation of ${strongNeg.val.toFixed(2)} between "${strongNeg.h1}" and "${strongNeg.h2}" suggests resource conflict.`;
+    if (bestPos > 0.4) {
+      opportunityText = `Exploit high positive correlation (${bestPos.toFixed(2)}) between "${bestPosCols[0]}" and "${bestPosCols[1]}" to drive revenue velocity.`;
+    }
+    if (worstNeg < -0.4) {
+      riskText = `Mitigate negative covariance of "${worstNegCols[0]}" vs "${worstNegCols[1]}" (${worstNeg.toFixed(2)}) impacting operational overhead.`;
+    }
   }
 
   // Calculate trends for signals
   const generateSignalData = (colName: string | null, labelName: string, category: string, defaultScore: number): SignalItem => {
     if (!colName || !kpiStats[colName]) {
-      // Mock signal data if column doesn't exist
       return {
         id: colName || labelName.toLowerCase().replace(/\s+/g, '-'),
         title: labelName,
@@ -143,7 +175,17 @@ export function generateLocalAnalysis(summary: DatasetSummary): {
       trend: healthScore >= 80 ? 'up' : healthScore >= 60 ? 'neutral' : 'down',
       opportunity: opportunityText,
       risk: riskText,
-      recommendation: recommendationText
+      recommendation: buildEnhancedRecommendation(
+        recommendationText,
+        "The primary risk factor revolves around supply chain and inventory turn parameters.",
+        `Composite Health Index stands at ${healthScore}/100.`,
+        "Restores inventory buffers and stabilizes raw material components.",
+        `${healthScore}%`,
+        "Short-term increase in storage buffer overheads.",
+        "Medium",
+        "High",
+        "Next 14 Days"
+      )
     },
     revenue: {
       id: 'revenue',
@@ -154,7 +196,17 @@ export function generateLocalAnalysis(summary: DatasetSummary): {
       trend: 'up',
       opportunity: `Expand operations in the highest correlation category node to unlock scalable capital.`,
       risk: `Overconcentration of sales in a single category node introduces sudden revenue drops.`,
-      recommendation: `We recommend balancing regional capital allocations across the ${profile.regions.length} active regions.`
+      recommendation: buildEnhancedRecommendation(
+        `We recommend balancing regional capital allocations across the ${profile.regions.length} active regions.`,
+        "Overconcentration of sales in a single category node introduces sudden revenue drops.",
+        `Total accumulated revenue stands at ${totalRevenue}.`,
+        "Diversifies risk exposure and captures growth across multiple active regions.",
+        "95%",
+        "Requires cross-border logistics coordination and compliance audits.",
+        "Medium",
+        "High",
+        "Next 30 Days"
+      )
     },
     profit: {
       id: 'profit',
@@ -165,7 +217,17 @@ export function generateLocalAnalysis(summary: DatasetSummary): {
       trend: marginVal > 40 ? 'up' : 'neutral',
       opportunity: `Optimizing cost of goods sold (COGS) by 5% yields an additional ${formatCurrency(totalRevenueVal * 0.05)} profit.`,
       risk: `Upstream margin compression from operational cost spikes.`,
-      recommendation: `We recommend locking fixed carrier and sourcing contracts for the next 90 days.`
+      recommendation: buildEnhancedRecommendation(
+        "We recommend locking fixed carrier and sourcing contracts for the next 90 days.",
+        "Upstream margin compression from operational cost spikes.",
+        `Total profit stands at ${totalProfit} representing profit margin of ${profitMargin}.`,
+        "Insulates margin profile from spot shipping freight rate volatility.",
+        "93%",
+        "Locks contract pricing and restricts flexibility if spot rates decline.",
+        "Low",
+        "High",
+        "Next 7 Days"
+      )
     },
     customers: {
       id: 'customers',
@@ -176,7 +238,17 @@ export function generateLocalAnalysis(summary: DatasetSummary): {
       trend: averageSatisfactionVal >= 75 ? 'up' : 'neutral',
       opportunity: `Utilize high satisfaction scores to secure recurring enterprise contract extensions.`,
       risk: `Unresolved anomalies in lower performing categories degrade composite brand loyalty.`,
-      recommendation: `We recommend deploying customer success automation in regions with expanding complaint metrics.`
+      recommendation: buildEnhancedRecommendation(
+        "We recommend deploying customer success automation in regions with expanding complaint metrics.",
+        "Declining customer satisfaction scores across West corridors.",
+        `Customer feedback satisfaction index averages ${avgSatisfaction}.`,
+        "Improves Western region response speeds and resolves down-channel SLA bottlenecks.",
+        "91%",
+        "Initial workflow friction and team training adjustment period.",
+        "Medium",
+        "Medium",
+        "Next 30 Days"
+      )
     }
   };
 
@@ -192,7 +264,17 @@ export function generateLocalAnalysis(summary: DatasetSummary): {
         trend: 'neutral',
         opportunity: opportunityText,
         risk: riskText,
-        recommendation: recommendationText
+        recommendation: buildEnhancedRecommendation(
+          recommendationText,
+          "Standard metrics diagnostic log indicates overall operations are stabilized.",
+          "Composite indicators are running at standard nominal levels.",
+          "Stabilizes performance index across all operational corridors.",
+          "92%",
+          "Minor adjustment overhead in lower performing product categories.",
+          "Low",
+          "Medium",
+          "Next 14 Days"
+        )
       };
     }
   });
@@ -232,7 +314,17 @@ export function generateLocalAnalysis(summary: DatasetSummary): {
       category: 'Growth',
       whatHappened: 'Telemetry import validated.',
       why: 'Corporate spreadsheet uploaded to Decision Intelligence room.',
-      recommendedAction: 'Inspect nodes in the Strategy Canvas to trace interdependencies.',
+      recommendedAction: buildEnhancedRecommendation(
+        "We recommend inspecting nodes in the Strategy Canvas to trace interdependencies.",
+        "Corporate spreadsheet uploaded to Decision Intelligence room.",
+        `Ingested ${summary.rowCount} rows of operational telemetry.`,
+        "Enables proactive mapping of causal dependencies between KPIs.",
+        "98%",
+        "No direct risk. Informational review step.",
+        "Low",
+        "Low",
+        "Immediate"
+      ),
       targetNodeId: 'health'
     }
   ];
@@ -251,7 +343,17 @@ export function generateLocalAnalysis(summary: DatasetSummary): {
       category: 'Revenue',
       whatHappened: 'Peak sales period achieved.',
       why: 'Market expansion and high-margin conversion velocity spikes.',
-      recommendedAction: 'Trace category and region sales ratios for that period to duplicate wins.',
+      recommendedAction: buildEnhancedRecommendation(
+        "We recommend tracing category and region sales ratios for that period to duplicate wins.",
+        "Peak sales performance period identified in telemetry.",
+        `Peak revenue reached ${formatCurrency(maxRevVal)}.`,
+        "Identifies high-growth channels and isolates structural conversion drivers.",
+        "95%",
+        "Requires data segmentation drilldowns by operations analysts.",
+        "Low",
+        "Medium",
+        "Next 7 Days"
+      ),
       targetNodeId: 'revenue'
     });
   }
@@ -270,7 +372,17 @@ export function generateLocalAnalysis(summary: DatasetSummary): {
       category: 'Operations',
       whatHappened: 'Gross operating profit margin stabilized.',
       why: 'Protected by forward supply contracts and product category mix.',
-      recommendedAction: 'Verify nearshore waiver corridors to shield against carrier rate hikes.',
+      recommendedAction: buildEnhancedRecommendation(
+        "We recommend verifying nearshore waiver corridors to shield against carrier rate hikes.",
+        "Gross operating profit margin stabilized under forward contracts.",
+        `Overall profitability averaged ${formatCurrency(meanProf)} per period.`,
+        "Shields net profit margin from ocean freight rate spikes.",
+        "93%",
+        "Nearshoring shift may require supplier recertification.",
+        "Medium",
+        "High",
+        "Next 14 Days"
+      ),
       targetNodeId: 'profit'
     });
   }
@@ -290,7 +402,17 @@ export function generateLocalAnalysis(summary: DatasetSummary): {
       category: 'Customers',
       whatHappened: 'Composite feedback loops monitored.',
       why: 'Direct customer support loops and delivery timeliness.',
-      recommendedAction: 'Deploy automation packages in lower performing categories.',
+      recommendedAction: buildEnhancedRecommendation(
+        "We recommend deploying automation packages in lower performing categories.",
+        "Customer satisfaction NPS averages show regional SLA strains.",
+        `Customer NPS averages ${avgSatVal.toFixed(1)} NPS.`,
+        "Resolves ticket response queues and improves customer retention rates.",
+        "91%",
+        "Workflow restructuring adjustments.",
+        "Medium",
+        "Medium",
+        "Next 30 Days"
+      ),
       targetNodeId: 'customers'
     });
   }
@@ -334,7 +456,17 @@ export function askLocalCopilot(
           "Root Causes: Customer support, SLA satisfaction, or lifetime lifecycle parameters returned empty."
         ],
         confidence: 45,
-        recommendation: "Strategic Recommendations, Immediate Actions & Expected Impact: We recommend uploading a supplementary customer lifecycle matrix to enable customer retention modeling.",
+        recommendation: buildEnhancedRecommendation(
+          "We recommend uploading a supplementary customer lifecycle matrix to enable customer retention modeling.",
+          "Insufficient telemetry parameters were detected for retention audits.",
+          "Satisfactory NPS or SLA columns are missing.",
+          "Activates machine learning forecasting pipelines on customer churn.",
+          "45%",
+          "No risk. Supplementary upload required.",
+          "Low",
+          "High",
+          "Next 3 Days"
+        ),
         nextQuestion: "Can we integrate customer feedback surveys into this dataset?"
       };
     }
@@ -349,7 +481,17 @@ export function askLocalCopilot(
           "Root Causes: HR, payroll, headcount, or capacity staffing columns are completely absent from this dataset."
         ],
         confidence: 45,
-        recommendation: "Strategic Recommendations, Immediate Actions & Expected Impact: We recommend uploading a supplementary resource allocation or payroll register to activate resource audits.",
+        recommendation: buildEnhancedRecommendation(
+          "We recommend uploading a supplementary resource allocation or payroll register to activate resource audits.",
+          "Telemetry data lacks columns mapping resource capacity configurations.",
+          "No employee salary or headcount stats found.",
+          "Enables organizational structure charts and cost-saving audits.",
+          "45%",
+          "No risk. Baseline data ingestion required.",
+          "Low",
+          "High",
+          "Next 3 Days"
+        ),
         nextQuestion: "Can we inspect the available operations telemetry headers?"
       };
     }
@@ -366,7 +508,17 @@ export function askLocalCopilot(
         `Root Causes: The revenue expansion was driven by a strong positive correlation between marketing ad spend allocations and conversion rates.`
       ],
       confidence: 95,
-      recommendation: `Strategic Recommendations, Immediate Actions & Expected Impact: We recommend balancing regional capital allocations across the ${profile.regions.length} active regions: ${profile.regions.join(', ')}. Divert ad spends to European markets to capture expanding logistics opportunities.`,
+      recommendation: buildEnhancedRecommendation(
+        `We recommend balancing regional capital allocations across the ${profile.regions.length} active regions: ${profile.regions.join(', ')}.`,
+        "Revenue expansion should be distributed proportionally to minimize geographical risk dependencies.",
+        `Peak revenue registered at ${revMax} vs average of ${revAvg}.`,
+        "Unlocks growth in untapped local regions, diversifying portfolio exposures.",
+        "95%",
+        "Operational expansion requires localized regional compliance setup.",
+        "Medium",
+        "High",
+        "Next 30 Days"
+      ),
       nextQuestion: "What is the correlation between marketing spend and peak revenue periods?"
     };
   }
@@ -383,7 +535,17 @@ export function askLocalCopilot(
         `Root Causes: Gross margin stability is supported by locked forward contracts, shielding bottom-lines from freight spot rate fluctuations.`
       ],
       confidence: 93,
-      recommendation: "Strategic Recommendations, Immediate Actions & Expected Impact: We recommend locking fixed carrier and sourcing contracts for the next 90 days. This will protect bottom-lines from maritime spot freight volatility and ensure cost predictability.",
+      recommendation: buildEnhancedRecommendation(
+        "We recommend locking fixed carrier and sourcing contracts for the next 90 days.",
+        "Spot rate ocean freight volatility presents severe margin risks under transpacific lanes.",
+        `Profit baseline capped at minimum record of ${profMin} on a cumulative profit of ${totalProfit}.`,
+        "Insulates gross margin from spot shipping spikes, assuring operating predictability.",
+        "93%",
+        "Contracts limit cost flexibility if carrier spot rates decline in the off-season.",
+        "Low",
+        "High",
+        "Next 7 Days"
+      ),
       nextQuestion: "Which categories hold the highest net margins?"
     };
   }
@@ -396,7 +558,17 @@ export function askLocalCopilot(
         "Root Causes: Sourcing overconcentration in Hanoi supplier clusters creates assembly line exposures within 14 days."
       ],
       confidence: 90,
-      recommendation: "Strategic Recommendations, Immediate Actions & Expected Impact: We recommend diversifying logistics routes by shifting 25% of shipping volumes to the Jalisco overland nearshore corridor. Shifting wafer validation trials to domestic foundries mitigates carrier delay risks.",
+      recommendation: buildEnhancedRecommendation(
+        "We recommend diversifying logistics routes by shifting 25% of shipping volumes to the Jalisco overland nearshore corridor.",
+        "Asian logistics delay risks block working capital and delay delivery milestones.",
+        "Transit queues from transpacific channels average 32 days.",
+        "Lowers corridor queue delays down to 14 days, protecting supply chain integrity.",
+        "90%",
+        "Nearshore vendor onboarding overheads and localized transportation adjustments.",
+        "Medium",
+        "High",
+        "Next 14 Days"
+      ),
       nextQuestion: "How does safety stock targets shield against Hanoi supplier solvency risks?"
     };
   }
@@ -409,7 +581,17 @@ export function askLocalCopilot(
         "Root Causes: Focused search optimization and target account display campaigns successfully reduced cost-per-click ad overheads."
       ],
       confidence: 88,
-      recommendation: "Strategic Recommendations, Immediate Actions & Expected Impact: We recommend reallocating 20% of display media budget to targeted logistics webinars to engage Fortune 500 manufacturing accounts, expecting to capture higher high-intent enterprise pipeline leads.",
+      recommendation: buildEnhancedRecommendation(
+        "We recommend reallocating 20% of display media budget to targeted logistics webinars to engage Fortune 500 manufacturing accounts.",
+        "General display budgets exhibit declining marginal returns compared to targeted educational conversion channels.",
+        "CAC efficiency ratio holds at 8.2x ROI peak vs lower averages elsewhere.",
+        "Lowers baseline acquisition cost by 8% while acquiring high-intent logos.",
+        "88%",
+        "Initial webinar production setup complexity and lower short-term lead volume.",
+        "Low",
+        "Medium",
+        "Next 14 Days"
+      ),
       nextQuestion: "What is the projected revenue growth if marketing budgets are expanded?"
     };
   }
@@ -422,7 +604,17 @@ export function askLocalCopilot(
         "Root Causes: Slower APAC speeds are driven by local regulatory shift audits, while Western complaints reflect customer support response lag."
       ],
       confidence: 91,
-      recommendation: "Strategic Recommendations, Immediate Actions & Expected Impact: We recommend deploying automated customer success ticket triage to support Western region response speeds and resolve down-channel SLA bottlenecks.",
+      recommendation: buildEnhancedRecommendation(
+        "We recommend deploying automated customer success ticket triage to support Western region response speeds.",
+        "Declining Western satisfaction parameters reflect support queue bottlenecks.",
+        "APAC contract closure speeds extended by 14 days.",
+        "Resolves customer support ticket queues and shields Western contract retention rates.",
+        "91%",
+        "Requires CRM platform webhook integrations and support staff training.",
+        "Medium",
+        "Medium",
+        "Next 30 Days"
+      ),
       nextQuestion: "Does customer satisfaction score impact retention in underperforming regions?"
     };
   }
@@ -434,7 +626,17 @@ export function askLocalCopilot(
       `Root Causes: Stability is driven by solid compliance rates across primary business indicators: ${profile.primaryKPIs.join(', ')}.`
     ],
     confidence: 92,
-    recommendation: `Strategic Recommendations, Immediate Actions & Expected Impact: We recommend conducting a strategic review of "${activeNodeContext.title}" parameters against current logistics buffers to prevent capacity strains.`,
+    recommendation: buildEnhancedRecommendation(
+      `We recommend conducting a strategic review of "${activeNodeContext.title}" parameters against current logistics buffers.`,
+      "System baseline is running nominal, but buffers must be continuously tested to prevent capacity strains.",
+      `Ingested telemetry contains ${summary.rowCount} data points.`,
+      "Identifies capacity parameters before they constrain working capital variables.",
+      "92%",
+      "No direct risk. Standard diagnostic auditing step.",
+      "Low",
+      "Medium",
+      "Next 14 Days"
+    ),
     nextQuestion: `What are the critical risks and opportunities associated with ${activeNodeContext.title}?`
   };
 }
@@ -458,37 +660,25 @@ export function simulateLocalScenario(
   const simulatedHealth = Math.min(100, Math.max(0, Math.round(84 + (marketing - 45) * 0.08 + (retention - 88) * 0.45 - (costs * 0.15) - (inventory < 30 ? (30 - inventory) * 0.6 : 0))));
 
 
-
   const hasSlidersMoved = marketing !== 45 || price !== 10 || inventory !== 60 || hiring !== 15 || retention !== 88 || costs !== 5;
   const scenarioStatus = hasSlidersMoved
     ? "Reducing operating costs improves profitability, but may reduce customer satisfaction over time."
     : "If current momentum continues, quarterly revenue is projected to increase by approximately 11%.";
 
-  let verdict = '';
-  if (marketing > 55) {
-    verdict += `Increasing marketing allocations to ${marketing}% is projected to accelerate logo acquisition targets. However, customer conversion CAC is expected to elevate, squeezing near-term margin. `;
-  } else if (marketing < 35) {
-    verdict += `Reducing marketing buffers down to ${marketing}% minimizes overhead capital but limits target pipeline conversion velocity in expansion lanes. `;
-  }
-
-  if (inventory < 35) {
-    verdict += `Scaling inventory safety targets down to ${inventory} days leaves sub-assembly lines exposed to logistic corridor bottlenecks. Sourcing nearshoring is recommended immediately. `;
-  } else {
-    verdict += `Maintaining buffer inventories above 45 days ensures continuous plant utilization even during transpacific logistics congestion. `;
-  }
-
-  if (price > 18) {
-    verdict += `A price increase of ${price}% is expected to support overall margins but limits mid-market customer acquisition velocity. `;
-  }
-
-  if (verdict === '') {
-    verdict = `Simulated parameters are within optimal operating bounds. Telemetry registers stable gross profit margins at ${simulatedProfit.toFixed(1)}% with an executive health rating of ${simulatedHealth}/100.`;
-  }
-
   const recAction = hasSlidersMoved
     ? {
         title: "Execute Supply Chain Nearshoring Pivot",
-        impact: "Shifting raw wafer custom channels to Laredo overland corridors reduces transit risk by 45%, protecting net margin profiles.",
+        impact: buildEnhancedRecommendation(
+          "We recommend launching supply chain nearshoring pivots to Jalisco.",
+          "Shifting semiconductor logistics overland lowers transpacific delays from 32 days down to 14, safeguarding profit margins.",
+          `Current inventory target is set to ${inventory} days.`,
+          `Estimated revenue growth velocity of +8.3% and ARR multiplier of ${((1 + scale * 1.5)).toFixed(1)}x.`,
+          "94%",
+          "Overland carrier integration costs.",
+          "Medium",
+          "High",
+          "Next 14 Days"
+        ),
         expectedRevenueIncrease: "+8.3%",
         complexity: "Medium",
         confidence: 94,
@@ -496,7 +686,17 @@ export function simulateLocalScenario(
       }
     : {
         title: "Target 55% Marketing & Jalisco Logistics nearshore corridor",
-        impact: "Shifting semiconductor logistics overland lowers transpacific delays from 32 days down to 14, safeguarding profit margins.",
+        impact: buildEnhancedRecommendation(
+          "We recommend targeting 55% marketing spend and Jalisco nearshore logistics.",
+          "Shifting wafer transport overland protects assembly margins from transpacific port queue bottlenecks.",
+          `Ingested dataset average telemetry metrics are running nominal.`,
+          "Reduces queue latency from 32 days to 14 days, yielding a 12.1% revenue growth rate.",
+          "90%",
+          "Onboarding delays under new logistics carriers.",
+          "Low",
+          "High",
+          "Next 30 Days"
+        ),
         expectedRevenueIncrease: "+12.1%",
         complexity: "Low",
         confidence: 90,
@@ -513,4 +713,3 @@ export function simulateLocalScenario(
     recommendedAction: recAction
   };
 }
-

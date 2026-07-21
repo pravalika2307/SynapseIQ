@@ -8,6 +8,50 @@ import { parseCSV } from '../features/csvParser';
 import { motion } from 'framer-motion';
 import { AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 
+const renderRecommendation = (recText: string) => {
+  if (!recText) return null;
+  try {
+    const data = JSON.parse(recText);
+    if (data && typeof data === 'object' && data.recommendation) {
+      return (
+        <div className="space-y-2 mt-1 font-sans text-left text-11.5">
+          <div className="leading-relaxed"><strong className="text-white/80 font-sans block text-[10px] uppercase text-white/30 tracking-wider">Recommendation</strong> <span className="text-white/85 font-serif text-12 leading-relaxed block">{data.recommendation}</span></div>
+          <div className="leading-relaxed"><strong className="text-white/80 font-sans block text-[10px] uppercase text-white/30 tracking-wider">Business Reasoning</strong> <span className="text-white/70 font-serif leading-relaxed block">{data.businessReasoning}</span></div>
+          <div className="leading-relaxed"><strong className="text-white/80 font-sans block text-[10px] uppercase text-white/30 tracking-wider">Supporting Metrics</strong> <span className="text-white/70 font-serif leading-relaxed block">{data.supportingMetrics}</span></div>
+          <div className="leading-relaxed"><strong className="text-white/80 font-sans block text-[10px] uppercase text-white/30 tracking-wider">Expected Impact</strong> <span className="text-white/70 font-serif leading-relaxed block">{data.expectedImpact}</span></div>
+          
+          <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 border-t border-white/5 pt-2 mt-2 font-mono text-[10.5px]">
+            <div>
+              <span className="text-white/20 block uppercase text-[8px] tracking-wide">Confidence</span>
+              <span className="text-[#83D18B] font-bold">{data.confidenceScore}</span>
+            </div>
+            <div>
+              <span className="text-white/20 block uppercase text-[8px] tracking-wide">Risks</span>
+              <span className="text-white/50 block truncate max-w-[130px]" title={data.potentialRisks}>{data.potentialRisks}</span>
+            </div>
+            <div>
+              <span className="text-white/20 block uppercase text-[8px] tracking-wide">Difficulty</span>
+              <span className="text-white/60">{data.implementationDifficulty}</span>
+            </div>
+            <div>
+              <span className="text-white/20 block uppercase text-[8px] tracking-wide">Priority</span>
+              <span className="text-white/60">{data.priority}</span>
+            </div>
+            <div className="col-span-2">
+              <span className="text-white/20 block uppercase text-[8px] tracking-wide">Suggested Timeline</span>
+              <span className="text-[#83D18B]/80 font-semibold">{data.suggestedTimeline}</span>
+            </div>
+          </div>
+        </div>
+      );
+    }
+  } catch (e) {
+    // Treat as raw text
+  }
+  return <span className="font-serif leading-relaxed">{recText}</span>;
+};
+
+
 export const Forecast: React.FC = () => {
   const activeNodeId = useAppStore((state) => state.activeNodeId);
   const geminiApiKey = useAppStore((state) => state.geminiApiKey);
@@ -491,9 +535,9 @@ export const Forecast: React.FC = () => {
               <h4 className="text-14.5 font-bold text-white/95 tracking-tight font-serif text-left">
                 {dynamicRecommendedAction.title}
               </h4>
-              <p className="text-12 text-white/45 font-serif leading-relaxed text-left">
-                {dynamicRecommendedAction.impact}
-              </p>
+               <div className="text-12 text-white/45 leading-relaxed text-left">
+                 {renderRecommendation(dynamicRecommendedAction.impact)}
+               </div>
             </div>
             
             <div className="flex flex-col gap-1 text-right sm:border-l border-white/10 sm:pl-6 shrink-0 font-mono text-11">

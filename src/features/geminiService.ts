@@ -91,7 +91,6 @@ export async function generateGeminiAnalysis(
     biAnalysis: summary.biAnalysis
   }, null, 2);
 
-
   const prompt = `
 You are a Senior Strategy Consultant from McKinsey, BCG, Bain, Deloitte, or Google Cloud Consulting. Your tone is highly professional, concise, data-driven, and executive-friendly.
 Never provide generic summaries. Avoid repeating numbers unnecessarily. Every recommendation must include reasoning, and every insight must explain the underlying WHY.
@@ -101,19 +100,31 @@ ${statsString}
 
 Validate the dataset. If the dataset lacks sufficient column parameters to infer basic business performance, return a structured warning in briefingReports explaining what additional columns would improve the analysis. Do NOT fabricate numbers; only reference values derivable from the stats.
 
-Every single "recommendation" string value under "nodeContexts" MUST start with the exact text "We recommend...". Do not use "AI suggests...", "AI recommends...", or "AI directs...".
+CRITICAL REQUIREMENT:
+Every single "recommendation" string value under "nodeContexts" AND every "recommendedAction" string value under "timelineEvents" MUST be a stringified JSON object (JSON.stringify) representing the following structure:
+{
+  "recommendation": "We recommend... [The core consulting suggestion, must start with 'We recommend...']",
+  "businessReasoning": "[Strategic rationale explaining the WHY behind this suggestion]",
+  "supportingMetrics": "[Concrete metrics from telemetry validating the need]",
+  "expectedImpact": "[Quantified bottom-line or operational lift expected]",
+  "confidenceScore": "[e.g. 92%]",
+  "potentialRisks": "[Primary operational or capital hazard introduced by the recommendation]",
+  "implementationDifficulty": "[Low|Medium|High]",
+  "priority": "[Low|Medium|High]",
+  "suggestedTimeline": "[e.g. Next 14 Days]"
+}
 
 You must return a JSON object matching the following structure:
 {
   "nodeContexts": {
-    "health": { "id": "health", "title": "Business Health Index", "summary": "...", "metricLabel": "...", "metric": "...", "trend": "up|down|neutral", "opportunity": "...", "risk": "...", "recommendation": "..." },
-    "revenue": { "id": "revenue", "title": "Revenue Run-rate", "summary": "...", "metricLabel": "...", "metric": "...", "trend": "up|down|neutral", "opportunity": "...", "risk": "...", "recommendation": "..." },
-    "profit": { "id": "profit", "title": "Operating Profit Margin", "summary": "...", "metricLabel": "...", "metric": "...", "trend": "up|down|neutral", "opportunity": "...", "risk": "...", "recommendation": "..." },
-    "customers": { "id": "customers", "title": "Customer Acquisition", "summary": "...", "metricLabel": "...", "metric": "...", "trend": "up|down|neutral", "opportunity": "...", "risk": "...", "recommendation": "..." },
-    "marketing": { "id": "marketing", "title": "Marketing Spend Index", "summary": "...", "metricLabel": "...", "metric": "...", "trend": "up|down|neutral", "opportunity": "...", "risk": "...", "recommendation": "..." },
-    "inventory": { "id": "inventory", "title": "Inventory Turn Velocity", "summary": "...", "metricLabel": "...", "metric": "...", "trend": "up|down|neutral", "opportunity": "...", "risk": "...", "recommendation": "..." },
-    "operations": { "id": "operations", "title": "Operational Execution", "summary": "...", "metricLabel": "...", "metric": "...", "trend": "up|down|neutral", "opportunity": "...", "risk": "...", "recommendation": "..." },
-    "customer-satisfaction": { "id": "customer-satisfaction", "title": "Customer Satisfaction Score", "summary": "...", "metricLabel": "...", "metric": "...", "trend": "up|down|neutral", "opportunity": "...", "risk": "...", "recommendation": "..." }
+    "health": { "id": "health", "title": "Business Health Index", "summary": "...", "metricLabel": "...", "metric": "...", "trend": "up|down|neutral", "opportunity": "...", "risk": "...", "recommendation": "STRINGIFIED_RECOMMENDATION_JSON" },
+    "revenue": { "id": "revenue", "title": "Revenue Run-rate", "summary": "...", "metricLabel": "...", "metric": "...", "trend": "up|down|neutral", "opportunity": "...", "risk": "...", "recommendation": "STRINGIFIED_RECOMMENDATION_JSON" },
+    "profit": { "id": "profit", "title": "Operating Profit Margin", "summary": "...", "metricLabel": "...", "metric": "...", "trend": "up|down|neutral", "opportunity": "...", "risk": "...", "recommendation": "STRINGIFIED_RECOMMENDATION_JSON" },
+    "customers": { "id": "customers", "title": "Customer Acquisition", "summary": "...", "metricLabel": "...", "metric": "...", "trend": "up|down|neutral", "opportunity": "...", "risk": "...", "recommendation": "STRINGIFIED_RECOMMENDATION_JSON" },
+    "marketing": { "id": "marketing", "title": "Marketing Spend Index", "summary": "...", "metricLabel": "...", "metric": "...", "trend": "up|down|neutral", "opportunity": "...", "risk": "...", "recommendation": "STRINGIFIED_RECOMMENDATION_JSON" },
+    "inventory": { "id": "inventory", "title": "Inventory Turn Velocity", "summary": "...", "metricLabel": "...", "metric": "...", "trend": "up|down|neutral", "opportunity": "...", "risk": "...", "recommendation": "STRINGIFIED_RECOMMENDATION_JSON" },
+    "operations": { "id": "operations", "title": "Operational Execution", "summary": "...", "metricLabel": "...", "metric": "...", "trend": "up|down|neutral", "opportunity": "...", "risk": "...", "recommendation": "STRINGIFIED_RECOMMENDATION_JSON" },
+    "customer-satisfaction": { "id": "customer-satisfaction", "title": "Customer Satisfaction Score", "summary": "...", "metricLabel": "...", "metric": "...", "trend": "up|down|neutral", "opportunity": "...", "risk": "...", "recommendation": "STRINGIFIED_RECOMMENDATION_JSON" }
   },
   "businessSignals": [
     {
@@ -169,7 +180,7 @@ You must return a JSON object matching the following structure:
       "category": "Growth|Revenue|Marketing|Inventory|Customers|Operations|Risk",
       "whatHappened": "What occurred in telemetry.",
       "why": "Underlying business rationale explaining the WHY.",
-      "recommendedAction": "Actionable steering guidance starting with 'We recommend...'.",
+      "recommendedAction": "STRINGIFIED_RECOMMENDATION_JSON",
       "targetNodeId": "health|revenue|profit|customers|marketing|inventory|operations|customer-satisfaction"
     }
   ]
@@ -177,8 +188,8 @@ You must return a JSON object matching the following structure:
 
 Instructions:
 1. Return structured JSON ONLY. Do not wrap response in markdown.
-2. In 'briefingReports', the 'narrative' array MUST contain exactly 10 paragraphs corresponding to the headings: Executive Summary, Business Context, Key Findings, Root Causes, Business Risks, Growth Opportunities, Strategic Recommendations, Immediate Actions, Expected Impact, and Confidence Score. Each paragraph must be prefixed with its heading name (e.g. 'Executive Summary: ...').
-3. Explain the underlying WHY behind every key data trend. Make statements context-rich, concise, and professional.
+2. In 'briefingReports', the 'narrative' array MUST contain exactly 10 paragraphs.
+3. Every recommendation string inside nodeContexts and timelineEvents must be JSON-serialized so it can be parsed as a structured object.
 `;
 
   const responseText = await callGeminiRawWithRetry(apiKey, prompt);
@@ -213,7 +224,21 @@ ${JSON.stringify(history.slice(-6), null, 2)}
 
 Current User Query: "${query}"
 
-Provide a genuine, strategic, dataset-aligned answer. Avoid hallucinating metrics. Every recommendation value MUST start with the exact text "We recommend...". Return structured JSON only.
+Provide a genuine, strategic, dataset-aligned answer. Avoid hallucinating metrics. Return structured JSON only.
+
+CRITICAL REQUIREMENT:
+The "recommendation" string value MUST be a stringified JSON object (JSON.stringify) representing the following structure:
+{
+  "recommendation": "We recommend... [The core consulting suggestion, must start with 'We recommend...']",
+  "businessReasoning": "[Strategic rationale explaining the WHY behind this suggestion]",
+  "supportingMetrics": "[Concrete metrics from telemetry validating the need]",
+  "expectedImpact": "[Quantified bottom-line or operational lift expected]",
+  "confidenceScore": "[e.g. 92%]",
+  "potentialRisks": "[Primary operational or capital hazard introduced by the recommendation]",
+  "implementationDifficulty": "[Low|Medium|High]",
+  "priority": "[Low|Medium|High]",
+  "suggestedTimeline": "[e.g. Next 14 Days]"
+}
 
 Return a JSON object with this exact shape:
 {
@@ -223,7 +248,7 @@ Return a JSON object with this exact shape:
     "Root Causes: [Underlying operational driver explaining this data trend]"
   ],
   "confidence": 95,
-  "recommendation": "Strategic Recommendations, Immediate Actions & Expected Impact: [We recommend specific steering actions, detail immediate next steps, and outline expected bottom-line impacts]",
+  "recommendation": "STRINGIFIED_RECOMMENDATION_JSON",
   "nextQuestion": "Next Suggested Question (intelligent question starter related to this answer)"
 }
 `;
@@ -267,17 +292,31 @@ Assumed slider inputs adjusted by the executive:
 
 Model the forecast. Return structured JSON only.
 
+CRITICAL REQUIREMENT:
+The "recommendedAction.impact" string value MUST be a stringified JSON object (JSON.stringify) representing the following structure:
+{
+  "recommendation": "We recommend... [The core consulting suggestion, must start with 'We recommend...']",
+  "businessReasoning": "[Strategic rationale explaining the WHY behind this suggestion]",
+  "supportingMetrics": "[Concrete metrics from telemetry validating the need]",
+  "expectedImpact": "[Quantified bottom-line or operational lift expected]",
+  "confidenceScore": "[e.g. 92%]",
+  "potentialRisks": "[Primary operational or capital hazard introduced by the recommendation]",
+  "implementationDifficulty": "[Low|Medium|High]",
+  "priority": "[Low|Medium|High]",
+  "suggestedTimeline": "[e.g. Next 14 Days]"
+}
+
 JSON Structure:
 {
   "verdict": "Executive Summary, Business Context, Key Findings & Root Causes: [Synthesised forecast path showing how sliders shift operations, explaining the WHY and structural root causes]",
   "tradeoffs": "Growth Opportunities & Trade-offs: [Explain how pipeline velocity or near-term margins are balanced by these sliders]",
   "risks": "Business Risks: [Detailed operational and financial threats created by these configurations]",
-  "roi": "Strategic Recommendations, Immediate Actions & Expected Impact: [We recommend specific steering targets, detailed immediate actions, and estimated ROI multipliers]",
+  "roi": "Strategic Recommendations, Immediate Actions & Expected Impact: [General explanation of ROI factors]",
   "confidence": 88,
   "scenarioStatus": "McKinsey-style status description banner summarizing the model outlook",
   "recommendedAction": {
     "title": "Short action title",
-    "impact": "Detailed explanation of implementation benefits and reasoning",
+    "impact": "STRINGIFIED_RECOMMENDATION_JSON",
     "expectedRevenueIncrease": "+8.3%",
     "complexity": "Low|Medium|High",
     "confidence": 94,
