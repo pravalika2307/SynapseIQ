@@ -98,6 +98,66 @@ export const ExecutiveBrief: React.FC = () => {
     };
   }, [nodeContexts, decisionReadiness]);
 
+  // Dynamically calculate prioritized insights using the Prioritization Engine
+  const prioritizedInsights = useMemo(() => {
+    return Object.keys(nodeContexts)
+      .filter(key => key !== 'health') // Skip main index node
+      .map(key => {
+        const node = nodeContexts[key];
+        let rec = null;
+        try {
+          rec = JSON.parse(node.recommendation);
+        } catch (e) {}
+
+        // WACC Weighted Score
+        let score = 50;
+        if (rec) {
+          const conf = parseInt(rec.confidenceScore) || 75;
+          score += (conf - 75) * 0.4;
+
+          if (rec.priority === 'High') score += 20;
+          if (rec.priority === 'Medium') score += 10;
+          if (rec.priority === 'Low') score -= 5;
+
+          if (rec.implementationDifficulty === 'Low') score += 10;
+          if (rec.implementationDifficulty === 'High') score -= 10;
+
+          const timeline = rec.suggestedTimeline || '';
+          if (timeline.includes('7') || timeline.includes('14') || timeline.toLowerCase().includes('immediate')) {
+            score += 15;
+          }
+        }
+
+        // Automatic Classification
+        let classification: 'Critical' | 'High' | 'Medium' | 'Low' = 'Medium';
+        if (score >= 80) classification = 'Critical';
+        else if (score >= 68) classification = 'High';
+        else if (score >= 50) classification = 'Medium';
+        else classification = 'Low';
+
+        let roiText = '3.5x';
+        if (classification === 'Critical') roiText = '12.4x';
+        else if (classification === 'High') roiText = '8.2x';
+        else if (classification === 'Medium') roiText = '5.5x';
+        else roiText = '1.8x';
+
+        return {
+          id: key,
+          title: rec?.recommendation || `Optimize ${node.title}`,
+          impact: rec?.businessReasoning || node.summary,
+          confidence: parseInt(rec?.confidenceScore) || 85,
+          roi: roiText,
+          time: rec?.suggestedTimeline || '30 days',
+          classification,
+          score,
+          query: `Detail the business reasoning and metrics supporting ${node.title} recommendation.`,
+          nodeId: key
+        };
+      })
+      .sort((a, b) => b.score - a.score) // Sort highest value first
+      .slice(0, 3); // Take the top 3 most valuable insights
+  }, [nodeContexts]);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {
@@ -344,86 +404,58 @@ export const ExecutiveBrief: React.FC = () => {
             <TrendingUp className="text-[#83D18B]" size={15} />
             <h2 className="text-14 font-bold uppercase tracking-wider text-white/80">Today's Priorities</h2>
           </div>
-          <span className="text-[10px] font-mono text-white/40">Guiding Strategic Actions</span>
+          <span className="text-[10px] font-mono text-white/40">Prioritization Engine Enabled</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[
-            {
-              title: "Execute Supply Buffer Optimization",
-              impact: "Stabilize raw wafer stock against transport delay bottlenecks.",
-              confidence: 94,
-              roi: "12.4x",
-              time: "14 days",
-              query: "How do safety stock buffers prevent production delays? Detail the specific ROI calculation.",
-              nodeId: "inventory",
-              badge: "High Impact"
-            },
-            {
-              title: "Deploy Marketing Reallocation",
-              impact: "Shift digital ad spend to high-performing organic customer channels.",
-              confidence: 88,
-              roi: "8.2x",
-              time: "30 days",
-              query: "Detail the ad spend reallocation forecast. How does a 15% shift influence acquisition?",
-              nodeId: "marketing",
-              badge: "Organic Focus"
-            },
-            {
-              title: "Deploy West Region SLA Remediation",
-              impact: "Address declining customer satisfaction scores across West corridors.",
-              confidence: 91,
-              roi: "5.5x",
-              time: "45 days",
-              query: "Analyze customer support response speeds in the West region and list recommendations.",
-              nodeId: "customers",
-              badge: "SLA Alert"
-            }
-          ].map((item, idx) => (
-            <Card key={idx} elevation="flat" className="p-6 flex flex-col gap-5 justify-between min-h-[260px] hover:border-[#83D18B]/25 transition-all">
-              <div className="flex flex-col gap-3">
-                <div className="flex justify-between items-center">
-                  <Badge variant={idx === 2 ? 'critical' : 'sage'}>{item.badge}</Badge>
-                  <span className="text-[9px] font-mono text-white/35 font-bold uppercase">Priority {idx + 1}</span>
-                </div>
-                <h3 className="text-14.5 font-bold text-white/90 leading-snug tracking-tight font-serif text-left">
-                  {item.title}
-                </h3>
-                <p className="text-12.5 text-white/45 leading-relaxed font-serif text-left">
-                  {item.impact}
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-2 text-11 border-t border-white/5 pt-3.5 text-left">
-                  <div className="flex flex-col">
-                    <span className="text-[8px] font-bold text-white/30 uppercase">Confidence</span>
-                    <span className="text-white/80 font-bold font-mono text-11.5"><CountUp value={item.confidence} />%</span>
+          {prioritizedInsights.map((item, idx) => {
+            const badgeVariant = item.classification === 'Critical' ? 'critical' : item.classification === 'High' ? 'warn' : item.classification === 'Medium' ? 'sage' : 'neutral';
+            return (
+              <Card key={idx} elevation="flat" className="p-6 flex flex-col gap-5 justify-between min-h-[260px] hover:border-[#83D18B]/25 transition-all">
+                <div className="flex flex-col gap-3">
+                  <div className="flex justify-between items-center">
+                    <Badge variant={badgeVariant}>{item.classification}</Badge>
+                    <span className="text-[9px] font-mono text-white/35 font-bold uppercase">Priority {idx + 1}</span>
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-[8px] font-bold text-white/30 uppercase">Est. ROI</span>
-                    <span className="text-[#83D18B] font-bold font-mono text-11.5">{item.roi}</span>
-                  </div>
-                  <div className="flex flex-col mt-2">
-                    <span className="text-[8px] font-bold text-white/30 uppercase">Est. Completion</span>
-                    <span className="text-white/80 font-mono text-11">{item.time}</span>
-                  </div>
+                  <h3 className="text-14.5 font-bold text-white/90 leading-snug tracking-tight font-serif text-left">
+                    {item.title}
+                  </h3>
+                  <p className="text-12.5 text-white/45 leading-relaxed font-serif text-left line-clamp-4">
+                    {item.impact}
+                  </p>
                 </div>
 
-                <button
-                  onClick={() => {
-                    setCopilotPreloadQuery(item.query);
-                    setCopilotContextNodeId(item.nodeId);
-                    navigate('/dashboard/copilot');
-                  }}
-                  className="w-full py-2 bg-white/[0.02] hover:bg-[#83D18B] border border-white/5 hover:border-[#83D18B] text-white/70 hover:text-[#0D1117] font-bold text-11.5 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-98"
-                >
-                  Open Investigation
-                  <ArrowRight size={12} />
-                </button>
-              </div>
-            </Card>
-          ))}
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-2 text-11 border-t border-white/5 pt-3.5 text-left">
+                    <div className="flex flex-col">
+                      <span className="text-[8px] font-bold text-white/30 uppercase">Confidence</span>
+                      <span className="text-white/80 font-bold font-mono text-11.5"><CountUp value={item.confidence} />%</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[8px] font-bold text-white/30 uppercase">Est. ROI</span>
+                      <span className="text-[#83D18B] font-bold font-mono text-11.5">{item.roi}</span>
+                    </div>
+                    <div className="flex flex-col mt-2">
+                      <span className="text-[8px] font-bold text-white/30 uppercase">Suggested Timeline</span>
+                      <span className="text-white/80 font-mono text-11">{item.time}</span>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setCopilotPreloadQuery(item.query);
+                      setCopilotContextNodeId(item.nodeId);
+                      navigate('/dashboard/copilot');
+                    }}
+                    className="w-full py-2 bg-white/[0.02] hover:bg-[#83D18B] border border-white/5 hover:border-[#83D18B] text-white/70 hover:text-[#0D1117] font-bold text-11.5 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-98"
+                  >
+                    Open Investigation
+                    <ArrowRight size={12} />
+                  </button>
+                </div>
+              </Card>
+            );
+          })}
         </div>
       </dMotion.div>
     </dMotion.div>
