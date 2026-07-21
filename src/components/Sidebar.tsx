@@ -14,14 +14,17 @@ import {
   Settings,
   HelpCircle,
   User,
-  Clock
+  Clock,
+  Sparkles
 } from 'lucide-react';
 import { useAppStore } from '../features/store';
+import { useDemoStore } from '../features/demoStore';
 
 export const Sidebar: React.FC = () => {
   const activeNodeId = useAppStore((state) => state.activeNodeId);
   const isSidebarCollapsed = useAppStore((state) => state.isSidebarCollapsed);
   const setSidebarCollapsed = useAppStore((state) => state.setSidebarCollapsed);
+  const startDemo = useDemoStore((state) => state.startDemo);
 
   const navContainerRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
@@ -81,6 +84,11 @@ export const Sidebar: React.FC = () => {
   ];
 
   const bottomItems = [
+    {
+      icon: <Sparkles size={16} className="text-[#83D18B]" />,
+      label: 'Guided Tour',
+      onClick: () => startDemo()
+    },
     {
       icon: <Settings size={16} />,
       label: 'Settings',

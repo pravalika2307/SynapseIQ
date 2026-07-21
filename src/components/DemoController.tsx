@@ -16,59 +16,59 @@ interface StepConfig {
 const stepsConfig: StepConfig[] = [
   {
     step: 1,
-    title: 'Welcome Screen',
+    title: '1. Upload Dataset',
     route: '/',
     durationMs: 5000,
-    narrative: "Welcome to SynapseIQ. Let's discover the story hidden in your business data."
+    narrative: "Ingest any business telemetry matrix to initiate automated metric calculations. Business Value: Bypasses manual SQL queries and profiles raw dataset columns instantly."
   },
   {
     step: 2,
-    title: 'AI Synthesis Sequence',
+    title: '2. AI Analysis',
     route: '/',
     durationMs: 8000,
-    narrative: 'Playing the ingestion sequence: validating context, detecting trends, and isolating operational anomalies.'
+    narrative: "Validating operational metrics. Business Value: Auto-detects anomalies, outliers (Z-scores >= 3), and industry profile domains prior to Gemini evaluation."
   },
   {
     step: 3,
-    title: 'Executive Briefing',
+    title: '3. Executive Brief',
     route: '/dashboard/brief',
     durationMs: 14000,
-    narrative: 'Isolated Q2 growth targets, circular Business Health (91/100), and top strategic action plans.'
+    narrative: "Dynamic CEO Daily Briefing dashboard. Business Value: Synthesizes real-time business health indices, priority vectors, and critical risks for rapid ingestion."
   },
   {
     step: 4,
-    title: 'Strategy Canvas Relational Graph',
+    title: '4. Strategy Canvas',
     route: '/dashboard/projections',
     durationMs: 14000,
-    narrative: 'Exploring metric interdependencies. Revenue, Marketing, and Profit relationships are mapped.'
+    narrative: "Mathematical Pearson correlation graph. Business Value: Maps metric interdependencies (e.g. price elasticity, satisfaction churn) to prevent siloed decisions."
   },
   {
     step: 5,
-    title: 'Operational Business Signals',
-    route: '/dashboard/signals',
-    durationMs: 14000,
-    narrative: 'Analyzing regional telemetry trends, NRR logo expansions, and AI recommendations.'
+    title: '5. Decision Copilot',
+    route: '/dashboard/copilot',
+    durationMs: 18000,
+    narrative: "Executive conversational business advisor. Business Value: Grounds answers in active dataset context, providing risk evaluations and actionable recommendations without hallucinations."
   },
   {
     step: 6,
-    title: 'Decision Copilot consultation',
-    route: '/dashboard/copilot',
-    durationMs: 18000,
-    narrative: 'Asking: "What should the company prioritize next quarter?" Streaming McKinsey consultant responses.'
+    title: '6. Forecast Studio',
+    route: '/dashboard/forecast',
+    durationMs: 14000,
+    narrative: "Interactive scenario simulator. Business Value: Models simulated margins and projected revenues under varying operational sliders (pricing, marketing, hiring)."
   },
   {
     step: 7,
-    title: 'AI Scenario Simulation',
-    route: '/dashboard/forecast',
+    title: '7. Boardroom Report',
+    route: '/dashboard/reports',
     durationMs: 14000,
-    narrative: 'Simulating +15% Marketing budget increase. Observe real-time margin adjustments and target shifts.'
+    narrative: "One-click investor report builder. Business Value: Compiles professional, structured briefings ready for steering committee and board distribution."
   },
   {
     step: 8,
-    title: 'Executive Synthesis Complete',
+    title: 'Evaluation Complete',
     route: '/dashboard/brief',
     durationMs: 999999,
-    narrative: 'SynapseIQ has successfully transformed raw business telemetry into actionable directives.'
+    narrative: "SynapseIQ has successfully walked you through the core AI decision-making workflow. Feel free to explore the system at your own pace."
   }
 ];
 
