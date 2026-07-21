@@ -62,6 +62,7 @@ export interface DatasetSummary {
   };
   profile: {
     industry: string;
+    businessDomain: string;
     timePeriod: string;
     regions: string[];
     categories: string[];
@@ -233,15 +234,38 @@ export function parseCSV(csvText: string, fileName: string): DatasetSummary {
     }
   }
 
-  // Detect industry
+  // Detect industry & business domain
   let industry = 'General Business';
+  let businessDomain = 'Corporate General Operations';
+  
+  const headerLowerList = headers.map(h => h.toLowerCase());
   const allCategoryVals = categories.map(c => c.toLowerCase());
-  if (allCategoryVals.some(c => c.includes('soft') || c.includes('saas') || c.includes('app') || c.includes('cloud'))) {
+  const headerText = headerLowerList.join(' ') + ' ' + allCategoryVals.join(' ');
+
+  if (headerText.includes('patient') || headerText.includes('doctor') || headerText.includes('hospital') || headerText.includes('clinical') || headerText.includes('medical') || headerText.includes('diagnosis')) {
+    industry = 'Healthcare & Medical';
+    businessDomain = 'Healthcare Operations & Quality';
+  } else if (headerText.includes('student') || headerText.includes('teacher') || headerText.includes('course') || headerText.includes('grade') || headerText.includes('score') || headerText.includes('school') || headerText.includes('learn')) {
+    industry = 'Education';
+    businessDomain = 'Academic Performance & Learning Operations';
+  } else if (headerText.includes('employee') || headerText.includes('staff') || headerText.includes('salary') || headerText.includes('hiring') || headerText.includes('attrition') || headerText.includes('headcount') || headerText.includes('payroll')) {
+    industry = 'HR & Workforce';
+    businessDomain = 'Human Capital & Workforce Strategy';
+  } else if (headerText.includes('inventory') || headerText.includes('stock') || headerText.includes('warehouse') || headerText.includes('carrier') || headerText.includes('shipping') || headerText.includes('delay') || headerText.includes('transit') || headerText.includes('supply')) {
+    industry = 'Supply Chain & Manufacturing';
+    businessDomain = 'Logistics Operations & Capacity Scheduling';
+  } else if (headerText.includes('ad') || headerText.includes('marketing') || headerText.includes('campaign') || headerText.includes('cac') || headerText.includes('click') || headerText.includes('spend')) {
+    industry = 'Marketing & Advertising';
+    businessDomain = 'Customer Acquisition & Growth Marketing';
+  } else if (headerText.includes('profit') || headerText.includes('expense') || headerText.includes('cost') || headerText.includes('ebitda') || headerText.includes('equity') || headerText.includes('tax') || headerText.includes('cash')) {
+    industry = 'Financial Operations';
+    businessDomain = 'Corporate Finance & Resource Allocation';
+  } else if (headerText.includes('sale') || headerText.includes('revenue') || headerText.includes('deal') || headerText.includes('lead') || headerText.includes('retail') || headerText.includes('e-commerce') || headerText.includes('customer')) {
+    industry = 'Sales & E-commerce';
+    businessDomain = 'Revenue Enablement & Commercial Operations';
+  } else if (allCategoryVals.some(c => c.includes('soft') || c.includes('saas') || c.includes('app') || c.includes('cloud'))) {
     industry = 'Technology / SaaS';
-  } else if (allCategoryVals.some(c => c.includes('cloth') || c.includes('shoe') || c.includes('furn') || c.includes('electr') || c.includes('retail') || c.includes('toy'))) {
-    industry = 'Retail & E-commerce';
-  } else if (allCategoryVals.some(c => c.includes('part') || c.includes('metal') || c.includes('chem') || c.includes('machin'))) {
-    industry = 'Manufacturing';
+    businessDomain = 'SaaS Growth & Software Operations';
   }
 
   const primaryKPIs = [];
@@ -542,6 +566,7 @@ export function parseCSV(csvText: string, fileName: string): DatasetSummary {
     detectedMetrics,
     profile: {
       industry,
+      businessDomain,
       timePeriod,
       regions: regions.length > 0 ? regions : ['Global'],
       categories: categories.length > 0 ? categories : ['All Categories'],

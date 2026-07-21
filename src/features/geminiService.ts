@@ -63,6 +63,47 @@ function rewriteExecutiveLanguage(text: string): string {
   return cleaned;
 }
 
+function getIndustryContextInstructions(industry: string): string {
+  switch (industry) {
+    case 'Healthcare & Medical':
+      return `
+Focus areas for Healthcare: Patient throughput optimization, clinical quality metrics, bed capacity scheduling, staff compliance, and medical resource conservation. Adjust recommendations to target clinical directors and chief medical officers.
+`;
+    case 'Education':
+      return `
+Focus areas for Education: Learning velocity indexes, academic retention scores, curriculum allocations, and tuition budget balances. Adjust recommendations to target academic directors and board trustees.
+`;
+    case 'HR & Workforce':
+      return `
+Focus areas for Human Resources: Talent retention, cost-of-hire optimization, compensation parity indexes, workforce utilization capacity, and headcount distribution. Adjust recommendations to target CHROs and personnel strategy committees.
+`;
+    case 'Supply Chain & Manufacturing':
+      return `
+Focus areas for Supply Chain & Logistics: Transit queue bottlenecks, warehouse safety stock threshold optimizations, carrier spot rate mitigations, nearshore capacity corridor shifts, and inventory turns. Adjust recommendations to target Chief Operations Officers and supply chain directors.
+`;
+    case 'Marketing & Advertising':
+      return `
+Focus areas for Marketing: Acquisition conversion ratios, LTV:CAC efficiency indices, direct marketing reallocations, organic brand expansion, and traffic channel margins. Adjust recommendations to target CMOs and digital marketing directors.
+`;
+    case 'Financial Operations':
+      return `
+Focus areas for Finance: Net operating margins, EBITDA growth targets, fixed/variable cost structures, investment optimization, and working capital cash conservation. Adjust recommendations to target CFOs and treasury committees.
+`;
+    case 'Sales & E-commerce':
+      return `
+Focus areas for Sales: Close ratios, average deal velocity, regional distribution metrics, customer churn margins, and lifetime customer value optimization. Adjust recommendations to target Chief Revenue Officers and sales managers.
+`;
+    case 'Technology / SaaS':
+      return `
+Focus areas for SaaS: Monthly Recurring Revenue (MRR), Customer Acquisition Cost (CAC) payback speed, customer churn indices, net revenue retention (NRR), and platform capacity margins. Adjust recommendations to target Chief Executive Officers and technology directors.
+`;
+    default:
+      return `
+Focus areas for General Business: Corporate operating efficiencies, workflow bottlenecks, commercial capacity scheduling, and bottom-line margin expansion.
+`;
+  }
+}
+
 function hasDuplicateSentences(text: string): boolean {
   if (!text) return false;
   const sentences = text.split(/[.!?]+/).map(s => s.trim().toLowerCase()).filter(s => s.length > 25);
@@ -248,6 +289,9 @@ export async function generateGeminiAnalysis(
 
   const prompt = `
 Role: Executive Business Advisor (McKinsey/BCG).
+Industry Context Strategy Directives:
+${getIndustryContextInstructions(summary.profile.industry)}
+
 Dataset:
 ${statsString}
 
@@ -335,6 +379,9 @@ export async function askGeminiCopilot(
 
   const prompt = `
 Role: Executive Business Advisor (McKinsey/BCG).
+Industry Context Strategy Directives:
+${getIndustryContextInstructions(summary.profile.industry)}
+
 Dataset:
 ${JSON.stringify(statsSummary)}
 
@@ -401,6 +448,9 @@ export async function simulateGeminiScenario(
 
   const prompt = `
 Role: Executive Business Advisor (McKinsey/BCG) forecasting telemetry.
+Industry Context Strategy Directives:
+${getIndustryContextInstructions(summary.profile.industry)}
+
 Context:
 ${JSON.stringify(statsSummary)}
 
