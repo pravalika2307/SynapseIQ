@@ -176,13 +176,22 @@ function cleanAndValidateScenario(parsed: any): boolean {
   return true;
 }
 
-// Raw Gemini fetch with Timeout & Abort controller
+const GEMINI_FLASH_MODELS = [
+  'gemini-2.5-flash',
+  'gemini-2.0-flash',
+  'gemini-2.0-flash-lite',
+  'gemini-1.5-flash'
+];
+
+// Raw Gemini fetch with Model Negotiation, Timeout & Abort controller
 async function callGeminiRaw(apiKey: string, prompt: string, signal?: AbortSignal): Promise<string> {
-  const models = ['gemini-2.0-flash', 'gemini-2.0-flash-lite'];
   let lastError: any = null;
 
-  for (const model of models) {
+  for (let i = 0; i < GEMINI_FLASH_MODELS.length; i++) {
+    const model = GEMINI_FLASH_MODELS[i];
+    const isLastModel = i === GEMINI_FLASH_MODELS.length - 1;
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+    const start = performance.now();
     
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 12000); // 12 seconds timeout
@@ -212,21 +221,45 @@ async function callGeminiRaw(apiKey: string, prompt: string, signal?: AbortSigna
         signal: controller.signal
       });
       clearTimeout(timeoutId);
+      const duration = Math.round(performance.now() - start);
 
       if (!response.ok) {
         const errText = await response.text();
-        if (response.status === 404 && model !== models[models.length - 1]) {
-          lastError = new Error(`Gemini Model ${model} returned 404: ${errText}`);
-          continue;
+        const status = response.status;
+
+        // Status 404 (Not Found / Unsupported), 429 (Quota/Rate limit), 503/500 (Service Unavailable)
+        const isNegotiationFallback = status === 404 || status === 429 || status === 503 || status === 500;
+        
+        lastError = new Error(`Gemini API Model [${model}] HTTP ${status}: ${errText}`);
+
+        if (isNegotiationFallback && !isLastModel) {
+          logStructured({
+            operation: 'modelNegotiation',
+            status: 'retry',
+            durationMs: duration,
+            attempt: i + 1,
+            error: `Model ${model} returned HTTP ${status}. Retrying fallback model [${GEMINI_FLASH_MODELS[i + 1]}]...`
+          });
+          continue; // Fallback to next model
         }
-        throw new Error(`Gemini API Error: ${response.status} - ${errText}`);
+
+        throw lastError;
       }
 
       const resJson = await response.json();
       const rawText = resJson?.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!rawText) {
-        throw new Error('Gemini API returned an empty response.');
+        throw new Error(`Gemini API Model [${model}] returned empty candidate text.`);
       }
+
+      logStructured({
+        operation: 'modelNegotiation',
+        status: 'success',
+        durationMs: duration,
+        attempt: i + 1,
+        error: `Gemini Model [${model}] activated successfully.`
+      });
+      console.info(`[Gemini Intelligence Engine] Activated model: ${model}`);
 
       return rawText;
     } catch (err: any) {
@@ -235,12 +268,22 @@ async function callGeminiRaw(apiKey: string, prompt: string, signal?: AbortSigna
         throw err;
       }
       lastError = err;
-      if (models.indexOf(model) === models.length - 1) {
-        throw err;
+      if (!isLastModel) {
+        const duration = Math.round(performance.now() - start);
+        logStructured({
+          operation: 'modelNegotiation',
+          status: 'retry',
+          durationMs: duration,
+          attempt: i + 1,
+          error: `Model ${model} error (${err.message}). Retrying fallback model [${GEMINI_FLASH_MODELS[i + 1]}]...`
+        });
+        continue;
       }
+      throw err;
     }
   }
-  throw lastError || new Error('Gemini API call failed.');
+
+  throw lastError || new Error('Gemini API model chain negotiation failed.');
 }
 
 // Retry loop with exponential backoff and rate-limiting (429) checks
