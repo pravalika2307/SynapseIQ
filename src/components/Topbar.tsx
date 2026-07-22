@@ -39,13 +39,13 @@ export const Topbar: React.FC = () => {
   ];
 
   return (
-    <header className="flex items-center h-13 px-6 bg-background/95 backdrop-blur-md border-b border-white/5 sticky top-0 z-50 justify-between gap-4 select-none shrink-0">
+    <header className="flex items-center h-13 px-6 bg-[#0D1117]/90 backdrop-blur-xl border-b border-white/[0.08] sticky top-0 z-50 justify-between gap-4 select-none shrink-0 shadow-sm">
       {/* Brand */}
       <div className="flex items-center gap-2.5 w-48 shrink-0">
         <div className="w-5 h-5 text-accent-sage flex items-center justify-center">
-          <Sparkles size={18} className="animate-pulse" />
+          <Sparkles size={18} className="animate-pulse text-[#83D18B]" />
         </div>
-        <span className="text-13.5 font-semibold text-white/90 tracking-tight">
+        <span className="text-13.5 font-bold text-white/90 tracking-tight font-sans">
           SynapseIQ
         </span>
       </div>
@@ -56,7 +56,7 @@ export const Topbar: React.FC = () => {
         <input
           type="text"
           placeholder="Search signals, reports, metrics..."
-          className="w-full bg-white/[0.03] border border-white/5 rounded-lg py-1.5 pl-9 pr-4 text-13 text-white/90 placeholder-white/20 outline-none transition-all duration-300 focus:border-accent-sage-border focus:bg-white/[0.05] focus:ring-4 focus:ring-accent-sage/5"
+          className="w-full bg-white/[0.03] border border-white/5 rounded-xl py-1.5 pl-9 pr-4 text-13 text-white/90 placeholder-white/25 outline-none transition-all duration-200 focus:border-[#83D18B]/40 focus:bg-white/[0.06] focus:ring-2 focus:ring-[#83D18B]/10 font-sans"
         />
       </div>
 
