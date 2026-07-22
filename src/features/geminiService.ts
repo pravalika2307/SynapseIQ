@@ -178,7 +178,7 @@ function cleanAndValidateScenario(parsed: any): boolean {
 
 // Raw Gemini fetch with Timeout & Abort controller
 async function callGeminiRaw(apiKey: string, prompt: string, signal?: AbortSignal): Promise<string> {
-  const models = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-2.5-flash'];
+  const models = ['gemini-2.0-flash', 'gemini-2.0-flash-lite'];
   let lastError: any = null;
 
   for (const model of models) {
