@@ -112,8 +112,8 @@ export const Sidebar: React.FC = () => {
     },
     {
       icon: <Settings size={16} />,
-      label: 'Design System',
-      onClick: () => window.location.hash = '#/dashboard/explorer'
+      label: 'Platform Settings',
+      onClick: () => window.location.hash = '#/dashboard/settings'
     },
     {
       icon: <HelpCircle size={16} />,

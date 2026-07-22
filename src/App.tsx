@@ -14,6 +14,7 @@ const Forecast = React.lazy(() => import('./pages/Forecast').then(m => ({ defaul
 const Reports = React.lazy(() => import('./pages/Reports').then(m => ({ default: m.Reports })));
 const DataExplorer = React.lazy(() => import('./pages/DataExplorer').then(m => ({ default: m.DataExplorer })));
 const BusinessTimeline = React.lazy(() => import('./pages/BusinessTimeline').then(m => ({ default: m.BusinessTimeline })));
+const Settings = React.lazy(() => import('./pages/Settings').then(m => ({ default: m.Settings })));
 
 const App: React.FC = () => {
   return (
@@ -38,6 +39,7 @@ const App: React.FC = () => {
             <Route path="forecast" element={<Forecast />} />
             <Route path="reports" element={<Reports />} />
             <Route path="explorer" element={<DataExplorer />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />
