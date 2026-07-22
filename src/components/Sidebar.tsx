@@ -91,13 +91,13 @@ export const Sidebar: React.FC = () => {
     },
     {
       icon: <Settings size={16} />,
-      label: 'Settings',
-      onClick: () => alert('Settings configuration module.')
+      label: 'Design System',
+      onClick: () => window.location.hash = '#/dashboard/explorer'
     },
     {
       icon: <HelpCircle size={16} />,
       label: 'Help & Docs',
-      onClick: () => alert('Launching SynapseIQ document desk.')
+      onClick: () => window.open('https://github.com/pravalika2307/SynapseIQ#readme', '_blank')
     }
   ];
 

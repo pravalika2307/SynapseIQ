@@ -52,9 +52,9 @@ export const DashboardLayout: React.FC = () => {
         nextSuggestion = {
           text: `Solvency metrics are currently focused on "${activeTitle}". Explore interdependencies on the Strategy Canvas?`,
           actionText: 'Open Canvas',
-          actionPath: '/dashboard/canvas'
+          actionPath: '/dashboard/projections'
         };
-      } else if (path.includes('/canvas')) {
+      } else if (path.includes('/projections')) {
         nextSuggestion = {
           text: `Wait! Wafer spot-rates are showing regional variance. Compile a Board Briefing?`,
           actionText: 'View Reports',
@@ -133,10 +133,8 @@ export const DashboardLayout: React.FC = () => {
 
   const handleAction = (path: string, text: string) => {
     if (text === 'Copy Query') {
-      // Copy to clipboard or trigger query in Copilot
-      // For ease of use, we can populate input or copy query text
-      navigator.clipboard.writeText('How do safety stock buffers prevent production delays?');
-      alert('Strategic query copied to clipboard! Paste it into the Copilot input.');
+      setCopilotPreloadQuery('How do safety stock buffers prevent production delays?');
+      navigate('/dashboard/copilot');
     } else {
       navigate(path);
     }

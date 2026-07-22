@@ -22,17 +22,20 @@ export const DataExplorer: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const [inputError, setInputError] = useState('');
 
+  const [statusMsg, setStatusMsg] = useState('');
+
   const sampleDropdownItems = [
-    { id: 'view', label: 'View Profile', icon: <Eye size={14} />, onClick: () => alert('Viewing node details.') },
-    { id: 'add', label: 'Assign Tag', icon: <Plus size={14} />, onClick: () => alert('Assigning classification tags.') },
+    { id: 'view', label: 'View Profile', icon: <Eye size={14} />, onClick: () => setStatusMsg('Viewing node details profile...') },
+    { id: 'add', label: 'Assign Tag', icon: <Plus size={14} />, onClick: () => setStatusMsg('Classification tags updated.') },
   ];
 
   const handleValidation = () => {
     if (!inputValue) {
       setInputError('Intake record lookup identifier is required.');
+      setStatusMsg('');
     } else {
       setInputError('');
-      alert(`Validating token ID: ${inputValue}`);
+      setStatusMsg(`Verified record token: ${inputValue}`);
     }
   };
 
@@ -111,6 +114,9 @@ export const DataExplorer: React.FC = () => {
                 align="left"
               />
             </div>
+            {statusMsg && (
+              <p className="text-12 text-[#83D18B] font-mono border-t border-white/5 pt-2">{statusMsg}</p>
+            )}
           </div>
         </Card>
 

@@ -133,10 +133,10 @@ export const Reports: React.FC = () => {
                 </div>
               </div>
               <button 
-                onClick={() => alert(`Opening "${activeReport.title}" PDF dossier...`)}
+                onClick={() => window.print()}
                 className="px-4 py-1.5 bg-[#83D18B] hover:bg-[#83D18B]/95 text-[#090B10] font-bold text-11 rounded-lg transition-all font-sans cursor-pointer active:scale-95"
               >
-                Open Briefing
+                Print / Export Briefing
               </button>
             </motion.div>
           )}

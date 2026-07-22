@@ -84,9 +84,9 @@ export const Landing: React.FC = () => {
         </div>
 
         <nav className="hidden md:flex items-center gap-8 text-12 text-white/40">
-          <a href="#docs" onClick={() => alert('Accessing SynapseIQ documentation.')} className="hover:text-white transition-colors">Documentation</a>
+          <a href="https://github.com/pravalika2307/SynapseIQ#readme" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">Documentation</a>
           <a href="https://github.com/pravalika2307/SynapseIQ" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">GitHub</a>
-          <a href="#about" onClick={() => alert('SynapseIQ — Executive Decision Intelligence Engine.')} className="hover:text-white transition-colors">About</a>
+          <a href="https://github.com/pravalika2307/SynapseIQ" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">About</a>
           <button
             onClick={() => setState('loading')}
             className="px-4 py-1.5 bg-white/[0.03] border border-white/5 rounded-lg text-white hover:bg-white/[0.06] hover:border-white/10 transition-all font-semibold"

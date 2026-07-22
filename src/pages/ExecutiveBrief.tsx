@@ -52,7 +52,7 @@ export const ExecutiveBrief: React.FC = () => {
       const node = nodeContexts[key];
       let recommendationData = null;
       try {
-        recommendationData = JSON.parse(node.recommendation);
+        recommendationData = node?.recommendation ? JSON.parse(node.recommendation) : null;
       } catch (e) {}
       return {
         key,
@@ -61,31 +61,31 @@ export const ExecutiveBrief: React.FC = () => {
       };
     });
 
-    const revNode = dataNodes.find(d => d.key === 'revenue') || dataNodes[0];
-    const opportunityText = revNode.node.opportunity || "Expand high-margin sourcing segments across active territories.";
-    const opportunityMetric = revNode.rec?.supportingMetrics || "Revenue at stable baseline.";
+    const revNode = dataNodes.find(d => d?.key === 'revenue') || dataNodes[0];
+    const opportunityText = revNode?.node?.opportunity || "Expand high-margin sourcing segments across active territories.";
+    const opportunityMetric = revNode?.rec?.supportingMetrics || "Revenue at stable baseline.";
 
-    const invNode = dataNodes.find(d => d.key === 'inventory') || dataNodes.find(d => d.key === 'profit') || dataNodes[0];
-    const riskText = invNode.node.risk || "Upstream logistics transit bottleneck delays.";
-    const riskMetric = invNode.rec?.potentialRisks || "Sourcing delays or supplier concentration risks.";
+    const invNode = dataNodes.find(d => d?.key === 'inventory') || dataNodes.find(d => d?.key === 'profit') || dataNodes[0];
+    const riskText = invNode?.node?.risk || "Upstream logistics transit bottleneck delays.";
+    const riskMetric = invNode?.rec?.potentialRisks || "Sourcing delays or supplier concentration risks.";
 
-    const opNode = dataNodes.find(d => d.key === 'operations') || dataNodes.find(d => d.key === 'profit') || dataNodes[0];
-    const actionText = opNode.rec?.recommendation || "Shift logistics routes and diversify transportation vectors.";
-    const actionMetric = opNode.rec?.supportingMetrics || "Nominal parameters lag behind baseline targets.";
+    const opNode = dataNodes.find(d => d?.key === 'operations') || dataNodes.find(d => d?.key === 'profit') || dataNodes[0];
+    const actionText = opNode?.rec?.recommendation || "Shift logistics routes and diversify transportation vectors.";
+    const actionMetric = opNode?.rec?.supportingMetrics || "Nominal parameters lag behind baseline targets.";
 
-    const positiveNodes = dataNodes.filter(d => d.node.trend === 'up');
-    const posNode = positiveNodes[0] || dataNodes.find(d => d.key === 'revenue') || dataNodes[0];
-    const posTrendText = posNode.node.summary || "Revenue run-rates demonstrate stable gains.";
-    const posTrendMetric = posNode.rec?.supportingMetrics || "Nominal parameters exceeded.";
+    const positiveNodes = dataNodes.filter(d => d?.node?.trend === 'up');
+    const posNode = positiveNodes[0] || dataNodes.find(d => d?.key === 'revenue') || dataNodes[0];
+    const posTrendText = posNode?.node?.summary || "Revenue run-rates demonstrate stable gains.";
+    const posTrendMetric = posNode?.rec?.supportingMetrics || "Nominal parameters exceeded.";
 
-    const negativeNodes = dataNodes.filter(d => d.node.trend === 'down');
-    const negNode = negativeNodes[0] || dataNodes.find(d => d.key === 'customers') || dataNodes[0];
-    const negTrendText = negNode.node.summary || "Customer support complaints showing regional divergence in West regions.";
-    const negTrendMetric = negNode.rec?.potentialRisks || "SLA compliance levels contracted by 8%.";
+    const negativeNodes = dataNodes.filter(d => d?.node?.trend === 'down');
+    const negNode = negativeNodes[0] || dataNodes.find(d => d?.key === 'customers') || dataNodes[0];
+    const negTrendText = negNode?.node?.summary || "Customer support complaints showing regional divergence in West regions.";
+    const negTrendMetric = negNode?.rec?.potentialRisks || "SLA compliance levels contracted by 8%.";
 
-    const stratNode = dataNodes.find(d => d.rec?.priority === 'High') || dataNodes.find(d => d.key === 'health') || dataNodes[0];
-    const stratPriorityText = stratNode.rec?.businessReasoning || "Optimize safety stock carrying levels and insulate gross margin conservation from shipping rate volatility.";
-    const stratPriorityImpact = stratNode.rec?.expectedImpact || "1.8% to 2.5% bottom-line operating margin conservation.";
+    const stratNode = dataNodes.find(d => d?.rec?.priority === 'High') || dataNodes.find(d => d?.key === 'health') || dataNodes[0];
+    const stratPriorityText = stratNode?.rec?.businessReasoning || "Optimize safety stock carrying levels and insulate gross margin conservation from shipping rate volatility.";
+    const stratPriorityImpact = stratNode?.rec?.expectedImpact || "1.8% to 2.5% bottom-line operating margin conservation.";
 
     return {
       opportunity: { text: opportunityText, metrics: opportunityMetric },

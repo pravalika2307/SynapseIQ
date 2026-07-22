@@ -14,27 +14,27 @@ export const Topbar: React.FC = () => {
   const profileMenuItems = [
     {
       id: 'profile',
-      label: 'My Profile',
+      label: 'Executive Brief',
       icon: <User size={14} />,
-      onClick: () => alert('Launching profile configurations.')
+      onClick: () => window.location.hash = '#/dashboard/brief'
     },
     {
       id: 'settings',
-      label: 'Preferences',
+      label: 'Design Playground',
       icon: <Settings size={14} />,
-      onClick: () => alert('Loading system preferences.')
+      onClick: () => window.location.hash = '#/dashboard/explorer'
     },
     {
       id: 'switch',
-      label: 'Switch Account',
+      label: 'Reload Workspace',
       icon: <RefreshCw size={14} />,
-      onClick: () => alert('Re-authenticating session.')
+      onClick: () => window.location.reload()
     },
     {
       id: 'logout',
-      label: 'Log Out',
+      label: 'Return to Landing',
       icon: <LogOut size={14} />,
-      onClick: () => alert('Logging out of workspace.')
+      onClick: () => window.location.hash = '#/'
     }
   ];
 
