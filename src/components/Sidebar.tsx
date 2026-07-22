@@ -18,7 +18,8 @@ import {
   User,
   Clock,
   Sparkles,
-  Target
+  Target,
+  Cpu
 } from 'lucide-react';
 import { useAppStore } from '../features/store';
 import { useDemoStore } from '../features/demoStore';
@@ -27,6 +28,11 @@ export const Sidebar: React.FC = () => {
   const activeNodeId = useAppStore((state) => state.activeNodeId);
   const isSidebarCollapsed = useAppStore((state) => state.isSidebarCollapsed);
   const setSidebarCollapsed = useAppStore((state) => state.setSidebarCollapsed);
+  const datasetName = useAppStore((state) => state.datasetName);
+  const parsedData = useAppStore((state) => state.parsedData);
+  const decisionReadiness = useAppStore((state) => state.decisionReadiness);
+  const isLoadingAnalysis = useAppStore((state) => state.isLoadingAnalysis);
+  const geminiApiKey = useAppStore((state) => state.geminiApiKey);
   const startDemo = useDemoStore((state) => state.startDemo);
 
   const navContainerRef = useRef<HTMLDivElement>(null);
@@ -165,6 +171,56 @@ export const Sidebar: React.FC = () => {
         ref={navContainerRef} 
         className="flex-1 overflow-y-auto overflow-x-hidden py-3 px-1.5 scroll-smooth scrollbar-thin scrollbar-thumb-white/10 hover:scrollbar-thumb-white/20 relative"
       >
+        {/* Intelligent Live Workspace Telemetry Summary Card */}
+        <AnimatePresence>
+          {datasetName && !isSidebarCollapsed && (
+            <motion.div
+              initial={{ opacity: 0, y: -6, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -6, scale: 0.98 }}
+              transition={{ duration: 0.25 }}
+              className="mb-3 p-3 rounded-xl bg-[#151B23]/90 border border-[#83D18B]/25 font-sans space-y-2.5 shadow-lg select-none"
+            >
+              <div className="flex items-center justify-between border-b border-white/5 pb-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <Database size={13} className="text-[#83D18B] shrink-0" />
+                  <span className="text-11.5 font-bold text-white/90 truncate font-mono">{datasetName}</span>
+                </div>
+                <span className="w-2 h-2 rounded-full bg-[#83D18B] animate-pulse shrink-0" />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 text-[10px] text-white/50 font-mono">
+                <div>
+                  <span className="text-white/30 block uppercase tracking-wider text-[8.5px]">Industry</span>
+                  <span className="text-white/80 font-medium truncate block">{parsedData?.profile?.industry || 'Commercial Strategy'}</span>
+                </div>
+                <div>
+                  <span className="text-white/30 block uppercase tracking-wider text-[8.5px]">Dimensions</span>
+                  <span className="text-white/80 font-medium truncate block">
+                    {parsedData?.rowCount ? `${parsedData.rowCount}r • ${parsedData.columns?.length || 0}c` : '240r • 7c'}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-white/30 block uppercase tracking-wider text-[8.5px]">Health Score</span>
+                  <span className="text-[#83D18B] font-bold block">{decisionReadiness || 87}/100</span>
+                </div>
+                <div>
+                  <span className="text-white/30 block uppercase tracking-wider text-[8.5px]">AI Status</span>
+                  <span className="text-white/80 font-medium truncate block">{isLoadingAnalysis ? 'Synthesizing...' : 'Active'}</span>
+                </div>
+              </div>
+
+              <div className="pt-1.5 border-t border-white/5 flex items-center justify-between text-[9.5px] font-mono text-white/40">
+                <div className="flex items-center gap-1 text-[#83D18B]">
+                  <Cpu size={11} />
+                  <span>{geminiApiKey ? 'Gemini 2.0-Flash' : 'Offline Engine'}</span>
+                </div>
+                <span>Just now</span>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Main Workspace Navigation */}
         <nav className="space-y-[2px]" aria-label="Main Workspace Links">
           {navItems.map((item) => (
