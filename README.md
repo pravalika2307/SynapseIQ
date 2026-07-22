@@ -499,6 +499,40 @@ SynapseIQ includes a built-in **Guided Demo Tour** that requires zero configurat
 
 > **No Gemini API key required.** The guided demo uses an intelligent offline reasoning engine backed by pre-computed statistical analysis of the bundled dataset.
 
+---
+
+## 📂 Sample Dataset Library & Validation Suite
+
+SynapseIQ includes a comprehensive collection of 17 enterprise-grade sample datasets in [`sample-datasets/`](file:///D:/Projects/SynapseIQ/sample-datasets/) designed for judges, developers, and QA testing across multiple business domains.
+
+### 📊 Available Industry Datasets
+
+| Dataset File | Industry Domain | Records | Core Telemetry Metrics | Primary Strategy Focus |
+|---|---|---|---|---|
+| **[`sales.csv`](file:///D:/Projects/SynapseIQ/sample-datasets/sales.csv)** | Sales & Revenue | 300 | `Sales`, `Revenue`, `Profit`, `Quantity` | Revenue growth acceleration & territorial margin expansion |
+| **[`hr.csv`](file:///D:/Projects/SynapseIQ/sample-datasets/hr.csv)** | Human Resources | 300 | `Salary`, `Experience`, `Performance`, `Attrition` | Retention risk mitigation & talent compensation alignment |
+| **[`finance.csv`](file:///D:/Projects/SynapseIQ/sample-datasets/finance.csv)** | Corporate Finance | 240 | `Revenue`, `Expenses`, `Net_Profit`, `Cash_Flow` | Operating cost reduction & free cash flow optimization |
+| **[`healthcare.csv`](file:///D:/Projects/SynapseIQ/sample-datasets/healthcare.csv)** | Healthcare Operations | 250 | `Patients`, `Recovery_Rate`, `Readmission_Rate` | Clinical throughput & readmission SLA reduction |
+| **[`manufacturing.csv`](file:///D:/Projects/SynapseIQ/sample-datasets/manufacturing.csv)** | Manufacturing Yield | 300 | `Production`, `Downtime`, `Defect_Rate`, `Output` | Predictive maintenance & yield defect minimization |
+| **[`retail.csv`](file:///D:/Projects/SynapseIQ/sample-datasets/retail.csv)** | Retail & E-Commerce | 300 | `Inventory`, `Sales`, `Margin`, `Customer_Count` | Inventory turnover velocity & gross margin conservation |
+| **[`education.csv`](file:///D:/Projects/SynapseIQ/sample-datasets/education.csv)** | Education & Tech | 250 | `Students`, `Attendance`, `Exam_Score`, `Graduation_Rate` | Student retention & academic outcome elevation |
+| **[`logistics.csv`](file:///D:/Projects/SynapseIQ/sample-datasets/logistics.csv)** | Freight & Logistics | 300 | `Delivery_Time`, `Fuel_Cost`, `Delayed`, `Distance` | Route fuel efficiency & on-time delivery SLA protection |
+| **[`banking.csv`](file:///D:/Projects/SynapseIQ/sample-datasets/banking.csv)** | Banking & Financials | 250 | `Deposits`, `Loans`, `Defaults`, `Revenue` | Credit risk mitigation & deposit-to-loan ratio optimization |
+| **[`energy.csv`](file:///D:/Projects/SynapseIQ/sample-datasets/energy.csv)** | Energy & Utilities | 250 | `Energy_Output`, `Downtime`, `Efficiency`, `Carbon` | Asset uptime & carbon footprint reduction |
+
+### 🛠️ Robustness & Stress-Testing Datasets
+
+Located in **[`sample-datasets/edge-cases/`](file:///D:/Projects/SynapseIQ/sample-datasets/edge-cases/)**:
+- `small_dataset.csv` (12 rows): Tests micro-dataset statistical stability.
+- `large_dataset.csv` (3,000 rows): Stress tests fast Web Worker parsing and chart rendering under load.
+- `missing_values.csv`: Validates missing cell filtering during Z-score and covariance calculation.
+- `duplicate_rows.csv`: Tests record deduplication and unique key handling.
+- `outliers.csv`: Tests statistical Z-score outlier isolation ($Z \ge 4.5$).
+- `mixed_date_formats.csv`: Tests multi-format ISO date parsing.
+- `invalid_numeric_values.csv`: Tests text sanitization ("N/A", "$1,200", "INVALID") without runtime errors.
+
+> For step-by-step QA testing protocols, view the **[QA Release Validation Checklist](file:///D:/Projects/SynapseIQ/docs/QA_CHECKLIST.md)**.
+
 <br />
 
 ---
