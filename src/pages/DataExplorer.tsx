@@ -18,6 +18,8 @@ import {
   Database
 } from 'lucide-react';
 
+import { DeveloperDatasetTester } from '../components/DeveloperDatasetTester';
+
 export const DataExplorer: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const [inputError, setInputError] = useState('');
@@ -47,6 +49,9 @@ export const DataExplorer: React.FC = () => {
         title="SynapseIQ Component Explorer"
         description="A showcase of the premium, high-fidelity atomic UI foundation engineered for Google Cloud and Linear aesthetics."
       />
+
+      {/* Internal Developer Testing Utility */}
+      <DeveloperDatasetTester />
 
       {/* Spacing & Rhythm Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
