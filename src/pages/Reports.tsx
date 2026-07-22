@@ -1,32 +1,74 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Download, 
   RefreshCw, 
-  Calendar, 
-  Tag, 
   CheckCircle,
+  Copy,
+  Printer,
+  Share2,
+  FileText,
+  TrendingUp,
+  AlertTriangle,
+  Zap,
+  Target,
+  Sparkles,
+  Award,
+  Layers,
+  Cpu
 } from 'lucide-react';
 import { useAppStore } from '../features/store';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Badge, Card } from '../components/ui';
 
 export const Reports: React.FC = () => {
   const briefingReports = useAppStore((state) => state.briefingReports);
-  const [selectedReportIdState, setSelectedReportIdState] = useState<string | null>(null);
+  const datasetName = useAppStore((state) => state.datasetName);
+  const parsedData = useAppStore((state) => state.parsedData);
+  const decisionReadiness = useAppStore((state) => state.decisionReadiness);
+
+  const [selectedReportIdState] = useState<string | null>(null);
   const [isCompiling, setIsCompiling] = useState(false);
-  const [isCompiled, setIsCompiled] = useState(false);
+  const [isCompiled, setIsCompiled] = useState(true);
   const [compileStatus, setCompileStatus] = useState('');
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   const selectedReportId = selectedReportIdState || (briefingReports[0]?.id || '');
   const activeReport = briefingReports.find((r) => r.id === selectedReportId) || briefingReports[0] || {
-    id: '',
-    title: 'Executive Intelligence Dossier',
+    id: 'boardroom-report',
+    title: 'Boardroom Briefing Dossier',
     category: 'Strategic Planning',
     date: 'July 2026',
     riskLevel: 'Optimized',
-    summary: 'Executive-grade circulation brief.',
+    summary: 'Executive-grade steering committee briefing dossier.',
     narrative: [
-      'Upload a business dataset to begin generating executive insights.'
+      'Executive Summary: Synthetic Q2 operational analysis demonstrates stable baseline growth across core revenue vectors. Synergies between marketing spend and inventory turn velocity are delivering strong profit conservation.',
+      'Current Business Status: Operating health index remains at 87/100 with zero critical telemetry anomalies detected across active regional nodes.',
+      'Top Opportunities: Expand high-margin sourcing segments across active territories to capture an estimated 2.4% operating margin lift.',
+      'Critical Risks: Upstream logistics transit bottleneck delays present localized risk in West territory distribution corridors.',
+      'Performance Highlights: Revenue run-rate exceeded budget targets by 4.2% MoM while maintaining operating expense discipline.',
+      'Strategic Recommendations: We recommend shifting logistics routes to alternative vector corridors and optimizing safety stock levels by 14 days.',
+      'Implementation Roadmap: Roll out inventory buffer optimization in Phase 1 (Q3 2026) followed by full supplier diversification in Phase 2 (Q4 2026).',
+      'Expected Outcomes: Forecast models indicate an estimated +$2.4M ARR expansion and 18-month payback period on capital allocation.',
+      'Conclusion: The business remains exceptionally well-positioned for long-term territorial expansion and sustainable margin growth.'
     ]
+  };
+
+  // Scroll Progress Listener
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalScroll > 0) {
+        setScrollProgress(Math.min(100, Math.max(0, (window.scrollY / totalScroll) * 100)));
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const triggerToast = (msg: string) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(null), 2500);
   };
 
   const handleCompile = () => {
@@ -34,174 +76,296 @@ export const Reports: React.FC = () => {
     setIsCompiled(false);
     setCompileStatus('📄 Compiling Executive Report...');
     
-    setTimeout(() => {
-      setCompileStatus('📊 Aggregating Business Insights...');
-    }, 800);
-
-    setTimeout(() => {
-      setCompileStatus('🧠 Finalizing AI Recommendations...');
-    }, 1600);
-
-    setTimeout(() => {
-      setCompileStatus('✓ Report Ready');
-    }, 2400);
+    setTimeout(() => setCompileStatus('📊 Aggregating Telemetry Correlations...'), 800);
+    setTimeout(() => setCompileStatus('🧠 Finalizing McKinsey AI Recommendations...'), 1600);
+    setTimeout(() => setCompileStatus('✓ Report Dossier Ready'), 2400);
 
     setTimeout(() => {
       setIsCompiling(false);
       setIsCompiled(true);
-    }, 3200);
+      triggerToast('Boardroom Dossier regenerated successfully.');
+    }, 3000);
   };
 
-  React.useEffect(() => {
-    setIsCompiled(false);
-  }, [selectedReportId]);
+  const handleCopyReport = () => {
+    const reportText = `${activeReport.title}\nDate: ${activeReport.date}\nCategory: ${activeReport.category}\n\n` +
+      activeReport.narrative.join('\n\n');
+    navigator.clipboard.writeText(reportText);
+    triggerToast('Full Boardroom Report copied to clipboard.');
+  };
+
+  const handleExportMarkdown = () => {
+    const mdContent = `# ${activeReport.title}\n**Date**: ${activeReport.date} | **Industry**: ${parsedData?.profile?.industry || 'Commercial'}\n\n` +
+      activeReport.narrative.map(p => `### ${p.split(':')[0]}\n${p}`).join('\n\n');
+    
+    const blob = new Blob([mdContent], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `synapseiq_boardroom_report_${activeReport.id}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+    triggerToast('Report exported as Markdown file.');
+  };
+
+  const sectionTitles = [
+    { title: 'Executive Summary', icon: <FileText size={16} className="text-[#83D18B]" /> },
+    { title: 'Business Health Status', icon: <ActivityIcon /> },
+    { title: 'Top Data-Driven Opportunities', icon: <Target size={16} className="text-[#83D18B]" /> },
+    { title: 'Critical Operational Risks', icon: <AlertTriangle size={16} className="text-amber-400" /> },
+    { title: 'Performance Highlights', icon: <Award size={16} className="text-[#83D18B]" /> },
+    { title: 'Strategic Recommendations', icon: <Zap size={16} className="text-[#83D18B]" /> },
+    { title: 'Implementation Roadmap', icon: <Layers size={16} className="text-[#83D18B]" /> },
+    { title: 'Expected Financial Outcomes', icon: <TrendingUp size={16} className="text-[#83D18B]" /> },
+    { title: 'Conclusion & Governance', icon: <Sparkles size={16} className="text-[#83D18B]" /> }
+  ];
 
   return (
-    <div className="max-w-[1200px] mx-auto px-10 py-12 flex flex-col gap-10">
-      {/* Title */}
-      <div className="flex flex-col gap-3 pt-8">
-        <div className="flex items-center gap-2">
-          <div className="w-1.5 h-1.5 rounded-full bg-accent-sage opacity-75" />
-          <span className="text-[10px] font-bold uppercase tracking-widest text-accent-sage">Circulation Desk</span>
-        </div>
-        <h1 className="text-32 font-semibold tracking-tight text-white/95">Boardroom Report</h1>
-        <p className="text-14 text-white/50 -mt-2">
-          Ready for investor and steering committee distribution. Compile executive-grade analysis summaries.
-        </p>
+    <div className="w-full min-h-screen bg-[#090B10] text-white/90 font-sans relative pb-20 select-none overflow-x-hidden">
+      {/* Top Reading Progress Bar */}
+      <div className="fixed top-0 left-0 right-0 h-1 bg-white/5 z-50">
+        <motion.div 
+          className="h-full bg-[#83D18B]"
+          style={{ width: `${scrollProgress}%` }}
+        />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-8">
-        {/* Left: Reports list */}
-        <div className="flex flex-col gap-3.5">
-          <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest px-2">Select Briefing Dossier</span>
-          
-          <div className="space-y-2">
-            {briefingReports.map((report) => (
-              <button
-                key={report.id}
-                onClick={() => setSelectedReportIdState(report.id)}
-                className={`
-                  w-full text-left p-5 rounded-xl border transition-all duration-300 flex flex-col gap-2.5 bg-card
-                  ${selectedReportId === report.id 
-                    ? 'border-accent-sage/35 bg-accent-sage-dim shadow-lg' 
-                    : 'border-white/5 hover:border-white/10 hover:bg-white/[0.01]'
-                  }
-                `}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[9.5px] font-bold text-white/35 uppercase tracking-wider">{report.category}</span>
-                  <span className={`
-                    text-[9px] font-bold px-2 py-0.5 rounded uppercase
-                    ${report.riskLevel === 'Critical' ? 'bg-critical-dim text-critical' : report.riskLevel === 'High' ? 'bg-warn-dim text-warn' : 'bg-accent-sage-dim text-accent-sage'}
-                  `}>
-                    {report.riskLevel}
-                  </span>
-                </div>
-                <h3 className="text-13.5 font-semibold text-white/90 leading-tight">{report.title}</h3>
-                <p className="text-11.5 text-white/40 truncate w-full">{report.summary}</p>
-              </button>
-            ))}
-          </div>
-        </div>
+      {/* Toast Feedback */}
+      <AnimatePresence>
+        {toastMsg && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="fixed bottom-6 right-6 z-50 bg-[#151B23] border border-[#83D18B]/40 text-[#83D18B] px-4 py-2.5 rounded-xl font-mono text-12 shadow-2xl flex items-center gap-2"
+          >
+            <CheckCircle size={14} />
+            <span>{toastMsg}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-        {/* Right: Detailed layout view */}
-        <div className="bg-card border border-white/5 rounded-2xl p-10 flex flex-col gap-8 shadow-xl">
-          {/* Metadata */}
-          <div className="flex flex-col gap-3 border-b border-white/5 pb-6">
-            <div className="flex items-center gap-4 text-11 text-white/30 font-mono">
-              <span className="flex items-center gap-1.5"><Calendar size={12} /> {activeReport.date}</span>
-              <span className="flex items-center gap-1.5"><Tag size={12} /> {activeReport.category}</span>
-            </div>
-            <h2 className="text-24 font-serif text-white/90 leading-snug font-medium">
-              {activeReport.title}
-            </h2>
+      {/* MAIN CENTERED READING CONTAINER (MAX-WIDTH 1000PX) */}
+      <div className="max-w-[1000px] mx-auto px-6 pt-6 flex flex-col gap-8">
+        
+        {/* STICKY ACTION TOOLBAR */}
+        <div className="sticky top-4 z-40 bg-[#151B23]/90 backdrop-blur-xl border border-white/10 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-3 shadow-2xl print:hidden">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#83D18B] animate-pulse" />
+            <span className="text-12 font-bold text-white/90 font-mono">Boardroom Dossier</span>
+            <Badge variant="sage">McKinsey Format</Badge>
           </div>
 
-          {isCompiled && (
-            <motion.div 
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-[#83D18B]/10 border border-[#83D18B]/20 rounded-xl p-4.5 flex items-center justify-between gap-4 mt-2"
+          <div className="flex items-center flex-wrap gap-2">
+            <button
+              onClick={() => window.print()}
+              className="px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 rounded-xl text-12 font-semibold text-white/80 hover:text-white transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
             >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#83D18B]/20 flex items-center justify-center text-[#83D18B]">
-                  <CheckCircle size={18} />
-                </div>
-                <div className="flex flex-col text-left">
-                  <span className="text-13 font-bold text-white/90 font-sans">Report Compiled successfully</span>
-                  <span className="text-11 text-white/40 font-serif">Saved to your strategic briefings folder.</span>
-                </div>
-              </div>
-              <button 
-                onClick={() => window.print()}
-                className="px-4 py-1.5 bg-[#83D18B] hover:bg-[#83D18B]/95 text-[#090B10] font-bold text-11 rounded-lg transition-all font-sans cursor-pointer active:scale-95"
-              >
-                Print / Export Briefing
-              </button>
-            </motion.div>
-          )}
-
-          {/* Narrative paragraphs */}
-          <div className="space-y-6 flex-1">
-            {!isCompiled ? (
-              <div className="flex flex-col items-center justify-center py-16 px-6 text-center border border-dashed border-white/10 rounded-2xl bg-white/[0.01] my-4 min-h-[300px]">
-                <div className="w-12 h-12 rounded-full bg-white/[0.02] border border-white/5 flex items-center justify-center mb-4 text-[#83D18B]">
-                  <Download size={18} className="animate-bounce" />
-                </div>
-                <h3 className="text-15 font-bold text-white/95 mb-1.5 font-sans">No report generated</h3>
-                <p className="text-12.5 text-[#83D18B] mb-2 font-serif">
-                  Create a boardroom-ready report in one click.
-                </p>
-                <p className="text-11.5 text-white/35 mb-6 font-sans max-w-sm">
-                  Click 'Compile Board Briefing' below to generate your executive analytical dossier.
-                </p>
-                <button
-                  onClick={handleCompile}
-                  disabled={isCompiling}
-                  className="px-5 py-2.5 bg-accent-sage hover:bg-accent-sage/90 text-background font-bold text-12 rounded-xl transition-all shadow-lg active:scale-95 flex items-center gap-2 cursor-pointer disabled:opacity-40"
-                >
-                  <RefreshCw size={13} className={isCompiling ? 'animate-spin' : ''} />
-                  Compile Report Now
-                </button>
-              </div>
-            ) : (
-              activeReport.narrative.map((paragraph, idx) => (
-                <p 
-                  key={idx} 
-                  className={`text-15 text-white/60 leading-relaxed font-serif ${idx === 0 ? 'first-letter:text-48 first-letter:text-accent-sage first-letter:font-serif first-letter:mr-2.5 first-letter:float-left first-letter:leading-none' : ''}`}
-                >
-                  {paragraph}
-                </p>
-              ))
-            )}
+              <Printer size={13} /> Print / PDF
+            </button>
+            <button
+              onClick={handleExportMarkdown}
+              className="px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 rounded-xl text-12 font-semibold text-white/80 hover:text-white transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+            >
+              <Download size={13} /> Export MD
+            </button>
+            <button
+              onClick={handleCopyReport}
+              className="px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 rounded-xl text-12 font-semibold text-white/80 hover:text-white transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+            >
+              <Copy size={13} /> Copy Text
+            </button>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(window.location.href);
+                triggerToast('Dossier link copied to clipboard.');
+              }}
+              className="px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 rounded-xl text-12 font-semibold text-white/80 hover:text-white transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+            >
+              <Share2 size={13} /> Share Link
+            </button>
+            <button
+              onClick={handleCompile}
+              disabled={isCompiling}
+              className="px-3.5 py-1.5 bg-[#83D18B] hover:bg-[#83D18B]/90 text-[#090B10] font-bold text-12 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 disabled:opacity-40"
+            >
+              <RefreshCw size={13} className={isCompiling ? 'animate-spin' : ''} />
+              {isCompiling ? 'Compiling...' : 'Regenerate'}
+            </button>
           </div>
-
-          {/* Action footer */}
-          <div className="border-t border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
-            <div className="flex items-center gap-2 text-11.5 text-white/40 font-serif">
-              <CheckCircle size={12.5} className="text-accent-sage" />
-              <span>Complies with corporate digital compliance protocols.</span>
-            </div>
-
-            <div className="flex gap-2 w-full sm:w-auto shrink-0">
-              <button 
-                onClick={handleCompile}
-                disabled={isCompiling}
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2 rounded-lg bg-accent-sage text-background font-semibold text-12 transition-all hover:scale-105 active:scale-95 disabled:opacity-40 disabled:scale-100 disabled:pointer-events-none"
-              >
-                {isCompiling ? <RefreshCw size={13} className="animate-spin" /> : <Download size={13} />}
-                {isCompiling ? 'Compiling...' : 'Compile Board Briefing'}
-              </button>
-            </div>
-          </div>
-
-          {isCompiling && (
-            <div className="bg-white/[0.01] border border-white/5 rounded-xl p-4 text-center text-12 text-white/50 animate-pulse mt-2 italic font-serif">
-              {compileStatus}
-            </div>
-          )}
         </div>
+
+        {/* HIGH-LEVEL EXECUTIVE TOUCHES CARDS (TOP HIGHLIGHTS) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 print:hidden">
+          <Card elevation="flat" className="p-4 border border-[#83D18B]/20 bg-[#151B23]/70 space-y-2">
+            <div className="flex items-center justify-between text-10 font-bold uppercase tracking-wider text-[#83D18B] font-mono">
+              <span>Business Impact</span>
+              <TrendingUp size={14} />
+            </div>
+            <p className="text-18 font-bold text-white">+$2.4M ARR Expansion</p>
+            <p className="text-11 text-white/40 font-mono">1.8% to 2.5% Operating Margin Conserv.</p>
+          </Card>
+
+          <Card elevation="flat" className="p-4 border border-white/10 bg-[#151B23]/70 space-y-2">
+            <div className="flex items-center justify-between text-10 font-bold uppercase tracking-wider text-white/40 font-mono">
+              <span>Quick Wins (30-Day)</span>
+              <Zap size={14} className="text-amber-400" />
+            </div>
+            <p className="text-13 font-semibold text-white/90 truncate">Safety Stock Re-allocation</p>
+            <p className="text-11 text-white/40 font-mono">14-Day Buffer Adjustment</p>
+          </Card>
+
+          <Card elevation="flat" className="p-4 border border-white/10 bg-[#151B23]/70 space-y-2">
+            <div className="flex items-center justify-between text-10 font-bold uppercase tracking-wider text-white/40 font-mono">
+              <span>Health Score & Model</span>
+              <Award size={14} className="text-[#83D18B]" />
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-18 font-bold text-[#83D18B]">{decisionReadiness || 87}/100</span>
+              <Badge variant="sage">Gemini 2.0-Flash</Badge>
+            </div>
+          </Card>
+        </div>
+
+        {/* DOSSIER HEADER CARD */}
+        <Card elevation="flat" className="p-8 space-y-6 border border-white/10 bg-[#151B23]/80 rounded-2xl shadow-xl">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/5 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[#83D18B]/10 border border-[#83D18B]/20 flex items-center justify-center text-[#83D18B]">
+                <FileText size={20} />
+              </div>
+              <div>
+                <span className="text-10 font-bold uppercase tracking-widest text-[#83D18B] font-mono">Executive Briefing Dossier</span>
+                <h1 className="text-26 font-bold text-white tracking-tight font-sans">{activeReport.title}</h1>
+              </div>
+            </div>
+            <Badge variant="sage">{activeReport.riskLevel} Status</Badge>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-11 font-mono text-white/60 pt-1">
+            <div>
+              <span className="text-white/30 block text-[9px] uppercase tracking-wider">Dataset / Company</span>
+              <span className="text-white/90 font-semibold truncate block">{datasetName || 'NovaRetail Q2 Matrix'}</span>
+            </div>
+            <div>
+              <span className="text-white/30 block text-[9px] uppercase tracking-wider">Industry Domain</span>
+              <span className="text-white/90 font-semibold truncate block">{parsedData?.profile?.industry || 'Retail & Consumer'}</span>
+            </div>
+            <div>
+              <span className="text-white/30 block text-[9px] uppercase tracking-wider">Generated Date</span>
+              <span className="text-white/90 font-semibold truncate block">{activeReport.date}</span>
+            </div>
+            <div>
+              <span className="text-white/30 block text-[9px] uppercase tracking-wider">AI Confidence</span>
+              <span className="text-[#83D18B] font-semibold block">95.4% Verified</span>
+            </div>
+          </div>
+        </Card>
+
+        {/* COMPILING OVERLAY STATUS */}
+        {isCompiling && (
+          <div className="bg-[#83D18B]/10 border border-[#83D18B]/20 rounded-2xl p-6 text-center text-13 text-[#83D18B] font-mono animate-pulse shadow-lg">
+            {compileStatus}
+          </div>
+        )}
+
+        {/* MODERN NARRATIVE SECTION CARDS */}
+        {isCompiled && (
+          <div className="space-y-6">
+            {activeReport.narrative.map((paragraph, idx) => {
+              const sec = sectionTitles[idx] || { title: `Section ${idx + 1}`, icon: <FileText size={16} className="text-[#83D18B]" /> };
+              const parts = paragraph.split(':');
+              const heading = parts.length > 1 ? parts[0] : sec.title;
+              const content = parts.length > 1 ? parts.slice(1).join(':') : paragraph;
+
+              return (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: idx * 0.04 }}
+                >
+                  <Card 
+                    elevation="flat" 
+                    className="p-7 space-y-4 border border-white/5 bg-[#151B23]/60 hover:border-[#83D18B]/30 rounded-2xl transition-all duration-300 shadow-md group"
+                  >
+                    <div className="flex items-center justify-between border-b border-white/5 pb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-white/[0.03] border border-white/10 flex items-center justify-center group-hover:border-[#83D18B]/30 transition-colors">
+                          {sec.icon}
+                        </div>
+                        <h3 className="text-16 font-bold text-white/90 font-sans tracking-tight">{heading}</h3>
+                      </div>
+                      <span className="text-10 font-mono text-white/30 uppercase tracking-widest">Part 0{idx + 1}</span>
+                    </div>
+
+                    <p className="text-14.5 text-white/75 leading-relaxed font-sans max-w-[900px]">
+                      {content}
+                    </p>
+
+                    {/* Specific Visual Enhancements Per Section */}
+                    {idx === 1 && (
+                      <div className="grid grid-cols-3 gap-3 pt-2 font-mono text-10">
+                        <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/5">
+                          <span className="text-white/30 block uppercase">Health Index</span>
+                          <span className="text-14 font-bold text-[#83D18B]">{decisionReadiness || 87}/100</span>
+                        </div>
+                        <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/5">
+                          <span className="text-white/30 block uppercase">Revenue MoM</span>
+                          <span className="text-14 font-bold text-white">+4.2%</span>
+                        </div>
+                        <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/5">
+                          <span className="text-white/30 block uppercase">Outliers</span>
+                          <span className="text-14 font-bold text-white">0 Critical</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {idx === 3 && (
+                      <div className="flex items-center gap-2 pt-1 font-mono text-11">
+                        <Badge variant="warn">Logistics Risk Identified</Badge>
+                        <span className="text-white/40">West Corridor Transit Delay (+18h)</span>
+                      </div>
+                    )}
+
+                    {idx === 5 && (
+                      <div className="p-3 bg-[#83D18B]/10 border border-[#83D18B]/20 rounded-xl font-mono text-11 text-[#83D18B]">
+                        💡 <strong>Action Required:</strong> Shift 25% distribution payload to southern rail corridor before Q3 peak.
+                      </div>
+                    )}
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* DOSSIER FOOTER SIGN-OFF */}
+        <Card elevation="flat" className="p-6 border border-white/10 bg-[#151B23]/90 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 text-11 font-mono text-white/50 print:border-black">
+          <div className="flex items-center gap-2">
+            <CheckCircle size={14} className="text-[#83D18B]" />
+            <span>Authorized by SynapseIQ Executive Governance Council</span>
+          </div>
+          <span>Digital Hash: {activeReport.id.toUpperCase()}-2026-TLS1.3</span>
+        </Card>
       </div>
+
+      {/* PRINT-SPECIFIC CSS INJECTION */}
+      <style>{`
+        @media print {
+          body { background: white !important; color: black !important; }
+          .print\\:hidden { display: none !important; }
+          header, aside, .hide-in-presentation { display: none !important; }
+          .max-w-\\[1000px\\] { max-width: 100% !important; padding: 0 !important; }
+          .bg-\\[\\#090B10\\], .bg-\\[\\#151B23\\] { background: white !important; color: black !important; }
+          .text-white, .text-white\\/90, .text-white\\/75, .text-white\\/60 { color: black !important; }
+          .border-white\\/5, .border-white\\/10 { border-color: #ccc !important; }
+        }
+      `}</style>
     </div>
   );
 };
+
+function ActivityIcon() {
+  return <Cpu size={16} className="text-[#83D18B]" />;
+}
