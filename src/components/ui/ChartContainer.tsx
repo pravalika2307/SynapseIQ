@@ -9,7 +9,7 @@ export interface ChartContainerProps {
   children: React.ReactNode;
 }
 
-export const ChartContainer: React.FC<ChartContainerProps> = ({
+export const ChartContainer: React.FC<ChartContainerProps> = React.memo(({
   title,
   subtitle,
   extra,
@@ -30,7 +30,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
         </div>
         
         {extra ? extra : (
-          <div className="flex items-center gap-1 text-[10px] text-white/30 bg-white/[0.02] border border-white/5 rounded-md px-2 py-0.5 font-mono select-none">
+          <div className="flex items-center gap-1 text-[10px] text-white/30 bg-[#151B23]/60 border border-white/5 rounded-md px-2 py-0.5 font-mono select-none">
             <Info size={11} /> Real-time telemetry
           </div>
         )}
@@ -41,4 +41,6 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
       </div>
     </Card>
   );
-};
+});
+
+ChartContainer.displayName = 'ChartContainer';
