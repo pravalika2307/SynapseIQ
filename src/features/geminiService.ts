@@ -178,53 +178,69 @@ function cleanAndValidateScenario(parsed: any): boolean {
 
 // Raw Gemini fetch with Timeout & Abort controller
 async function callGeminiRaw(apiKey: string, prompt: string, signal?: AbortSignal): Promise<string> {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-  
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 12000); // 12 seconds timeout
-  
-  if (signal) {
-    if (signal.aborted) {
-      controller.abort();
-    } else {
-      signal.addEventListener('abort', () => controller.abort(), { once: true });
-    }
-  }
+  const models = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-2.5-flash'];
+  let lastError: any = null;
 
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{ text: prompt }]
-        }],
-        generationConfig: {
-          responseMimeType: 'application/json'
+  for (const model of models) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 12000); // 12 seconds timeout
+    
+    if (signal) {
+      if (signal.aborted) {
+        controller.abort();
+      } else {
+        signal.addEventListener('abort', () => controller.abort(), { once: true });
+      }
+    }
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{ text: prompt }]
+          }],
+          generationConfig: {
+            responseMimeType: 'application/json'
+          }
+        }),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errText = await response.text();
+        if (response.status === 404 && model !== models[models.length - 1]) {
+          lastError = new Error(`Gemini Model ${model} returned 404: ${errText}`);
+          continue;
         }
-      }),
-      signal: controller.signal
-    });
-    clearTimeout(timeoutId);
+        throw new Error(`Gemini API Error: ${response.status} - ${errText}`);
+      }
 
-    if (!response.ok) {
-      const errText = await response.text();
-      throw new Error(`Gemini API Error: ${response.status} - ${errText}`);
+      const resJson = await response.json();
+      const rawText = resJson?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!rawText) {
+        throw new Error('Gemini API returned an empty response.');
+      }
+
+      return rawText;
+    } catch (err: any) {
+      clearTimeout(timeoutId);
+      if (err.name === 'AbortError' || signal?.aborted) {
+        throw err;
+      }
+      lastError = err;
+      if (models.indexOf(model) === models.length - 1) {
+        throw err;
+      }
     }
-
-    const resJson = await response.json();
-    const rawText = resJson?.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!rawText) {
-      throw new Error('Gemini API returned an empty response.');
-    }
-
-    return rawText;
-  } catch (err) {
-    clearTimeout(timeoutId);
-    throw err;
   }
+  throw lastError || new Error('Gemini API call failed.');
 }
 
 // Retry loop with exponential backoff and rate-limiting (429) checks
@@ -542,10 +558,11 @@ export async function getAnalysisResponse(
   summary: DatasetSummary,
   signal?: AbortSignal
 ): Promise<AnalysisResponse> {
+  const effectiveKey = (apiKey && apiKey.trim() !== '') ? apiKey : getStoredApiKey();
   const start = performance.now();
-  if (apiKey && apiKey.trim() !== '') {
+  if (effectiveKey && effectiveKey.trim() !== '') {
     try {
-      return await generateGeminiAnalysis(apiKey, summary, signal);
+      return await generateGeminiAnalysis(effectiveKey, summary, signal);
     } catch (err: any) {
       const duration = Math.round(performance.now() - start);
       if (err.name === 'AbortError' || signal?.aborted) {
@@ -570,10 +587,11 @@ export async function getCopilotResponse(
   activeNodeContext: NodeContext,
   signal?: AbortSignal
 ): Promise<CopilotResponse> {
+  const effectiveKey = (apiKey && apiKey.trim() !== '') ? apiKey : getStoredApiKey();
   const start = performance.now();
-  if (apiKey && apiKey.trim() !== '') {
+  if (effectiveKey && effectiveKey.trim() !== '') {
     try {
-      return await askGeminiCopilot(apiKey, query, history, summary, activeNodeContext, signal);
+      return await askGeminiCopilot(effectiveKey, query, history, summary, activeNodeContext, signal);
     } catch (err: any) {
       const duration = Math.round(performance.now() - start);
       if (err.name === 'AbortError' || signal?.aborted) {
@@ -599,10 +617,11 @@ export async function getScenarioSimulation(
   summary: DatasetSummary,
   signal?: AbortSignal
 ): Promise<ScenarioResponse> {
+  const effectiveKey = (apiKey && apiKey.trim() !== '') ? apiKey : getStoredApiKey();
   const start = performance.now();
-  if (apiKey && apiKey.trim() !== '') {
+  if (effectiveKey && effectiveKey.trim() !== '') {
     try {
-      return await simulateGeminiScenario(apiKey, sliderValues, summary, signal);
+      return await simulateGeminiScenario(effectiveKey, sliderValues, summary, signal);
     } catch (err: any) {
       const duration = Math.round(performance.now() - start);
       if (err.name === 'AbortError' || signal?.aborted) {
