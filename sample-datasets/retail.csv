@@ -1,0 +1,301 @@
+Store,Category,Inventory,Sales,Margin,Customer_Count
+Flagship NYC,Electronics,7769,3962,36.7,36
+London Oxford St,Apparel,6082,6690,36.8,113
+Tokyo Shibuya,Home & Living,5552,2998,40.3,51
+Berlin Mitte,Beauty & Health,2553,2502,41.9,46
+Flagship NYC,Electronics,7961,6448,31.4,66
+London Oxford St,Apparel,7899,4897,38,51
+Tokyo Shibuya,Home & Living,4333,2860,56.4,46
+Berlin Mitte,Beauty & Health,2901,2901,56.4,42
+Flagship NYC,Electronics,5307,4086,37.7,40
+London Oxford St,Apparel,5600,4088,45.7,40
+Tokyo Shibuya,Home & Living,6820,7161,48.4,110
+Berlin Mitte,Beauty & Health,7253,6600,43.5,67
+Flagship NYC,Electronics,3031,1273,39.1,20
+London Oxford St,Apparel,7688,3306,34.2,31
+Tokyo Shibuya,Home & Living,5846,3157,41.6,33
+Berlin Mitte,Beauty & Health,1480,814,29.8,9
+Flagship NYC,Electronics,7855,6205,48.8,97
+London Oxford St,Apparel,3007,3278,37.6,32
+Tokyo Shibuya,Home & Living,4290,4547,52.6,45
+Berlin Mitte,Beauty & Health,6300,6993,29,81
+Flagship NYC,Electronics,2203,2181,44.7,22
+London Oxford St,Apparel,7384,3470,32.1,75
+Tokyo Shibuya,Home & Living,1622,1362,54.4,18
+Berlin Mitte,Beauty & Health,6722,4033,30.2,45
+Flagship NYC,Electronics,2168,911,32.9,9
+London Oxford St,Apparel,6259,5883,40.1,55
+Tokyo Shibuya,Home & Living,3266,3266,39.2,49
+Berlin Mitte,Beauty & Health,6078,3951,36.7,53
+Flagship NYC,Electronics,1957,2309,31.5,24
+London Oxford St,Apparel,913,676,38.3,12
+Tokyo Shibuya,Home & Living,7237,7599,34,136
+Berlin Mitte,Beauty & Health,3574,2430,54.9,33
+Flagship NYC,Electronics,5175,4037,33.1,39
+London Oxford St,Apparel,2287,1601,38.1,22
+Tokyo Shibuya,Home & Living,4716,2971,47.1,50
+Berlin Mitte,Beauty & Health,6667,5467,37.1,49
+Flagship NYC,Electronics,4260,3110,35.9,68
+London Oxford St,Apparel,3969,2143,34.5,38
+Tokyo Shibuya,Home & Living,6757,7703,41.2,92
+Berlin Mitte,Beauty & Health,4749,3229,42.5,27
+Flagship NYC,Electronics,3609,1985,33.6,32
+London Oxford St,Apparel,3810,4153,56.6,67
+Tokyo Shibuya,Home & Living,6960,8143,46.6,129
+Berlin Mitte,Beauty & Health,5364,2467,35.7,27
+Flagship NYC,Electronics,1633,1845,34.9,19
+London Oxford St,Apparel,612,490,43.1,6
+Tokyo Shibuya,Home & Living,6756,2702,34,39
+Berlin Mitte,Beauty & Health,965,782,48.1,7
+Flagship NYC,Electronics,2824,1356,49.9,21
+London Oxford St,Apparel,4319,3066,30.1,40
+Tokyo Shibuya,Home & Living,3487,2197,42.2,19
+Berlin Mitte,Beauty & Health,6637,3252,35.9,37
+Flagship NYC,Electronics,2337,1683,43.6,15
+London Oxford St,Apparel,6226,5230,49.5,101
+Tokyo Shibuya,Home & Living,1618,1683,41.1,19
+Berlin Mitte,Beauty & Health,764,313,54.1,3
+Flagship NYC,Electronics,5966,2983,51.5,31
+London Oxford St,Apparel,534,566,37,7
+Tokyo Shibuya,Home & Living,7036,5629,43.1,56
+Berlin Mitte,Beauty & Health,7001,7001,32.8,71
+Flagship NYC,Electronics,756,892,44.3,8
+London Oxford St,Apparel,3295,3888,52,58
+Tokyo Shibuya,Home & Living,7346,8154,52.4,88
+Berlin Mitte,Beauty & Health,726,726,44.5,11
+Flagship NYC,Electronics,4489,2604,33.5,30
+London Oxford St,Apparel,6107,6412,55.9,57
+Tokyo Shibuya,Home & Living,2936,3112,49.1,32
+Berlin Mitte,Beauty & Health,6495,5521,48,61
+Flagship NYC,Electronics,6317,3095,30.7,50
+London Oxford St,Apparel,3892,3230,52.6,63
+Tokyo Shibuya,Home & Living,4450,3293,41.8,39
+Berlin Mitte,Beauty & Health,3607,2886,39,34
+Flagship NYC,Electronics,4988,5038,36.6,99
+London Oxford St,Apparel,1584,1236,55.9,22
+Tokyo Shibuya,Home & Living,5676,3235,33.9,43
+Berlin Mitte,Beauty & Health,2471,2644,44.9,47
+Flagship NYC,Electronics,7218,6280,35.4,72
+London Oxford St,Apparel,3403,2416,33,33
+Tokyo Shibuya,Home & Living,4092,3478,42.7,58
+Berlin Mitte,Beauty & Health,2094,1780,33,17
+Flagship NYC,Electronics,1699,1444,42.2,14
+London Oxford St,Apparel,4977,5425,57.2,65
+Tokyo Shibuya,Home & Living,6078,2735,42.6,35
+Berlin Mitte,Beauty & Health,2000,1480,51.5,22
+Flagship NYC,Electronics,5553,3832,53.3,34
+London Oxford St,Apparel,4086,2819,56.4,55
+Tokyo Shibuya,Home & Living,2073,2135,43.5,29
+Berlin Mitte,Beauty & Health,5721,4977,40.6,59
+Flagship NYC,Electronics,1677,855,33.3,8
+London Oxford St,Apparel,1812,1939,51.4,20
+Tokyo Shibuya,Home & Living,3320,3951,29.9,35
+Berlin Mitte,Beauty & Health,6401,5505,29.5,66
+Flagship NYC,Electronics,1019,1019,30.6,9
+London Oxford St,Apparel,5332,6078,47.6,73
+Tokyo Shibuya,Home & Living,4429,3676,44.3,63
+Berlin Mitte,Beauty & Health,4162,1790,39.6,26
+Flagship NYC,Electronics,6914,4909,30.6,67
+London Oxford St,Apparel,537,569,52.5,10
+Tokyo Shibuya,Home & Living,685,397,39.5,5
+Berlin Mitte,Beauty & Health,7966,6054,37.4,68
+Flagship NYC,Electronics,7260,4138,46.5,74
+London Oxford St,Apparel,4766,3384,51.3,36
+Tokyo Shibuya,Home & Living,6415,5389,29.2,55
+Berlin Mitte,Beauty & Health,2377,1902,57.7,26
+Flagship NYC,Electronics,2255,1173,54.9,17
+London Oxford St,Apparel,5583,3126,54.2,33
+Tokyo Shibuya,Home & Living,7458,8800,35.2,97
+Berlin Mitte,Beauty & Health,6270,7461,40.8,64
+Flagship NYC,Electronics,7227,7950,43,112
+London Oxford St,Apparel,6877,3645,31.7,31
+Tokyo Shibuya,Home & Living,6798,5438,39.7,63
+Berlin Mitte,Beauty & Health,7871,6926,46.8,59
+Flagship NYC,Electronics,1306,731,53.4,7
+London Oxford St,Apparel,5291,5291,32.4,85
+Tokyo Shibuya,Home & Living,2606,1642,36.5,19
+Berlin Mitte,Beauty & Health,2216,1507,37.4,27
+Flagship NYC,Electronics,2489,2539,49.7,33
+London Oxford St,Apparel,7356,7577,55.5,69
+Tokyo Shibuya,Home & Living,4400,2992,40.4,47
+Berlin Mitte,Beauty & Health,6812,4223,40.7,45
+Flagship NYC,Electronics,6050,4659,43.6,61
+London Oxford St,Apparel,6397,2559,53.6,22
+Tokyo Shibuya,Home & Living,6094,2499,36.9,25
+Berlin Mitte,Beauty & Health,2113,993,56.2,21
+Flagship NYC,Electronics,6876,3300,57.5,46
+London Oxford St,Apparel,5497,2199,29.5,41
+Tokyo Shibuya,Home & Living,5665,2776,49,29
+Berlin Mitte,Beauty & Health,5686,5117,50.1,60
+Flagship NYC,Electronics,6667,7134,33.2,149
+London Oxford St,Apparel,7202,6554,34.9,55
+Tokyo Shibuya,Home & Living,7260,3703,56.9,37
+Berlin Mitte,Beauty & Health,3953,2135,31,31
+Flagship NYC,Electronics,6603,4820,57,41
+London Oxford St,Apparel,607,401,37.4,5
+Tokyo Shibuya,Home & Living,1731,1419,35,25
+Berlin Mitte,Beauty & Health,7577,8032,43,73
+Flagship NYC,Electronics,6837,4991,57.1,104
+London Oxford St,Apparel,4637,2319,45.8,24
+Tokyo Shibuya,Home & Living,2849,2051,57.2,30
+Berlin Mitte,Beauty & Health,4308,2412,49.8,31
+Flagship NYC,Electronics,4378,4290,35.6,73
+London Oxford St,Apparel,1172,1160,46.3,23
+Tokyo Shibuya,Home & Living,3314,1524,46.5,17
+Berlin Mitte,Beauty & Health,6963,3830,55,47
+Flagship NYC,Electronics,5407,3515,51.3,66
+London Oxford St,Apparel,1848,924,31.4,10
+Tokyo Shibuya,Home & Living,889,711,32.1,10
+Berlin Mitte,Beauty & Health,5685,2331,44.8,21
+Flagship NYC,Electronics,3777,2342,30.4,21
+London Oxford St,Apparel,3407,1976,45.3,21
+Tokyo Shibuya,Home & Living,6772,8059,35.8,179
+Berlin Mitte,Beauty & Health,705,684,54.5,10
+Flagship NYC,Electronics,2300,1978,48.4,20
+London Oxford St,Apparel,5405,5459,29.5,72
+Tokyo Shibuya,Home & Living,4119,2183,36.6,34
+Berlin Mitte,Beauty & Health,6322,4425,47.2,43
+Flagship NYC,Electronics,7477,3514,47.6,36
+London Oxford St,Apparel,4202,4832,43.7,48
+Tokyo Shibuya,Home & Living,528,607,29.3,9
+Berlin Mitte,Beauty & Health,7708,8864,56.4,88
+Flagship NYC,Electronics,6172,4506,35.3,41
+London Oxford St,Apparel,3186,1943,45.2,26
+Tokyo Shibuya,Home & Living,891,838,31.1,12
+Berlin Mitte,Beauty & Health,1741,1428,50.8,20
+Flagship NYC,Electronics,6968,5783,51.6,62
+London Oxford St,Apparel,3807,3274,34.6,44
+Tokyo Shibuya,Home & Living,3277,1606,52.2,21
+Berlin Mitte,Beauty & Health,6558,3672,51.8,38
+Flagship NYC,Electronics,7975,5343,50.4,83
+London Oxford St,Apparel,5202,4526,53.2,75
+Tokyo Shibuya,Home & Living,5846,5086,54.1,83
+Berlin Mitte,Beauty & Health,6562,7349,56.4,92
+Flagship NYC,Electronics,1407,915,56.6,10
+London Oxford St,Apparel,1668,1518,44.7,25
+Tokyo Shibuya,Home & Living,3675,4006,35.8,72
+Berlin Mitte,Beauty & Health,902,794,44.8,11
+Flagship NYC,Electronics,1483,1335,31.8,11
+London Oxford St,Apparel,3858,4205,37.1,44
+Tokyo Shibuya,Home & Living,7044,7114,44.8,61
+Berlin Mitte,Beauty & Health,5272,2900,31.4,30
+Flagship NYC,Electronics,5743,5226,48.9,47
+London Oxford St,Apparel,6978,7885,40.8,78
+Tokyo Shibuya,Home & Living,7225,3179,29.5,29
+Berlin Mitte,Beauty & Health,1660,1743,41.1,31
+Flagship NYC,Electronics,4812,4956,48.1,45
+London Oxford St,Apparel,4536,2767,45.8,48
+Tokyo Shibuya,Home & Living,2241,919,31.6,8
+Berlin Mitte,Beauty & Health,7554,7478,37.5,73
+Flagship NYC,Electronics,3253,1724,41.4,35
+London Oxford St,Apparel,697,592,42.4,8
+Tokyo Shibuya,Home & Living,2620,2672,32,48
+Berlin Mitte,Beauty & Health,5462,4151,56.3,38
+Flagship NYC,Electronics,4290,2746,46.1,23
+London Oxford St,Apparel,6448,7415,33.7,68
+Tokyo Shibuya,Home & Living,5692,3244,33.2,28
+Berlin Mitte,Beauty & Health,3037,1397,45.1,19
+Flagship NYC,Electronics,5442,5877,36.8,58
+London Oxford St,Apparel,621,621,44.9,5
+Tokyo Shibuya,Home & Living,6386,3385,39.6,32
+Berlin Mitte,Beauty & Health,5465,5957,54.5,50
+Flagship NYC,Electronics,1005,864,29.6,14
+London Oxford St,Apparel,5705,6390,43.9,125
+Tokyo Shibuya,Home & Living,7128,4990,47.5,59
+Berlin Mitte,Beauty & Health,5743,4767,49.4,67
+Flagship NYC,Electronics,4030,3667,32.5,39
+London Oxford St,Apparel,4872,4239,40.7,36
+Tokyo Shibuya,Home & Living,4897,4848,49.7,66
+Berlin Mitte,Beauty & Health,7314,4169,34.8,60
+Flagship NYC,Electronics,4004,4084,51.3,65
+London Oxford St,Apparel,7768,3962,49.1,54
+Tokyo Shibuya,Home & Living,518,285,39.7,3
+Berlin Mitte,Beauty & Health,615,683,34.1,7
+Flagship NYC,Electronics,1475,1313,57.7,12
+London Oxford St,Apparel,5234,3140,34.7,30
+Tokyo Shibuya,Home & Living,5508,5673,52.6,57
+Berlin Mitte,Beauty & Health,6958,3966,44.8,33
+Flagship NYC,Electronics,4098,2951,38.6,37
+London Oxford St,Apparel,7574,4393,45.8,64
+Tokyo Shibuya,Home & Living,937,984,32.3,21
+Berlin Mitte,Beauty & Health,7766,7921,50.4,141
+Flagship NYC,Electronics,7057,6563,46.7,71
+London Oxford St,Apparel,3343,2574,53.9,24
+Tokyo Shibuya,Home & Living,1869,1458,41.7,12
+Berlin Mitte,Beauty & Health,2608,2504,43.4,25
+Flagship NYC,Electronics,2735,2735,36.9,29
+London Oxford St,Apparel,1088,838,55.3,18
+Tokyo Shibuya,Home & Living,6637,3518,33,40
+Berlin Mitte,Beauty & Health,5840,3854,45.1,48
+Flagship NYC,Electronics,555,266,47.7,2
+London Oxford St,Apparel,6430,7523,52.2,112
+Tokyo Shibuya,Home & Living,7687,3997,35.2,47
+Berlin Mitte,Beauty & Health,5971,6568,48.4,57
+Flagship NYC,Electronics,7095,5392,42.6,66
+London Oxford St,Apparel,3182,2100,39.8,20
+Tokyo Shibuya,Home & Living,3090,2966,34,41
+Berlin Mitte,Beauty & Health,4308,2154,47.5,40
+Flagship NYC,Electronics,3163,3353,34.8,32
+London Oxford St,Apparel,4245,4967,33.3,66
+Tokyo Shibuya,Home & Living,616,524,29.1,10
+Berlin Mitte,Beauty & Health,3514,3549,38.4,32
+Flagship NYC,Electronics,7828,4932,53.7,62
+London Oxford St,Apparel,597,334,30.6,4
+Tokyo Shibuya,Home & Living,7211,3029,33.9,66
+Berlin Mitte,Beauty & Health,4907,5250,56.7,46
+Flagship NYC,Electronics,2384,954,38.4,16
+London Oxford St,Apparel,7554,7856,44.4,164
+Tokyo Shibuya,Home & Living,5484,5703,36.2,53
+Berlin Mitte,Beauty & Health,3768,2072,40.6,28
+Flagship NYC,Electronics,6945,8265,33.3,150
+London Oxford St,Apparel,7770,7148,55.2,69
+Tokyo Shibuya,Home & Living,1795,736,54.4,7
+Berlin Mitte,Beauty & Health,4108,1725,38.7,33
+Flagship NYC,Electronics,6936,3468,43,32
+London Oxford St,Apparel,3012,2259,57.8,28
+Tokyo Shibuya,Home & Living,1662,1197,56.9,14
+Berlin Mitte,Beauty & Health,4152,4110,56.3,60
+Flagship NYC,Electronics,860,894,30,11
+London Oxford St,Apparel,4283,1756,51.5,18
+Tokyo Shibuya,Home & Living,762,488,30,7
+Berlin Mitte,Beauty & Health,4638,2551,47.5,21
+Flagship NYC,Electronics,2967,2908,45.4,33
+London Oxford St,Apparel,3753,2064,43.1,22
+Tokyo Shibuya,Home & Living,1988,1352,50.8,21
+Berlin Mitte,Beauty & Health,7846,6277,38.5,71
+Flagship NYC,Electronics,1373,1085,57.1,13
+London Oxford St,Apparel,914,768,47.2,11
+Tokyo Shibuya,Home & Living,6611,7008,50.5,135
+Berlin Mitte,Beauty & Health,1004,492,54.6,5
+Flagship NYC,Electronics,5124,3177,34.2,42
+London Oxford St,Apparel,530,392,33.6,8
+Tokyo Shibuya,Home & Living,4698,2161,44.2,22
+Berlin Mitte,Beauty & Health,3053,2626,32.1,39
+Flagship NYC,Electronics,548,279,49.5,3
+London Oxford St,Apparel,6272,5018,31.1,48
+Tokyo Shibuya,Home & Living,4363,4058,50.8,52
+Berlin Mitte,Beauty & Health,3938,2166,30.1,45
+Flagship NYC,Electronics,5760,5242,36.9,103
+London Oxford St,Apparel,7136,8563,30.3,114
+Tokyo Shibuya,Home & Living,5241,4717,56.2,69
+Berlin Mitte,Beauty & Health,4792,3834,46,32
+Flagship NYC,Electronics,7388,5615,31.2,60
+London Oxford St,Apparel,3190,1436,30.3,15
+Tokyo Shibuya,Home & Living,6519,4889,43.3,57
+Berlin Mitte,Beauty & Health,5209,5105,47.2,45
+Flagship NYC,Electronics,2967,3382,51.1,69
+London Oxford St,Apparel,569,535,36.2,5
+Tokyo Shibuya,Home & Living,6142,2702,30,29
+Berlin Mitte,Beauty & Health,5583,5918,33.7,97
+Flagship NYC,Electronics,6866,5424,36.3,113
+London Oxford St,Apparel,7157,6012,50.2,102
+Tokyo Shibuya,Home & Living,7678,8446,51.7,71
+Berlin Mitte,Beauty & Health,3526,4020,36.9,79
+Flagship NYC,Electronics,1050,1040,34.7,12
+London Oxford St,Apparel,7945,8581,36.3,101
+Tokyo Shibuya,Home & Living,1912,1396,37.4,15
+Berlin Mitte,Beauty & Health,4395,4219,50.2,68
+Flagship NYC,Electronics,4402,4622,34,75
+London Oxford St,Apparel,2102,2249,30.7,40
+Tokyo Shibuya,Home & Living,890,1032,48.9,17
+Berlin Mitte,Beauty & Health,1268,926,54.4,11

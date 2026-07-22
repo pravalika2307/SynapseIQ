@@ -1,0 +1,301 @@
+Factory,Production,Downtime,Defect_Rate,Maintenance_Cost,Output
+Plant Detroit #1,2049,33,2.44,54710,1999
+Stuttgart Hub,1966,14,0.72,22596,1952
+Yokohama Foundry,2678,15,4.09,32756,2568
+Monterrey Assembly,2103,37,4.76,52769,2003
+Plant Detroit #1,2929,19,4.79,31120,2789
+Stuttgart Hub,2460,47,4.12,66991,2359
+Yokohama Foundry,2978,15,4.65,29730,2840
+Monterrey Assembly,3730,30,2.79,47143,3626
+Plant Detroit #1,3956,29,4.54,41417,3776
+Stuttgart Hub,2662,39,1.7,59083,2617
+Yokohama Foundry,2720,35,2.66,56984,2648
+Monterrey Assembly,3142,34,0.85,48719,3115
+Plant Detroit #1,4328,9,3.89,24742,4160
+Stuttgart Hub,4442,11,4.38,21646,4247
+Yokohama Foundry,2018,45,4.79,67581,1921
+Monterrey Assembly,3449,43,1.77,66839,3388
+Plant Detroit #1,2132,4,4.35,15776,2039
+Stuttgart Hub,3476,28,4.59,49199,3316
+Yokohama Foundry,1476,14,3.81,31917,1420
+Monterrey Assembly,4420,6,2.42,18654,4313
+Plant Detroit #1,3131,14,1.51,26971,3084
+Stuttgart Hub,3828,17,1.31,26525,3778
+Yokohama Foundry,2789,21,3.03,38363,2704
+Monterrey Assembly,3860,6,4.78,21875,3675
+Plant Detroit #1,4104,32,3.97,47614,3941
+Stuttgart Hub,1382,3,4.62,14319,1318
+Yokohama Foundry,1336,2,0.66,15885,1327
+Monterrey Assembly,3202,46,1.04,64089,3169
+Plant Detroit #1,3454,38,0.43,53943,3439
+Stuttgart Hub,3003,47,1.48,68269,2959
+Yokohama Foundry,3021,42,3.34,64042,2920
+Monterrey Assembly,3738,32,4.34,49825,3576
+Plant Detroit #1,1863,8,2.65,22841,1814
+Stuttgart Hub,2332,4,2.54,16309,2273
+Yokohama Foundry,4153,29,2.82,45962,4036
+Monterrey Assembly,1371,33,0.69,51677,1362
+Plant Detroit #1,1523,31,1.57,46827,1499
+Stuttgart Hub,3073,44,4.09,65934,2947
+Yokohama Foundry,1605,29,0.88,50570,1591
+Monterrey Assembly,3821,39,1.02,61787,3782
+Plant Detroit #1,1755,21,1.79,32201,1724
+Stuttgart Hub,4364,18,3.01,32588,4233
+Yokohama Foundry,2484,5,2.31,11755,2427
+Monterrey Assembly,3097,44,3.52,69247,2988
+Plant Detroit #1,4330,19,1.48,29221,4266
+Stuttgart Hub,4395,25,3.39,42210,4246
+Yokohama Foundry,3348,24,3.21,42232,3241
+Monterrey Assembly,4141,31,4.33,50921,3962
+Plant Detroit #1,1291,23,3.69,34108,1243
+Stuttgart Hub,2316,23,2.7,41017,2253
+Yokohama Foundry,4495,24,2.62,43439,4377
+Monterrey Assembly,3801,11,1.45,26611,3746
+Plant Detroit #1,3751,2,4.41,8226,3586
+Stuttgart Hub,2587,45,0.79,62336,2567
+Yokohama Foundry,3426,13,2.13,24862,3353
+Monterrey Assembly,1946,19,1.36,28917,1920
+Plant Detroit #1,3664,27,3.08,48300,3551
+Stuttgart Hub,3707,38,1.86,57263,3638
+Yokohama Foundry,1551,42,2.19,63829,1517
+Monterrey Assembly,3079,29,0.76,50291,3056
+Plant Detroit #1,1759,15,4.76,28820,1675
+Stuttgart Hub,3392,6,4.79,22424,3230
+Yokohama Foundry,3671,34,4.11,55123,3520
+Monterrey Assembly,4236,36,4.06,56968,4064
+Plant Detroit #1,2623,22,1.49,33435,2584
+Stuttgart Hub,2257,41,3.84,64582,2170
+Yokohama Foundry,2564,24,4.11,36978,2459
+Monterrey Assembly,1770,35,4.01,53312,1699
+Plant Detroit #1,1592,47,3.69,69048,1533
+Stuttgart Hub,2228,41,2,60119,2183
+Yokohama Foundry,2361,44,3.82,69071,2271
+Monterrey Assembly,1967,28,2.86,47122,1911
+Plant Detroit #1,3500,16,1.86,26781,3435
+Stuttgart Hub,2191,47,1.55,71866,2157
+Yokohama Foundry,4143,20,3.35,38752,4004
+Monterrey Assembly,1431,4,3.5,16183,1381
+Plant Detroit #1,1356,48,0.67,65123,1347
+Stuttgart Hub,2820,42,4.61,60699,2690
+Yokohama Foundry,1832,7,3.67,20077,1765
+Monterrey Assembly,2706,34,1.42,57365,2668
+Plant Detroit #1,3915,15,2.36,26928,3823
+Stuttgart Hub,3120,20,4.74,38206,2972
+Yokohama Foundry,3646,12,4.48,21313,3483
+Monterrey Assembly,2110,34,1.2,52335,2085
+Plant Detroit #1,1349,25,3.21,38018,1306
+Stuttgart Hub,1629,36,0.55,54519,1620
+Yokohama Foundry,3385,25,0.69,37067,3362
+Monterrey Assembly,2450,25,4.73,44595,2334
+Plant Detroit #1,3923,22,2.95,42081,3807
+Stuttgart Hub,2155,15,3.6,26268,2077
+Yokohama Foundry,3728,22,3.25,38248,3607
+Monterrey Assembly,3954,19,3.5,35859,3816
+Plant Detroit #1,1787,18,3.97,32316,1716
+Stuttgart Hub,2401,21,3.33,37858,2321
+Yokohama Foundry,2743,9,2.04,21911,2687
+Monterrey Assembly,2964,17,4.74,34361,2824
+Plant Detroit #1,3966,35,2.54,50866,3865
+Stuttgart Hub,2172,32,1.68,45611,2136
+Yokohama Foundry,2821,16,1.57,29774,2777
+Monterrey Assembly,3600,46,3.78,62879,3464
+Plant Detroit #1,3097,33,1.62,51817,3047
+Stuttgart Hub,4367,35,1.59,53681,4298
+Yokohama Foundry,1865,23,4.79,40712,1776
+Monterrey Assembly,3230,24,2.23,40455,3158
+Plant Detroit #1,2476,26,1.79,39743,2432
+Stuttgart Hub,2698,5,3.31,17176,2609
+Yokohama Foundry,3653,31,0.44,49207,3637
+Monterrey Assembly,2660,17,1.89,29808,2610
+Plant Detroit #1,2341,46,1.42,72138,2308
+Stuttgart Hub,1956,46,3.89,72286,1880
+Yokohama Foundry,1536,40,1.92,61401,1507
+Monterrey Assembly,1365,17,4.62,29114,1302
+Plant Detroit #1,2078,26,1.21,40715,2053
+Stuttgart Hub,1696,36,1.61,59786,1669
+Yokohama Foundry,2644,33,1.39,51121,2607
+Monterrey Assembly,1534,43,2.71,63264,1492
+Plant Detroit #1,3291,16,1.33,32404,3247
+Stuttgart Hub,3563,38,1.95,58039,3494
+Yokohama Foundry,3791,21,2.35,37111,3702
+Monterrey Assembly,2231,29,4.22,47614,2137
+Plant Detroit #1,1403,29,0.42,49892,1397
+Stuttgart Hub,4095,8,3.3,17937,3960
+Yokohama Foundry,2722,30,2.75,48650,2647
+Monterrey Assembly,2821,32,2.79,54535,2742
+Plant Detroit #1,3797,47,2.62,71592,3698
+Stuttgart Hub,2520,5,3.92,19871,2421
+Yokohama Foundry,2903,21,3.6,39286,2798
+Monterrey Assembly,3418,40,2.36,62787,3337
+Plant Detroit #1,2305,20,4.37,34482,2204
+Stuttgart Hub,4472,12,1.02,27144,4426
+Yokohama Foundry,2996,26,4.72,45531,2855
+Monterrey Assembly,3961,34,1.37,50526,3907
+Plant Detroit #1,1761,36,2.69,51540,1714
+Stuttgart Hub,2475,13,3.52,26654,2388
+Yokohama Foundry,2445,9,1.95,24706,2397
+Monterrey Assembly,4190,38,1.73,57703,4118
+Plant Detroit #1,3006,14,1.86,26003,2950
+Stuttgart Hub,3926,6,0.9,14674,3891
+Yokohama Foundry,1374,4,1.14,10855,1358
+Monterrey Assembly,3471,12,4.24,22857,3324
+Plant Detroit #1,4424,8,1.44,15652,4360
+Stuttgart Hub,2386,42,1.85,62579,2342
+Yokohama Foundry,1326,5,4.6,15593,1265
+Monterrey Assembly,3893,32,3.35,45297,3763
+Plant Detroit #1,2808,18,1.81,36938,2757
+Stuttgart Hub,4183,19,1.54,30751,4119
+Yokohama Foundry,3610,24,3.76,39782,3474
+Monterrey Assembly,3075,31,3.35,46465,2972
+Plant Detroit #1,3324,6,1.1,14391,3287
+Stuttgart Hub,2086,38,4.68,58391,1988
+Yokohama Foundry,1981,38,3.24,56960,1917
+Monterrey Assembly,1447,37,3.8,60739,1392
+Plant Detroit #1,3015,34,3.38,56206,2913
+Stuttgart Hub,2087,13,4.02,25075,2003
+Yokohama Foundry,2527,46,1.71,63963,2484
+Monterrey Assembly,1621,36,1.01,56456,1605
+Plant Detroit #1,4318,8,4.57,20376,4121
+Stuttgart Hub,2453,22,4.43,38775,2344
+Yokohama Foundry,2868,36,2.87,54725,2786
+Monterrey Assembly,3296,11,0.64,27734,3275
+Plant Detroit #1,2370,13,1.89,30645,2325
+Stuttgart Hub,3297,36,3.48,52484,3182
+Yokohama Foundry,1315,19,0.82,34828,1304
+Monterrey Assembly,2360,8,3.83,15205,2270
+Plant Detroit #1,1759,15,0.98,31259,1742
+Stuttgart Hub,4476,22,3.91,39298,4301
+Yokohama Foundry,4389,38,0.45,60487,4369
+Monterrey Assembly,3471,18,3.49,30059,3350
+Plant Detroit #1,4072,3,0.8,11193,4039
+Stuttgart Hub,2338,7,3.08,15373,2266
+Yokohama Foundry,3283,41,3.43,56854,3170
+Monterrey Assembly,2501,22,4.4,38610,2391
+Plant Detroit #1,2717,48,1.07,72052,2688
+Stuttgart Hub,1991,32,4.77,48367,1896
+Yokohama Foundry,3304,28,0.85,40806,3276
+Monterrey Assembly,1279,22,3.98,38928,1228
+Plant Detroit #1,3595,12,4.35,25173,3439
+Stuttgart Hub,3686,37,3.4,59356,3561
+Yokohama Foundry,2871,16,1.83,33766,2818
+Monterrey Assembly,1833,48,2.98,71403,1778
+Plant Detroit #1,4413,35,1.45,51462,4349
+Stuttgart Hub,4109,13,4.67,28261,3917
+Yokohama Foundry,3590,2,2.92,12955,3485
+Monterrey Assembly,2481,14,2.15,25402,2428
+Plant Detroit #1,1335,25,2.84,45638,1297
+Stuttgart Hub,1338,11,3.97,28186,1285
+Yokohama Foundry,1656,36,3.35,50175,1601
+Monterrey Assembly,1680,2,2.05,11962,1646
+Plant Detroit #1,3253,33,3.92,50167,3125
+Stuttgart Hub,2091,16,3.59,27789,2016
+Yokohama Foundry,2933,35,2.55,50173,2858
+Monterrey Assembly,1308,12,2.16,25217,1280
+Plant Detroit #1,1988,27,4.4,47744,1901
+Stuttgart Hub,3863,6,1.05,19708,3822
+Yokohama Foundry,1902,37,4.62,52536,1814
+Monterrey Assembly,2389,39,3.75,57053,2299
+Plant Detroit #1,2427,17,3.59,33224,2340
+Stuttgart Hub,3902,44,1.72,68539,3835
+Yokohama Foundry,3826,37,1.62,58943,3764
+Monterrey Assembly,3561,9,1.05,19018,3524
+Plant Detroit #1,1588,20,4.49,30916,1517
+Stuttgart Hub,2977,20,1.07,32588,2945
+Yokohama Foundry,1938,7,1.28,15551,1913
+Monterrey Assembly,1553,29,3.5,48762,1499
+Plant Detroit #1,2762,8,1.55,23289,2719
+Stuttgart Hub,3989,45,0.68,71068,3962
+Yokohama Foundry,2207,48,2.78,70330,2146
+Monterrey Assembly,2993,17,0.63,34519,2974
+Plant Detroit #1,2625,20,1.57,36651,2584
+Stuttgart Hub,2958,40,1.45,62056,2915
+Yokohama Foundry,3057,2,2.18,12479,2990
+Monterrey Assembly,3488,19,3.9,31468,3352
+Plant Detroit #1,3883,45,0.45,62497,3866
+Stuttgart Hub,2548,34,2.99,47664,2472
+Yokohama Foundry,1739,34,4.15,57158,1667
+Monterrey Assembly,2130,11,2.54,19227,2076
+Plant Detroit #1,1822,20,1.56,31956,1794
+Stuttgart Hub,1387,16,1.47,29095,1367
+Yokohama Foundry,3661,16,4.3,27353,3504
+Monterrey Assembly,1866,13,2.69,24456,1816
+Plant Detroit #1,2128,29,4.2,51078,2039
+Stuttgart Hub,3548,10,3.87,25317,3411
+Yokohama Foundry,3581,7,0.77,19638,3553
+Monterrey Assembly,2992,23,1.39,34026,2950
+Plant Detroit #1,4221,44,2.61,68515,4111
+Stuttgart Hub,2809,46,0.7,70471,2789
+Yokohama Foundry,2713,5,4.01,20034,2604
+Monterrey Assembly,2413,18,2.95,32570,2342
+Plant Detroit #1,2099,10,3.07,20991,2035
+Stuttgart Hub,3438,48,3.37,65461,3322
+Yokohama Foundry,2446,38,1.85,53764,2401
+Monterrey Assembly,2881,3,2.61,12259,2806
+Plant Detroit #1,1985,18,2.11,36221,1943
+Stuttgart Hub,1218,23,2.9,35908,1183
+Yokohama Foundry,2661,20,3.77,31189,2561
+Monterrey Assembly,2580,14,1.3,31016,2546
+Plant Detroit #1,1421,46,1.15,62742,1405
+Stuttgart Hub,2664,40,1.72,59643,2618
+Yokohama Foundry,3268,19,3.81,34380,3143
+Monterrey Assembly,1853,44,3.61,63171,1786
+Plant Detroit #1,1524,10,0.82,26667,1512
+Stuttgart Hub,3873,39,0.86,63276,3840
+Yokohama Foundry,2503,31,1.97,49996,2454
+Monterrey Assembly,1611,22,0.58,37063,1602
+Plant Detroit #1,1857,6,3.64,12822,1789
+Stuttgart Hub,3660,17,3.17,35771,3544
+Yokohama Foundry,1561,3,3.48,17298,1507
+Monterrey Assembly,4298,20,4.56,36433,4102
+Plant Detroit #1,3642,36,1.69,57102,3580
+Stuttgart Hub,2818,13,3.99,21570,2706
+Yokohama Foundry,1685,26,3.22,46605,1631
+Monterrey Assembly,2635,27,1.03,39106,2608
+Plant Detroit #1,1989,40,1.59,59713,1957
+Stuttgart Hub,3105,21,3.24,35697,3004
+Yokohama Foundry,1897,36,2.52,50618,1849
+Monterrey Assembly,3695,23,3.45,40205,3568
+Plant Detroit #1,3832,33,1.8,51632,3763
+Stuttgart Hub,2135,22,3.01,34345,2071
+Yokohama Foundry,3369,32,3.48,50175,3252
+Monterrey Assembly,1719,6,2.56,17472,1675
+Plant Detroit #1,2038,33,2.28,49108,1992
+Stuttgart Hub,4318,47,4.21,69172,4136
+Yokohama Foundry,3940,14,4.45,31637,3765
+Monterrey Assembly,4130,22,3.56,32939,3983
+Plant Detroit #1,3329,16,1.44,32920,3281
+Stuttgart Hub,1566,31,4.25,52700,1499
+Yokohama Foundry,1850,46,1.69,69955,1819
+Monterrey Assembly,2053,38,1.14,53436,2030
+Plant Detroit #1,3757,32,1.48,47555,3701
+Stuttgart Hub,2147,38,3.03,59154,2082
+Yokohama Foundry,3147,10,2.04,19314,3083
+Monterrey Assembly,4054,28,1.94,44500,3975
+Plant Detroit #1,3971,47,0.57,66105,3948
+Stuttgart Hub,2291,40,3.74,63327,2205
+Yokohama Foundry,3639,28,2.33,47272,3554
+Monterrey Assembly,4453,13,3.67,25095,4290
+Plant Detroit #1,3173,6,3.91,19529,3049
+Stuttgart Hub,3184,34,2.01,57258,3120
+Yokohama Foundry,3367,36,0.58,55860,3347
+Monterrey Assembly,3795,29,2.91,51023,3685
+Plant Detroit #1,2861,42,4.44,60093,2734
+Stuttgart Hub,3044,29,2.81,48217,2958
+Yokohama Foundry,2693,36,3.2,55562,2607
+Monterrey Assembly,3169,16,0.83,30328,3143
+Plant Detroit #1,4399,45,4.75,71059,4190
+Stuttgart Hub,1507,30,4.47,47442,1440
+Yokohama Foundry,2293,17,2.33,35098,2240
+Monterrey Assembly,2309,14,1.02,29581,2285
+Plant Detroit #1,3765,16,1.31,34634,3716
+Stuttgart Hub,1287,7,4.2,21125,1233
+Yokohama Foundry,2724,10,2.16,27147,2665
+Monterrey Assembly,4346,15,1.52,32162,4280
+Plant Detroit #1,2541,18,3.53,31059,2451
+Stuttgart Hub,2688,26,1.2,42299,2656
+Yokohama Foundry,1440,30,1.69,48465,1416
+Monterrey Assembly,2936,43,3.99,68043,2819
+Plant Detroit #1,1676,6,3.3,15408,1621
+Stuttgart Hub,2282,48,1.52,70520,2247
+Yokohama Foundry,3980,27,0.89,43746,3945
+Monterrey Assembly,2431,8,4.27,21432,2327
