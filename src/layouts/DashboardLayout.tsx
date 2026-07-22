@@ -147,7 +147,7 @@ export const DashboardLayout: React.FC = () => {
       <Topbar />
       <div className="flex flex-1 min-h-0 w-full overflow-hidden relative z-10">
         <Sidebar />
-        <main className="flex-1 overflow-y-auto w-full relative grid-bg">
+        <main role="main" aria-label="Executive Intelligence Workspace" className="flex-1 overflow-y-auto w-full relative grid-bg">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
