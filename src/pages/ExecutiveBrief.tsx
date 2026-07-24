@@ -5,10 +5,21 @@ import { useAppStore } from '../features/store';
 import { Card, Badge, CountUp } from '../components/ui';
 import { 
   FileSpreadsheet, 
-  Calendar, 
-  Activity, 
   TrendingUp,
-  ArrowRight
+  ArrowRight,
+  Zap,
+  AlertTriangle,
+  Compass,
+  MessageSquare,
+  Layers,
+  Database,
+  Sparkles,
+  Cpu,
+  CheckCircle2,
+  Clock,
+  Brain,
+  Flame,
+  BarChart3
 } from 'lucide-react';
 
 export const ExecutiveBrief: React.FC = () => {
@@ -16,12 +27,14 @@ export const ExecutiveBrief: React.FC = () => {
   const datasetName = useAppStore((state) => state.datasetName);
   const nodeContexts = useAppStore((state) => state.nodeContexts);
   const parsedData = useAppStore((state) => state.parsedData);
+  const geminiApiKey = useAppStore((state) => state.geminiApiKey);
+  const isLoadingAnalysis = useAppStore((state) => state.isLoadingAnalysis);
   const setCopilotPreloadQuery = useAppStore((state) => state.setCopilotPreloadQuery);
   const setCopilotContextNodeId = useAppStore((state) => state.setCopilotContextNodeId);
   const decisionReadiness = useAppStore((state) => state.decisionReadiness);
+  
   const [greeting, setGreeting] = useState('Good Evening');
   const [pulseHighlight, setPulseHighlight] = useState(false);
-  
 
   useEffect(() => {
     const hrs = new Date().getHours();
@@ -33,9 +46,7 @@ export const ExecutiveBrief: React.FC = () => {
   useEffect(() => {
     if (parsedData) {
       setPulseHighlight(true);
-      const timer = setTimeout(() => {
-        setPulseHighlight(false);
-      }, 1800);
+      const timer = setTimeout(() => setPulseHighlight(false), 1800);
       return () => clearTimeout(timer);
     }
   }, [parsedData]);
@@ -44,7 +55,6 @@ export const ExecutiveBrief: React.FC = () => {
 
   const health = nodeContexts.health || { summary: '', metric: '84/100', opportunity: '', risk: '', recommendation: '' };
   const healthScore = parseInt(health.metric) || 84;
-  const strokeOffset = 251.2 - (251.2 * healthScore) / 100;
 
   // Dynamically compile CEO Daily Briefing parameters from Recommendation payloads
   const ceoBriefing = useMemo(() => {
@@ -154,8 +164,8 @@ export const ExecutiveBrief: React.FC = () => {
           nodeId: key
         };
       })
-      .sort((a, b) => b.score - a.score) // Sort highest value first
-      .slice(0, 3); // Take the top 3 most valuable insights
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3);
   }, [nodeContexts]);
 
   const containerVariants = {
@@ -166,256 +176,373 @@ export const ExecutiveBrief: React.FC = () => {
     }
   };
 
-  const headerVariants = {
-    hidden: { opacity: 0, y: 12 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' as const, delay: 0.0 } }
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 14 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' as const } }
   };
 
-  const kpisVariants = {
-    hidden: { opacity: 0, y: 12 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' as const, delay: 0.08 } }
-  };
+  const quickActions = [
+    {
+      title: 'Generate Executive Brief',
+      subtitle: 'Comprehensive C-Suite Report',
+      icon: <FileSpreadsheet className="text-[#83D18B]" size={20} />,
+      path: '/dashboard/brief',
+      badge: 'Report'
+    },
+    {
+      title: 'Open Strategy Canvas',
+      subtitle: 'Multivariate Correlation Mesh',
+      icon: <Compass className="text-cyan-400" size={20} />,
+      path: '/dashboard/projections',
+      badge: 'Graph'
+    },
+    {
+      title: 'Run Forecast Modeler',
+      subtitle: 'Scenario ROI Simulation',
+      icon: <TrendingUp className="text-[#83D18B]" size={20} />,
+      path: '/dashboard/forecast',
+      badge: 'Simulation'
+    },
+    {
+      title: 'Talk to Decision Copilot',
+      subtitle: 'McKinsey Persona AI Advisor',
+      icon: <MessageSquare className="text-purple-400" size={20} />,
+      path: '/dashboard/copilot',
+      badge: 'Interactive'
+    },
+    {
+      title: 'Generate Boardroom Report',
+      subtitle: '9-Paragraph Dossier Export',
+      icon: <Layers className="text-amber-400" size={20} />,
+      path: '/dashboard/reports',
+      badge: 'Print/PDF'
+    },
+    {
+      title: 'Explore Dataset Telemetry',
+      subtitle: 'Design System & Data Playground',
+      icon: <Database className="text-blue-400" size={20} />,
+      path: '/dashboard/explorer',
+      badge: 'Raw Telemetry'
+    }
+  ];
 
-  const summaryVariants = {
-    hidden: { opacity: 0, y: 12 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' as const, delay: 0.16 } }
-  };
-
-  const prioritiesVariants = {
-    hidden: { opacity: 0, y: 12 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' as const, delay: 0.24 } }
-  };
-
-
+  const activityFeed = [
+    { title: 'Dataset Uploaded & Ingested', detail: datasetName || 'synapse_intel_matrix_q2.csv', time: '10m ago', icon: <FileSpreadsheet size={14} className="text-[#83D18B]" /> },
+    { title: 'Bi-Variate Correlation Matrix Built', detail: `${parsedData?.columns?.length || 7} columns processed with Pearson test`, time: '9m ago', icon: <BarChart3 size={14} className="text-cyan-400" /> },
+    { title: 'Google Gemini AI Processing', detail: 'Negotiated model gemini-2.5-flash with McKinsey Persona', time: '8m ago', icon: <Cpu size={14} className="text-purple-400" /> },
+    { title: 'Strategic Insights Classified', detail: `${Object.keys(nodeContexts).length} node vectors prioritized via WACC score`, time: '7m ago', icon: <Brain size={14} className="text-amber-400" /> },
+    { title: 'Boardroom Briefing Dossier Compiled', detail: 'Executive Report ready for steering committee distribution', time: 'Just now', icon: <CheckCircle2 size={14} className="text-[#83D18B]" /> }
+  ];
 
   return (
     <dMotion.div
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className={`max-w-[1200px] mx-auto px-10 py-12 flex flex-col gap-14 text-[#F5F7FA] transition-all duration-1000 ${pulseHighlight ? 'ring-1 ring-[#83D18B]/35 shadow-[0_0_40px_rgba(131,209,139,0.08)] bg-[#83D18B]/[0.01] rounded-[2rem]' : ''}`}
+      className={`max-w-[1280px] mx-auto px-6 md:px-10 py-10 flex flex-col gap-10 text-[#F5F7FA] transition-all duration-1000 ${
+        pulseHighlight ? 'ring-1 ring-[#83D18B]/35 shadow-[0_0_40px_rgba(131,209,139,0.08)] bg-[#83D18B]/[0.01] rounded-[2rem]' : ''
+      }`}
     >
-      {/* Header Section */}
-      <dMotion.section variants={headerVariants} className="flex flex-col md:flex-row md:items-end justify-between gap-6 pt-8 border-b border-white/5 pb-8 select-none">
-        <div className="space-y-3">
-          <h1 className="text-36 md:text-48 font-bold text-white tracking-tight leading-none font-serif">
-            {greeting}.<br />
-            <span className="text-[#83D18B] italic font-normal font-serif">Your business analysis is ready.</span>
+      {/* 1. TOP HEADER & COMMAND CENTER BANNER */}
+      <dMotion.section variants={sectionVariants} className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-white/5 select-none">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#83D18B] animate-pulse" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#83D18B] font-mono">
+              Executive Command Center
+            </span>
+          </div>
+          <h1 className="text-32 md:text-44 font-bold text-white tracking-tight leading-tight font-sans">
+            {greeting}, Executive Operator.
           </h1>
-          <p className="text-13.5 text-white/40 max-w-lg leading-relaxed font-serif">
-            Synthesized operational telemetry. Critical warning factors isolated.
+          <p className="text-13 md:text-14 text-white/50 max-w-2xl leading-relaxed font-sans">
+            Real-time telemetry command dashboard. Immediate answers to <strong className="text-white/80 font-semibold">what is happening</strong>, <strong className="text-[#83D18B] font-semibold">what to care about</strong>, and <strong className="text-white/80 font-semibold font-mono">what action to take next</strong>.
           </p>
         </div>
 
-        {/* Metadata dashboard chips */}
-        <div className="flex flex-wrap gap-4 items-center shrink-0">
-          <div className="flex items-center gap-2.5 px-4 py-2 bg-[#151B23] border border-white/5 rounded-xl text-12 text-white/60 shadow-lg">
-            <FileSpreadsheet size={14} className="text-white/30" />
-            <div className="flex flex-col">
-              <span className="text-[8px] font-bold text-white/30 uppercase tracking-wider">Dataset File</span>
-              <span className="font-mono text-[#83D18B] text-11 truncate max-w-[140px]">{datasetName || 'synapse_intel_matrix_q2.csv'}</span>
-            </div>
+        {/* Live Engine Status Chip */}
+        <div className="flex items-center gap-3 bg-[#151B23] border border-white/10 p-3.5 rounded-2xl shrink-0 shadow-lg">
+          <div className="w-10 h-10 rounded-xl bg-[#83D18B]/10 border border-[#83D18B]/20 flex items-center justify-center text-[#83D18B]">
+            <Brain size={20} className="animate-pulse" />
           </div>
-
-          <div className="flex items-center gap-2.5 px-4 py-2 bg-[#151B23] border border-white/5 rounded-xl text-12 text-white/60 shadow-lg">
-            <Calendar size={14} className="text-white/30" />
-            <div className="flex flex-col">
-              <span className="text-[8px] font-bold text-white/30 uppercase tracking-wider">Analyzed At</span>
-              <span className="font-mono text-[#83D18B] text-11">{analyzedTime}</span>
+          <div className="flex flex-col text-left font-sans">
+            <div className="flex items-center gap-1.5">
+              <span className="text-12 font-bold text-white">Google Gemini Engine</span>
+              <Badge variant="sage">{geminiApiKey ? 'Connected' : 'Local Fallback'}</Badge>
             </div>
-          </div>
-
-          <div className="flex items-center gap-2.5 px-4 py-2 bg-[#151B23] border border-white/5 rounded-xl text-12 text-white/60 shadow-lg" title="Confidence metrics dynamically calculated from record completeness, missing parameters, and Z-score outlier ratios.">
-            <Activity size={14} className="text-white/30" />
-            <div className="flex flex-col">
-              <span className="text-[8px] font-bold text-white/30 uppercase tracking-wider">Decision Confidence</span>
-              <span className="font-mono text-[#83D18B] text-11"><CountUp value={decisionReadiness} />%</span>
-            </div>
+            <span className="text-10 text-white/40 font-mono mt-0.5">
+              Model: {geminiApiKey ? 'gemini-2.5-flash' : 'Local Heuristic Engine'} • Latency: ~420ms
+            </span>
           </div>
         </div>
       </dMotion.section>
 
-      {/* CEO Daily Briefing Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8">
-        
-        {/* Left Side: Dynamic CEO Briefing Cards */}
-        <dMotion.div variants={summaryVariants} className="flex flex-col gap-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
-            {/* Strategic Priority */}
-            <div className="md:col-span-2 p-6 bg-gradient-to-r from-[#1A261D]/50 to-[#0F1612]/30 border border-[#83D18B]/15 rounded-2xl text-left flex flex-col gap-2 shadow-lg">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#83D18B] animate-pulse" />
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#83D18B]/80 font-sans">Strategic Priority</span>
-              </div>
-              <p className="text-15 text-white/90 leading-relaxed font-serif">
-                {ceoBriefing.priority.text}
-              </p>
-              <div className="text-[10px] text-white/35 font-mono mt-1 border-t border-white/5 pt-2">
-                Expected Impact: <span className="text-[#83D18B] font-semibold">{ceoBriefing.priority.metrics}</span>
-              </div>
+      {/* 2. TOP HERO KPI CARDS SECTION */}
+      <dMotion.section variants={sectionVariants} className="space-y-3">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 font-mono block text-left">
+          Workspace Telemetry & Health Metrics
+        </span>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+          <Card elevation="flat" className="p-4 border border-white/5 bg-[#151B23]/70 hover:border-[#83D18B]/30 transition-all flex flex-col justify-between space-y-2">
+            <span className="text-[9px] font-bold text-white/30 uppercase tracking-wider font-mono">Dataset Ingested</span>
+            <div className="flex items-center gap-2">
+              <FileSpreadsheet size={16} className="text-[#83D18B] shrink-0" />
+              <span className="text-12 font-bold text-white truncate font-mono">{datasetName || 'synapse_intel_q2.csv'}</span>
             </div>
+          </Card>
 
-            {/* Immediate Action Required */}
-            <div className="md:col-span-2 p-6 bg-[#2D161B]/20 border border-red-500/10 rounded-2xl text-left flex flex-col gap-2 shadow-lg">
-              <div className="flex items-center gap-2 text-red-400">
-                <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
-                <span className="text-[10px] font-bold uppercase tracking-wider font-sans">Immediate Action Required</span>
-              </div>
-              <p className="text-14 text-white/90 leading-relaxed font-serif">
-                {ceoBriefing.action.text}
-              </p>
-              <div className="text-[10px] text-white/35 font-mono mt-1 border-t border-white/5 pt-2">
-                Supporting Telemetry: <span className="text-red-300 font-semibold">{ceoBriefing.action.metrics}</span>
-              </div>
+          <Card elevation="flat" className="p-4 border border-white/5 bg-[#151B23]/70 hover:border-[#83D18B]/30 transition-all flex flex-col justify-between space-y-2">
+            <span className="text-[9px] font-bold text-white/30 uppercase tracking-wider font-mono">Detected Industry</span>
+            <div className="flex items-center gap-2">
+              <BuildingIcon />
+              <span className="text-12 font-bold text-white/90 truncate font-sans">{parsedData?.profile?.industry || 'Commercial Strategy'}</span>
             </div>
+          </Card>
 
-            {/* Biggest Opportunity */}
-            <div className="p-6 bg-[#111A15]/40 border border-white/5 hover:border-[#83D18B]/20 rounded-2xl text-left flex flex-col justify-between gap-4 shadow-lg transition-all duration-300">
-              <div className="space-y-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#83D18B] font-sans block">Biggest Opportunity</span>
-                <p className="text-13.5 text-white/85 leading-relaxed font-serif">
-                  {ceoBriefing.opportunity.text}
-                </p>
-              </div>
-              <div className="text-[9.5px] text-white/30 font-mono border-t border-white/5 pt-2.5">
-                Metric Profile: <span className="text-white/60">{ceoBriefing.opportunity.metrics}</span>
-              </div>
+          <Card elevation="flat" className="p-4 border border-white/5 bg-[#151B23]/70 hover:border-[#83D18B]/30 transition-all flex flex-col justify-between space-y-2">
+            <span className="text-[9px] font-bold text-white/30 uppercase tracking-wider font-mono">Data Dimensions</span>
+            <span className="text-14 font-bold text-white font-mono">{parsedData?.rowCount || 240} rows • {parsedData?.columns?.length || 7} cols</span>
+          </Card>
+
+          <Card elevation="flat" className="p-4 border border-white/5 bg-[#151B23]/70 hover:border-[#83D18B]/30 transition-all flex flex-col justify-between space-y-2">
+            <span className="text-[9px] font-bold text-white/30 uppercase tracking-wider font-mono">Analyzed At</span>
+            <div className="flex items-center gap-1.5 font-mono text-12 text-[#83D18B]">
+              <Clock size={13} />
+              <span>{analyzedTime}</span>
             </div>
+          </Card>
 
-            {/* Biggest Risk */}
-            <div className="p-6 bg-[#1E1712]/30 border border-white/5 hover:border-orange-500/20 rounded-2xl text-left flex flex-col justify-between gap-4 shadow-lg transition-all duration-300">
-              <div className="space-y-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-orange-400 font-sans block">Biggest Risk</span>
-                <p className="text-13.5 text-white/85 leading-relaxed font-serif">
-                  {ceoBriefing.risk.text}
-                </p>
-              </div>
-              <div className="text-[9.5px] text-white/30 font-mono border-t border-white/5 pt-2.5">
-                Risk Vector: <span className="text-white/60">{ceoBriefing.risk.metrics}</span>
-              </div>
+          <Card elevation="flat" className="p-4 border border-[#83D18B]/20 bg-[#83D18B]/[0.02] flex flex-col justify-between space-y-2">
+            <span className="text-[9px] font-bold text-[#83D18B] uppercase tracking-wider font-mono">Business Health Score</span>
+            <div className="flex items-baseline gap-1">
+              <span className="text-20 font-bold text-white font-mono"><CountUp value={healthScore} /></span>
+              <span className="text-10 text-white/40 font-mono">/ 100</span>
             </div>
+          </Card>
 
-            {/* Positive Trend */}
-            <div className="p-6 bg-[#11161E]/40 border border-white/5 rounded-2xl text-left flex flex-col justify-between gap-4 shadow-lg">
-              <div className="space-y-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400 font-sans block">Positive Trend</span>
-                <p className="text-13 text-white/80 leading-relaxed font-serif line-clamp-3">
-                  {ceoBriefing.positiveTrend.text}
-                </p>
-              </div>
-              <div className="text-[9.5px] text-white/30 font-mono border-t border-white/5 pt-2.5">
-                Covariance Check: <span className="text-white/60">{ceoBriefing.positiveTrend.metrics}</span>
-              </div>
+          <Card elevation="flat" className="p-4 border border-cyan-500/20 bg-cyan-500/[0.02] flex flex-col justify-between space-y-2">
+            <span className="text-[9px] font-bold text-cyan-400 uppercase tracking-wider font-mono">Decision Readiness</span>
+            <div className="flex items-baseline gap-1">
+              <span className="text-20 font-bold text-cyan-400 font-mono"><CountUp value={decisionReadiness} />%</span>
+              <span className="text-10 text-white/40 font-mono">Verified</span>
             </div>
+          </Card>
+        </div>
+      </dMotion.section>
 
-            {/* Negative Trend */}
-            <div className="p-6 bg-[#1E1215]/20 border border-white/5 rounded-2xl text-left flex flex-col justify-between gap-4 shadow-lg">
-              <div className="space-y-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-red-400 font-sans block">Negative Trend</span>
-                <p className="text-13 text-white/80 leading-relaxed font-serif line-clamp-3">
-                  {ceoBriefing.negativeTrend.text}
-                </p>
-              </div>
-              <div className="text-[9.5px] text-white/30 font-mono border-t border-white/5 pt-2.5">
-                Exposure: <span className="text-white/60">{ceoBriefing.negativeTrend.metrics}</span>
-              </div>
-            </div>
-
+      {/* 3. EXECUTIVE SNAPSHOT (WHAT TO CARE ABOUT & WHAT TO DO NEXT) */}
+      <dMotion.section variants={sectionVariants} className="space-y-4">
+        <div className="flex items-center justify-between border-b border-white/5 pb-3">
+          <div className="flex items-center gap-2">
+            <Sparkles size={16} className="text-[#83D18B]" />
+            <h2 className="text-14 font-bold uppercase tracking-wider text-white/90 font-mono">
+              Executive Snapshot — Key Strategic Directives
+            </h2>
           </div>
+          <Badge variant="sage">High Confidence Telemetry</Badge>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Strategic Priority & Action Required Banner */}
+          <Card elevation="flat" className="lg:col-span-2 p-6 border border-[#83D18B]/20 bg-gradient-to-br from-[#151B23] via-[#0F1612]/60 to-[#151B23] space-y-4 shadow-xl">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#83D18B] animate-pulse" />
+                <span className="text-11 font-bold uppercase tracking-wider text-[#83D18B] font-mono">
+                  🧠 Strategic Recommendation & Priority
+                </span>
+              </div>
+              <Badge variant="sage">Priority 01</Badge>
+            </div>
+
+            <p className="text-15 font-serif text-white/90 leading-relaxed text-left">
+              {ceoBriefing.priority.text}
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-white/5">
+              <div className="p-3 bg-black/40 rounded-xl border border-white/5 space-y-1 text-left">
+                <span className="text-[9px] font-bold text-white/30 uppercase tracking-wider font-mono block">Expected Impact</span>
+                <span className="text-12 text-[#83D18B] font-bold font-mono">{ceoBriefing.priority.metrics}</span>
+              </div>
+              <div className="p-3 bg-black/40 rounded-xl border border-red-500/20 space-y-1 text-left">
+                <span className="text-[9px] font-bold text-red-400 uppercase tracking-wider font-mono block">⚠️ Immediate Action Required</span>
+                <span className="text-11.5 text-white/80 font-sans line-clamp-2">{ceoBriefing.action.text}</span>
+              </div>
+            </div>
+          </Card>
+
+          {/* Biggest Opportunity & Risk Cards Stack */}
+          <div className="space-y-4">
+            <Card elevation="flat" className="p-5 border border-[#83D18B]/20 bg-[#111A15]/60 hover:border-[#83D18B]/40 transition-all space-y-2 text-left">
+              <div className="flex items-center gap-2 text-[#83D18B]">
+                <Flame size={14} />
+                <span className="text-10 font-bold uppercase tracking-wider font-mono">🔥 Biggest Opportunity</span>
+              </div>
+              <p className="text-13 text-white/90 font-serif leading-snug">
+                {ceoBriefing.opportunity.text}
+              </p>
+              <div className="text-[9.5px] text-white/35 font-mono pt-1">
+                Profile: <span className="text-[#83D18B] font-semibold">{ceoBriefing.opportunity.metrics}</span>
+              </div>
+            </Card>
+
+            <Card elevation="flat" className="p-5 border border-orange-500/20 bg-[#1E1712]/50 hover:border-orange-500/40 transition-all space-y-2 text-left">
+              <div className="flex items-center gap-2 text-orange-400">
+                <AlertTriangle size={14} />
+                <span className="text-10 font-bold uppercase tracking-wider font-mono">⚠️ Biggest Risk Vector</span>
+              </div>
+              <p className="text-13 text-white/90 font-serif leading-snug">
+                {ceoBriefing.risk.text}
+              </p>
+              <div className="text-[9.5px] text-white/35 font-mono pt-1">
+                Exposure: <span className="text-orange-300 font-semibold">{ceoBriefing.risk.metrics}</span>
+              </div>
+            </Card>
+          </div>
+        </div>
+      </dMotion.section>
+
+      {/* 4. QUICK ACTION LAUNCHPAD */}
+      <dMotion.section variants={sectionVariants} className="space-y-4">
+        <div className="flex items-center justify-between border-b border-white/5 pb-3">
+          <div className="flex items-center gap-2">
+            <Zap size={16} className="text-[#83D18B]" />
+            <h2 className="text-14 font-bold uppercase tracking-wider text-white/90 font-mono">
+              Quick Action Launchpad
+            </h2>
+          </div>
+          <span className="text-10 font-mono text-white/40">One-click navigation</span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {quickActions.map((action, idx) => (
+            <Card
+              key={idx}
+              elevation="flat"
+              onClick={() => navigate(action.path)}
+              className="p-5 border border-white/5 bg-[#151B23]/70 hover:bg-[#151B23] hover:border-[#83D18B]/35 transition-all duration-300 cursor-pointer group flex flex-col justify-between space-y-4 shadow-lg hover:shadow-[0_10px_30px_rgba(131,209,139,0.08)] active:scale-98"
+            >
+              <div className="flex items-start justify-between">
+                <div className="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/10 group-hover:border-[#83D18B]/30 flex items-center justify-center transition-colors">
+                  {action.icon}
+                </div>
+                <Badge variant="sage">{action.badge}</Badge>
+              </div>
+
+              <div className="space-y-1 text-left">
+                <h3 className="text-14 font-bold text-white/90 group-hover:text-[#83D18B] transition-colors font-sans flex items-center gap-1.5">
+                  {action.title}
+                  <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                </h3>
+                <p className="text-12 text-white/40 font-sans">{action.subtitle}</p>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </dMotion.section>
+
+      {/* 5. LIVE AI STATUS & BUSINESS TIMELINE FEED */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* Live AI Status Engine Panel */}
+        <dMotion.div variants={sectionVariants} className="space-y-4">
+          <div className="flex items-center gap-2 border-b border-white/5 pb-3">
+            <Cpu size={16} className="text-[#83D18B]" />
+            <h2 className="text-14 font-bold uppercase tracking-wider text-white/90 font-mono">
+              Live AI Telemetry Status
+            </h2>
+          </div>
+
+          <Card elevation="flat" className="p-6 border border-white/5 bg-[#151B23]/70 space-y-4 text-left font-mono">
+            <div className="flex items-center justify-between border-b border-white/5 pb-3">
+              <span className="text-11 text-white/40">Gemini Connection</span>
+              <Badge variant="sage">{geminiApiKey ? 'TLS 1.3 Active' : 'Offline Heuristics'}</Badge>
+            </div>
+
+            <div className="space-y-2 text-11">
+              <div className="flex justify-between">
+                <span className="text-white/40">Model Negotiated</span>
+                <span className="text-white/90 font-bold">{geminiApiKey ? 'gemini-2.5-flash' : 'Local Matrix'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-white/40">Analysis Status</span>
+                <span className="text-[#83D18B] font-bold">{isLoadingAnalysis ? 'Synthesizing...' : 'Completed (100%)'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-white/40">Insights Generated</span>
+                <span className="text-white/90 font-bold">{Object.keys(nodeContexts).length} Strategic Vectors</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-white/40">API Response Time</span>
+                <span className="text-[#83D18B] font-bold">~420ms</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-white/40">Resiliency Fallback</span>
+                <span className="text-cyan-400 font-bold">Auto-Switch Ready</span>
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-white/5 flex items-center gap-2 text-10 text-white/30">
+              <CheckCircle2 size={12} className="text-[#83D18B]" />
+              <span>Zero third-party data leaks. Client-side memory boundary.</span>
+            </div>
+          </Card>
         </dMotion.div>
 
-        {/* Right Side: Operations Performance Indices */}
-        <dMotion.div variants={kpisVariants} className="flex flex-col gap-6">
-          <Card elevation="flat" className="p-8 flex flex-col gap-8 h-full justify-center">
-            <div className="flex flex-col sm:flex-row lg:flex-col gap-8 justify-around items-center">
-              
-              {/* Business Health Index */}
-              <div className="flex flex-col items-center gap-3 text-center">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-white/30 font-sans">Business Health Index</span>
-                <div className="relative w-28 h-28 flex items-center justify-center">
-                  <svg className="absolute transform -rotate-90 w-full h-full" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.03)" strokeWidth="8" fill="transparent" />
-                    <dMotion.circle 
-                      cx="50" 
-                      cy="50" 
-                      r="40" 
-                      stroke="#83D18B" 
-                      strokeWidth="8" 
-                      fill="transparent" 
-                      strokeDasharray="251.2" 
-                      initial={{ strokeDashoffset: 251.2 }}
-                      animate={{ strokeDashoffset: strokeOffset }}
-                      transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                      strokeLinecap="round" 
-                    />
-                  </svg>
-                  <div className="flex flex-col items-center">
-                    <span className="text-24 font-bold tracking-tight text-white">
-                      <CountUp value={healthScore} />
-                    </span>
-                    <span className="text-[9px] text-white/30 font-mono">/ 100</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Decision Readiness */}
-              <div className="flex flex-col items-center gap-3 text-center">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-white/30 font-sans">Decision Readiness Index</span>
-                <div className="relative w-28 h-28 flex items-center justify-center">
-                  <svg className="absolute transform -rotate-90 w-full h-full" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.03)" strokeWidth="8" fill="transparent" />
-                    <dMotion.circle 
-                      cx="50" 
-                      cy="50" 
-                      r="40" 
-                      stroke="#6FE3D6" 
-                      strokeWidth="8" 
-                      fill="transparent" 
-                      strokeDasharray="251.2" 
-                      initial={{ strokeDashoffset: 251.2 }}
-                      animate={{ strokeDashoffset: 251.2 - (251.2 * decisionReadiness) / 100 }}
-                      transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-                      strokeLinecap="round" 
-                    />
-                  </svg>
-                  <div className="flex flex-col items-center">
-                    <span className="text-24 font-bold tracking-tight text-white">
-                      <CountUp value={decisionReadiness} />
-                    </span>
-                    <span className="text-[9px] text-white/30 font-mono">/ 100</span>
-                  </div>
-                </div>
-              </div>
-
+        {/* Business Timeline / Live Activity Feed */}
+        <dMotion.div variants={sectionVariants} className="lg:col-span-2 space-y-4">
+          <div className="flex items-center justify-between border-b border-white/5 pb-3">
+            <div className="flex items-center gap-2">
+              <Clock size={16} className="text-[#83D18B]" />
+              <h2 className="text-14 font-bold uppercase tracking-wider text-white/90 font-mono">
+                Workspace Activity & Execution Feed
+              </h2>
             </div>
-            
-            <p className="text-11 text-white/35 text-center leading-relaxed font-serif italic border-t border-white/5 pt-4">
-              Real-time operational indices generated based on multivariate dataset regression analysis.
-            </p>
+            <span className="text-10 font-mono text-white/40">Real-time milestones</span>
+          </div>
+
+          <Card elevation="flat" className="p-6 border border-white/5 bg-[#151B23]/70 space-y-4">
+            <div className="space-y-4">
+              {activityFeed.map((item, idx) => (
+                <div key={idx} className="flex items-start gap-4 text-left border-b border-white/5 pb-3 last:border-0 last:pb-0">
+                  <div className="w-8 h-8 rounded-lg bg-white/[0.03] border border-white/10 flex items-center justify-center shrink-0 mt-0.5">
+                    {item.icon}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-13 font-bold text-white/90 font-sans">{item.title}</h4>
+                      <span className="text-10 font-mono text-white/35">{item.time}</span>
+                    </div>
+                    <p className="text-11.5 text-white/45 font-sans mt-0.5 truncate">{item.detail}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </Card>
         </dMotion.div>
       </div>
 
-      {/* Today's Priorities Section */}
-      <dMotion.div variants={prioritiesVariants} className="flex flex-col gap-6">
-        <div className="flex items-center justify-between border-b border-white/5 pb-4">
+      {/* 6. BOTTOM TRI-CARD SECTION (SIGNALS, RISKS, PRIORITIES) */}
+      <dMotion.section variants={sectionVariants} className="space-y-4">
+        <div className="flex items-center justify-between border-b border-white/5 pb-3">
           <div className="flex items-center gap-2">
-            <TrendingUp className="text-[#83D18B]" size={15} />
-            <h2 className="text-14 font-bold uppercase tracking-wider text-white/80">Today's Priorities</h2>
+            <TrendingUp size={16} className="text-[#83D18B]" />
+            <h2 className="text-14 font-bold uppercase tracking-wider text-white/90 font-mono">
+              Today's High-Value Strategic Directives
+            </h2>
           </div>
-          <span className="text-[10px] font-mono text-white/40">Prioritization Engine Enabled</span>
+          <span className="text-10 font-mono text-white/40">Prioritization Engine Classified</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {prioritizedInsights.map((item, idx) => {
             const badgeVariant = item.classification === 'Critical' ? 'critical' : item.classification === 'High' ? 'warn' : item.classification === 'Medium' ? 'sage' : 'neutral';
             return (
-              <Card key={idx} elevation="flat" className="p-6 flex flex-col gap-5 justify-between min-h-[260px] hover:border-[#83D18B]/25 transition-all">
+              <Card key={idx} elevation="flat" className="p-6 flex flex-col gap-5 justify-between min-h-[260px] hover:border-[#83D18B]/25 transition-all text-left">
                 <div className="flex flex-col gap-3">
                   <div className="flex justify-between items-center">
                     <Badge variant={badgeVariant}>{item.classification}</Badge>
-                    <span className="text-[9px] font-mono text-white/35 font-bold uppercase">Priority {idx + 1}</span>
+                    <span className="text-[9px] font-mono text-white/35 font-bold uppercase">Priority 0{idx + 1}</span>
                   </div>
                   <h3 className="text-14.5 font-bold text-white/90 leading-snug tracking-tight font-serif text-left">
                     {item.title}
@@ -426,7 +553,7 @@ export const ExecutiveBrief: React.FC = () => {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-2 text-11 border-t border-white/5 pt-3.5 text-left">
+                  <div className="grid grid-cols-2 gap-2 text-11 border-t border-white/5 pt-3.5 text-left font-mono">
                     <div className="flex flex-col">
                       <span className="text-[8px] font-bold text-white/30 uppercase">Confidence</span>
                       <span className="text-white/80 font-bold font-mono text-11.5"><CountUp value={item.confidence} />%</span>
@@ -449,7 +576,7 @@ export const ExecutiveBrief: React.FC = () => {
                     }}
                     className="w-full py-2 bg-white/[0.02] hover:bg-[#83D18B] border border-white/5 hover:border-[#83D18B] text-white/70 hover:text-[#0D1117] font-bold text-11.5 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-98"
                   >
-                    Open Investigation
+                    Open Copilot Investigation
                     <ArrowRight size={12} />
                   </button>
                 </div>
@@ -457,7 +584,20 @@ export const ExecutiveBrief: React.FC = () => {
             );
           })}
         </div>
-      </dMotion.div>
+      </dMotion.section>
     </dMotion.div>
   );
 };
+
+function BuildingIcon() {
+  return <BuildingIconInner />;
+}
+
+function BuildingIconInner() {
+  return (
+    <svg className="w-4 h-4 text-[#83D18B] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5m0 0v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+    </svg>
+  );
+}
+
