@@ -24,6 +24,7 @@ import {
   Server
 } from 'lucide-react';
 import { getStoredApiKey } from '../features/geminiService';
+import { ACCENT_THEMES, applyAccentTheme } from '../features/themeEngine';
 
 export interface EnterpriseSettingsState {
   // General
@@ -265,20 +266,35 @@ export const Settings: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="text-12 font-medium text-white/60 block mb-3">Accent Highlights Color</label>
-                  <div className="flex items-center gap-4">
-                    {['#83D18B', '#60A5FA', '#A78BFA', '#F59E0B'].map((color) => (
-                      <button
-                        key={color}
-                        onClick={() => handleUpdate('accentColor', color)}
-                        className={`w-8 h-8 rounded-full border-2 transition-transform cursor-pointer flex items-center justify-center ${
-                          settings.accentColor === color ? 'scale-110 border-white' : 'border-transparent hover:scale-105'
-                        }`}
-                        style={{ backgroundColor: color }}
-                      >
-                        {settings.accentColor === color && <Check size={14} className="text-black font-bold" />}
-                      </button>
-                    ))}
+                  <label className="text-12 font-medium text-white/60 block mb-3 font-sans">Enterprise Accent Theme Engine</label>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {Object.values(ACCENT_THEMES).map((theme) => {
+                      const isSelected = settings.accentColor === theme.id || settings.accentColor === theme.hex;
+                      return (
+                        <button
+                          key={theme.id}
+                          onClick={() => {
+                            handleUpdate('accentColor', theme.id);
+                            applyAccentTheme(theme.id);
+                          }}
+                          className={`p-3 rounded-xl border flex items-center gap-3 transition-all cursor-pointer select-none text-left ${
+                            isSelected 
+                              ? 'bg-white/[0.06] border-white/30 ring-1 ring-white/30' 
+                              : 'bg-black/20 border-white/5 hover:border-white/15 hover:bg-white/[0.02]'
+                          }`}
+                        >
+                          <div 
+                            className="w-5 h-5 rounded-full border border-white/20 shrink-0 flex items-center justify-center shadow-sm"
+                            style={{ backgroundColor: theme.hex }}
+                          >
+                            {isSelected && <Check size={11} style={{ color: theme.contrastText }} className="font-bold" />}
+                          </div>
+                          <span className="text-12 font-medium text-white/85 truncate font-sans">
+                            {theme.name}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               </div>

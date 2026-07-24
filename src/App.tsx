@@ -4,6 +4,8 @@ import { DashboardLayout } from './layouts/DashboardLayout';
 import { DemoController } from './components/DemoController';
 import { AIThinkingLoader } from './components/ui';
 
+import { initAccentTheme } from './features/themeEngine';
+
 // Lazy load heavy page components to optimize initial bundle sizes and performance
 const Landing = React.lazy(() => import('./pages/Landing').then(m => ({ default: m.Landing })));
 const ExecutiveBrief = React.lazy(() => import('./pages/ExecutiveBrief').then(m => ({ default: m.ExecutiveBrief })));
@@ -17,6 +19,10 @@ const BusinessTimeline = React.lazy(() => import('./pages/BusinessTimeline').the
 const Settings = React.lazy(() => import('./pages/Settings').then(m => ({ default: m.Settings })));
 
 const App: React.FC = () => {
+  React.useEffect(() => {
+    initAccentTheme();
+  }, []);
+
   return (
     <HashRouter>
       <DemoController />
