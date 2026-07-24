@@ -20,6 +20,16 @@
 
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-serif: 'Lora', Georgia, serif;
+
+  --text-48: 48px;
+  --text-36: 36px;
+  --text-28: 28px;
+  --text-22: 22px;
+  --text-18: 18px;
+  --text-15: 15px;
+  --text-13: 13px;
+  --text-12: 12px;
+  --text-11: 11px;
   
   --animate-pulse-ring: pulse-ring 2.5s ease-in-out infinite;
 }
