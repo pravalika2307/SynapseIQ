@@ -55,43 +55,43 @@ export const Sidebar: React.FC = () => {
   const navItems = [
     {
       to: '/dashboard/brief',
-      icon: <FileText size={16} />,
+      icon: <FileText size={15} />,
       label: 'Executive Brief'
     },
     {
       to: '/dashboard/timeline',
-      icon: <Clock size={16} />,
+      icon: <Clock size={15} />,
       label: 'Business Timeline'
     },
     {
       to: '/dashboard/signals',
-      icon: <Activity size={16} />,
+      icon: <Activity size={15} />,
       label: 'Business Signals',
       badge: '6'
     },
     {
       to: '/dashboard/projections',
-      icon: <Compass size={16} />,
+      icon: <Compass size={15} />,
       label: 'Strategy Canvas'
     },
     {
       to: '/dashboard/copilot',
-      icon: <MessageSquare size={16} />,
+      icon: <MessageSquare size={15} />,
       label: 'Decision Copilot'
     },
     {
       to: '/dashboard/forecast',
-      icon: <TrendingUp size={16} />,
+      icon: <TrendingUp size={15} />,
       label: 'Forecast Modeler'
     },
     {
       to: '/dashboard/reports',
-      icon: <Layers size={16} />,
+      icon: <Layers size={15} />,
       label: 'Boardroom Report'
     },
     {
       to: '/dashboard/explorer',
-      icon: <Database size={16} />,
+      icon: <Database size={15} />,
       label: 'Data Explorer'
     }
   ];
@@ -112,17 +112,17 @@ export const Sidebar: React.FC = () => {
 
   const bottomItems = [
     {
-      icon: <Sparkles size={16} className="text-[#83D18B]" />,
+      icon: <Sparkles size={15} className="text-[#83D18B]" />,
       label: 'Guided Tour',
       onClick: () => startDemo()
     },
     {
-      icon: <Settings size={16} />,
+      icon: <Settings size={15} />,
       label: 'Platform Settings',
       onClick: () => window.location.hash = '#/dashboard/settings'
     },
     {
-      icon: <HelpCircle size={16} />,
+      icon: <HelpCircle size={15} />,
       label: 'Help & Docs',
       onClick: () => window.open('https://github.com/pravalika2307/SynapseIQ#readme', '_blank')
     }
@@ -228,8 +228,8 @@ export const Sidebar: React.FC = () => {
               key={item.to}
               to={item.to}
               className={({ isActive }) => `
-                flex items-center px-3.5 py-2.5 text-13 rounded-xl transition-all duration-200 relative group
-                ${isActive ? 'text-white font-medium active bg-white/[0.04]' : 'text-white/50 hover:text-white/85 hover:bg-white/[0.02]'}
+                flex items-center px-3 py-2 text-13 font-medium rounded-xl transition-all duration-200 relative group
+                ${isActive ? 'text-white font-semibold active bg-white/[0.04]' : 'text-white/70 hover:text-white hover:bg-white/[0.02]'}
               `}
             >
               {({ isActive }) => (
@@ -350,27 +350,32 @@ export const Sidebar: React.FC = () => {
       </div>
 
       {/* STICKY BOTTOM FOOTER & PROFILE CARD */}
-      <div className="sticky bottom-0 z-20 bg-[#0B0E14] border-t border-white/[0.06] pt-2 pb-3 px-2 space-y-1">
+      <div className="sticky bottom-0 z-20 bg-[#0B0E14] border-t border-white/[0.06] pt-2.5 pb-3 px-2 space-y-1">
+        {!isSidebarCollapsed && (
+          <span className="text-11 font-bold uppercase tracking-widest text-white/35 font-mono px-3 py-1 block text-left select-none">
+            Utilities
+          </span>
+        )}
         {/* Navigation bottom items */}
         {bottomItems.map((item, idx) => (
           <button
             key={idx}
             onClick={item.onClick}
-            className="w-full flex items-center px-3.5 py-2 text-12.5 text-white/50 hover:text-white/90 hover:bg-white/[0.03] rounded-xl transition-all duration-200 relative group cursor-pointer"
+            className="w-full flex items-center px-3 py-2 text-13 font-medium text-white/45 hover:text-white/80 hover:bg-white/[0.03] rounded-xl transition-all duration-200 relative group cursor-pointer"
           >
-            <span className="opacity-70 group-hover:opacity-100 min-w-[20px]">{item.icon}</span>
+            <span className="opacity-70 group-hover:opacity-100 min-w-[20px] flex items-center justify-center">{item.icon}</span>
             {!isSidebarCollapsed && (
               <motion.span
                 initial={{ opacity: 0, x: -5 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="ml-3 truncate font-sans"
+                className="ml-3 truncate font-sans text-left"
               >
                 {item.label}
               </motion.span>
             )}
 
             {isSidebarCollapsed && (
-              <div className="absolute left-16 bg-[#18212C] border border-white/10 text-white/90 text-[11px] rounded-lg px-2.5 py-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap shadow-xl">
+              <div className="absolute left-16 bg-[#18212C] border border-white/10 text-white/90 text-11 rounded-lg px-2.5 py-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-50 whitespace-nowrap shadow-xl">
                 {item.label}
               </div>
             )}
