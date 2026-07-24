@@ -342,7 +342,7 @@ export const ExecutiveBrief: React.FC = () => {
           <Badge variant="sage">High Confidence Telemetry</Badge>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
           {/* Strategic Priority & Action Required Banner */}
           <Card elevation="flat" className="lg:col-span-2 p-6 border border-[#83D18B]/20 bg-gradient-to-br from-[#151B23] via-[#0F1612]/60 to-[#151B23] space-y-4 shadow-xl">
             <div className="flex items-center justify-between">
@@ -442,7 +442,7 @@ export const ExecutiveBrief: React.FC = () => {
       </dMotion.section>
 
       {/* 5. LIVE AI STATUS & BUSINESS TIMELINE FEED */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         
         {/* Live AI Status Engine Panel */}
         <dMotion.div variants={sectionVariants} className="space-y-4">

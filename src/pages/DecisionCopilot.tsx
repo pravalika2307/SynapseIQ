@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, BookOpen, Zap, Compass, Sparkles, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { Send, BookOpen, Zap, Compass, Sparkles } from 'lucide-react';
 import { useAppStore } from '../features/store';
 import { copilotStarters } from '../features/data';
 import { getCopilotResponse } from '../features/geminiService';
@@ -611,90 +611,15 @@ export const DecisionCopilot: React.FC = () => {
             </span>
           </div>
 
-          {/* Enterprise Audit & Decision Confidence Card */}
-          <div className="space-y-3 p-4 bg-[#12161D]/90 border border-white/10 rounded-2xl shadow-lg backdrop-blur-md">
-            <div className="flex items-center justify-between border-b border-white/5 pb-2">
-              <div className="flex items-center gap-2">
-                <ShieldCheck size={14} className="text-[#83D18B]" />
-                <span className="text-[10px] font-bold text-white/90 uppercase tracking-widest font-mono">Audit Confidence</span>
-              </div>
-              <span className="text-[9.5px] font-bold bg-[#83D18B]/10 text-[#83D18B] border border-[#83D18B]/20 rounded-full px-2 py-0.5 font-mono">
-                Verified
-              </span>
+          {/* Audit Confidence Card */}
+          <div className="space-y-2 p-4 bg-white/[0.01] border border-white/5 rounded-xl text-left self-start" title="Confidence metrics dynamically calculated from record completeness, KPI status completeness, and Z-score outlier ratios.">
+            <span className="text-[9.5px] font-bold text-white/30 uppercase tracking-wider block font-mono">Audit Confidence</span>
+            <div className="flex items-center justify-between text-11 font-mono">
+              <span className="text-white/40">Reliability Index</span>
+              <span className="text-[#83D18B] font-bold">{decisionReadiness}%</span>
             </div>
-
-            {/* SVG Radial Gauge & Core Metric */}
-            <div className="flex items-center gap-3.5 py-0.5">
-              <div className="relative w-13 h-13 shrink-0 flex items-center justify-center">
-                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                  <path
-                    className="text-white/10"
-                    strokeWidth="3.5"
-                    stroke="currentColor"
-                    fill="none"
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                  />
-                  <path
-                    className="text-[#83D18B]"
-                    strokeDasharray={`${decisionReadiness}, 100`}
-                    strokeWidth="3.5"
-                    strokeLinecap="round"
-                    stroke="currentColor"
-                    fill="none"
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                  />
-                </svg>
-                <span className="absolute text-12 font-bold text-white font-mono">{decisionReadiness}%</span>
-              </div>
-              <div className="flex flex-col text-left font-sans min-w-0">
-                <span className="text-12 font-bold text-white/95 leading-tight truncate">High Precision Audit</span>
-                <span className="text-10 text-white/40 font-mono mt-0.5 leading-relaxed truncate">
-                  {parsedData?.rowCount || 240} telemetry samples • 0 gaps
-                </span>
-              </div>
-            </div>
-
-            {/* 4-Factor Breakdown Grid */}
-            <div className="grid grid-cols-2 gap-1.5 pt-1 border-t border-white/5 font-mono text-[9.5px]">
-              <div className="p-2 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col gap-0.5">
-                <span className="text-white/30 uppercase text-[8px]">Completeness</span>
-                <div className="flex justify-between items-center text-white/85 font-semibold">
-                  <span>Data Gaps</span>
-                  <span className="text-[#83D18B]">0.0%</span>
-                </div>
-              </div>
-
-              <div className="p-2 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col gap-0.5">
-                <span className="text-white/30 uppercase text-[8.5px]">Correlation</span>
-                <div className="flex justify-between items-center text-white/85 font-semibold">
-                  <span>Stability</span>
-                  <span className="text-[#83D18B]">96.4%</span>
-                </div>
-              </div>
-
-              <div className="p-2 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col gap-0.5">
-                <span className="text-white/30 uppercase text-[8.5px]">Variance</span>
-                <div className="flex justify-between items-center text-white/85 font-semibold">
-                  <span>Z-Outliers</span>
-                  <span className="text-white/70">{parsedData?.outlierCount || 0}</span>
-                </div>
-              </div>
-
-              <div className="p-2 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col gap-0.5">
-                <span className="text-white/30 uppercase text-[8.5px]">Model Fit</span>
-                <div className="flex justify-between items-center text-white/85 font-semibold">
-                  <span>McKinsey</span>
-                  <span className="text-[#83D18B]">Optimal</span>
-                </div>
-              </div>
-            </div>
-
-            {/* AI Verification Footer */}
-            <div className="pt-1 flex items-center justify-between text-[8.5px] font-mono text-white/30 border-t border-white/5">
-              <span className="flex items-center gap-1">
-                <CheckCircle2 size={11} className="text-[#83D18B]" /> Gemini 2.5 Audit
-              </span>
-              <span>Live Telemetry</span>
+            <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+              <div className="h-full bg-[#83D18B] rounded-full" style={{ width: `${decisionReadiness}%` }} />
             </div>
           </div>
 
