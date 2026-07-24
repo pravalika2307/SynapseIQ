@@ -1,14 +1,13 @@
-import React, { useMemo, useState, useEffect, useCallback } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { 
   ReactFlow, 
   Background, 
   Position, 
   Handle,
   ReactFlowProvider,
-  useReactFlow,
-  Controls,
-  MiniMap
+  useReactFlow 
 } from '@xyflow/react';
+import { useLocation } from 'react-router-dom';
 import type { 
   Node, 
   Edge, 
@@ -31,7 +30,7 @@ import { useAppStore } from '../features/store';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDemoStore } from '../features/demoStore';
 
-// Define custom node data type
+// Define custom node types
 interface CustomNodeData extends Record<string, unknown> {
   label: string;
   metric: string;
@@ -39,97 +38,54 @@ interface CustomNodeData extends Record<string, unknown> {
   isActive: boolean;
   isHovered: boolean;
   isDimmed: boolean;
-  onMouseEnter: (id: string) => void;
+  onMouseEnter: () => void;
   onMouseLeave: () => void;
 }
 
-// Memoized Custom Graph Node to prevent re-renders on unrelated graph state updates
-const CustomGraphNodeComponent: React.FC<NodeProps<Node<CustomNodeData>>> = ({ id, data }) => {
+const CustomGraphNode: React.FC<NodeProps<Node<CustomNodeData>>> = ({ id, data }) => {
   const breatheNode = id === 'health' || data.label === 'Business Health' || data.label === 'Business Health Index';
 
   return (
-    <motion.div 
-      initial={false}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.15, ease: 'easeOut' }}
-      className="relative"
-    >
-      {/* Radial glow backdrop for active or health hub node */}
+    <div className="relative select-none">
+      {/* Subtle radial glow backdrop */}
       {(data.isActive || breatheNode) && (
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ 
-            opacity: breatheNode ? [0.15, 0.3, 0.15] : [0.2, 0.4, 0.2], 
-            scale: breatheNode ? [1.1, 1.2, 1.1] : [1.15, 1.25, 1.15] 
-          }}
-          transition={{ repeat: Infinity, duration: breatheNode ? 4.0 : 2.5, ease: 'easeInOut' }}
-          className={`absolute -inset-6 rounded-2xl blur-xl -z-10 pointer-events-none ${breatheNode ? 'bg-[#83D18B]/15' : 'bg-[#83D18B]/20'}`}
+        <div 
+          className={`absolute -inset-5 rounded-full blur-xl -z-10 pointer-events-none transition-opacity duration-300 ${breatheNode ? 'bg-[#83D18B]/12 opacity-80' : 'bg-[#83D18B]/18 opacity-100'}`}
         />
       )}
 
-      <motion.div 
-        onMouseEnter={() => data.onMouseEnter(id)}
+      <div
+        onMouseEnter={data.onMouseEnter}
         onMouseLeave={data.onMouseLeave}
-        animate={{
-          scale: data.isActive 
-            ? [1.02, 1.04, 1.02] 
-            : breatheNode 
-              ? [0.99, 1.01, 0.99] 
-              : 1,
-          borderColor: data.isActive 
-            ? 'rgba(131, 209, 139, 0.85)' 
-            : data.isHovered 
-              ? 'rgba(131, 209, 139, 0.45)' 
-              : 'rgba(255, 255, 255, 0.08)',
-          boxShadow: data.isActive
-            ? ['0 0 10px rgba(131,209,139,0.1)', '0 0 25px rgba(131,209,139,0.25)', '0 0 10px rgba(131,209,139,0.1)']
-            : '0 8px 30px rgba(0,0,0,0.45)'
-        }}
-        transition={{
-          scale: { repeat: Infinity, duration: breatheNode ? 3.0 : 2.0, ease: 'easeInOut' },
-          boxShadow: { repeat: Infinity, duration: 2.0, ease: 'easeInOut' },
-          borderColor: { duration: 0.15 }
-        }}
         className={`
-          px-4.5 py-3.5 rounded-2xl border bg-[#12161D]/90 backdrop-blur-md transition-colors duration-150 min-w-[160px] select-none cursor-pointer
-          ${data.isActive ? 'bg-[#83D18B]/10 border-[#83D18B]' : ''}
-          ${data.isDimmed ? 'opacity-25 blur-[0.5px] grayscale scale-95' : 'opacity-100'}
+          px-4 py-3 rounded-xl border bg-[#151B23] transition-all duration-200 min-w-[150px] shadow-lg select-none cursor-pointer
+          ${data.isActive ? 'border-[#83D18B] bg-[#83D18B]/10 shadow-[0_0_20px_rgba(131,209,139,0.2)]' : 'border-white/5 hover:border-white/20'}
+          ${data.isHovered ? 'border-[#83D18B]/50' : ''}
+          ${data.isDimmed ? 'opacity-20 blur-[0.5px] grayscale scale-95' : 'opacity-100'}
         `}
       >
         <Handle type="target" position={Position.Top} className="opacity-0" />
         <Handle type="source" position={Position.Bottom} className="opacity-0" />
         
-        <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-xl bg-white/[0.03] border border-white/5 ${data.isActive ? 'text-[#83D18B] border-[#83D18B]/30' : 'text-white/40'}`}>
+        <div className="flex items-center gap-2.5">
+          <div className={`p-1.5 rounded-lg bg-white/[0.03] ${data.isActive ? 'text-[#83D18B]' : 'text-white/40'}`}>
             {data.icon}
           </div>
           <div className="flex flex-col min-w-0 text-left">
-            <span className="text-[9px] uppercase font-bold tracking-wider font-mono text-white/35">{data.label}</span>
-            <span className="text-13 font-bold text-white/95 truncate font-sans">{data.metric}</span>
+            <span className="text-[10px] uppercase font-bold tracking-wider text-white/30 font-mono">{data.label}</span>
+            <span className="text-13 font-semibold text-white/90 truncate font-mono">{data.metric}</span>
           </div>
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 };
 
-export const CustomGraphNode = React.memo(CustomGraphNodeComponent, (prevProps, nextProps) => {
-  return (
-    prevProps.id === nextProps.id &&
-    prevProps.data.isActive === nextProps.data.isActive &&
-    prevProps.data.isHovered === nextProps.data.isHovered &&
-    prevProps.data.isDimmed === nextProps.data.isDimmed &&
-    prevProps.data.label === nextProps.data.label &&
-    prevProps.data.metric === nextProps.data.metric
-  );
-});
-
-// Static nodeTypes definition outside render loop to prevent re-mounting
 const nodeTypes = {
   customNode: CustomGraphNode
 };
 
-// Static relationship fallback definitions
+// Relationship details map for the tooltip (Static fallbacks)
 const fallbackRelationshipMap: Record<string, { metric: string; influence: string[] }> = {
   health: { metric: '84/100', influence: ['Revenue Run-rate', 'SLA Compliances', 'Safety stocks'] },
   revenue: { metric: '↑ 18%', influence: ['Marketing campaigns', 'Enterprise Customers', 'South Region'] },
@@ -160,35 +116,19 @@ const DecisionGraphInner: React.FC = () => {
   );
 
   const { fitView } = useReactFlow();
+  const location = useLocation();
 
-  // Single initial camera fit on mount to avoid viewport jumping
+  // Initial fitView on mount
   useEffect(() => {
     const timer = setTimeout(() => {
-      fitView({ padding: 0.24, duration: 250 });
-    }, 150);
+      fitView({ padding: 0.22 });
+    }, 100);
     return () => clearTimeout(timer);
-  }, [fitView]);
+  }, [location.pathname, fitView]);
 
   const activeHoveredNodeId = (isDemoActive && currentStep === 4) ? 'revenue' : hoveredNodeId;
 
-  // Memoized node hover callbacks
-  const handleMouseEnter = useCallback((id: string) => {
-    setHoveredNodeId(id);
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    setHoveredNodeId(null);
-  }, []);
-
-  const handleNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
-    setCopilotContextNodeId(node.id);
-  }, [setCopilotContextNodeId]);
-
-  const handlePaneClick = useCallback(() => {
-    setHoveredNodeId(null);
-  }, []);
-
-  // Fast sequential node assembly animation
+  // Assemble nodes sequentially over 1.2s
   useEffect(() => {
     if (strategyCanvasHasPlayedAnimation) return;
 
@@ -201,10 +141,11 @@ const DecisionGraphInner: React.FC = () => {
         }
         return prev + 1;
       });
-    }, 90);
+    }, 100);
     return () => clearInterval(timer);
   }, []);
 
+  // Compute dynamic relationships based on actual correlations
   const relationshipMap = useMemo(() => {
     const map: Record<string, { metric: string; influence: string[] }> = {};
     
@@ -241,6 +182,7 @@ const DecisionGraphInner: React.FC = () => {
     return map;
   }, [nodeContexts, parsedData]);
 
+  // Set of connections linked to any hovered node
   const connectedNodes = useMemo(() => {
     if (!activeHoveredNodeId) return new Set<string>();
     
@@ -262,166 +204,168 @@ const DecisionGraphInner: React.FC = () => {
     return linked;
   }, [activeHoveredNodeId, dynamicCanvasEdges]);
 
-  // Executive node layout definitions with stable coordinate geometry
+  // Layout node definitions
   const fullNodes = useMemo(() => [
     {
       id: 'health',
       type: 'customNode',
-      position: { x: 360, y: 240 },
+      position: { x: 300, y: 195 },
       data: {
         label: 'Business Health',
         metric: nodeContexts.health?.metric || '84/100',
-        icon: <Heart size={16} />,
+        icon: <Heart size={14} />,
         isActive: activeNodeId === 'health',
         isHovered: activeHoveredNodeId === 'health',
         isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('health'),
-        onMouseEnter: handleMouseEnter,
-        onMouseLeave: handleMouseLeave
+        onMouseEnter: () => setHoveredNodeId('health'),
+        onMouseLeave: () => setHoveredNodeId(null)
       }
     },
     {
       id: 'revenue',
       type: 'customNode',
-      position: { x: 360, y: 20 },
+      position: { x: 300, y: 15 },
       data: {
         label: 'Revenue',
         metric: nodeContexts.revenue?.metric || '$42.8M',
-        icon: <DollarSign size={16} />,
+        icon: <DollarSign size={14} />,
         isActive: activeNodeId === 'revenue',
         isHovered: activeHoveredNodeId === 'revenue',
         isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('revenue'),
-        onMouseEnter: handleMouseEnter,
-        onMouseLeave: handleMouseLeave
+        onMouseEnter: () => setHoveredNodeId('revenue'),
+        onMouseLeave: () => setHoveredNodeId(null)
       }
     },
     {
       id: 'profit',
       type: 'customNode',
-      position: { x: 600, y: 90 },
+      position: { x: 490, y: 75 },
       data: {
         label: 'Profit',
         metric: nodeContexts.profit?.metric || '44.0%',
-        icon: <Percent size={16} />,
+        icon: <Percent size={14} />,
         isActive: activeNodeId === 'profit',
         isHovered: activeHoveredNodeId === 'profit',
         isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('profit'),
-        onMouseEnter: handleMouseEnter,
-        onMouseLeave: handleMouseLeave
+        onMouseEnter: () => setHoveredNodeId('profit'),
+        onMouseLeave: () => setHoveredNodeId(null)
       }
     },
     {
       id: 'customer-satisfaction',
       type: 'customNode',
-      position: { x: 650, y: 240 },
+      position: { x: 530, y: 195 },
       data: {
         label: 'Satisfaction',
         metric: nodeContexts['customer-satisfaction']?.metric || '72 NPS',
-        icon: <Smile size={16} />,
+        icon: <Smile size={14} />,
         isActive: activeNodeId === 'customer-satisfaction',
         isHovered: activeHoveredNodeId === 'customer-satisfaction',
         isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('customer-satisfaction'),
-        onMouseEnter: handleMouseEnter,
-        onMouseLeave: handleMouseLeave
+        onMouseEnter: () => setHoveredNodeId('customer-satisfaction'),
+        onMouseLeave: () => setHoveredNodeId(null)
       }
     },
     {
       id: 'marketing',
       type: 'customNode',
-      position: { x: 600, y: 390 },
+      position: { x: 490, y: 315 },
       data: {
         label: 'Marketing',
         metric: nodeContexts.marketing?.metric || '4.8x ROI',
-        icon: <Megaphone size={16} />,
+        icon: <Megaphone size={14} />,
         isActive: activeNodeId === 'marketing',
         isHovered: activeHoveredNodeId === 'marketing',
         isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('marketing'),
-        onMouseEnter: handleMouseEnter,
-        onMouseLeave: handleMouseLeave
+        onMouseEnter: () => setHoveredNodeId('marketing'),
+        onMouseLeave: () => setHoveredNodeId(null)
       }
     },
     {
       id: 'operations',
       type: 'customNode',
-      position: { x: 360, y: 460 },
+      position: { x: 300, y: 375 },
       data: {
         label: 'Operations',
         metric: nodeContexts.operations?.metric || '92.4%',
-        icon: <Settings size={16} />,
+        icon: <Settings size={14} />,
         isActive: activeNodeId === 'operations',
         isHovered: activeHoveredNodeId === 'operations',
         isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('operations'),
-        onMouseEnter: handleMouseEnter,
-        onMouseLeave: handleMouseLeave
+        onMouseEnter: () => setHoveredNodeId('operations'),
+        onMouseLeave: () => setHoveredNodeId(null)
       }
     },
     {
       id: 'inventory',
       type: 'customNode',
-      position: { x: 120, y: 390 },
+      position: { x: 110, y: 315 },
       data: {
         label: 'Inventory',
         metric: nodeContexts.inventory?.metric || '6.2x Turns',
-        icon: <Boxes size={16} />,
+        icon: <Boxes size={14} />,
         isActive: activeNodeId === 'inventory',
         isHovered: activeHoveredNodeId === 'inventory',
         isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('inventory'),
-        onMouseEnter: handleMouseEnter,
-        onMouseLeave: handleMouseLeave
+        onMouseEnter: () => setHoveredNodeId('inventory'),
+        onMouseLeave: () => setHoveredNodeId(null)
       }
     },
     {
       id: 'customers',
       type: 'customNode',
-      position: { x: 70, y: 240 },
+      position: { x: 70, y: 195 },
       data: {
         label: 'Customers',
         metric: nodeContexts.customers?.metric || '118% NRR',
-        icon: <Users size={16} />,
+        icon: <Users size={14} />,
         isActive: activeNodeId === 'customers',
         isHovered: activeHoveredNodeId === 'customers',
         isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('customers'),
-        onMouseEnter: handleMouseEnter,
-        onMouseLeave: handleMouseLeave
+        onMouseEnter: () => setHoveredNodeId('customers'),
+        onMouseLeave: () => setHoveredNodeId(null)
       }
     },
     {
       id: 'growth',
       type: 'customNode',
-      position: { x: 120, y: 90 },
+      position: { x: 110, y: 75 },
       data: {
         label: 'Growth Index',
         metric: nodeContexts.growth?.metric || '+14% YoY',
-        icon: <TrendingUp size={16} />,
+        icon: <TrendingUp size={14} />,
         isActive: activeNodeId === 'growth',
         isHovered: activeHoveredNodeId === 'growth',
         isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('growth'),
-        onMouseEnter: handleMouseEnter,
-        onMouseLeave: handleMouseLeave
+        onMouseEnter: () => setHoveredNodeId('growth'),
+        onMouseLeave: () => setHoveredNodeId(null)
       }
     }
-  ], [activeNodeId, activeHoveredNodeId, connectedNodes, nodeContexts, handleMouseEnter, handleMouseLeave]);
+  ], [activeNodeId, activeHoveredNodeId, connectedNodes, nodeContexts]);
 
-  const nodes = useMemo(() => fullNodes.slice(0, nodesAssembled), [fullNodes, nodesAssembled]);
+  // Display only assembled nodes
+  const nodes = useMemo(() => {
+    return fullNodes.slice(0, nodesAssembled);
+  }, [fullNodes, nodesAssembled]);
 
-  // Clean edge routing with stable keys
+  // Connected relationship edges
   const edges: Edge[] = useMemo(() => {
     const renderedEdges = dynamicCanvasEdges
       .filter(e => nodes.some(n => n.id === e.source) && nodes.some(n => n.id === e.target))
-      .map((e) => {
+      .map((e, idx) => {
         const isSourceActive = activeNodeId === e.source || activeNodeId === e.target;
         const isHighlighted = activeHoveredNodeId === e.source || activeHoveredNodeId === e.target || isSourceActive;
         const isDimmed = activeHoveredNodeId !== null && activeHoveredNodeId !== e.source && activeHoveredNodeId !== e.target;
 
         return {
-          id: `edge-${e.source}-${e.target}`,
+          id: `edge-${e.source}-${e.target}-${idx}`,
           source: e.source,
           target: e.target,
-          type: 'smoothstep',
           animated: !isDimmed,
           style: {
             stroke: isHighlighted ? '#83D18B' : isDimmed ? 'rgba(255,255,255,0.02)' : 'rgba(255, 255, 255, 0.08)',
-            strokeWidth: isHighlighted ? 1.8 : 1,
-            transition: 'stroke 0.2s, stroke-width 0.2s'
+            strokeWidth: isHighlighted ? 1.5 : 1,
+            transition: 'stroke 0.3s, stroke-width 0.3s'
           }
         };
       });
@@ -440,12 +384,11 @@ const DecisionGraphInner: React.FC = () => {
             id: `edge-fallback-${satId}`,
             source: 'health',
             target: satId,
-            type: 'smoothstep',
             animated: isHighlighted,
             style: {
               stroke: isHighlighted ? '#83D18B' : isDimmed ? 'rgba(255,255,255,0.02)' : 'rgba(255, 255, 255, 0.08)',
-              strokeWidth: isHighlighted ? 1.8 : 1,
-              transition: 'stroke 0.2s, stroke-width 0.2s'
+              strokeWidth: isHighlighted ? 1.5 : 1,
+              transition: 'stroke 0.3s, stroke-width 0.3s'
             }
           };
         });
@@ -458,10 +401,10 @@ const DecisionGraphInner: React.FC = () => {
   const hoveredNode = activeHoveredNodeId ? fullNodes.find(n => n.id === activeHoveredNodeId) : null;
 
   return (
-    <div className="w-full h-[620px] relative bg-[#090B10] border border-white/10 rounded-2xl overflow-hidden shadow-2xl font-sans">
-      <div className="absolute top-4 left-4 z-10 flex flex-col gap-0.5 select-none pointer-events-none">
-        <span className="text-[9.5px] font-bold uppercase tracking-wider text-[#83D18B] font-mono">Decision Topology</span>
-        <span className="text-12 font-bold text-white/90 font-sans">Multivariate Strategy Mesh</span>
+    <div className="w-full h-[580px] relative bg-[#090B10] border border-white/5 rounded-2xl overflow-hidden shadow-2xl font-sans">
+      <div className="absolute top-4 left-4 z-10 flex flex-col gap-0.5 pointer-events-none select-none">
+        <span className="text-[10px] font-bold uppercase tracking-wider text-white/30 font-mono">System Blueprint</span>
+        <span className="text-12 font-medium text-white/70 font-sans">Interactive Relationship Graph</span>
       </div>
 
       {/* Relationship Tooltip overlay */}
@@ -472,10 +415,10 @@ const DecisionGraphInner: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
-            className="absolute z-20 top-4 right-4 bg-[#12161D]/95 border border-white/10 rounded-2xl p-4.5 w-64 shadow-2xl flex flex-col gap-2.5 pointer-events-none select-none backdrop-blur-md font-sans"
+            className="absolute z-20 top-4 right-4 bg-[#151B23] border border-white/5 rounded-xl p-4 w-60 shadow-2xl flex flex-col gap-2 pointer-events-none select-none font-sans"
           >
             <div className="flex justify-between items-center border-b border-white/5 pb-2">
-              <span className="text-[9.5px] uppercase font-bold tracking-wider text-white/40 font-mono">
+              <span className="text-[9.5px] uppercase font-bold tracking-wider text-white/30 font-mono">
                 {hoveredNode.data.label}
               </span>
               <span className="text-12.5 font-bold text-[#83D18B] font-mono flex items-center gap-0.5">
@@ -485,7 +428,7 @@ const DecisionGraphInner: React.FC = () => {
             
             <div className="space-y-1">
               <span className="text-[9px] uppercase font-bold tracking-widest text-[#83D18B] font-mono">Related Nodes / Influences</span>
-              <div className="flex flex-col gap-1 text-12 text-white/70">
+              <div className="flex flex-col gap-1 text-12 text-white/65">
                 {activeHoveredRel.influence.map((inf, idx) => (
                   <span key={idx} className="flex items-center gap-1.5 leading-tight truncate">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#83D18B] shrink-0 opacity-60" />
@@ -495,9 +438,10 @@ const DecisionGraphInner: React.FC = () => {
               </div>
             </div>
 
+            {/* Dynamic relationship explanation */}
             <div className="border-t border-white/5 pt-2 mt-1 space-y-1">
               <span className="text-[8.5px] uppercase font-bold tracking-widest text-white/35 font-mono">Correlation Insight</span>
-              <p className="text-11 text-white/60 leading-relaxed font-sans text-left">
+              <p className="text-11 text-white/50 leading-normal font-sans italic text-left">
                 {activeHoveredNodeId === 'marketing' 
                   ? "Ad bidding scale directly influences lead capture rates and pipeline volume."
                   : activeHoveredNodeId === 'revenue'
@@ -520,48 +464,20 @@ const DecisionGraphInner: React.FC = () => {
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
-        onNodeClick={handleNodeClick}
-        onPaneClick={handlePaneClick}
+        onNodeClick={(_, node) => setCopilotContextNodeId(node.id)}
         fitView
-        fitViewOptions={{ padding: 0.24 }}
+        fitViewOptions={{ padding: 0.20 }}
         nodesConnectable={false}
         nodesDraggable={false}
-        elementsSelectable={false}
+        elementsSelectable={true}
         zoomOnScroll={true}
         zoomOnPinch={true}
         panOnDrag={true}
         proOptions={{ hideAttribution: true }}
         className="w-full h-full"
       >
-        <Background color="#1A212B" gap={24} size={1} />
-        <Controls 
-          className="bg-[#151B23]/90 border border-white/10 rounded-xl overflow-hidden shadow-2xl fill-white/70"
-          showInteractive={false}
-        />
-        <MiniMap 
-          nodeColor="#83D18B"
-          maskColor="rgba(9, 11, 16, 0.75)"
-          className="bg-[#12161D]/90 border border-white/10 rounded-xl overflow-hidden shadow-2xl"
-          zoomable
-          pannable
-        />
+        <Background color="#1b222c" gap={20} size={1} />
       </ReactFlow>
-
-      {/* Attribution watermark styling rules */}
-      <style>{`
-        .react-flow__attribution { display: none !important; }
-        .react-flow__controls-button {
-          background: #12161D !important;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-          color: rgba(255, 255, 255, 0.7) !important;
-          fill: rgba(255, 255, 255, 0.7) !important;
-        }
-        .react-flow__controls-button:hover {
-          background: rgba(255, 255, 255, 0.06) !important;
-          color: #83D18B !important;
-          fill: #83D18B !important;
-        }
-      `}</style>
     </div>
   );
 };
