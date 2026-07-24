@@ -13,16 +13,16 @@ export const Card: React.FC<CardProps> = ({
   children,
   ...props
 }) => {
-  const baseStyles = 'rounded-2xl border transition-all duration-[250ms] ease-out overflow-hidden';
+  const baseStyles = 'rounded-2xl border transition-all duration-200 ease-out overflow-hidden';
   
   const elevations = {
-    flat: 'bg-card border-white/5 shadow-sm',
-    raised: 'bg-card border-white/10 shadow-md',
-    elevated: 'bg-white/[0.01] border-white/5 shadow-2xl backdrop-blur-md',
+    flat: 'bg-[#12161D]/80 border-white/[0.06] shadow-sm backdrop-blur-sm',
+    raised: 'bg-[#151B23] border-white/[0.08] shadow-md',
+    elevated: 'bg-white/[0.015] border-white/[0.06] shadow-xl backdrop-blur-md',
   };
 
   const hoverStyles = hoverEffect 
-    ? 'hover:border-[#83D18B]/20 hover:-translate-y-1.5 hover:shadow-[0_12px_40px_rgba(0,0,0,0.55),0_0_20px_rgba(131,209,139,0.05)] hover:bg-white/[0.015]' 
+    ? 'hover:border-[#83D18B]/25 hover:-translate-y-1 hover:shadow-[0_10px_32px_rgba(0,0,0,0.45),0_0_16px_rgba(131,209,139,0.04)] hover:bg-white/[0.02]' 
     : '';
 
   return (

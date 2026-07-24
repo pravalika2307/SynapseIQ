@@ -288,12 +288,12 @@ export const DecisionCopilot: React.FC = () => {
                     {isUser ? 'Executive Query' : 'Strategy Advisory Team'} · {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
 
-                  {/* Bubble - Claude / Perplexity typography, no speech shapes */}
+                  {/* Bubble - Linear / Perplexity typography */}
                   <div className={`
                     rounded-2xl transition-all duration-300
                     ${isUser 
-                      ? 'bg-[#151B23] border border-white/10 text-white px-5 py-3.5 shadow-md font-sans text-13.5 font-medium' 
-                      : 'text-white/80 font-serif text-15 leading-relaxed space-y-4'
+                      ? 'bg-[#151B23] border border-white/10 text-white px-4.5 py-3 shadow-md font-sans text-13 font-medium' 
+                      : 'text-white/85 font-sans text-13.5 md:text-14 leading-relaxed space-y-3'
                     }
                   `}>
                     {isUser ? (

@@ -18,20 +18,20 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
   const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);
 
-  const baseStyles = 'inline-flex items-center justify-center font-sans font-semibold rounded-xl transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-sage/50 disabled:opacity-40 disabled:pointer-events-none select-none cursor-pointer overflow-hidden relative';
+  const baseStyles = 'inline-flex items-center justify-center font-sans font-medium rounded-xl transition-all duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-sage/40 disabled:opacity-40 disabled:pointer-events-none select-none cursor-pointer overflow-hidden relative tracking-tight';
   
   const variants = {
-    primary: 'bg-accent-sage text-background shadow-md shadow-accent-sage/5 hover:bg-[#A5E6B3] active:bg-accent-sage/80 hover:shadow-[0_4px_15px_rgba(131,209,139,0.25)]',
-    secondary: 'bg-white/[0.03] border border-white/5 text-white/80 hover:bg-white/[0.06] hover:text-white hover:border-white/10 active:bg-white/[0.08] hover:shadow-[0_4px_12px_rgba(255,255,255,0.02)]',
+    primary: 'bg-accent-sage text-background font-semibold shadow-md shadow-accent-sage/5 hover:bg-[#97DD9E] active:bg-accent-sage/80 hover:shadow-[0_4px_14px_rgba(131,209,139,0.22)]',
+    secondary: 'bg-white/[0.03] border border-white/[0.08] text-white/85 hover:bg-white/[0.06] hover:text-white hover:border-white/15 active:bg-white/[0.08]',
     ghost: 'text-white/60 hover:text-white hover:bg-white/[0.04] active:bg-white/[0.06]',
-    critical: 'bg-critical/15 border border-critical/20 text-critical hover:bg-critical/25 active:bg-critical/30 hover:shadow-[0_4px_12px_rgba(231,111,81,0.15)]',
-    warn: 'bg-warn/15 border border-warn/20 text-warn hover:bg-warn/25 active:bg-warn/30 hover:shadow-[0_4px_12px_rgba(245,177,76,0.15)]',
+    critical: 'bg-critical/15 border border-critical/20 text-critical hover:bg-critical/25 active:bg-critical/30',
+    warn: 'bg-warn/15 border border-warn/20 text-warn hover:bg-warn/25 active:bg-warn/30',
   };
 
   const sizes = {
-    sm: 'px-3 py-1.5 text-11.5',
-    md: 'px-4.5 py-2 text-13',
-    lg: 'px-6 py-2.5 text-14.5',
+    sm: 'px-3 py-1.5 text-11',
+    md: 'px-4 py-2 text-12.5',
+    lg: 'px-5 py-2.5 text-13.5',
   };
 
   const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {

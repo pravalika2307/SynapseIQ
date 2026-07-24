@@ -11,7 +11,7 @@ export const Badge: React.FC<BadgeProps> = ({
   children,
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[10.5px] font-bold tracking-wider uppercase border select-none';
+  const baseStyles = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9.5px] font-bold tracking-wider uppercase border select-none font-mono';
   
   const variants = {
     sage: 'bg-accent-sage-dim text-accent-sage border-accent-sage-border',

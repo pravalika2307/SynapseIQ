@@ -44,16 +44,16 @@ export const BusinessSignals: React.FC = () => {
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="max-w-[1200px] mx-auto px-10 py-12 flex flex-col gap-10"
+      className="max-w-[1280px] mx-auto px-8 md:px-12 py-10 flex flex-col gap-8 md:gap-10 font-sans"
     >
       {/* Title */}
-      <motion.div variants={itemVariants} className="flex flex-col gap-3 pt-8">
+      <motion.div variants={itemVariants} className="flex flex-col gap-2 pt-4">
         <div className="flex items-center gap-2">
           <div className="w-1.5 h-1.5 rounded-full bg-accent-sage opacity-75" />
-          <span className="text-[10px] font-bold uppercase tracking-widest text-accent-sage">Telemetry Telepresence</span>
+          <span className="text-[9.5px] font-bold uppercase tracking-widest text-accent-sage font-mono">Telemetry Telepresence</span>
         </div>
-        <h1 className="text-32 font-semibold tracking-tight text-white/95">Business Signals Matrix</h1>
-        <p className="text-14 text-white/50 -mt-2">
+        <h1 className="text-28 md:text-34 font-bold tracking-tight text-white/95 font-sans">Business Signals Matrix</h1>
+        <p className="text-12.5 text-white/45 max-w-2xl leading-relaxed font-sans">
           Real-time telemetry indicators. Clicking a graph node filters and highlights relevant operational signals.
         </p>
       </motion.div>

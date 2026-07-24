@@ -35,24 +35,24 @@ export const MetricCard: React.FC<MetricCardProps> = ({
     : null;
 
   return (
-    <Card elevation="flat" hoverEffect className="pt-5 px-5 flex flex-col justify-between overflow-hidden relative group">
+    <Card elevation="flat" hoverEffect className="p-5 flex flex-col justify-between overflow-hidden relative group">
       <div>
-        <span className="text-[10px] font-bold uppercase tracking-wider text-white/30 block mb-3 select-none">
+        <span className="text-[9.5px] font-bold uppercase tracking-wider text-white/35 block mb-2 select-none font-mono">
           {label}
         </span>
-        <div className={`text-28 font-bold tracking-tight mb-1 ${trend ? trendColors[trend.type] : 'text-white'}`}>
+        <div className={`text-24 md:text-26 font-bold tracking-tight mb-1 font-sans ${trend ? trendColors[trend.type] : 'text-white'}`}>
           {value}
         </div>
         
         {trend && (
-          <div className="text-11 text-white/40 flex items-center gap-1">
+          <div className="text-11 text-white/40 flex items-center gap-1 font-mono">
             {TrendIcon && <TrendIcon size={12} className={trendColors[trend.type]} />}
             <span>{trend.value}</span>
           </div>
         )}
 
         {description && !trend && (
-          <div className="text-11 text-white/40">
+          <div className="text-11 text-white/40 font-sans">
             {description}
           </div>
         )}

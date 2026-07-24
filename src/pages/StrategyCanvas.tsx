@@ -42,15 +42,15 @@ export const StrategyCanvas: React.FC = () => {
   ];
 
   return (
-    <div className={`max-w-[1200px] mx-auto px-10 py-12 flex flex-col gap-10 transition-all duration-1000 ${pulseHighlight ? 'ring-1 ring-[#83D18B]/35 shadow-[0_0_40px_rgba(131,209,139,0.08)] bg-[#83D18B]/[0.01] rounded-[2rem]' : ''}`}>
+    <div className={`max-w-[1280px] mx-auto px-8 md:px-12 py-10 flex flex-col gap-8 md:gap-10 font-sans transition-all duration-1000 ${pulseHighlight ? 'ring-1 ring-[#83D18B]/35 shadow-[0_0_40px_rgba(131,209,139,0.08)] bg-[#83D18B]/[0.01] rounded-[2rem]' : ''}`}>
       {/* Title */}
-      <div className="flex flex-col gap-3 pt-8">
+      <div className="flex flex-col gap-2 pt-4">
         <div className="flex items-center gap-2">
           <Compass className="text-accent-sage animate-spin-slow" size={16} />
-          <span className="text-[10px] font-bold uppercase tracking-widest text-accent-sage">Strategy Mapping</span>
+          <span className="text-[9.5px] font-bold uppercase tracking-widest text-accent-sage font-mono">Strategy Mapping</span>
         </div>
-        <h1 className="text-32 font-semibold tracking-tight text-white/95">Business Strategy Canvas</h1>
-        <p className="text-14 text-white/50 -mt-2">
+        <h1 className="text-28 md:text-34 font-bold tracking-tight text-white/95 font-sans">Business Strategy Canvas</h1>
+        <p className="text-12.5 text-white/45 max-w-2xl leading-relaxed font-sans">
           Interactive business relationship network. Maps interdependencies between core organizational metrics.
         </p>
       </div>

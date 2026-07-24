@@ -42,7 +42,7 @@ export const DataExplorer: React.FC = () => {
   };
 
   return (
-    <div className="max-w-[1200px] mx-auto px-10 py-12 flex flex-col gap-14">
+    <div className="max-w-[1280px] mx-auto px-8 md:px-12 py-10 flex flex-col gap-8 md:gap-10 font-sans">
       {/* Title */}
       <SectionHeader 
         label="Design System Playground"
@@ -54,10 +54,10 @@ export const DataExplorer: React.FC = () => {
       <DeveloperDatasetTester />
 
       {/* Spacing & Rhythm Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
         
         {/* Buttons section */}
-        <Card elevation="flat" className="p-6 space-y-6">
+        <Card elevation="flat" className="p-5 md:p-6 space-y-5">
           <div className="flex items-center justify-between border-b border-white/5 pb-4">
             <h3 className="text-14 font-semibold text-white/90">Atomic Buttons</h3>
             <Badge variant="sage">interactive</Badge>

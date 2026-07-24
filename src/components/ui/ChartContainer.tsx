@@ -16,14 +16,14 @@ export const ChartContainer: React.FC<ChartContainerProps> = React.memo(({
   children
 }) => {
   return (
-    <Card elevation="flat" className="p-6 flex flex-col gap-5">
-      <div className="flex items-center justify-between">
+    <Card elevation="flat" className="p-5 md:p-6 flex flex-col gap-5">
+      <div className="flex items-center justify-between pb-1">
         <div className="flex flex-col gap-0.5 select-none">
-          <span className="text-[9.5px] font-bold text-white/30 uppercase tracking-wider">
+          <span className="text-[9.5px] font-bold text-white/35 uppercase tracking-wider font-mono">
             {title}
           </span>
           {subtitle && (
-            <span className="text-11.5 text-white/40 leading-none">
+            <span className="text-11 text-white/40 leading-none font-sans">
               {subtitle}
             </span>
           )}
@@ -36,7 +36,7 @@ export const ChartContainer: React.FC<ChartContainerProps> = React.memo(({
         )}
       </div>
 
-      <div className="w-full relative">
+      <div className="w-full relative pt-1 pb-1">
         {children}
       </div>
     </Card>
