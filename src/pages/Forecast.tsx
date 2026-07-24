@@ -15,10 +15,10 @@ const renderRecommendation = (recText: string) => {
     if (data && typeof data === 'object' && data.recommendation) {
       return (
         <div className="space-y-2 mt-1 font-sans text-left text-11.5">
-          <div className="leading-relaxed"><strong className="text-white/80 font-sans block text-[10px] uppercase text-white/30 tracking-wider">Recommendation</strong> <span className="text-white/85 font-serif text-12 leading-relaxed block">{data.recommendation}</span></div>
-          <div className="leading-relaxed"><strong className="text-white/80 font-sans block text-[10px] uppercase text-white/30 tracking-wider">Business Reasoning</strong> <span className="text-white/70 font-serif leading-relaxed block">{data.businessReasoning}</span></div>
-          <div className="leading-relaxed"><strong className="text-white/80 font-sans block text-[10px] uppercase text-white/30 tracking-wider">Supporting Metrics</strong> <span className="text-white/70 font-serif leading-relaxed block">{data.supportingMetrics}</span></div>
-          <div className="leading-relaxed"><strong className="text-white/80 font-sans block text-[10px] uppercase text-white/30 tracking-wider">Expected Impact</strong> <span className="text-white/70 font-serif leading-relaxed block">{data.expectedImpact}</span></div>
+          <div className="leading-relaxed"><strong className="text-white/80 font-sans block text-11 uppercase text-white/35 tracking-wider font-mono">Recommendation</strong> <span className="text-white/90 font-sans text-14 leading-relaxed block">{data.recommendation}</span></div>
+          <div className="leading-relaxed"><strong className="text-white/80 font-sans block text-11 uppercase text-white/35 tracking-wider font-mono">Business Reasoning</strong> <span className="text-white/75 font-sans text-13 leading-relaxed block">{data.businessReasoning}</span></div>
+          <div className="leading-relaxed"><strong className="text-white/80 font-sans block text-11 uppercase text-white/35 tracking-wider font-mono">Supporting Metrics</strong> <span className="text-white/75 font-sans text-13 leading-relaxed block">{data.supportingMetrics}</span></div>
+          <div className="leading-relaxed"><strong className="text-white/80 font-sans block text-11 uppercase text-white/35 tracking-wider font-mono">Expected Impact</strong> <span className="text-[#83D18B] font-sans text-13 font-semibold leading-relaxed block">{data.expectedImpact}</span></div>
           
           <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 border-t border-white/5 pt-2 mt-2 font-mono text-[10.5px]">
             <div>
