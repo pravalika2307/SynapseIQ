@@ -184,6 +184,10 @@ const DecisionGraphInner: React.FC = () => {
     setCopilotContextNodeId(node.id);
   }, [setCopilotContextNodeId]);
 
+  const handlePaneClick = useCallback(() => {
+    setHoveredNodeId(null);
+  }, []);
+
   // Fast sequential node assembly animation
   useEffect(() => {
     if (strategyCanvasHasPlayedAnimation) return;
@@ -517,6 +521,7 @@ const DecisionGraphInner: React.FC = () => {
         edges={edges}
         nodeTypes={nodeTypes}
         onNodeClick={handleNodeClick}
+        onPaneClick={handlePaneClick}
         fitView
         fitViewOptions={{ padding: 0.24 }}
         nodesConnectable={false}

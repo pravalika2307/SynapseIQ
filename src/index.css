@@ -42,9 +42,17 @@
   --color-accent-contrast-text: #050608;
 }
 
-/* Smooth 250ms accent theme transitions */
-*, *::before, *::after {
+/* Smooth 250ms accent theme transitions for UI components */
+*:not(.react-flow):not(.react-flow *):not(.recharts-wrapper):not(.recharts-wrapper *) {
   transition: color 0.2s ease-out, background-color 0.2s ease-out, border-color 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+/* Explicitly disable CSS transition interpolation on canvas viewport matrix and SVG path recalculations */
+.react-flow,
+.react-flow *,
+.recharts-wrapper,
+.recharts-wrapper * {
+  transition: none !important;
 }
 
 @keyframes pulse-ring {
