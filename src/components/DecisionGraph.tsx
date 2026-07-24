@@ -49,9 +49,9 @@ const CustomGraphNodeComponent: React.FC<NodeProps<Node<CustomNodeData>>> = ({ i
 
   return (
     <motion.div 
-      initial={{ opacity: 0, scale: 0.9 }}
+      initial={false}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3, ease: 'easeOut' }}
+      transition={{ duration: 0.15, ease: 'easeOut' }}
       className="relative"
     >
       {/* Radial glow backdrop for active or health hub node */}
@@ -179,6 +179,10 @@ const DecisionGraphInner: React.FC = () => {
   const handleMouseLeave = useCallback(() => {
     setHoveredNodeId(null);
   }, []);
+
+  const handleNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
+    setCopilotContextNodeId(node.id);
+  }, [setCopilotContextNodeId]);
 
   // Fast sequential node assembly animation
   useEffect(() => {
@@ -512,12 +516,12 @@ const DecisionGraphInner: React.FC = () => {
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
-        onNodeClick={(_, node) => setCopilotContextNodeId(node.id)}
+        onNodeClick={handleNodeClick}
         fitView
         fitViewOptions={{ padding: 0.24 }}
         nodesConnectable={false}
         nodesDraggable={false}
-        elementsSelectable={true}
+        elementsSelectable={false}
         zoomOnScroll={true}
         zoomOnPinch={true}
         panOnDrag={true}

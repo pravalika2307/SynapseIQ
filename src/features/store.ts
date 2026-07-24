@@ -138,12 +138,17 @@ export const useAppStore = create<AppState>((set, get) => ({
   setIsDatasetLoaded: (loaded) => set({ isDatasetLoaded: loaded }),
   
   setActiveNodeId: (id) => {
-    set({ activeNodeId: id });
-    set((state) => ({ explorationHistory: [...state.explorationHistory, id] }));
+    set((state) => ({
+      activeNodeId: id,
+      explorationHistory: [...state.explorationHistory, id]
+    }));
   },
   setCopilotContextNodeId: (id) => {
-    set({ copilotContextNodeId: id, activeNodeId: id });
-    set((state) => ({ explorationHistory: [...state.explorationHistory, id] }));
+    set((state) => ({
+      copilotContextNodeId: id,
+      activeNodeId: id,
+      explorationHistory: [...state.explorationHistory, id]
+    }));
   },
   setSelectedScenario: (scenario) => set({ selectedScenario: scenario }),
   updateScenarioInputs: (inputs) => set((state) => ({
