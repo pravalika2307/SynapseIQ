@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 interface CountUpProps {
   value: number;
@@ -10,12 +10,13 @@ interface CountUpProps {
 
 export const CountUp: React.FC<CountUpProps> = ({ 
   value, 
-  duration = 800, 
+  duration = 900, 
   prefix = '', 
   suffix = '',
   decimals = 0
 }) => {
   const [displayValue, setDisplayValue] = useState(0);
+  const elementRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     let startTimestamp: number | null = null;
@@ -24,7 +25,9 @@ export const CountUp: React.FC<CountUpProps> = ({
     const step = (timestamp: number) => {
       if (!startTimestamp) startTimestamp = timestamp;
       const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-      setDisplayValue(progress * value);
+      // Ease out quad
+      const easedProgress = 1 - (1 - progress) * (1 - progress);
+      setDisplayValue(easedProgress * value);
       
       if (progress < 1) {
         animationFrameId = window.requestAnimationFrame(step);
@@ -39,7 +42,7 @@ export const CountUp: React.FC<CountUpProps> = ({
   }, [value, duration]);
 
   return (
-    <span>
+    <span ref={elementRef} className="tabular-nums transition-all">
       {prefix}
       {displayValue.toLocaleString('en-US', {
         minimumFractionDigits: decimals,
