@@ -47,15 +47,15 @@ export const Dropdown: React.FC<DropdownProps> = ({
             exit={{ opacity: 0, scale: 0.95, y: 5 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
             className={`
-              absolute z-50 mt-2 w-48 rounded-lg bg-card border border-white/5 shadow-2xl p-1
-              ${align === 'right' ? 'right-0Origin' : 'left-0'}
+              absolute z-50 mt-2 w-52 rounded-2xl bg-[#12161D]/95 border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.5)] backdrop-blur-md p-1.5 font-sans
+              ${align === 'right' ? 'right-0' : 'left-0'}
             `}
             style={{
               right: align === 'right' ? 0 : 'auto',
               left: align === 'left' ? 0 : 'auto',
             }}
           >
-            <div className="space-y-[1px]">
+            <div className="space-y-0.5">
               {items.map((item) => (
                 <button
                   key={item.id}

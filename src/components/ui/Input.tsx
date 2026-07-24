@@ -21,11 +21,11 @@ export const Input: React.FC<InputProps> = ({
         )}
         <input
           className={`
-            w-full bg-card border rounded-lg py-2 px-3 text-13 text-white/90 placeholder-white/20 outline-none transition-all duration-300
-            ${icon ? 'pl-9' : ''}
+            w-full bg-[#12161D] border rounded-xl py-2 px-3.5 text-12.5 text-white/90 placeholder-white/25 outline-none transition-all duration-150 font-sans tracking-tight
+            ${icon ? 'pl-9.5' : ''}
             ${error 
-              ? 'border-critical focus:border-critical focus:ring-4 focus:ring-critical/5' 
-              : 'border-white/5 focus:border-accent-sage-border focus:bg-white/[0.05] focus:ring-4 focus:ring-accent-sage/5'
+              ? 'border-critical focus:border-critical focus:ring-2 focus:ring-critical/20' 
+              : 'border-white/[0.08] focus:border-[#83D18B]/50 focus:bg-white/[0.03] focus:ring-2 focus:ring-[#83D18B]/20'
             }
             ${className}
           `}
