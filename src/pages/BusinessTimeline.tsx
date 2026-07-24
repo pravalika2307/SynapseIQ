@@ -92,10 +92,10 @@ export const BusinessTimeline: React.FC = () => {
   };
 
   return (
-    <div className="max-w-[1200px] mx-auto px-10 py-12 flex flex-col gap-10 text-[#F5F7FA]">
+    <div className="max-w-[1280px] mx-auto px-8 md:px-12 py-10 flex flex-col gap-8 md:gap-10 text-[#F5F7FA] font-sans">
       
       {/* Title Header */}
-      <div className="flex flex-col gap-3 pt-8 select-none">
+      <div className="flex flex-col gap-2 select-none">
         <SectionHeader 
           label="Strategic Progression"
           title="Business Progression Timeline"

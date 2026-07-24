@@ -294,12 +294,12 @@ export const Reports: React.FC = () => {
                         <div className="w-8 h-8 rounded-lg bg-white/[0.03] border border-white/10 flex items-center justify-center group-hover:border-[#83D18B]/30 transition-colors">
                           {sec.icon}
                         </div>
-                        <h3 className="text-16 font-bold text-white/90 font-sans tracking-tight">{heading}</h3>
+                        <h3 className="text-14.5 font-bold text-white/90 font-sans tracking-tight">{heading}</h3>
                       </div>
                       <span className="text-10 font-mono text-white/30 uppercase tracking-widest">Part 0{idx + 1}</span>
                     </div>
 
-                    <p className="text-14.5 text-white/75 leading-relaxed font-sans max-w-[900px]">
+                    <p className="text-13 md:text-13.5 text-white/80 leading-relaxed font-sans max-w-[900px]">
                       {content}
                     </p>
 

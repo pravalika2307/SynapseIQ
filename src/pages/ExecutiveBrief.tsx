@@ -252,10 +252,10 @@ export const ExecutiveBrief: React.FC = () => {
               Executive Command Center
             </span>
           </div>
-          <h1 className="text-32 md:text-44 font-bold text-white tracking-tight leading-tight font-sans">
+          <h1 className="text-26 md:text-32 font-bold text-white tracking-tight leading-snug font-sans">
             {greeting}, Executive Operator.
           </h1>
-          <p className="text-13 md:text-14 text-white/50 max-w-2xl leading-relaxed font-sans">
+          <p className="text-12 md:text-12.5 text-white/45 max-w-2xl leading-relaxed font-sans">
             Real-time telemetry command dashboard. Immediate answers to <strong className="text-white/80 font-semibold">what is happening</strong>, <strong className="text-[#83D18B] font-semibold">what to care about</strong>, and <strong className="text-white/80 font-semibold font-mono">what action to take next</strong>.
           </p>
         </div>
