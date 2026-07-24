@@ -1,19 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import { 
-  ReactFlow, 
-  Background, 
-  Position, 
-  Handle,
-  ReactFlowProvider,
-  useReactFlow 
-} from '@xyflow/react';
-import { useLocation } from 'react-router-dom';
-import type { 
-  Node, 
-  Edge, 
-  NodeProps 
-} from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
+import React, { useMemo, useState, useCallback, useRef } from 'react';
 import { 
   Heart, 
   DollarSign, 
@@ -24,68 +9,37 @@ import {
   Settings, 
   Smile,
   TrendingUp,
-  ArrowUpRight
+  ArrowUpRight,
+  ZoomIn,
+  ZoomOut,
+  Maximize2
 } from 'lucide-react';
 import { useAppStore } from '../features/store';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDemoStore } from '../features/demoStore';
 
-// Define custom node types
-interface CustomNodeData extends Record<string, unknown> {
+interface NodeDefinition {
+  id: string;
   label: string;
-  metric: string;
+  x: number;
+  y: number;
   icon: React.ReactNode;
-  isActive: boolean;
-  isHovered: boolean;
-  isDimmed: boolean;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
 }
 
-const CustomGraphNode: React.FC<NodeProps<Node<CustomNodeData>>> = ({ id, data }) => {
-  const breatheNode = id === 'health' || data.label === 'Business Health' || data.label === 'Business Health Index';
+// Static topology node positions centered in an 800x520 canvas coordinate system
+const STAGED_NODES: NodeDefinition[] = [
+  { id: 'health', label: 'Business Health', x: 400, y: 260, icon: <Heart size={16} /> },
+  { id: 'revenue', label: 'Revenue', x: 400, y: 65, icon: <DollarSign size={16} /> },
+  { id: 'profit', label: 'Profit', x: 630, y: 130, icon: <Percent size={16} /> },
+  { id: 'customer-satisfaction', label: 'Satisfaction', x: 680, y: 260, icon: <Smile size={16} /> },
+  { id: 'marketing', label: 'Marketing', x: 630, y: 390, icon: <Megaphone size={16} /> },
+  { id: 'operations', label: 'Operations', x: 400, y: 455, icon: <Settings size={16} /> },
+  { id: 'inventory', label: 'Inventory', x: 170, y: 390, icon: <Boxes size={16} /> },
+  { id: 'customers', label: 'Customers', x: 120, y: 260, icon: <Users size={16} /> },
+  { id: 'growth', label: 'Growth Index', x: 170, y: 130, icon: <TrendingUp size={16} /> }
+];
 
-  return (
-    <div className="relative select-none">
-      {/* Subtle radial glow backdrop */}
-      {(data.isActive || breatheNode) && (
-        <div 
-          className={`absolute -inset-5 rounded-full blur-xl -z-10 pointer-events-none transition-opacity duration-300 ${breatheNode ? 'bg-[#83D18B]/12 opacity-80' : 'bg-[#83D18B]/18 opacity-100'}`}
-        />
-      )}
-
-      <div
-        onMouseEnter={data.onMouseEnter}
-        onMouseLeave={data.onMouseLeave}
-        className={`
-          px-4 py-3 rounded-xl border bg-[#151B23] transition-all duration-200 min-w-[150px] shadow-lg select-none cursor-pointer
-          ${data.isActive ? 'border-[#83D18B] bg-[#83D18B]/10 shadow-[0_0_20px_rgba(131,209,139,0.2)]' : 'border-white/5 hover:border-white/20'}
-          ${data.isHovered ? 'border-[#83D18B]/50' : ''}
-          ${data.isDimmed ? 'opacity-20 blur-[0.5px] grayscale scale-95' : 'opacity-100'}
-        `}
-      >
-        <Handle type="target" position={Position.Top} className="opacity-0" />
-        <Handle type="source" position={Position.Bottom} className="opacity-0" />
-        
-        <div className="flex items-center gap-2.5">
-          <div className={`p-1.5 rounded-lg bg-white/[0.03] ${data.isActive ? 'text-[#83D18B]' : 'text-white/40'}`}>
-            {data.icon}
-          </div>
-          <div className="flex flex-col min-w-0 text-left">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-white/30 font-mono">{data.label}</span>
-            <span className="text-13 font-semibold text-white/90 truncate font-mono">{data.metric}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const nodeTypes = {
-  customNode: CustomGraphNode
-};
-
-// Relationship details map for the tooltip (Static fallbacks)
+// Fallback influence metadata map
 const fallbackRelationshipMap: Record<string, { metric: string; influence: string[] }> = {
   health: { metric: '84/100', influence: ['Revenue Run-rate', 'SLA Compliances', 'Safety stocks'] },
   revenue: { metric: '↑ 18%', influence: ['Marketing campaigns', 'Enterprise Customers', 'South Region'] },
@@ -98,54 +52,57 @@ const fallbackRelationshipMap: Record<string, { metric: string; influence: strin
   growth: { metric: '↑ 14%', influence: ['Sales team focus', 'Frankfurt regulatory path', 'Renewals scale'] }
 };
 
-let strategyCanvasHasPlayedAnimation = false;
-
-const DecisionGraphInner: React.FC = () => {
+export const DecisionGraph: React.FC = () => {
   const activeNodeId = useAppStore((state) => state.activeNodeId);
   const setCopilotContextNodeId = useAppStore((state) => state.setCopilotContextNodeId);
   const nodeContexts = useAppStore((state) => state.nodeContexts);
   const parsedData = useAppStore((state) => state.parsedData);
   const dynamicCanvasEdges = useAppStore((state) => state.strategyCanvasEdges);
-  
+
   const isDemoActive = useDemoStore((state) => state.isDemoActive);
   const currentStep = useDemoStore((state) => state.currentStep);
 
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
-  const [nodesAssembled, setNodesAssembled] = useState(
-    strategyCanvasHasPlayedAnimation ? 9 : 0
-  );
 
-  const { fitView } = useReactFlow();
-  const location = useLocation();
-
-  // Initial fitView on mount
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fitView({ padding: 0.22 });
-    }, 100);
-    return () => clearTimeout(timer);
-  }, [location.pathname, fitView]);
+  // Smooth Viewport Controls
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const isDraggingRef = useRef(false);
+  const dragStartRef = useRef({ x: 0, y: 0 });
 
   const activeHoveredNodeId = (isDemoActive && currentStep === 4) ? 'revenue' : hoveredNodeId;
 
-  // Assemble nodes sequentially over 1.2s
-  useEffect(() => {
-    if (strategyCanvasHasPlayedAnimation) return;
+  // Viewport drag pan handlers
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).closest('.graph-node')) return;
+    isDraggingRef.current = true;
+    dragStartRef.current = { x: e.clientX - pan.x, y: e.clientY - pan.y };
+  }, [pan]);
 
-    const timer = setInterval(() => {
-      setNodesAssembled((prev) => {
-        if (prev >= 9) {
-          clearInterval(timer);
-          strategyCanvasHasPlayedAnimation = true;
-          return 9;
-        }
-        return prev + 1;
-      });
-    }, 100);
-    return () => clearInterval(timer);
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!isDraggingRef.current) return;
+    setPan({
+      x: e.clientX - dragStartRef.current.x,
+      y: e.clientY - dragStartRef.current.y
+    });
   }, []);
 
-  // Compute dynamic relationships based on actual correlations
+  const handleMouseUp = useCallback(() => {
+    isDraggingRef.current = false;
+  }, []);
+
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault();
+    const zoomFactor = e.deltaY < 0 ? 1.08 : 0.92;
+    setZoom((prev) => Math.min(1.6, Math.max(0.65, prev * zoomFactor)));
+  }, []);
+
+  const resetViewport = useCallback(() => {
+    setZoom(1);
+    setPan({ x: 0, y: 0 });
+  }, []);
+
+  // Relationship Map compilation
   const relationshipMap = useMemo(() => {
     const map: Record<string, { metric: string; influence: string[] }> = {};
     
@@ -182,7 +139,7 @@ const DecisionGraphInner: React.FC = () => {
     return map;
   }, [nodeContexts, parsedData]);
 
-  // Set of connections linked to any hovered node
+  // Connected nodes map for hover highlighting
   const connectedNodes = useMemo(() => {
     if (!activeHoveredNodeId) return new Set<string>();
     
@@ -194,220 +151,94 @@ const DecisionGraphInner: React.FC = () => {
     });
 
     if (activeHoveredNodeId === 'health') {
-      return new Set([
-        'health', 'revenue', 'profit', 'marketing', 'customers', 
-        'inventory', 'operations', 'customer-satisfaction', 'growth'
-      ]);
+      return new Set(STAGED_NODES.map(n => n.id));
     }
 
     linked.add('health');
     return linked;
   }, [activeHoveredNodeId, dynamicCanvasEdges]);
 
-  // Layout node definitions
-  const fullNodes = useMemo(() => [
-    {
-      id: 'health',
-      type: 'customNode',
-      position: { x: 300, y: 195 },
-      data: {
-        label: 'Business Health',
-        metric: nodeContexts.health?.metric || '84/100',
-        icon: <Heart size={14} />,
-        isActive: activeNodeId === 'health',
-        isHovered: activeHoveredNodeId === 'health',
-        isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('health'),
-        onMouseEnter: () => setHoveredNodeId('health'),
-        onMouseLeave: () => setHoveredNodeId(null)
-      }
-    },
-    {
-      id: 'revenue',
-      type: 'customNode',
-      position: { x: 300, y: 15 },
-      data: {
-        label: 'Revenue',
-        metric: nodeContexts.revenue?.metric || '$42.8M',
-        icon: <DollarSign size={14} />,
-        isActive: activeNodeId === 'revenue',
-        isHovered: activeHoveredNodeId === 'revenue',
-        isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('revenue'),
-        onMouseEnter: () => setHoveredNodeId('revenue'),
-        onMouseLeave: () => setHoveredNodeId(null)
-      }
-    },
-    {
-      id: 'profit',
-      type: 'customNode',
-      position: { x: 490, y: 75 },
-      data: {
-        label: 'Profit',
-        metric: nodeContexts.profit?.metric || '44.0%',
-        icon: <Percent size={14} />,
-        isActive: activeNodeId === 'profit',
-        isHovered: activeHoveredNodeId === 'profit',
-        isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('profit'),
-        onMouseEnter: () => setHoveredNodeId('profit'),
-        onMouseLeave: () => setHoveredNodeId(null)
-      }
-    },
-    {
-      id: 'customer-satisfaction',
-      type: 'customNode',
-      position: { x: 530, y: 195 },
-      data: {
-        label: 'Satisfaction',
-        metric: nodeContexts['customer-satisfaction']?.metric || '72 NPS',
-        icon: <Smile size={14} />,
-        isActive: activeNodeId === 'customer-satisfaction',
-        isHovered: activeHoveredNodeId === 'customer-satisfaction',
-        isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('customer-satisfaction'),
-        onMouseEnter: () => setHoveredNodeId('customer-satisfaction'),
-        onMouseLeave: () => setHoveredNodeId(null)
-      }
-    },
-    {
-      id: 'marketing',
-      type: 'customNode',
-      position: { x: 490, y: 315 },
-      data: {
-        label: 'Marketing',
-        metric: nodeContexts.marketing?.metric || '4.8x ROI',
-        icon: <Megaphone size={14} />,
-        isActive: activeNodeId === 'marketing',
-        isHovered: activeHoveredNodeId === 'marketing',
-        isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('marketing'),
-        onMouseEnter: () => setHoveredNodeId('marketing'),
-        onMouseLeave: () => setHoveredNodeId(null)
-      }
-    },
-    {
-      id: 'operations',
-      type: 'customNode',
-      position: { x: 300, y: 375 },
-      data: {
-        label: 'Operations',
-        metric: nodeContexts.operations?.metric || '92.4%',
-        icon: <Settings size={14} />,
-        isActive: activeNodeId === 'operations',
-        isHovered: activeHoveredNodeId === 'operations',
-        isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('operations'),
-        onMouseEnter: () => setHoveredNodeId('operations'),
-        onMouseLeave: () => setHoveredNodeId(null)
-      }
-    },
-    {
-      id: 'inventory',
-      type: 'customNode',
-      position: { x: 110, y: 315 },
-      data: {
-        label: 'Inventory',
-        metric: nodeContexts.inventory?.metric || '6.2x Turns',
-        icon: <Boxes size={14} />,
-        isActive: activeNodeId === 'inventory',
-        isHovered: activeHoveredNodeId === 'inventory',
-        isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('inventory'),
-        onMouseEnter: () => setHoveredNodeId('inventory'),
-        onMouseLeave: () => setHoveredNodeId(null)
-      }
-    },
-    {
-      id: 'customers',
-      type: 'customNode',
-      position: { x: 70, y: 195 },
-      data: {
-        label: 'Customers',
-        metric: nodeContexts.customers?.metric || '118% NRR',
-        icon: <Users size={14} />,
-        isActive: activeNodeId === 'customers',
-        isHovered: activeHoveredNodeId === 'customers',
-        isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('customers'),
-        onMouseEnter: () => setHoveredNodeId('customers'),
-        onMouseLeave: () => setHoveredNodeId(null)
-      }
-    },
-    {
-      id: 'growth',
-      type: 'customNode',
-      position: { x: 110, y: 75 },
-      data: {
-        label: 'Growth Index',
-        metric: nodeContexts.growth?.metric || '+14% YoY',
-        icon: <TrendingUp size={14} />,
-        isActive: activeNodeId === 'growth',
-        isHovered: activeHoveredNodeId === 'growth',
-        isDimmed: activeHoveredNodeId !== null && !connectedNodes.has('growth'),
-        onMouseEnter: () => setHoveredNodeId('growth'),
-        onMouseLeave: () => setHoveredNodeId(null)
-      }
-    }
-  ], [activeNodeId, activeHoveredNodeId, connectedNodes, nodeContexts]);
-
-  // Display only assembled nodes
-  const nodes = useMemo(() => {
-    return fullNodes.slice(0, nodesAssembled);
-  }, [fullNodes, nodesAssembled]);
-
-  // Connected relationship edges
-  const edges: Edge[] = useMemo(() => {
-    const renderedEdges = dynamicCanvasEdges
-      .filter(e => nodes.some(n => n.id === e.source) && nodes.some(n => n.id === e.target))
-      .map((e, idx) => {
-        const isSourceActive = activeNodeId === e.source || activeNodeId === e.target;
-        const isHighlighted = activeHoveredNodeId === e.source || activeHoveredNodeId === e.target || isSourceActive;
-        const isDimmed = activeHoveredNodeId !== null && activeHoveredNodeId !== e.source && activeHoveredNodeId !== e.target;
-
-        return {
-          id: `edge-${e.source}-${e.target}-${idx}`,
-          source: e.source,
-          target: e.target,
-          animated: !isDimmed,
-          style: {
-            stroke: isHighlighted ? '#83D18B' : isDimmed ? 'rgba(255,255,255,0.02)' : 'rgba(255, 255, 255, 0.08)',
-            strokeWidth: isHighlighted ? 1.5 : 1,
-            transition: 'stroke 0.3s, stroke-width 0.3s'
-          }
-        };
-      });
-
-    if (renderedEdges.length === 0) {
-      const satellites = ['revenue', 'profit', 'marketing', 'customers', 'inventory', 'operations', 'customer-satisfaction', 'growth'];
-      return satellites
-        .filter((satId, idx) => idx + 1 < nodesAssembled && nodes.some(n => n.id === satId))
-        .map((satId) => {
-          const isCenterHovered = activeHoveredNodeId === 'health';
-          const isSatHovered = activeHoveredNodeId === satId;
-          const isHighlighted = isCenterHovered || isSatHovered || (activeNodeId === satId || activeNodeId === 'health');
-          const isDimmed = activeHoveredNodeId !== null && !isCenterHovered && !isSatHovered;
-
-          return {
-            id: `edge-fallback-${satId}`,
-            source: 'health',
-            target: satId,
-            animated: isHighlighted,
-            style: {
-              stroke: isHighlighted ? '#83D18B' : isDimmed ? 'rgba(255,255,255,0.02)' : 'rgba(255, 255, 255, 0.08)',
-              strokeWidth: isHighlighted ? 1.5 : 1,
-              transition: 'stroke 0.3s, stroke-width 0.3s'
-            }
-          };
-        });
+  // Compute dynamic edge paths
+  const edges = useMemo(() => {
+    let edgePairs: { source: string; target: string }[] = dynamicCanvasEdges;
+    
+    if (edgePairs.length === 0) {
+      edgePairs = STAGED_NODES.filter(n => n.id !== 'health').map(n => ({ source: 'health', target: n.id }));
     }
 
-    return renderedEdges;
-  }, [activeNodeId, activeHoveredNodeId, nodesAssembled, dynamicCanvasEdges, nodes]);
+    return edgePairs.map(pair => {
+      const sourceNode = STAGED_NODES.find(n => n.id === pair.source);
+      const targetNode = STAGED_NODES.find(n => n.id === pair.target);
+      if (!sourceNode || !targetNode) return null;
+
+      const isSourceActive = activeNodeId === pair.source || activeNodeId === pair.target;
+      const isHighlighted = activeHoveredNodeId === pair.source || activeHoveredNodeId === pair.target || isSourceActive;
+      const isDimmed = activeHoveredNodeId !== null && activeHoveredNodeId !== pair.source && activeHoveredNodeId !== pair.target;
+
+      // Curved SVG Bezier path
+      const dx = targetNode.x - sourceNode.x;
+      const cx1 = sourceNode.x + dx * 0.5;
+      const cy1 = sourceNode.y;
+      const cx2 = sourceNode.x + dx * 0.5;
+      const cy2 = targetNode.y;
+      const pathData = `M ${sourceNode.x} ${sourceNode.y} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${targetNode.x} ${targetNode.y}`;
+
+      return {
+        id: `${pair.source}-${pair.target}`,
+        pathData,
+        isHighlighted,
+        isDimmed
+      };
+    }).filter(Boolean);
+  }, [activeNodeId, activeHoveredNodeId, dynamicCanvasEdges]);
 
   const activeHoveredRel = activeHoveredNodeId ? relationshipMap[activeHoveredNodeId] : null;
-  const hoveredNode = activeHoveredNodeId ? fullNodes.find(n => n.id === activeHoveredNodeId) : null;
+  const hoveredNode = activeHoveredNodeId ? STAGED_NODES.find(n => n.id === activeHoveredNodeId) : null;
 
   return (
-    <div className="w-full h-[580px] relative bg-[#090B10] border border-white/5 rounded-2xl overflow-hidden shadow-2xl font-sans">
-      <div className="absolute top-4 left-4 z-10 flex flex-col gap-0.5 pointer-events-none select-none">
-        <span className="text-[10px] font-bold uppercase tracking-wider text-white/30 font-mono">System Blueprint</span>
-        <span className="text-12 font-medium text-white/70 font-sans">Interactive Relationship Graph</span>
+    <div 
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+      onWheel={handleWheel}
+      className="w-full h-[580px] relative bg-[#090B10] border border-white/10 rounded-2xl overflow-hidden shadow-2xl select-none font-sans cursor-grab active:cursor-grabbing"
+    >
+      {/* Top Header Information Overlay */}
+      <div className="absolute top-4 left-4 z-20 flex flex-col gap-0.5 pointer-events-none select-none">
+        <span className="text-[9.5px] font-bold uppercase tracking-wider text-[#83D18B] font-mono">Decision Topology</span>
+        <span className="text-12 font-bold text-white/90 font-sans">Multivariate Strategy Mesh</span>
       </div>
 
-      {/* Relationship Tooltip overlay */}
+      {/* Floating Viewport Controls */}
+      <div className="absolute bottom-4 left-4 z-20 flex items-center gap-1 bg-[#12161D]/90 border border-white/10 p-1 rounded-xl shadow-xl backdrop-blur-md">
+        <button
+          type="button"
+          onClick={() => setZoom(z => Math.min(1.6, z + 0.15))}
+          title="Zoom In"
+          className="w-7 h-7 flex items-center justify-center text-white/60 hover:text-[#83D18B] hover:bg-white/[0.05] rounded-lg transition-colors cursor-pointer"
+        >
+          <ZoomIn size={14} />
+        </button>
+        <button
+          type="button"
+          onClick={() => setZoom(z => Math.max(0.65, z - 0.15))}
+          title="Zoom Out"
+          className="w-7 h-7 flex items-center justify-center text-white/60 hover:text-[#83D18B] hover:bg-white/[0.05] rounded-lg transition-colors cursor-pointer"
+        >
+          <ZoomOut size={14} />
+        </button>
+        <button
+          type="button"
+          onClick={resetViewport}
+          title="Reset Viewport"
+          className="w-7 h-7 flex items-center justify-center text-white/60 hover:text-[#83D18B] hover:bg-white/[0.05] rounded-lg transition-colors cursor-pointer"
+        >
+          <Maximize2 size={13} />
+        </button>
+      </div>
+
+      {/* Dynamic McKinsey Relationship Tooltip Overlay */}
       <AnimatePresence>
         {activeHoveredRel && hoveredNode && (
           <motion.div
@@ -415,11 +246,11 @@ const DecisionGraphInner: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
-            className="absolute z-20 top-4 right-4 bg-[#151B23] border border-white/5 rounded-xl p-4 w-60 shadow-2xl flex flex-col gap-2 pointer-events-none select-none font-sans"
+            className="absolute z-30 top-4 right-4 bg-[#12161D]/95 border border-white/10 rounded-2xl p-4.5 w-64 shadow-2xl flex flex-col gap-2.5 pointer-events-none select-none backdrop-blur-md font-sans"
           >
             <div className="flex justify-between items-center border-b border-white/5 pb-2">
-              <span className="text-[9.5px] uppercase font-bold tracking-wider text-white/30 font-mono">
-                {hoveredNode.data.label}
+              <span className="text-[9.5px] uppercase font-bold tracking-wider text-white/40 font-mono">
+                {hoveredNode.label}
               </span>
               <span className="text-12.5 font-bold text-[#83D18B] font-mono flex items-center gap-0.5">
                 <ArrowUpRight size={12} /> {activeHoveredRel.metric}
@@ -427,8 +258,8 @@ const DecisionGraphInner: React.FC = () => {
             </div>
             
             <div className="space-y-1">
-              <span className="text-[9px] uppercase font-bold tracking-widest text-[#83D18B] font-mono">Related Nodes / Influences</span>
-              <div className="flex flex-col gap-1 text-12 text-white/65">
+              <span className="text-[9px] uppercase font-bold tracking-widest text-[#83D18B] font-mono">Related Influences</span>
+              <div className="flex flex-col gap-1 text-12 text-white/70">
                 {activeHoveredRel.influence.map((inf, idx) => (
                   <span key={idx} className="flex items-center gap-1.5 leading-tight truncate">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#83D18B] shrink-0 opacity-60" />
@@ -438,10 +269,9 @@ const DecisionGraphInner: React.FC = () => {
               </div>
             </div>
 
-            {/* Dynamic relationship explanation */}
             <div className="border-t border-white/5 pt-2 mt-1 space-y-1">
               <span className="text-[8.5px] uppercase font-bold tracking-widest text-white/35 font-mono">Correlation Insight</span>
-              <p className="text-11 text-white/50 leading-normal font-sans italic text-left">
+              <p className="text-11 text-white/60 leading-relaxed font-sans text-left">
                 {activeHoveredNodeId === 'marketing' 
                   ? "Ad bidding scale directly influences lead capture rates and pipeline volume."
                   : activeHoveredNodeId === 'revenue'
@@ -460,32 +290,90 @@ const DecisionGraphInner: React.FC = () => {
         )}
       </AnimatePresence>
 
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        nodeTypes={nodeTypes}
-        onNodeClick={(_, node) => setCopilotContextNodeId(node.id)}
-        fitView
-        fitViewOptions={{ padding: 0.20 }}
-        nodesConnectable={false}
-        nodesDraggable={false}
-        elementsSelectable={true}
-        zoomOnScroll={true}
-        zoomOnPinch={true}
-        panOnDrag={true}
-        proOptions={{ hideAttribution: true }}
-        className="w-full h-full"
+      {/* Main SVG/HTML Canvas Transform Group */}
+      <div 
+        className="w-full h-full relative"
+        style={{
+          transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+          transformOrigin: 'center center'
+        }}
       >
-        <Background color="#1b222c" gap={20} size={1} />
-      </ReactFlow>
-    </div>
-  );
-};
+        {/* SVG Background Pattern & Curved Edges */}
+        <svg className="w-full h-full absolute inset-0 pointer-events-none" viewBox="0 0 800 520">
+          <defs>
+            <pattern id="grid-dots" width="24" height="24" patternUnits="userSpaceOnUse">
+              <circle cx="2" cy="2" r="1" fill="#1A212B" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid-dots)" />
 
-export const DecisionGraph: React.FC = () => {
-  return (
-    <ReactFlowProvider>
-      <DecisionGraphInner />
-    </ReactFlowProvider>
+          {/* Render Bezier Edges */}
+          {edges.map(edge => edge && (
+            <g key={edge.id}>
+              <path
+                d={edge.pathData}
+                fill="none"
+                stroke={edge.isHighlighted ? '#83D18B' : edge.isDimmed ? 'rgba(255,255,255,0.02)' : 'rgba(255, 255, 255, 0.08)'}
+                strokeWidth={edge.isHighlighted ? 2.2 : 1}
+                strokeDasharray={edge.isHighlighted ? '6,4' : 'none'}
+                className={edge.isHighlighted ? 'animate-pulse' : ''}
+              />
+            </g>
+          ))}
+        </svg>
+
+        {/* HTML Node Layer (Strictly 100% Flicker-Free Controlled Coordinates) */}
+        <div className="absolute inset-0 pointer-events-none">
+          {STAGED_NODES.map((node) => {
+            const isActive = activeNodeId === node.id;
+            const isHovered = activeHoveredNodeId === node.id;
+            const isDimmed = activeHoveredNodeId !== null && !connectedNodes.has(node.id);
+            const metric = nodeContexts[node.id]?.metric || (fallbackRelationshipMap[node.id]?.metric || 'Nominal');
+            const breatheNode = node.id === 'health';
+
+            return (
+              <div
+                key={node.id}
+                style={{
+                  left: `${(node.x / 800) * 100}%`,
+                  top: `${(node.y / 520) * 100}%`,
+                  transform: 'translate(-50%, -50%)'
+                }}
+                className="absolute pointer-events-auto graph-node z-10"
+              >
+                {/* Hub Radial Glow */}
+                {(isActive || breatheNode) && (
+                  <div 
+                    className={`absolute -inset-5 rounded-2xl blur-xl -z-10 pointer-events-none ${breatheNode ? 'bg-[#83D18B]/15' : 'bg-[#83D18B]/25'}`}
+                  />
+                )}
+
+                <div
+                  onClick={() => setCopilotContextNodeId(node.id)}
+                  onMouseEnter={() => setHoveredNodeId(node.id)}
+                  onMouseLeave={() => setHoveredNodeId(null)}
+                  className={`
+                    px-4 py-3 rounded-2xl border bg-[#12161D]/95 backdrop-blur-md min-w-[160px] select-none cursor-pointer transition-colors duration-150 shadow-xl
+                    ${isActive ? 'border-[#83D18B] bg-[#83D18B]/10 shadow-[0_0_25px_rgba(131,209,139,0.25)]' : 'border-white/10 hover:border-[#83D18B]/40'}
+                    ${isHovered ? 'border-[#83D18B]/60' : ''}
+                    ${isDimmed ? 'opacity-25 grayscale' : 'opacity-100'}
+                  `}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-xl bg-white/[0.03] border border-white/5 ${isActive ? 'text-[#83D18B] border-[#83D18B]/30' : 'text-white/40'}`}>
+                      {node.icon}
+                    </div>
+                    <div className="flex flex-col min-w-0 text-left">
+                      <span className="text-[9px] uppercase font-bold tracking-wider font-mono text-white/35">{node.label}</span>
+                      <span className="text-13 font-bold text-white/95 truncate font-sans">{metric}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
   );
 };
