@@ -157,18 +157,18 @@ export const BusinessSignals: React.FC = () => {
               </div>
 
               {/* CEO/Advisory Bulletins */}
-              <div className="border-t border-white/5 pt-4 flex flex-col gap-3 font-serif">
+              <div className="border-t border-white/5 pt-4 flex flex-col gap-3 font-sans">
                 <div className="space-y-1">
-                  <span className="text-[8.5px] uppercase font-sans font-bold tracking-widest text-[#83D18B]/70">What changed?</span>
-                  <p className="text-12 text-white/70 leading-normal">{advisory.insight}</p>
+                  <span className="text-11 uppercase font-mono font-bold tracking-widest text-[#83D18B]">What changed?</span>
+                  <p className="text-13 text-white/80 leading-relaxed font-sans">{advisory.insight}</p>
                 </div>
                 <div className="space-y-1">
-                  <span className="text-[8.5px] uppercase font-sans font-bold tracking-widest text-white/40">What happens next?</span>
-                  <p className="text-12 text-white/60 leading-normal">{advisory.impact}</p>
+                  <span className="text-11 uppercase font-mono font-bold tracking-widest text-white/40">What happens next?</span>
+                  <p className="text-13 text-white/70 leading-relaxed font-sans">{advisory.impact}</p>
                 </div>
                 <div className="space-y-1">
-                  <span className="text-[8.5px] uppercase font-sans font-bold tracking-widest text-white/40">What should you do?</span>
-                  <p className="text-12 text-white/65 leading-normal italic">{advisory.action}</p>
+                  <span className="text-11 uppercase font-mono font-bold tracking-widest text-white/40">What should you do?</span>
+                  <p className="text-13 text-white/75 leading-relaxed font-sans italic">{advisory.action}</p>
                 </div>
               </div>
             </motion.div>
@@ -185,15 +185,15 @@ export const BusinessSignals: React.FC = () => {
             exit={{ opacity: 0 }}
             className="w-full mt-4"
           >
-            <Card elevation="flat" className="p-6 border border-[#83D18B]/20 bg-[#83D18B]/5 shadow-xl flex flex-col gap-3">
+            <Card elevation="flat" className="p-5 border border-[#83D18B]/20 bg-[#83D18B]/5 shadow-xl flex flex-col gap-3">
               <div className="flex items-center gap-1.5 text-[#83D18B]">
                 <Zap size={14} className="animate-pulse" />
-                <span className="text-[10px] font-bold uppercase tracking-wider font-sans">AI Sourcing Recommendations</span>
+                <span className="text-11 font-bold uppercase tracking-widest font-mono">AI Sourcing Recommendations</span>
               </div>
-              <h4 className="text-14.5 font-semibold text-white tracking-tight font-serif">
+              <h4 className="text-18 font-bold text-white/95 tracking-tight font-sans leading-snug">
                 Divert wafer sourcing flow to Arizona foundry lines & scale Jalisco stock targets to 60 days
               </h4>
-              <p className="text-13 text-white/50 leading-relaxed font-serif">
+              <p className="text-14 text-white/80 leading-relaxed font-sans">
                 Analysis of Vietnamese dock backlogs flags peak queues at 32 days. Transitioning microcontroller SKU components overland protects overall gross profit margin targets.
               </p>
             </Card>

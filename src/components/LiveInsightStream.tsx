@@ -112,7 +112,7 @@ export const LiveInsightStream: React.FC = () => {
                 </div>
                 <span className="text-[8px] text-white/30 font-mono">{insight.time}</span>
               </div>
-              <p className="text-12 font-medium text-white/80 leading-normal text-left font-serif">
+              <p className="text-13 font-medium text-white/85 leading-relaxed text-left font-sans">
                 {insight.text}
               </p>
               <div className="absolute top-0 right-0 w-24 h-24 bg-[#83D18B]/1 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />

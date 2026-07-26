@@ -166,7 +166,7 @@ export const AIMissionControl: React.FC<AIMissionControlProps> = ({ onComplete }
               <h3 className="text-15 font-bold text-white/95 truncate font-sans">
                 {currentStep.title}
               </h3>
-              <p className="text-12 text-white/50 truncate font-serif mt-0.5">
+              <p className="text-13 text-white/60 truncate font-sans mt-0.5">
                 {currentStep.status}
               </p>
             </div>

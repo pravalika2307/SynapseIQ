@@ -137,7 +137,7 @@ export const Reports: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="fixed bottom-6 right-6 z-50 bg-[#151B23] border border-[#83D18B]/40 text-[#83D18B] px-4 py-2.5 rounded-xl font-mono text-12 shadow-2xl flex items-center gap-2"
+            className="fixed bottom-6 right-6 z-50 bg-[#12161D]/95 border border-[#83D18B]/35 text-[#83D18B] px-4 py-2.5 rounded-xl font-sans text-13 font-medium shadow-2xl backdrop-blur-md flex items-center gap-2"
           >
             <CheckCircle size={14} />
             <span>{toastMsg}</span>
