@@ -356,8 +356,8 @@ export const DecisionCopilot: React.FC = () => {
 
                         {/* 3 & 4. Confidence and Recommended Action */}
                         {msg.references && (
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-                            <div className="p-4 bg-white/[0.01] border border-white/5 rounded-xl flex flex-col justify-between gap-2.5">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2 items-start">
+                            <div className="p-4 bg-white/[0.01] border border-white/5 rounded-xl flex flex-col gap-3">
                               <div className="flex justify-between items-center text-[9px] uppercase font-bold text-white/40 font-sans">
                                 <span>3. Audit Confidence</span>
                                 <span className="text-[#83D18B] font-mono">{msg.references.confidence}%</span>
