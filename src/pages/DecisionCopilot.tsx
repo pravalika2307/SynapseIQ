@@ -15,32 +15,44 @@ const renderRecommendation = (recText: string) => {
     const data = JSON.parse(recText);
     if (data && typeof data === 'object' && data.recommendation) {
       return (
-        <div className="space-y-2 mt-1 font-sans text-left text-11.5">
-          <div className="leading-relaxed"><strong className="text-white/80 font-sans block text-11 uppercase text-white/35 tracking-wider font-mono">Recommendation</strong> <span className="text-white/90 font-sans text-14 leading-relaxed block">{data.recommendation}</span></div>
-          <div className="leading-relaxed"><strong className="text-white/80 font-sans block text-11 uppercase text-white/35 tracking-wider font-mono">Business Reasoning</strong> <span className="text-white/75 font-sans text-13 leading-relaxed block">{data.businessReasoning}</span></div>
-          <div className="leading-relaxed"><strong className="text-white/80 font-sans block text-11 uppercase text-white/35 tracking-wider font-mono">Supporting Metrics</strong> <span className="text-white/75 font-sans text-13 leading-relaxed block">{data.supportingMetrics}</span></div>
-          <div className="leading-relaxed"><strong className="text-white/80 font-sans block text-11 uppercase text-white/35 tracking-wider font-mono">Expected Impact</strong> <span className="text-[#83D18B] font-sans text-13 font-semibold leading-relaxed block">{data.expectedImpact}</span></div>
+        <div className="space-y-3 mt-1.5 font-sans text-left">
+          <div className="space-y-1">
+            <strong className="text-11 uppercase font-bold text-white/40 font-mono tracking-wider block">Recommendation</strong>
+            <span className="text-white/90 font-sans text-14 leading-relaxed block">{data.recommendation}</span>
+          </div>
+          <div className="space-y-1">
+            <strong className="text-11 uppercase font-bold text-white/40 font-mono tracking-wider block">Business Reasoning</strong>
+            <span className="text-white/75 font-sans text-13 leading-relaxed block">{data.businessReasoning}</span>
+          </div>
+          <div className="space-y-1">
+            <strong className="text-11 uppercase font-bold text-white/40 font-mono tracking-wider block">Supporting Metrics</strong>
+            <span className="text-white/75 font-sans text-13 leading-relaxed block">{data.supportingMetrics}</span>
+          </div>
+          <div className="space-y-1">
+            <strong className="text-11 uppercase font-bold text-white/40 font-mono tracking-wider block">Expected Impact</strong>
+            <span className="text-[#83D18B] font-sans text-13 font-semibold leading-relaxed block">{data.expectedImpact}</span>
+          </div>
           
-          <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 border-t border-white/5 pt-2 mt-2 font-mono text-[10.5px]">
-            <div>
-              <span className="text-white/20 block uppercase text-[8px] tracking-wide">Confidence</span>
+          <div className="grid grid-cols-2 gap-2 border-t border-white/5 pt-2.5 mt-2 font-mono text-11">
+            <div className="p-2 rounded-lg bg-white/[0.02] border border-white/5">
+              <span className="text-white/30 block uppercase text-[8.5px] tracking-wider">Confidence</span>
               <span className="text-[#83D18B] font-bold">{data.confidenceScore}</span>
             </div>
-            <div>
-              <span className="text-white/20 block uppercase text-[8px] tracking-wide">Risks</span>
-              <span className="text-white/50 block truncate max-w-[130px]" title={data.potentialRisks}>{data.potentialRisks}</span>
+            <div className="p-2 rounded-lg bg-white/[0.02] border border-white/5">
+              <span className="text-white/30 block uppercase text-[8.5px] tracking-wider">Risks</span>
+              <span className="text-white/70 block truncate" title={data.potentialRisks}>{data.potentialRisks}</span>
             </div>
-            <div>
-              <span className="text-white/20 block uppercase text-[8px] tracking-wide">Difficulty</span>
-              <span className="text-white/60">{data.implementationDifficulty}</span>
+            <div className="p-2 rounded-lg bg-white/[0.02] border border-white/5">
+              <span className="text-white/30 block uppercase text-[8.5px] tracking-wider">Difficulty</span>
+              <span className="text-white/70">{data.implementationDifficulty}</span>
             </div>
-            <div>
-              <span className="text-white/20 block uppercase text-[8px] tracking-wide">Priority</span>
-              <span className="text-white/60">{data.priority}</span>
+            <div className="p-2 rounded-lg bg-white/[0.02] border border-white/5">
+              <span className="text-white/30 block uppercase text-[8.5px] tracking-wider">Priority</span>
+              <span className="text-white/70">{data.priority}</span>
             </div>
-            <div className="col-span-2">
-              <span className="text-white/20 block uppercase text-[8px] tracking-wide">Suggested Timeline</span>
-              <span className="text-[#83D18B]/80 font-semibold">{data.suggestedTimeline}</span>
+            <div className="col-span-2 p-2 rounded-lg bg-white/[0.02] border border-white/5">
+              <span className="text-white/30 block uppercase text-[8.5px] tracking-wider">Suggested Timeline</span>
+              <span className="text-[#83D18B] font-semibold">{data.suggestedTimeline}</span>
             </div>
           </div>
         </div>
@@ -49,7 +61,7 @@ const renderRecommendation = (recText: string) => {
   } catch (e) {
     // Treat as raw text
   }
-  return <span className="font-serif leading-relaxed">"{recText}"</span>;
+  return <span className="font-sans text-14 text-white/90 leading-relaxed block">"{recText}"</span>;
 };
 
 
@@ -411,13 +423,13 @@ export const DecisionCopilot: React.FC = () => {
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col gap-3 max-w-[85%] bg-accent-sage-dim/40 border border-accent-sage-border/30 rounded-2xl p-5 select-none self-start"
+              className="flex flex-col gap-3 max-w-[85%] bg-[#83D18B]/10 border border-[#83D18B]/20 rounded-2xl p-5 select-none self-start"
             >
               <div className="flex items-center gap-2 border-b border-[#83D18B]/20 pb-2 text-[#83D18B]">
                 <Sparkles size={13} className="animate-pulse" />
-                <span className="text-[10px] font-bold uppercase tracking-wider font-sans">Streaming Strategic Insights...</span>
+                <span className="text-11 font-bold uppercase tracking-widest font-mono">Streaming Strategic Insights...</span>
               </div>
-              <p className="text-13 leading-relaxed font-serif text-white/90">
+              <p className="text-14 leading-relaxed font-sans text-white/95">
                 {streamingText}
                 <span className="inline-block text-[#83D18B] ml-1 font-bold animate-[pulse_0.75s_infinite]">▋</span>
               </p>
@@ -442,7 +454,7 @@ export const DecisionCopilot: React.FC = () => {
                   className="bg-[#83D18B]/10 border border-[#83D18B]/20 rounded-xl p-3.5 flex items-center gap-3 text-left shadow-lg select-none"
                 >
                   <Sparkles size={14} className="text-[#83D18B] shrink-0 animate-pulse" />
-                  <p className="text-12 text-white/80 leading-normal font-serif">
+                  <p className="text-13 text-white/85 leading-relaxed font-sans">
                     Based on your earlier analysis of <strong>{memoryAnalysis.topicLabel}</strong>, we recommend reviewing related <strong>{memoryAnalysis.relatedLabel}</strong>.
                   </p>
                 </motion.div>
@@ -541,73 +553,73 @@ export const DecisionCopilot: React.FC = () => {
 
         <div className="p-6 space-y-6">
           {/* Selected Metric Context */}
-          <div className="space-y-2">
-            <span className="text-[9.5px] font-bold text-[#83D18B] uppercase tracking-widest block">Selected Metric</span>
-            <div className="p-4 bg-white/[0.01] border border-white/5 rounded-xl space-y-1">
-              <span className="text-14 font-semibold text-white/95">{activeNodeContext.title}</span>
-              <div className="flex justify-between items-center text-11 font-mono text-white/40 mt-1">
+          <div className="space-y-1.5">
+            <span className="text-11 font-bold text-[#83D18B] uppercase tracking-widest block font-mono">Selected Metric</span>
+            <div className="p-4 bg-white/[0.02] border border-white/10 rounded-2xl space-y-1 shadow-sm">
+              <span className="text-14 font-bold text-white/95 font-sans">{activeNodeContext.title}</span>
+              <div className="flex justify-between items-center text-11 font-mono text-white/50 pt-1 border-t border-white/5 mt-1">
                 <span>Value:</span>
-                <span className="text-white/70 font-semibold">{activeNodeContext.metric}</span>
+                <span className="text-[#83D18B] font-bold">{activeNodeContext.metric}</span>
               </div>
             </div>
           </div>
 
           {/* Dataset Name */}
           <div className="space-y-1.5">
-            <span className="text-[9.5px] font-bold text-white/30 uppercase tracking-widest block">Dataset Name</span>
-            <span className="text-12 font-mono text-white/60 truncate block bg-white/[0.01] border border-white/5 rounded-lg px-3 py-2">
+            <span className="text-11 font-bold text-white/40 uppercase tracking-widest block font-mono">Dataset Name</span>
+            <span className="text-12 font-mono text-white/70 truncate block bg-white/[0.02] border border-white/10 rounded-xl px-3.5 py-2.5 shadow-sm">
               {datasetName || 'synapse_intel_matrix_q2.csv'}
             </span>
           </div>
 
           {/* Ingested Dataset Profile */}
           {parsedData && (
-            <div className="space-y-2 p-4 bg-white/[0.01] border border-white/5 rounded-xl text-12 text-left">
-              <span className="text-[9.5px] font-bold text-white/30 uppercase tracking-widest block">Dataset Profile</span>
+            <div className="space-y-2 p-4 bg-white/[0.02] border border-white/10 rounded-2xl text-12 text-left shadow-sm">
+              <span className="text-11 font-bold text-white/40 uppercase tracking-widest block font-mono">Dataset Profile</span>
               <div className="space-y-1.5 font-mono text-11 text-white/50 pt-1">
                 <div className="flex justify-between">
                   <span>Industry:</span>
-                  <span className="text-white/70 font-semibold">{parsedData.profile.industry}</span>
+                  <span className="text-white/80 font-semibold">{parsedData.profile.industry}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Records:</span>
-                  <span className="text-white/70 font-semibold">{parsedData.rowCount.toLocaleString()}</span>
+                  <span className="text-white/80 font-semibold">{parsedData.rowCount.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Timeframe:</span>
-                  <span className="text-white/70 font-semibold truncate max-w-[130px]" title={parsedData.profile.timePeriod}>
+                  <span className="text-white/80 font-semibold truncate max-w-[130px]" title={parsedData.profile.timePeriod}>
                     {parsedData.profile.timePeriod.split(' (')[0]}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span>Missing Values:</span>
-                  <span className="text-white/70 font-semibold">{parsedData.missingValueCount}</span>
+                  <span className="text-white/80 font-semibold">{parsedData.missingValueCount}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Detected Outliers:</span>
-                  <span className="text-white/70 font-semibold">{parsedData.outlierCount}</span>
+                  <span className="text-white/80 font-semibold">{parsedData.outlierCount}</span>
                 </div>
               </div>
             </div>
           )}
 
           {/* Current Focus Analysis */}
-          <div className="space-y-1.5">
-            <span className="text-[9.5px] font-bold text-white/30 uppercase tracking-widest block">Current Focus</span>
-            <p className="text-12.5 text-white/50 leading-relaxed font-serif">
+          <div className="space-y-2 p-4 bg-white/[0.02] border border-white/10 rounded-2xl text-left shadow-sm">
+            <span className="text-11 font-bold text-white/40 uppercase tracking-widest font-mono block">Current Focus</span>
+            <p className="text-13 text-white/75 leading-relaxed font-sans">
               {activeNodeContext.summary}
             </p>
           </div>
 
           {/* Related Insights */}
           <div className="space-y-2.5">
-            <span className="text-[9.5px] font-bold text-white/30 uppercase tracking-widest block">Related Insights</span>
+            <span className="text-11 font-bold text-white/40 uppercase tracking-widest font-mono block">Related Insights</span>
             <div className="space-y-2">
-              <div className="p-3 bg-white/[0.01] border border-white/5 rounded-lg text-11.5 text-white/50 font-serif leading-relaxed">
-                <strong className="text-white/70 font-sans">Opportunity:</strong> {activeNodeContext.opportunity}
+              <div className="p-3.5 bg-white/[0.02] border border-white/10 rounded-xl text-12.5 text-white/80 font-sans leading-relaxed">
+                <strong className="text-[#83D18B] font-bold block mb-0.5 text-11 uppercase font-mono tracking-wider">Opportunity</strong> {activeNodeContext.opportunity}
               </div>
-              <div className="p-3 bg-white/[0.01] border border-white/5 rounded-lg text-11.5 text-white/50 font-serif leading-relaxed">
-                <strong className="text-white/70 font-sans">Anomaly risk:</strong> {activeNodeContext.risk}
+              <div className="p-3.5 bg-white/[0.02] border border-white/10 rounded-xl text-12.5 text-white/80 font-sans leading-relaxed">
+                <strong className="text-amber-400/90 font-bold block mb-0.5 text-11 uppercase font-mono tracking-wider">Anomaly risk</strong> {activeNodeContext.risk}
               </div>
             </div>
           </div>
