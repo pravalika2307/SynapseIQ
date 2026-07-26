@@ -201,15 +201,15 @@ export const BusinessTimeline: React.FC = () => {
                     <h3 className="text-15.5 font-semibold text-white/95 tracking-tight flex items-center gap-2">
                       {ev.title}
                     </h3>
-                    <p className="text-13.5 text-white/45 leading-relaxed font-serif">
+                    <p className="text-14 text-white/80 leading-relaxed font-sans">
                       {ev.summary}
                     </p>
                   </div>
 
                   {/* Context Metrics Summary */}
                   <div className="flex flex-wrap justify-between items-center text-11.5 pt-1 mt-auto">
-                    <span className="text-white/30 font-serif">
-                      Business Impact: <strong className="text-white/60 font-sans">{ev.impact}</strong>
+                    <span className="text-white/45 font-sans">
+                      Business Impact: <strong className="text-white/80 font-sans">{ev.impact}</strong>
                     </span>
                     <span className="text-white/30 font-mono">
                       Audit Conf: <strong className="text-[#83D18B]">{ev.confidence}%</strong>

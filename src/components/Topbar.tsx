@@ -90,7 +90,7 @@ export const Topbar: React.FC = () => {
           <div className="w-5 h-5 text-accent-sage flex items-center justify-center">
             <Sparkles size={18} className="animate-pulse text-[#83D18B]" />
           </div>
-          <span className="text-13.5 font-bold text-white/90 tracking-tight font-sans">
+          <span className="text-14 font-bold text-white/95 tracking-tight font-sans">
             SynapseIQ
           </span>
         </div>
@@ -110,12 +110,12 @@ export const Topbar: React.FC = () => {
           {datasetName && (
             <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 bg-white/[0.02] border border-white/5 rounded-md text-11 text-white/55 font-mono">
               <span className="text-[9px] font-bold text-white/30 uppercase">Set:</span>
-              <span className="text-accent-sage truncate max-w-[120px]">{datasetName}</span>
+              <span className="text-[#83D18B] truncate max-w-[120px]">{datasetName}</span>
             </div>
           )}
 
           <div className="flex items-center gap-2 px-2.5 py-1 bg-white/[0.02] border border-white/5 rounded-full text-[10px] font-bold text-white/55 tracking-wider uppercase font-mono select-none overflow-hidden">
-            <span className={`w-1.5 h-1.5 rounded-full ${isLoadingAnalysis ? 'bg-critical' : 'bg-accent-sage'} animate-pulse`} />
+            <span className={`w-1.5 h-1.5 rounded-full ${isLoadingAnalysis ? 'bg-critical' : 'bg-[#83D18B]'} animate-pulse`} />
             <AnimatePresence mode="wait">
               <motion.span
                 key={isLoadingAnalysis ? 'analysing' : isDatasetLoaded ? 'loaded' : 'ready'}
@@ -132,7 +132,7 @@ export const Topbar: React.FC = () => {
           <button
             onClick={() => setPresentationMode(!isPresentationMode)}
             className={`
-              flex items-center gap-1.5 px-3 py-1.5 border rounded-xl text-11.5 font-bold transition-all cursor-pointer active:scale-95 select-none
+              flex items-center gap-1.5 px-3 py-1.5 border rounded-xl text-13 font-semibold transition-all cursor-pointer active:scale-95 select-none font-sans
               ${isPresentationMode
                 ? 'bg-[#83D18B] border-[#83D18B] text-[#050608]'
                 : 'border-white/5 bg-white/[0.01] hover:bg-white/[0.03] text-white/60 hover:text-white/90 hover:border-white/10'

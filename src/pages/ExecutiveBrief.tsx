@@ -355,7 +355,7 @@ export const ExecutiveBrief: React.FC = () => {
               <Badge variant="sage">Priority 01</Badge>
             </div>
 
-            <p className="text-15 font-serif text-white/90 leading-relaxed text-left">
+            <p className="text-15 font-sans font-medium text-white/95 leading-relaxed text-left">
               {ceoBriefing.priority.text}
             </p>
 
