@@ -7,7 +7,9 @@ import {
   Dropdown, 
   SectionHeader, 
   MetricCard, 
-  ChartContainer 
+  ChartContainer,
+  SkeletonCard,
+  SkeletonChart
 } from '../components/ui';
 import { 
   Play, 
@@ -156,15 +158,21 @@ export const DataExplorer: React.FC = () => {
         </div>
       </div>
 
+      {/* Skeleton Loaders & Empty State Showcase */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <SkeletonCard rows={3} />
+        <SkeletonChart />
+      </div>
+
       {/* Chart Container mockup */}
       <ChartContainer 
         title="Interactive Sandbox Telemetry" 
         subtitle="Historical waiver log comparison index"
       >
-        <div className="h-44 bg-white/[0.01] border border-dashed border-white/10 rounded-xl flex flex-col items-center justify-center text-center p-6 gap-3">
-          <Database size={24} className="text-white/20" />
-          <span className="text-12 text-white/40 max-w-sm leading-relaxed">
-            Data Explorer chart canvas mounts here. Ready to render optimized SVG telemetry metrics.
+        <div className="h-48 bg-white/[0.01] border border-white/5 rounded-xl flex flex-col items-center justify-center text-center p-6 gap-3">
+          <Database size={24} className="text-[#83D18B]" />
+          <span className="text-13 text-white/70 max-w-sm leading-relaxed font-sans">
+            Data Explorer chart canvas mounts dynamically upon telemetry intake.
           </span>
         </div>
       </ChartContainer>
