@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { useAppStore } from '../features/store';
 import { useDemoStore } from '../features/demoStore';
-import { Card } from '../components/ui';
+import { Card, AITrustBadge } from '../components/ui';
 import { Zap } from 'lucide-react';
 
 // Helper to check if a signal is related to the currently active graph node
@@ -186,9 +186,12 @@ export const BusinessSignals: React.FC = () => {
             className="w-full mt-4"
           >
             <Card elevation="flat" className="p-5 border border-[#83D18B]/20 bg-[#83D18B]/5 shadow-xl flex flex-col gap-3">
-              <div className="flex items-center gap-1.5 text-[#83D18B]">
-                <Zap size={14} className="animate-pulse" />
-                <span className="text-11 font-bold uppercase tracking-widest font-mono">AI Sourcing Recommendations</span>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[#83D18B]">
+                <div className="flex items-center gap-1.5">
+                  <Zap size={14} className="animate-pulse" />
+                  <span className="text-11 font-bold uppercase tracking-widest font-mono">AI Sourcing Recommendations</span>
+                </div>
+                <AITrustBadge confidence={96} sourceCoverage="100% Vietnamese Dock Intake" dataFreshness="Real-time" />
               </div>
               <h4 className="text-18 font-bold text-white/95 tracking-tight font-sans leading-snug">
                 Divert wafer sourcing flow to Arizona foundry lines & scale Jalisco stock targets to 60 days

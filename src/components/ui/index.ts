@@ -10,4 +10,5 @@ export * from './CountUp';
 export * from './AIThinkingLoader';
 export * from './Skeleton';
 export * from './EmptyState';
+export * from './AITrustBadge';
 

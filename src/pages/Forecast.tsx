@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Sliders, Zap, CheckCircle, Sparkles } from 'lucide-react';
-import { SectionHeader, Card, CountUp, AIThinkingLoader } from '../components/ui';
+import { SectionHeader, Card, CountUp, AIThinkingLoader, AITrustBadge } from '../components/ui';
 import { useDemoStore } from '../features/demoStore';
 import { useAppStore } from '../features/store';
 import { getScenarioSimulation } from '../features/geminiService';
@@ -482,14 +482,12 @@ export const Forecast: React.FC = () => {
               </div>
             )}
             
-            <div className="flex items-center justify-between text-[#83D18B] select-none border-b border-white/5 pb-2.5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[#83D18B] select-none border-b border-white/5 pb-2.5">
               <div className="flex items-center gap-1.5">
                 <Zap size={14} className="animate-pulse" />
-                <span className="text-[10px] font-bold uppercase tracking-wider font-sans">Gemini Predictive Advisor</span>
+                <span className="text-11 font-bold uppercase tracking-widest font-mono">Gemini Predictive Advisor</span>
               </div>
-              <span className="text-[9.5px] font-mono text-white/30">
-                Confidence: {dynamicConfidence}%
-              </span>
+              <AITrustBadge confidence={dynamicConfidence} sourceCoverage="Multivariate Telemetry" dataFreshness="Real-time" />
             </div>
 
             <div className="p-3.5 bg-accent-sage-dim/20 border border-accent-sage-border/25 rounded-xl text-12 font-serif text-[#83D18B] leading-normal flex items-start gap-2.5">
