@@ -6,7 +6,7 @@ import { useAppStore } from '../features/store';
 import { getScenarioSimulation } from '../features/geminiService';
 import { parseCSV } from '../features/csvParser';
 import { motion } from 'framer-motion';
-import { AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
+import { AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
 const renderRecommendation = (recText: string) => {
   if (!recText) return null;
@@ -408,25 +408,51 @@ export const Forecast: React.FC = () => {
               <span className="text-[10px] text-[#83D18B] font-mono font-bold">Base vs. Simulated</span>
             </div>
             
-            <div className="h-44 w-full select-none">
+            <div className="h-60 w-full select-none">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+                <AreaChart data={chartData} margin={{ top: 15, right: 20, left: 10, bottom: 10 }}>
                   <defs>
                     <linearGradient id="simulatedColor" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#83D18B" stopOpacity={0.2}/>
+                      <stop offset="5%" stopColor="#83D18B" stopOpacity={0.25}/>
                       <stop offset="95%" stopColor="#83D18B" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <XAxis dataKey="month" stroke="rgba(255,255,255,0.15)" fontSize={10} />
-                  <YAxis stroke="rgba(255,255,255,0.15)" fontSize={10} domain={['auto', 'auto']} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                  <XAxis 
+                    dataKey="month" 
+                    stroke="rgba(255,255,255,0.3)" 
+                    fontSize={11} 
+                    tickLine={false}
+                    axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                    dy={8}
+                  />
+                  <YAxis 
+                    stroke="rgba(255,255,255,0.3)" 
+                    fontSize={11} 
+                    tickLine={false}
+                    axisLine={false}
+                    dx={-4}
+                    tickFormatter={(val) => `$${val}M`}
+                    domain={['auto', 'auto']} 
+                  />
                   <Tooltip 
-                    contentStyle={{ background: '#18212C', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', fontSize: '11px', color: '#fff' }}
+                    contentStyle={{ 
+                      background: '#12161D', 
+                      border: '1px solid rgba(255,255,255,0.15)', 
+                      borderRadius: '12px', 
+                      padding: '10px 14px', 
+                      boxShadow: '0 12px 30px rgba(0,0,0,0.5)', 
+                      fontSize: '12px', 
+                      color: '#F5F7FA' 
+                    }}
+                    cursor={{ stroke: '#83D18B', strokeWidth: 1.5, strokeDasharray: '4 4' }}
                   />
                   <Area 
                     type="monotone" 
                     dataKey="simulated" 
+                    name="Simulated Outcome"
                     stroke="#83D18B" 
-                    strokeWidth={2}
+                    strokeWidth={2.2}
                     fillOpacity={1} 
                     fill="url(#simulatedColor)" 
                     isAnimationActive={true} 
@@ -435,7 +461,8 @@ export const Forecast: React.FC = () => {
                   <Area 
                     type="monotone" 
                     dataKey="base" 
-                    stroke="rgba(255, 255, 255, 0.25)" 
+                    name="Baseline Run-rate"
+                    stroke="rgba(255, 255, 255, 0.3)" 
                     strokeWidth={1.5}
                     strokeDasharray="4 4"
                     fill="none" 

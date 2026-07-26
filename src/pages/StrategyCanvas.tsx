@@ -77,16 +77,19 @@ export const StrategyCanvas: React.FC = () => {
             </span>
           </div>
 
-          <div className="h-72 w-full">
+          <div className="h-80 w-full select-none">
             <ResponsiveContainer width="100%" height="100%">
-              <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: -20 }}>
+              <ScatterChart margin={{ top: 20, right: 25, bottom: 20, left: 10 }}>
                 <XAxis 
                   type="number" 
                   dataKey="debtRatio" 
                   name="Debt Ratio" 
                   unit="x" 
-                  stroke="rgba(255,255,255,0.15)"
-                  fontSize={10}
+                  stroke="rgba(255,255,255,0.3)"
+                  fontSize={11}
+                  tickLine={false}
+                  axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
+                  dy={8}
                   domain={[0, 4]}
                 />
                 <YAxis 
@@ -94,14 +97,25 @@ export const StrategyCanvas: React.FC = () => {
                   dataKey="creditRating" 
                   name="Solvency Rating" 
                   unit=" pts" 
-                  stroke="rgba(255,255,255,0.15)"
-                  fontSize={10}
+                  stroke="rgba(255,255,255,0.3)"
+                  fontSize={11}
+                  tickLine={false}
+                  axisLine={false}
+                  dx={-4}
                   domain={[0, 100]}
                 />
-                <ZAxis type="number" dataKey="value" range={[60, 400]} />
+                <ZAxis type="number" dataKey="value" range={[80, 450]} />
                 <Tooltip 
-                  cursor={{ strokeDasharray: '3 3' }}
-                  contentStyle={{ background: '#18212C', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', fontSize: '11px', color: '#fff' }}
+                  cursor={{ strokeDasharray: '3 3', stroke: 'rgba(255,255,255,0.2)' }}
+                  contentStyle={{ 
+                    background: '#12161D', 
+                    border: '1px solid rgba(255,255,255,0.15)', 
+                    borderRadius: '12px', 
+                    padding: '10px 14px', 
+                    boxShadow: '0 12px 30px rgba(0,0,0,0.5)', 
+                    fontSize: '12px', 
+                    color: '#F5F7FA' 
+                  }}
                 />
                 <ReferenceLine x={2.0} stroke="#E76F51" strokeDasharray="3 3" />
                 <ReferenceLine y={50} stroke="#E76F51" strokeDasharray="3 3" />
