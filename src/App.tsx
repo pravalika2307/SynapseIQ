@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { Routes, Route, Navigate, HashRouter } from 'react-router-dom';
+import { Routes, Route, Navigate, BrowserRouter } from 'react-router-dom';
 import { DashboardLayout } from './layouts/DashboardLayout';
 import { DemoController } from './components/DemoController';
 import { AIThinkingLoader } from './components/ui';
@@ -24,7 +24,7 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <HashRouter>
+    <BrowserRouter>
       <DemoController />
       <Suspense fallback={
         <div className="flex items-center justify-center min-h-screen bg-[#090B10] text-[#83D18B]">
@@ -33,7 +33,7 @@ const App: React.FC = () => {
       }>
         <Routes>
           <Route path="/" element={<Landing />} />
-          
+
           <Route path="/dashboard" element={<DashboardLayout />}>
             <Route index element={<Navigate to="/dashboard/brief" replace />} />
             <Route path="brief" element={<ExecutiveBrief />} />
@@ -51,7 +51,7 @@ const App: React.FC = () => {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
-    </HashRouter>
+    </BrowserRouter>
   );
 };
 

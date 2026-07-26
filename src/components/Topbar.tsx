@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Search, 
   Bell, 
@@ -16,6 +17,7 @@ import { useAppStore } from '../features/store';
 import { Dropdown } from './ui/Dropdown';
 
 export const Topbar: React.FC = () => {
+  const navigate = useNavigate();
   const datasetName = useAppStore((state) => state.datasetName);
   const isLoadingAnalysis = useAppStore((state) => state.isLoadingAnalysis);
   const isDatasetLoaded = useAppStore((state) => state.isDatasetLoaded);
@@ -30,37 +32,37 @@ export const Topbar: React.FC = () => {
       id: 'profile',
       label: 'Profile & Activity',
       icon: <User size={14} className="text-[#83D18B]" />,
-      onClick: () => window.location.hash = '#/dashboard/brief'
+      onClick: () => navigate('/dashboard/brief')
     },
     {
       id: 'reports',
       label: 'My Reports',
       icon: <FileText size={14} />,
-      onClick: () => window.location.hash = '#/dashboard/reports'
+      onClick: () => navigate('/dashboard/reports')
     },
     {
       id: 'timeline',
       label: 'Recent Sessions',
       icon: <Clock size={14} />,
-      onClick: () => window.location.hash = '#/dashboard/timeline'
+      onClick: () => navigate('/dashboard/timeline')
     },
     {
       id: 'settings',
       label: 'Preferences & Controls',
       icon: <Settings size={14} />,
-      onClick: () => window.location.hash = '#/dashboard/settings'
+      onClick: () => navigate('/dashboard/settings')
     },
     {
       id: 'help',
       label: 'Help Center & Shortcuts',
       icon: <HelpCircle size={14} />,
-      onClick: () => window.location.hash = '#/dashboard/explorer'
+      onClick: () => navigate('/dashboard/explorer')
     },
     {
       id: 'releases',
       label: 'Release Notes (v1.0.0)',
       icon: <Sparkles size={14} className="text-amber-400" />,
-      onClick: () => window.location.hash = '#/dashboard/settings'
+      onClick: () => navigate('/dashboard/settings')
     },
     {
       id: 'about',
@@ -79,7 +81,7 @@ export const Topbar: React.FC = () => {
   const handleConfirmSignOut = () => {
     setIsDatasetLoaded(false);
     setShowSignOutModal(false);
-    window.location.hash = '#/';
+    navigate('/');
   };
 
   return (

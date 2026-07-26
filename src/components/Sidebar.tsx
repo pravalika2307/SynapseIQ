@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FileText,
@@ -25,6 +25,7 @@ import { useAppStore } from '../features/store';
 import { useDemoStore } from '../features/demoStore';
 
 export const Sidebar: React.FC = () => {
+  const navigate = useNavigate();
   const activeNodeId = useAppStore((state) => state.activeNodeId);
   const isSidebarCollapsed = useAppStore((state) => state.isSidebarCollapsed);
   const setSidebarCollapsed = useAppStore((state) => state.setSidebarCollapsed);
@@ -119,7 +120,7 @@ export const Sidebar: React.FC = () => {
     {
       icon: <Settings size={15} />,
       label: 'Platform Settings',
-      onClick: () => window.location.hash = '#/dashboard/settings'
+      onClick: () => navigate('/dashboard/settings')
     },
     {
       icon: <HelpCircle size={15} />,
