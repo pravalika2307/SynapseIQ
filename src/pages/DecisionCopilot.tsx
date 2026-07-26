@@ -639,25 +639,25 @@ export const DecisionCopilot: React.FC = () => {
             </span>
           </div>
 
-          {/* AI Confidence Analysis Enterprise Card */}
-          <div className="space-y-3.5 p-4 bg-[#12161D]/90 border border-white/10 rounded-2xl shadow-lg backdrop-blur-md text-left font-sans select-none">
+          {/* Brand-New AI Confidence Analysis Executive Card (220-260px naturally sized) */}
+          <div className="bg-[#12161D]/90 border border-white/10 rounded-2xl p-4 space-y-3 shadow-lg text-left font-sans select-none self-start">
             
-            {/* Header */}
-            <div className="flex items-center justify-between border-b border-white/5 pb-2.5">
+            {/* 1. Header */}
+            <div className="flex items-center justify-between border-b border-white/5 pb-2">
               <div className="flex items-center gap-2">
-                <ShieldCheck size={15} className="text-[#83D18B]" />
+                <ShieldCheck size={14} className="text-[#83D18B]" />
                 <span className="text-11 font-bold text-white/90 uppercase tracking-widest font-mono">
                   AI Confidence Analysis
                 </span>
               </div>
-              <span className="text-[10px] font-bold bg-[#83D18B]/10 text-[#83D18B] border border-[#83D18B]/20 rounded-full px-2 py-0.5 font-mono">
+              <span className="text-[9.5px] font-bold bg-[#83D18B]/10 text-[#83D18B] border border-[#83D18B]/20 rounded-full px-2 py-0.5 font-mono">
                 Verified
               </span>
             </div>
 
-            {/* Overall Confidence Gauge & Main Number */}
-            <div className="flex items-center gap-4 bg-white/[0.02] border border-white/5 rounded-xl p-3">
-              <div className="relative w-14 h-14 shrink-0 flex items-center justify-center">
+            {/* 2. Top Section: Circular Gauge & Overall Confidence */}
+            <div className="flex items-center gap-3.5 bg-white/[0.02] border border-white/5 rounded-xl p-2.5">
+              <div className="relative w-11 h-11 shrink-0 flex items-center justify-center">
                 <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
                   <path
                     className="text-white/10"
@@ -676,98 +676,95 @@ export const DecisionCopilot: React.FC = () => {
                     d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                   />
                 </svg>
-                <span className="absolute text-13 font-bold text-white font-mono">{overallConfidenceScore}%</span>
+                <span className="absolute text-11 font-bold text-white font-mono">{overallConfidenceScore}%</span>
               </div>
               <div className="flex flex-col text-left font-sans min-w-0">
-                <span className="text-11 uppercase font-bold text-white/40 font-mono tracking-wider">Overall Confidence</span>
-                <span className="text-15 font-bold text-white/95 leading-tight">{confidenceTierLabel}</span>
-                <span className="text-11 text-white/45 font-mono mt-0.5 truncate">
-                  {parsedData ? `${parsedData.rowCount} records • ${parsedData.columns?.length || 0} signals` : 'Statistical telemetry model'}
-                </span>
+                <span className="text-[10px] uppercase font-bold text-white/40 font-mono tracking-wider">Overall Confidence</span>
+                <span className="text-13 font-bold text-white/95 leading-tight">{confidenceTierLabel}</span>
               </div>
             </div>
 
-            {/* Confidence Breakdown Progress Indicators */}
-            <div className="space-y-2.5 pt-1">
-              <span className="text-11 font-bold text-white/40 uppercase tracking-widest font-mono block">
+            {/* 3. Confidence Breakdown 2x2 High-Density Grid */}
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest font-mono block">
                 Confidence Breakdown
               </span>
 
-              <div className="space-y-2">
-                {/* 1. Data Quality */}
-                <div className="space-y-1">
-                  <div className="flex justify-between items-center text-11 font-mono">
-                    <span className="text-white/70">Data Quality</span>
+              <div className="grid grid-cols-2 gap-2 text-[10.5px] font-mono">
+                {/* Data Quality */}
+                <div className="space-y-1 bg-white/[0.01] border border-white/5 rounded-lg p-1.5">
+                  <div className="flex justify-between items-center text-white/70">
+                    <span>Data Quality</span>
                     <span className="text-[#83D18B] font-bold">{dataQualityScore}%</span>
                   </div>
-                  <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#83D18B] rounded-full transition-all duration-500" style={{ width: `${dataQualityScore}%` }} />
+                  <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                    <div className="h-full bg-[#83D18B] rounded-full" style={{ width: `${dataQualityScore}%` }} />
                   </div>
                 </div>
 
-                {/* 2. Statistical Reliability */}
-                <div className="space-y-1">
-                  <div className="flex justify-between items-center text-11 font-mono">
-                    <span className="text-white/70">Statistical Reliability</span>
+                {/* Statistical Reliability */}
+                <div className="space-y-1 bg-white/[0.01] border border-white/5 rounded-lg p-1.5">
+                  <div className="flex justify-between items-center text-white/70">
+                    <span>Statistical</span>
                     <span className="text-[#83D18B] font-bold">{statisticalConfidenceScore}%</span>
                   </div>
-                  <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#83D18B] rounded-full transition-all duration-500" style={{ width: `${statisticalConfidenceScore}%` }} />
+                  <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                    <div className="h-full bg-[#83D18B] rounded-full" style={{ width: `${statisticalConfidenceScore}%` }} />
                   </div>
                 </div>
 
-                {/* 3. AI Reasoning Confidence */}
-                <div className="space-y-1">
-                  <div className="flex justify-between items-center text-11 font-mono">
-                    <span className="text-white/70">AI Reasoning Confidence</span>
+                {/* AI Reasoning */}
+                <div className="space-y-1 bg-white/[0.01] border border-white/5 rounded-lg p-1.5">
+                  <div className="flex justify-between items-center text-white/70">
+                    <span>AI Reasoning</span>
                     <span className="text-[#83D18B] font-bold">{aiReliabilityScore}%</span>
                   </div>
-                  <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#83D18B] rounded-full transition-all duration-500" style={{ width: `${aiReliabilityScore}%` }} />
+                  <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                    <div className="h-full bg-[#83D18B] rounded-full" style={{ width: `${aiReliabilityScore}%` }} />
                   </div>
                 </div>
 
-                {/* 4. Business Context Match */}
-                <div className="space-y-1">
-                  <div className="flex justify-between items-center text-11 font-mono">
-                    <span className="text-white/70">Business Context Match</span>
+                {/* Context Match */}
+                <div className="space-y-1 bg-white/[0.01] border border-white/5 rounded-lg p-1.5">
+                  <div className="flex justify-between items-center text-white/70">
+                    <span>Context Match</span>
                     <span className="text-[#83D18B] font-bold">{businessContextScore}%</span>
                   </div>
-                  <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#83D18B] rounded-full transition-all duration-500" style={{ width: `${businessContextScore}%` }} />
+                  <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                    <div className="h-full bg-[#83D18B] rounded-full" style={{ width: `${businessContextScore}%` }} />
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* AI Verification Chips */}
-            <div className="space-y-2 pt-2.5 border-t border-white/5 font-sans">
-              <span className="text-11 font-bold text-white/40 uppercase tracking-widest font-mono block">
-                AI Verification
+            {/* 4. Verification Chips */}
+            <div className="space-y-1.5 pt-2 border-t border-white/5">
+              <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest font-mono block">
+                Verification Status
               </span>
-              <div className="grid grid-cols-2 gap-1.5 text-11 text-white/80 font-mono">
-                <div className="flex items-center gap-1.5 bg-white/[0.02] border border-white/5 rounded-lg p-1.5">
-                  <CheckCircle2 size={12} className="text-[#83D18B] shrink-0" />
+              <div className="grid grid-cols-2 gap-1 text-[10px] text-white/80 font-mono">
+                <div className="flex items-center gap-1 bg-white/[0.02] border border-white/5 rounded-md px-1.5 py-0.5 truncate">
+                  <CheckCircle2 size={11} className="text-[#83D18B] shrink-0" />
                   <span className="truncate">Dataset Validated</span>
                 </div>
-                <div className="flex items-center gap-1.5 bg-white/[0.02] border border-white/5 rounded-lg p-1.5">
-                  <CheckCircle2 size={12} className="text-[#83D18B] shrink-0" />
+                <div className="flex items-center gap-1 bg-white/[0.02] border border-white/5 rounded-md px-1.5 py-0.5 truncate">
+                  <CheckCircle2 size={11} className="text-[#83D18B] shrink-0" />
                   <span className="truncate">Model Verified</span>
                 </div>
-                <div className="flex items-center gap-1.5 bg-white/[0.02] border border-white/5 rounded-lg p-1.5">
-                  <CheckCircle2 size={12} className="text-[#83D18B] shrink-0" />
+                <div className="flex items-center gap-1 bg-white/[0.02] border border-white/5 rounded-md px-1.5 py-0.5 truncate">
+                  <CheckCircle2 size={11} className="text-[#83D18B] shrink-0" />
                   <span className="truncate">Gemini Reasoning</span>
                 </div>
-                <div className="flex items-center gap-1.5 bg-white/[0.02] border border-white/5 rounded-lg p-1.5">
-                  <CheckCircle2 size={12} className="text-[#83D18B] shrink-0" />
+                <div className="flex items-center gap-1 bg-white/[0.02] border border-white/5 rounded-md px-1.5 py-0.5 truncate">
+                  <CheckCircle2 size={11} className="text-[#83D18B] shrink-0" />
                   <span className="truncate">Rules Passed</span>
                 </div>
               </div>
             </div>
 
-            {/* Confidence Summary Callout Footer */}
-            <div className="pt-2.5 border-t border-white/5">
-              <p className="text-11 text-white/50 leading-relaxed font-sans italic">
+            {/* 5. Confidence Explanation Footer */}
+            <div className="pt-2 border-t border-white/5">
+              <p className="text-[10.5px] text-white/50 leading-normal font-sans italic">
                 "This recommendation is supported by statistically significant business trends, validated enterprise heuristics and Gemini reasoning."
               </p>
             </div>
