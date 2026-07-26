@@ -705,25 +705,25 @@ export const DecisionCopilot: React.FC = () => {
                   </div>
                 </div>
 
-                {/* 2. AI Reliability */}
+                {/* 2. Statistical Reliability */}
                 <div className="space-y-1">
                   <div className="flex justify-between items-center text-11 font-mono">
-                    <span className="text-white/70">AI Reliability</span>
-                    <span className="text-[#83D18B] font-bold">{aiReliabilityScore}%</span>
-                  </div>
-                  <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#83D18B] rounded-full transition-all duration-500" style={{ width: `${aiReliabilityScore}%` }} />
-                  </div>
-                </div>
-
-                {/* 3. Statistical Confidence */}
-                <div className="space-y-1">
-                  <div className="flex justify-between items-center text-11 font-mono">
-                    <span className="text-white/70">Statistical Confidence</span>
+                    <span className="text-white/70">Statistical Reliability</span>
                     <span className="text-[#83D18B] font-bold">{statisticalConfidenceScore}%</span>
                   </div>
                   <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
                     <div className="h-full bg-[#83D18B] rounded-full transition-all duration-500" style={{ width: `${statisticalConfidenceScore}%` }} />
+                  </div>
+                </div>
+
+                {/* 3. AI Reasoning Confidence */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center text-11 font-mono">
+                    <span className="text-white/70">AI Reasoning Confidence</span>
+                    <span className="text-[#83D18B] font-bold">{aiReliabilityScore}%</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                    <div className="h-full bg-[#83D18B] rounded-full transition-all duration-500" style={{ width: `${aiReliabilityScore}%` }} />
                   </div>
                 </div>
 
@@ -740,31 +740,35 @@ export const DecisionCopilot: React.FC = () => {
               </div>
             </div>
 
-            {/* Verification Status Checklist */}
+            {/* AI Verification Chips */}
             <div className="space-y-2 pt-2.5 border-t border-white/5 font-sans">
               <span className="text-11 font-bold text-white/40 uppercase tracking-widest font-mono block">
-                Verification Status
+                AI Verification
               </span>
-              <div className="space-y-1.5 text-12 text-white/80">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 size={13} className="text-[#83D18B] shrink-0" />
-                  <span>Gemini Analysis Complete</span>
+              <div className="grid grid-cols-2 gap-1.5 text-11 text-white/80 font-mono">
+                <div className="flex items-center gap-1.5 bg-white/[0.02] border border-white/5 rounded-lg p-1.5">
+                  <CheckCircle2 size={12} className="text-[#83D18B] shrink-0" />
+                  <span className="truncate">Dataset Validated</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 size={13} className="text-[#83D18B] shrink-0" />
-                  <span>Business Rules Validated</span>
+                <div className="flex items-center gap-1.5 bg-white/[0.02] border border-white/5 rounded-lg p-1.5">
+                  <CheckCircle2 size={12} className="text-[#83D18B] shrink-0" />
+                  <span className="truncate">Model Verified</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 size={13} className="text-[#83D18B] shrink-0" />
-                  <span>Statistical Consistency Verified</span>
+                <div className="flex items-center gap-1.5 bg-white/[0.02] border border-white/5 rounded-lg p-1.5">
+                  <CheckCircle2 size={12} className="text-[#83D18B] shrink-0" />
+                  <span className="truncate">Gemini Reasoning</span>
+                </div>
+                <div className="flex items-center gap-1.5 bg-white/[0.02] border border-white/5 rounded-lg p-1.5">
+                  <CheckCircle2 size={12} className="text-[#83D18B] shrink-0" />
+                  <span className="truncate">Rules Passed</span>
                 </div>
               </div>
             </div>
 
-            {/* Confidence Explanation Callout Footer */}
+            {/* Confidence Summary Callout Footer */}
             <div className="pt-2.5 border-t border-white/5">
-              <p className="text-11 text-white/45 leading-relaxed font-sans italic">
-                "Recommendations generated using statistical analysis, business heuristics and Gemini reasoning."
+              <p className="text-11 text-white/50 leading-relaxed font-sans italic">
+                "This recommendation is supported by statistically significant business trends, validated enterprise heuristics and Gemini reasoning."
               </p>
             </div>
           </div>
