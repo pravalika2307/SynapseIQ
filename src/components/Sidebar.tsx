@@ -131,7 +131,7 @@ export const Sidebar: React.FC = () => {
   return (
     <motion.aside
       animate={{ width: isSidebarCollapsed ? 64 : 230 }}
-      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
       className="bg-[#0B0E14] border-r border-white/5 flex flex-col h-full shrink-0 select-none relative hide-in-presentation"
     >
       {/* Collapse Toggle Button */}
