@@ -69,3 +69,12 @@ This checklist provides a systematic QA verification matrix to validate producti
 - [ ] `.env` and API keys are excluded from Git repository index (`.gitignore`).
 - [ ] API keys are transmitted via HTTPS TLS directly to Google's official Gemini endpoint.
 - [ ] CSV parsing occurs entirely client-side in browser memory without sending raw customer files to unauthorized external servers.
+
+---
+
+## 🌐 6. Vercel SPA Routing & Deployment Audit
+- [ ] **Clean BrowserRouter Rewrites**: Direct browser refresh on deep paths (`/dashboard/brief`, `/dashboard/signals`, `/dashboard/projections`, `/dashboard/copilot`, `/dashboard/forecast`, `/dashboard/reports`, `/dashboard/settings`) loads `index.html` without 404 errors.
+- [ ] **Hash-Free Production URLs**: Zero `#` fragments present in production URLs (`https://synapseiq-os.vercel.app/`).
+- [ ] **Vercel SPA Config**: `vercel.json` rewrite rule `{ "source": "/(.*)", "destination": "/index.html" }` verified active.
+- [ ] **Asset Bundle Caching**: Static JS and CSS chunks load with immutable caching headers.
+
