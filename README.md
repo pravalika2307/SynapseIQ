@@ -13,12 +13,12 @@
 [![Vite](https://img.shields.io/badge/Vite-6.x-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
 [![Google Gemini](https://img.shields.io/badge/Google_Gemini-2.0_Flash-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev)
-[![Vercel Deployment](https://img.shields.io/badge/Vercel-Deployed-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com)
+[![Vercel Deployment](https://img.shields.io/badge/Vercel-Deployed-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://synapseiq-os.vercel.app/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22C55E?style=for-the-badge)](./LICENSE)
 
 <br />
 
-🚀 [Live Vercel Application](#-production-deployment) &nbsp;·&nbsp; 📚 [Architecture Spec](./docs/architecture.md) &nbsp;·&nbsp; 📑 [Prompt Engineering](./docs/PROMPT_ENGINEERING.md) &nbsp;·&nbsp; 🛠️ [Contributing](./CONTRIBUTING.md)
+🚀 [Live Vercel Application](https://synapseiq-os.vercel.app/) &nbsp;·&nbsp; 📚 [Architecture Spec](./docs/architecture.md) &nbsp;·&nbsp; 📑 [Prompt Engineering](./docs/PROMPT_ENGINEERING.md) &nbsp;·&nbsp; 🛠️ [Contributing](./CONTRIBUTING.md)
 
 </div>
 
@@ -282,7 +282,11 @@ Open your browser and navigate to `http://localhost:5173`.
 
 ## 🚀 Production Deployment
 
-### Vercel Deployment (Recommended)
+### 🌐 Live Production Application
+The live application is deployed on Vercel Edge Infrastructure:
+👉 **[https://synapseiq-os.vercel.app/](https://synapseiq-os.vercel.app/)**
+
+### Vercel Deployment Guide
 SynapseIQ includes a pre-configured `vercel.json` file supporting `BrowserRouter` single-page application (SPA) client rewrites.
 
 1. Push your code to GitHub.
