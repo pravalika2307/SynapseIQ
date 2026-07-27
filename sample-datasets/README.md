@@ -58,6 +58,24 @@ Welcome to the **SynapseIQ Dataset Library**. This collection contains realistic
 
 Located in **[`sample-datasets/edge-cases/`](file:///D:/Projects/SynapseIQ/sample-datasets/edge-cases/)**:
 
+* **`missing-values.csv`**: Contains datasets with 5%–15% null cells to verify SynapseIQ's automatic statistical imputation algorithms.
+* **`high-outliers.csv`**: Contains mathematical anomalies ($>3\sigma$) to verify Z-score outlier isolation and filtering in the Business Signals matrix.
+* **`single-metric.csv`**: Contains minimal 2-column CSV telemetry to test auto-scaling of the Strategy Canvas.
+* **`large-schema.csv`**: 50+ column dataset testing multivariate correlation matrix generation performance (< 100ms).
+
+---
+
+## 🔬 4. Telemetry Parser Engine & Data Validation Rules
+
+SynapseIQ executes a 5-step automated data profiling pipeline on every loaded CSV dataset:
+
+1. **Header Normalization & Sanitize**: Strips whitespace, special symbols, and converts headers into canonical metric identifiers (`revenue`, `profit`, `churn`, `inventory`, `latency`).
+2. **Numeric Type Detection**: Evaluates column value ratios to categorize fields into *Numeric Metrics*, *Categorical Segments*, or *Temporal Identifiers*.
+3. **Statistical Outlier Isolation**: Calculates sample mean ($\mu$) and standard deviation ($\sigma$). Values exceeding $Z = \frac{x - \mu}{\sigma} > 2.5$ are flagged as operational telemetry outliers.
+4. **Correlation Matrix Computation**: Computes pairwise Pearson correlation coefficients ($r$) across all numerical columns to map interdependencies on the Strategy Canvas.
+5. **Industry Auto-Categorization**: Scans header tokens for domain keywords (*patients*, *students*, *wafer*, *churn*, *margin*) to automatically select the executive prompt context.
+
+
 1. **`small_dataset.csv`** (12 rows): Validates statistical integrity on micro-datasets without crashing variance algorithms.
 2. **`large_dataset.csv`** (3,000 rows): Stress tests fast Web Worker parsing and virtualized chart rendering under load.
 3. **`missing_values.csv`**: Ensures missing cells are gracefully filtered during mean/variance computation.
