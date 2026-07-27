@@ -65,20 +65,46 @@ Every Google Gemini API request mandates strict JSON output schemas:
 }
 ```
 
-### B. Decision Copilot Response Contract (`askGeminiCopilot`)
+### B. Decision Copilot Schema Contract (`askGeminiCopilot`)
 ```json
 {
-  "summary": "Executive Summary & Business Context: [Strategic context]",
-  "evidence": ["Key Finding: [observation]", "Root Cause: [driver]"],
+  "summary": "Executive Summary & Business Context...",
+  "evidence": ["Key Finding 1...", "Root Cause 2..."],
   "confidence": 95,
   "recommendation": "STRINGIFIED_RECOMMENDATION_JSON",
-  "nextQuestion": "Follow-up question starter"
+  "nextQuestion": "Suggested follow-up query starter..."
 }
 ```
 
 ---
 
-## 🛡️ 4. Validation & Sanitization Loop
+## 🔄 4. Model Negotiation & Fallback Protocol
+
+SynapseIQ implements an automated multi-tier model negotiation fallback chain (`callGeminiRaw`) to guarantee 99.99% uptime and zero disruption during API rate limits (HTTP 429), model deprecations, or service unavailability (HTTP 503):
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ 1. gemini-2.5-flash (Primary High-Speed Reasoning Model)    │
+│    └─► HTTP 429 / 503 / 404 Fallback                      │
+│ 2. gemini-2.0-flash (Secondary Scenario Simulation Model)   │
+│    └─► HTTP 429 / 503 / 404 Fallback                      │
+│ 3. gemini-2.0-flash-lite (Ultra-Low Latency Streaming)     │
+│    └─► HTTP 429 / 503 / 404 Fallback                      │
+│ 4. gemini-1.5-flash (Legacy Baseline Fallback Model)        │
+│    └─► Network Loss / No API Key                          │
+│ 5. Local Strategy Engine (Offline Client Heuristic Engine)  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Rate-Limiting & Exponential Backoff
+- **Exponential Backoff**: Initial retry delay of 1,000ms scaling with $2^{\text{attempt}-1}$ up to 3 total attempts per endpoint request.
+- **Rate-Limit Guard (HTTP 429)**: Automatically multiplies backoff delay by $3\times$ when rate-limit quotas are detected.
+- **Aborting Support**: Full integration with browser `AbortSignal` for instant cancellation of pending HTTP requests when navigating between views.
+
+
+---
+
+## 🛡️ 5. Validation & Sanitization Loop
 
 Before any Gemini response hydrates the Zustand global store, it passes through `cleanAndValidateAnalysis()` / `cleanAndValidateCopilot()`:
 
