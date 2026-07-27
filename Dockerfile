@@ -1,4 +1,4 @@
-# Stage 1: Build static assets
+# Stage 1: Build production static distribution
 FROM node:20-alpine AS builder
 WORKDIR /app
 
@@ -10,11 +10,16 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-# Stage 2: Serve using Nginx
+# Stage 2: Production Nginx Server for Cloud Run Gen2
 FROM nginx:alpine
+
+# Default PORT environment variable for Cloud Run (fallback: 8080)
+ENV PORT=8080
+
 COPY --from=builder /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 
 EXPOSE 8080
 
-CMD ["nginx", "-g", "daemon off;"]
+# Substitute $PORT into Nginx config at container startup and launch Nginx
+CMD ["/bin/sh", "-c", "envsubst '$PORT' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"]

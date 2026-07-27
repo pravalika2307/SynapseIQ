@@ -190,7 +190,10 @@ async function callGeminiRaw(apiKey: string, prompt: string, signal?: AbortSigna
   for (let i = 0; i < GEMINI_FLASH_MODELS.length; i++) {
     const model = GEMINI_FLASH_MODELS[i];
     const isLastModel = i === GEMINI_FLASH_MODELS.length - 1;
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+    const backendBase = import.meta.env.VITE_BACKEND_URL ? import.meta.env.VITE_BACKEND_URL.replace(/\/$/, '') : 'https://generativelanguage.googleapis.com';
+    const url = backendBase.includes('generativelanguage.googleapis.com')
+      ? `${backendBase}/v1beta/models/${model}:generateContent?key=${apiKey}`
+      : `${backendBase}/api/v1beta/models/${model}:generateContent?key=${apiKey}`;
     const start = performance.now();
     
     const controller = new AbortController();
