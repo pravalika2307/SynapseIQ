@@ -13,13 +13,12 @@
 [![Vite](https://img.shields.io/badge/Vite-6.x-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
 [![Google Gemini](https://img.shields.io/badge/Google_Gemini-2.0_Flash-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev)
-[![Google Cloud Run](https://img.shields.io/badge/Google_Cloud_Run-Gen2_asia--south1-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white)](https://cloud.google.com/run)
 [![Vercel Deployment](https://img.shields.io/badge/Vercel-Deployed-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22C55E?style=for-the-badge)](./LICENSE)
 
 <br />
 
-☁️ [Google Cloud Run Deployment](#-google-cloud-run-deployment) &nbsp;·&nbsp; 🚀 [Vercel Deployment](#-vercel-deployment-frontend) &nbsp;·&nbsp; 📚 [Architecture Spec](./docs/architecture.md) &nbsp;·&nbsp; 📑 [Prompt Engineering](./docs/PROMPT_ENGINEERING.md)
+🚀 [Live Vercel Application](#-production-deployment) &nbsp;·&nbsp; 📚 [Architecture Spec](./docs/architecture.md) &nbsp;·&nbsp; 📑 [Prompt Engineering](./docs/PROMPT_ENGINEERING.md) &nbsp;·&nbsp; 🛠️ [Contributing](./CONTRIBUTING.md)
 
 </div>
 
@@ -36,8 +35,7 @@
 - [Repository Structure](#-repository-structure)
 - [Quickstart & Installation](#-quickstart--installation)
 - [Environment Variables](#-environment-variables)
-- [Google Cloud Run Deployment](#-google-cloud-run-deployment)
-- [Vercel Deployment (Frontend)](#-vercel-deployment-frontend)
+- [Production Deployment](#-production-deployment)
 - [Security & Privacy Audit](#-security--privacy-audit)
 - [Future Enhancements](#-future-enhancements)
 - [Contributing](#-contributing)
@@ -47,37 +45,11 @@
 
 ## 🌐 Overview
 
-**SynapseIQ** is an enterprise-grade **AI Decision Intelligence Platform** engineered to transform structured business datasets into executive-ready strategic directives, multivariate correlation graphs, scenario forecasts, and boardroom-ready briefings — powered by **Google Gemini 2.0 Flash** and deployed on **Google Cloud Run (Gen2)**.
+**SynapseIQ** is an enterprise-grade **AI Decision Intelligence Platform** engineered to transform structured business datasets into executive-ready strategic directives, multivariate correlation graphs, scenario forecasts, and boardroom-ready briefings — powered by **Google Gemini 2.0 Flash**.
 
 Unlike traditional static BI dashboards that passively display charts, SynapseIQ functions as a **living AI operating system**. It proactively analyzes operational telemetry, isolates statistical anomalies, quantifies business risks, and streams structured recommendations with verified confidence scores.
 
 > *"This isn't another analytics tool. This is an AI executive partner embedded directly into your enterprise data stream."*
-
----
-
-## ☁️ Google Cloud Run Deployment
-
-SynapseIQ is architected for single-command production container deployment on **Google Cloud Run Gen2** in the **`asia-south1` (Mumbai)** region.
-
-### Cloud Run Specifications
-- **Service Name**: `synapseiq-backend`
-- **Region**: `asia-south1` (Mumbai)
-- **Execution Environment**: Gen2 (High Performance, Sub-second Cold Start)
-- **Container Port**: Configured via dynamic `$PORT` environment variable (default `8080`)
-- **Health Check Endpoint**: `/healthz` (Returns `200 OK`)
-- **CORS Configuration**: Fully enabled for `localhost` and Vercel production frontend domains
-
-### Quick Cloud Run Deploy Command
-```bash
-gcloud run deploy synapseiq-backend \
-  --source . \
-  --region asia-south1 \
-  --platform managed \
-  --execution-environment gen2 \
-  --allow-unauthenticated \
-  --port 8080 \
-  --set-env-vars PORT=8080
-```
 
 ---
 
@@ -90,7 +62,7 @@ gcloud run deploy synapseiq-backend \
 | **Scenario Modeling** | Static historical projections | **Forecast Modeler**: Real-time ROI & risk simulation sliders |
 | **Executive Reporting** | Manual copy-paste presentation drafting | **Boardroom Dossier**: Automated 9-paragraph McKinsey briefing |
 | **AI Transparency** | Black-box single percentage labels | **AITrustBadge**: 4-factor confidence metrics & verification chips |
-| **Cloud Architecture** | Legacy VM instances | **Cloud Run Gen2**: Serverless containerized scale-to-zero execution |
+| **Privacy & Security** | Server database data storage | **Client-Side Isolated Processing**: Zero server dataset retention |
 
 ---
 
@@ -185,17 +157,14 @@ gcloud run deploy synapseiq-backend \
 
 ## 🏛️ System Architecture
 
-SynapseIQ runs client-side with a hybrid execution engine backed by Google Cloud Run Gen2:
+SynapseIQ runs client-side with a hybrid execution engine:
 
-- **Google Cloud Run Gen2 Backend**: Serves containerized production builds (`nginx:alpine` + dynamic `$PORT` substitution + CORS headers + `/healthz` probe).
-- **Google Gemini 2.0 Flash Client**: Connects via streaming REST endpoints to generate live executive directives.
 - **Local Strategy Engine**: Computes dataset statistics, correlation matrices, Z-score outliers, and fallback recommendations completely offline.
+- **Google Gemini 2.0 Flash Client**: Connects via streaming REST endpoints to generate live executive directives when an API key is active.
 
 ```mermaid
 graph TD
-    Client[Executive Browser / Vercel Frontend] --> CloudRun[Google Cloud Run Gen2 - asia-south1]
-    CloudRun -->|Health Probe| Healthz[/healthz Endpoint]
-    Client --> Store[(Zustand State Store)]
+    Client[Executive Browser Client] --> Store[(Zustand State Store)]
     Store --> LocalEngine[Local Strategy Engine]
     Store --> GeminiAPI[Google Gemini 2.0 Flash API]
     LocalEngine --> UI[React 19 Dashboard Views]
@@ -211,14 +180,13 @@ For full details, Mermaid sequence diagrams, and data flow specifications, see [
 | Layer | Technologies & Tools |
 |---|---|
 | **Core Framework** | React 19.x, TypeScript 5.8, Vite 6.x |
-| **Cloud Infrastructure** | Google Cloud Run Gen2 (`asia-south1`), Google Artifact Registry, Nginx Alpine |
 | **Styling & Design** | Vanilla CSS, Tailwind CSS v4, Lucide React Icons |
 | **State Management** | Zustand (Persistent local state) |
 | **Visualizations** | Recharts, Custom SVG Decision Graph Engine |
 | **Animations** | Framer Motion (180–220ms enterprise ease curves) |
 | **AI Processing** | Google Gemini 2.0 Flash, Local Heuristic Engine |
-| **Routing** | React Router v7 (`BrowserRouter` with Vercel & Nginx SPA rewrites) |
-| **Deployment** | Google Cloud Run (Backend Container), Vercel (Frontend CDN) |
+| **Routing** | React Router v7 (`BrowserRouter` with Vercel SPA rewrites) |
+| **Deployment** | Vercel Edge CDN |
 
 ---
 
@@ -227,7 +195,7 @@ For full details, Mermaid sequence diagrams, and data flow specifications, see [
 ```
 SynapseIQ/
 ├── docs/                        # Architecture & Technical Documentation
-│   ├── architecture.md          # High-level architecture & Cloud Run sequence diagrams
+│   ├── architecture.md          # High-level architecture & Mermaid sequence diagrams
 │   ├── PROMPT_ENGINEERING.md    # Multi-stage Gemini 2.0 Flash system prompt specs
 │   ├── QA_CHECKLIST.md          # Production quality assurance checklist
 │   └── images/                  # High-resolution application screenshots
@@ -235,18 +203,30 @@ SynapseIQ/
 ├── sample-datasets/             # Enterprise sample CSV datasets
 ├── src/
 │   ├── components/              # Reusable UI components & layouts
+│   │   ├── ui/                  # Atomic design system primitives (Card, Badge, Button, AITrustBadge)
+│   │   ├── DecisionGraph.tsx    # Custom zero-flicker SVG graph engine
+│   │   ├── Sidebar.tsx          # Navigation sidebar with collapsed state
+│   │   └── Topbar.tsx           # Global header with search & profile controls
 │   ├── features/                # Core business logic & state engines
-│   │   ├── geminiService.ts     # Dynamic Google Gemini & Cloud Run backend integration
 │   │   ├── store.ts             # Zustand global state store
-│   │   └── csvParser.ts         # Statistical CSV dataset parser
+│   │   ├── geminiService.ts     # Google Gemini API integration
+│   │   ├── csvParser.ts         # Statistical CSV dataset parser
+│   │   ├── localAnalysis.ts     # Fallback local strategy engine
+│   │   └── themeEngine.ts       # Dynamic executive theme engine
+│   ├── layouts/                 # Page layout wrappers (DashboardLayout)
 │   ├── pages/                   # Application view components (8 modules)
+│   │   ├── ExecutiveBrief.tsx   # Executive Briefing Hub
+│   │   ├── BusinessTimeline.tsx # Business Timeline & Audit Trail
+│   │   ├── BusinessSignals.tsx  # Telemetry Signals Matrix
+│   │   ├── StrategyCanvas.tsx   # Strategy Canvas & Scatter Chart
+│   │   ├── DecisionCopilot.tsx  # Decision Copilot Advisory Suite
+│   │   ├── Forecast.tsx         # Scenario Forecast Modeler
+│   │   ├── Reports.tsx          # Boardroom Report Dossier
+│   │   ├── Settings.tsx         # Platform Settings & API Controls
+│   │   └── DataExplorer.tsx     # Atomic UI Component Sandbox
 │   ├── App.tsx                  # Root application router setup
 │   └── main.tsx                 # Application DOM entrypoint
-├── .dockerignore                # Excludes unnecessary files from Docker context
 ├── .env.example                 # Environment variables template
-├── Dockerfile                   # Production Nginx container for Cloud Run Gen2
-├── nginx.conf                   # Static Nginx server configuration
-├── nginx.conf.template          # Nginx config template for Cloud Run $PORT substitution
 ├── package.json                 # Project dependencies and npm scripts
 ├── vercel.json                  # Vercel SPA rewrite deployment configuration
 └── vite.config.ts               # Vite build configuration
@@ -273,17 +253,16 @@ cd SynapseIQ
 npm install
 ```
 
-### 3. Configure Environment Variables
+### 3. Configure Environment Variables (Optional)
 Copy the example environment template:
 ```bash
 cp .env.example .env
 ```
-Edit `.env` and add your Google Gemini API Key and Cloud Run backend URL:
+Edit `.env` and add your Google Gemini API Key:
 ```env
-PORT=8080
 VITE_GEMINI_API_KEY=your_google_gemini_api_key_here
-VITE_BACKEND_URL=https://synapseiq-backend-asia-south1.a.run.app
 ```
+> *Note: If no API key is provided, SynapseIQ seamlessly falls back to its built-in Local Strategy Engine.*
 
 ### 4. Run Development Server
 ```bash
@@ -297,52 +276,34 @@ Open your browser and navigate to `http://localhost:5173`.
 
 | Variable | Required | Description | Default |
 |---|---|---|---|
-| `PORT` | Required (Cloud Run) | Server listening port injected by Cloud Run | `8080` |
 | `VITE_GEMINI_API_KEY` | Optional | Google Gemini 2.0 Flash API Key for live AI reasoning | Fallback to Local Engine |
-| `VITE_BACKEND_URL` | Optional | Deployed Cloud Run Backend URL | `https://synapseiq-backend-asia-south1.a.run.app` |
 
 ---
 
-## 🚀 Google Cloud Run & Vercel Deployment
+## 🚀 Production Deployment
 
-### Deploying Backend to Google Cloud Run Gen2
+### Vercel Deployment (Recommended)
+SynapseIQ includes a pre-configured `vercel.json` file supporting `BrowserRouter` single-page application (SPA) client rewrites.
 
-1. Authenticate with Google Cloud CLI:
-   ```bash
-   gcloud auth login pravalikareddy315@gmail.com
-   gcloud config set project SynapseIQ
-   ```
-2. Enable required Cloud APIs:
-   ```bash
-   gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com iam.googleapis.com
-   ```
-3. Deploy to Cloud Run Gen2 (`asia-south1`):
-   ```bash
-   gcloud run deploy synapseiq-backend \
-     --source . \
-     --region asia-south1 \
-     --platform managed \
-     --execution-environment gen2 \
-     --allow-unauthenticated \
-     --port 8080 \
-     --set-env-vars PORT=8080
-   ```
-
-### Deploying Frontend to Vercel
-
-1. Import the repository into your **Vercel** dashboard.
-2. Add `VITE_BACKEND_URL` pointing to your deployed Cloud Run URL:
-   `VITE_BACKEND_URL=https://synapseiq-backend-asia-south1.a.run.app`
+1. Push your code to GitHub.
+2. Import the repository into your **Vercel** dashboard.
 3. Add `VITE_GEMINI_API_KEY` to Vercel Environment Variables.
 4. Click **Deploy**.
+
+### Static Production Build
+To generate static production bundle files:
+```bash
+npm run build
+```
+Output files will be located in the `/dist` directory.
 
 ---
 
 ## 🔒 Security & Privacy Audit
 
-- **Zero Server Telemetry**: SynapseIQ runs purely in the client browser. No uploaded CSV datasets, user notes, or prompt histories are stored permanently on server disks.
-- **Sanitized Secrets**: `.env` and sensitive environment configurations are strictly included in `.gitignore`.
-- **Cloud Run Security**: Unauthenticated access allowed for static SPA serving while preserving API key privacy in environment variables.
+- **Zero Server Telemetry**: SynapseIQ runs purely in the client browser. No uploaded CSV datasets, user notes, or prompt histories are sent to external database servers.
+- **Sanitized Secrets**: `.env` and sensitive environment configurations are strictly included in `.gitignore`. No hardcoded API keys exist in the repository.
+- **Client-Side Authorization**: API keys remain securely within local browser state.
 
 ---
 
@@ -367,4 +328,4 @@ Distributed under the **MIT License**. See [`LICENSE`](./LICENSE) for more infor
 
 **Author**: Pravalika Palle  
 **Repository**: [github.com/pravalika2307/SynapseIQ](https://github.com/pravalika2307/SynapseIQ)  
-**Google Cloud Project**: SynapseIQ (`asia-south1`)
+**Project**: SynapseIQ Enterprise Executive Intelligence Platform
