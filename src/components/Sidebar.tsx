@@ -141,7 +141,6 @@ export const Sidebar: React.FC = () => {
       <button
         aria-label={isSidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
         onClick={() => setSidebarCollapsed(!isSidebarCollapsed)}
-        aria-label="Toggle Navigation Sidebar"
         className="absolute top-5 -right-3 w-6 h-6 rounded-full border border-white/10 bg-[#151B23] flex items-center justify-center text-white/50 hover:text-white/90 hover:border-white/20 transition-all z-40 shadow-lg cursor-pointer"
       >
         {isSidebarCollapsed ? <ChevronRight size={12} /> : <ChevronLeft size={12} />}
